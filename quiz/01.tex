@@ -1,0 +1,102 @@
+\documentclass{article}
+\usepackage[margin=0.6in]{geometry}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage[shortlabels]{enumitem}
+
+\newcommand{\answeritem}{\global\answertrue\item}
+\newcommand{\perhapsanswer}{%
+  \ifanswer
+    $\blacksquare$ \global\answerfalse
+  \else
+    $\square$ \global\answerfalse
+  \fi
+}
+\newif\ifanswer
+
+\begin{document}
+
+  \title{605.601— Foundations of Software Engineering:Quiz 01}
+  \author{Sabbir Ahmed}
+
+  \maketitle
+
+  \section*{Part 1} Answer all five questions below.
+
+  \begin{enumerate}
+
+    \item Choose the correct option in terms of the ‘code of ethics’ you know or recognize for issues related to professional responsibility of a software engineer
+    \begin{enumerate}[start=1,align=left,label={\protect\perhapsanswer(\alph*)}]
+      \item Confidentiality
+      \item Intellectual property rights
+      \answeritem Both confidentiality \& intellectual property rights
+      \item Managing Client Relationships
+    \end{enumerate}
+
+    \item Software Development Methodology includes a model and a framework
+    \begin{enumerate}[start=1,align=left,label={\protect\perhapsanswer(\alph*)}]
+      \answeritem True
+      \item False
+    \end{enumerate}
+
+    \item What is a Software?
+    \begin{enumerate}[start=1,align=left,label={\protect\perhapsanswer(\alph*)}]
+      \item Software is a set of programs
+      \item Software is documentation and configuration of data
+      \answeritem Software is set of programs, documentation \& configuration of data
+      \item None of the mentioned
+    \end{enumerate}
+
+    \item Which one of these issues or points does not necessarily account for software failure?
+    \begin{enumerate}[start=1,align=left,label={\protect\perhapsanswer(\alph*)}]
+      \item Increasing demand
+      \answeritem Low expectation
+      \item Increasing supply
+      \item Less reliable and expensive
+    \end{enumerate}
+
+    \item Which of the following is not software project management goal?
+    \begin{enumerate}[start=1,align=left,label={\protect\perhapsanswer(\alph*)}]
+      \item Keeping overall costs within budget
+      \item Delivering the software to the customer at the agreed time
+      \item Maintaining a happy and well-functioning development team
+      \answeritem Avoiding customer complaints
+    \end{enumerate}
+
+  \end{enumerate}
+
+  \section*{Part 2} Please use your own words to answer the following questions. Please make sure that your answer is clear, concise, and legible.
+
+  \begin{enumerate}[resume]
+
+    \item
+    \begin{enumerate}
+      \item What is a software development process?
+
+      A software development process is a coherent set of activities grouped in distinct phases that lead to a software system's production.
+
+      \item Why would you use it?
+
+      A software development process is required to ensure that a software product is adequately implemented according to the specified requirements. The process also guarantees the proper maintenance of the software product after being shipped to the customers.
+
+      \item What do you think are the common phases or stages of software development process?
+
+      The common phases of a software development process are;
+      \begin{enumerate}
+        \item requirements gathering
+        \item analysis and design
+        \item implementation
+        \item testing
+        \item verification and acceptance
+        \item maintenance
+      \end{enumerate}
+
+      \item Name and describe in a few sentences a software development process that is most commonly used in the industry today.
+
+      A typical software development process in the industry is the agile methodology. Several derivations of the method exist to account for company or product constraints; however, the general principles of adaptive planning, evolutionary planning, and continuous integration are maintained. Agile methodologies advocate for frequent collaboration between the development teams and their end-users through iterative development.
+
+    \end{enumerate}
+  \end{enumerate}
+
+\end{document}
