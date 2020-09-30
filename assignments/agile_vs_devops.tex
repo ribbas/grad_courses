@@ -1,34 +1,38 @@
-\documentclass{article}
-\usepackage[margin=0.6in]{geometry}
-\usepackage{amssymb}
-\usepackage{graphicx}
-\usepackage{enumerate}
-\usepackage[shortlabels]{enumitem}
+\documentclass[12pt]{article}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{setspace}
+\usepackage{titling}
 
-\newcommand{\answeritem}{\global\answertrue\item}
-\newcommand{\perhapsanswer}{%
-  \ifanswer
-    $\blacksquare$ \global\answerfalse
-  \else
-    $\square$ \global\answerfalse
-  \fi
-}
-\newif\ifanswer
+\setstretch{1.5}
+\setlength{\droptitle}{-8em}
 
 \begin{document}
 
-  \title{605.601 - Foundations of Software Engineering \\ Agile vs. DevOps}
+  \title{605.601 - Foundations of Software Engineering \\ Agile vs. DevOps\vspace{-0.5em}}
   \author{Sabbir Ahmed}
-
   \maketitle
+  \vspace{-1em}
 
-  \section*{Part 1} Please do read them - and then write a page or two on your understanding of Agile and DevOps:
+  % Please do read them - and then write a page or two on your understanding of Agile and DevOps:
 
-1. Describe in your own words.
+  % 1. Describe in your own words.
 
-2. Point out a difference or two between Agile and DevOps.
+  % 2. Point out a difference or two between Agile and DevOps.
 
-3. Please tell us when and why will you choose one over the other
+  % 3. Please tell us when and why will you choose one over the other
+  Agile is a software development methodology, while DevOps is a practice that aims to combine software development and IT operations. Agile methodologies advocate for frequent collaboration between the development teams and their end-users through iterative development. Several derivations of the method exist to account for company or product constraints; however, the general principles of adaptive planning, evolutionary development, and continuous integration are maintained. DevOps derives several aspects of Agile methodologies. The practice advocates for rapid collaboration and delivery.\cite{BMC} The two practices are often viewed as complementary.
 
+  There are several key differences between the two concepts. Agile methodologies attempt to address communication gaps between the clients and developers, while DevOps focuses on the development and operations teams. Agile encourages rapid and frequent deployment to maintain the evolving communication with the end-users. DevOps, although encouraging similar goals, does not find the fast-paced outputs to be a requirement. The size of the teams in the respective practices can differ drastically.\cite{guru99} Agile teams tend to work in small numbers to keep up with its hasty philosophy; the smaller the team, the faster they can develop their feature to contribute to the larger project. Agile teams usually work in sprints, which are short periods scheduled to complete a set of tasks. These predetermined cycles typically range from one to several weeks.\cite{guru99} DevOps, on the other hand, will recruit as many teams as possible on long-term schedules to minimize disruptions in productivity. In terms of internal communication within teams, Agile methodology practitioners tend to have informal meetings comprising of daily progress and goal updates commonly referred to as stand-up meetings.\cite{guru99} Meetings in DevOps teams are not usually as frequent, but they are well documented to communicate with all the relevant teams. Lastly, the philosophy of DevOps advocates for maximum automation in development and deployment, while Agile does not hold it as a requirement.
+
+  Since Agile and DevOps methodologies are not necessarily mutually exclusive, it is possible to implement both of the practices in the workplace. However, a team may decide to lean on one methodology over another depending on their workspace culture, product goals, and customer relationships.\cite{BMC} If a company is developing a product aimed towards proactive customers who prefer to be updated on the status, Agile would be preferred. If the product is being developed for an ever-changing audience who frequently updates its requirements, the development team may opt-in for an Agile methodology. Developers working on software that has established requirements and is aimed towards customers who favor minimal business disruptions would practice DevOps ethics. There is, however, not a precise method of determining which practice a team should follow. As mentioned earlier, derivations of the Agile methodology exist to fit the needs of specific workplaces. There are also several variations of DevOps methodologies in the industry and numerous hybrid combinations of both practices.
+
+  \begin{thebibliography}{2}
+  \bibitem{guru99}
+  \textit{“Agile Vs. DevOps: What's the Difference?”} Guru99, www.guru99.com/agile-vs-devops.html.
+
+  \bibitem{BMC}
+  10, August, et al. \textit{“DevOps vs Agile: A Complete Introduction.”} BMC Blogs, 10 Aug. 2017, www.bmc.com/blogs/devops-vs-agile-whats-the-difference-and-how-are-they-related/. 
+
+  \end{thebibliography}
 
 \end{document}

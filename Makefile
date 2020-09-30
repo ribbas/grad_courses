@@ -14,4 +14,4 @@ convert1 convert2:
 
 clean:
 	# clean out cache and temporary files
-	rm -rf *.aux *.log *.out *.pdf
+	rm -rf *.aux *.log *.out
