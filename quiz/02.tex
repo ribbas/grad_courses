@@ -1,0 +1,94 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{setspace}
+\usepackage{titling}
+
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage[shortlabels]{enumitem}
+
+\newcommand{\answeritem}{\global\answertrue\item}
+\newcommand{\perhapsanswer}{%
+  \ifanswer
+    $\blacksquare$ \global\answerfalse
+  \else
+    $\square$ \global\answerfalse
+  \fi
+}
+\newif\ifanswer
+
+\setstretch{1.5}
+\setlength{\droptitle}{-8em}
+
+\begin{document}
+
+  \title{605.601 - Foundations of Software Engineering \\ Quiz 02\vspace{-0.5em}}
+  \author{Sabbir Ahmed}
+  \maketitle
+  \vspace{-1em}
+
+  \section*{Part 1} Answer any five questions below.
+
+  \begin{enumerate}
+
+    \item What kind of approach was introduced for elicitation and modelling to give a functional view of the system or software?
+    \begin{enumerate}[start=1,align=left,label={\protect\perhapsanswer(\alph*)}]
+      \item Object Oriented Design
+      \answeritem Use Cases
+      \item Fusion
+      \item Object Modeling Technique
+    \end{enumerate}
+
+    \item A stakeholder is anyone who will purchase the completed software system under development.
+    \begin{enumerate}[start=1,align=left,label={\protect\perhapsanswer(\alph*)}]
+      \item True
+      \answeritem False
+    \end{enumerate}
+
+    \item Which one of the following is not a step of requirement engineering?
+    \begin{enumerate}[start=1,align=left,label={\protect\perhapsanswer(\alph*)}]
+      \answeritem Elicitation
+      \item Design
+      \item Analysis
+      \item Documentation
+    \end{enumerate}
+
+    \item Which model in software modeling using UML depicts the dynamic behavior of the software?
+    \begin{enumerate}[start=1,align=left,label={\protect\perhapsanswer(\alph*)}]
+      \item Context Model
+      \item Object Model
+      \item Data Model
+      \item Sequence Model
+    \end{enumerate}
+
+    \item A Use-case actor is always a person having a role that different people may play.
+    \begin{enumerate}[start=1,align=left,label={\protect\perhapsanswer(\alph*)}]
+      \item True
+      \answeritem False
+    \end{enumerate}
+
+    \item Project management is less important for modern software development since most projects are successful and completed on time
+    \begin{enumerate}[start=1,align=left,label={\protect\perhapsanswer(\alph*)}]
+      \answeritem True
+      \item False
+    \end{enumerate}
+
+  \end{enumerate}
+
+  \section*{Part 2}
+
+  \begin{enumerate}[resume]
+
+    \item Please answer in your own words:
+
+    \begin{enumerate}
+      \item As a software engineer, do you have any responsibility or accountability to make sure that the software you and your team are developing – must be delivered on time and within budget? Please justify;
+
+      \item If you are a part of an Agile development team, how much importance or attention would you like to offer in order for your team to gather and analyze the requirements? Please explain.
+    \end{enumerate}
+
+  \end{enumerate}
+
+
+\end{document}
