@@ -1,0 +1,168 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{setspace}
+\usepackage{titling}
+
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage[shortlabels]{enumitem}
+
+\newcommand{\answeritem}{\global\answertrue\item}
+\newcommand{\perhapsanswer}{%
+  \ifanswer
+    $\blacksquare$ \global\answerfalse
+  \else
+    $\square$ \global\answerfalse
+  \fi
+}
+\newif\ifanswer
+
+\setstretch{1.5}
+\setlength{\droptitle}{-8em}
+
+\begin{document}
+
+  \title{605.601 - Foundations of Software Engineering \\ Mid-Term Examination\vspace{-0.5em}}
+  \author{Sabbir Ahmed}
+  \maketitle
+  \vspace{-5em}
+
+  \section*{} Please answer any five (5) questions. Please type your answers below the question in the corresponding bullet points. Please keep the bullet points separate from each other.
+
+  \begin{enumerate}
+
+    \item
+    \begin{enumerate}[start=1,align=left]
+      \item What does ``Software Engineering'' mean to you?
+
+      Software engineering is an umbrella term for developing software while following general engineering requirements. A software engineering professional holds programming skills as well as knowledge on the proper procedure to develop, document and maintain a software product.
+
+      \item What does ``software'' mean to you?
+
+      A software is any set of repeatable instructions and data organized to perform at least one task.
+
+      \item Please describe a software that you use on a regular basis.
+
+      Operating systems (OS) are software themselves. I have computers with Windows OS and Linux OS, and I use those software on a regular basis.
+
+      \item Why do you use it?
+
+      Operating systems provide a platform to interface application software with the hardware of a computer system. Without my Linux distributions, I would not be able to utilize the applications required for work, such as text editors and browsers.
+
+      \item Please list two primary benefits of the software you use.
+
+      Two benefits of using Linux distributions on my machines over a Windows OS is that I maintain more control of the processes and data. When I am running a browser application on my Linux distribution, I have the ability to restrict far more permissions to ensure security. Another major benefit of using a Linux OS is that it is an open source software available for free.
+
+    \end{enumerate}
+
+    \item
+    \begin{enumerate}[start=1,align=left]
+      \item From your own personal or professional experience, can you distinguish or differentiate a software from a computer program, and if so, how?
+
+      In my professional experience, the terms ``software'' and ``computer program'' are often used interchangeably. However, a software usually consists of supporting documentation.
+
+      \item Please list a difference between the two – software and computer program? 
+
+      A software usually consists of supporting documentation, such as requirements, design models and user manuals.
+
+      \item Do you think there is a difference between a computer programmer and a software engineer? Please explain.
+
+      A software engineer is expected to be knowledgeable of all the skills of a computer programmer, including writing code, understanding algorithms and structures, and other computer science principles. Additionally, they are expected to maintain general engineering principles, such as following development methodologies, contribute thorough documentation, communicate with clients and other teams and follow engineering ethics.
+
+      \item As a professional, why is software engineering a discipline of your interest?
+
+      I am interested in software engineering because I enjoy writing code. Although computer programming would suffice that interest, I also enjoy following proper etiquette and ethics when developing software.
+
+    \end{enumerate}
+
+    \item
+    \begin{enumerate}[start=1,align=left]
+      \item What is software development life cycle or SDLC?
+
+      A software development life cycle is a coherent set of activities grouped in distinct phases that lead to a software system's production and maintenance.
+
+      \item What is the primary benefit of software development process?
+
+      Following a software development process to create an application ensures the product's quality and guarantees its delivery within the timelines and budgets constrained by the clients.
+
+      \item How many different software development processes have you heard of or know of?
+
+      Some of the common software development processes that I have heard of are Agile, DevOps and Waterfall.
+
+      \item Please describe one of the processes in your own words.
+
+      A typical software development process in the industry is the Agile methodology. Agile methodologies advocate for frequent collaboration between the development teams and their end-users through iterative development. Several derivations of the method exist to account for company or product constraints; however, the general principles of adaptive planning, evolutionary development, and continuous integration are maintained.
+
+      \item List the common phases of a software development process.
+
+      The common phases of a software development process are;
+      \begin{enumerate}
+        \item requirements gathering
+        \item analysis and design
+        \item implementation
+        \item testing
+        \item verification and acceptance
+        \item maintenance
+      \end{enumerate}
+
+    \end{enumerate}
+
+    \item
+    \begin{enumerate}[start=1,align=left]
+      \item How do you describe software project management?
+
+      Software project management is the concept of planning, scheduling, allocating resources, executing, tracking and delivery of software projects through and after its creation.
+
+      \item What does project management involve?
+
+      Software project management involves all the activities needed to plan and execute a project, including decisions on requirements and goals, budgets and costs, capability and responsibilities of teams involved, timelines and other arrangements.
+
+      \item What are the four major components of project management?
+
+      The four major components of software project management are usually referred to as the ``four P's''. They consist of:
+      \begin{enumerate}
+        \item People (team)
+        \item Product (business value)
+        \item Process (activities)
+        \item Plan (schedule and milestones)
+      \end{enumerate}
+
+      \item Which one of the components is most important? And, why?
+
+      The component that is considered the most important is ``People'', or the team that is involved in the development, testing and maintenance of the software product. A software project, regardless of its size, involves multiple individuals contributing to its various aspects. Minimizing any conflicts and ensuring a smooth development process is crucial for the product's quality. A coherent team of contributors will ultimately lead to the completion of the software project within the time and budget constraints.
+
+      \item Why do we need software project management process?
+
+      All projects, regardless of size, require some degree of planning, organizing, status monitoring, and further adjustment. Following an established process would make software project management more convenient and seamless.
+
+      \item Please elaborate on one of the components of software project management process.
+
+      One of the major components of the software project management process is the adjustments necessary to improve the product until completion. Issues and drawbacks are always expected during the development of a software project. Being flexible with resources, timelines, costs, materials, etc. due to any potential issues is required to guarantee the quality of the product.
+
+    \end{enumerate}
+
+    \item
+    \begin{enumerate}[start=1,align=left]
+      \item What is a software requirement?
+
+      A software requirement is a condition or capability needed by the client to achieve an objective.
+
+      \item What is the fundamental purpose of defining or identifying requirements?
+
+      Software requirements provide guidance to the developers on what exactly to build and help communicate back to the customers. They also provide information to the testing teams on what to test. Without thorough definitions of the requirements, the development team runs the risk of committing extraneous efforts into misguided directions. This would ultimately cause setbacks in the timeline and affect the customers and testing teams.
+
+      \item What are the basic difficulties you have experienced in gathering requirements for your class project?
+
+      Some of the difficulties I have experienced in gathering requirements for the class project was thoroughly understanding the project descriptions to extract the problems. For example, in the hospital management system, I found it difficult to interpret how the users wanted to use the service.
+
+      \item What would you have liked to do differently and why?
+
+      To properly identify the requirements for the hospital management system, I would have began with identifying and categorizing the requirements in the ``5 W's and 1 H'' format.
+
+    \end{enumerate}
+
+  \end{enumerate}
+
+
+\end{document}
