@@ -10,8 +10,8 @@ all: convert
 convert: convert1 convert2
 convert1 convert2:
 	# convert LaTex file to PDF
-	@xelatex ${DOC}
+	xelatex -output-directory=$(dir ${DOC}) ${DOC}
 
 clean:
 	# clean out cache and temporary files
-	rm -rf *.aux *.log *.out
+	find . \( -name *.aux -o -name *.log -o -name *.out \) -delete
