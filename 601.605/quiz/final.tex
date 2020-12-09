@@ -1,0 +1,97 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{setspace}
+\usepackage{titling}
+
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage[shortlabels]{enumitem}
+
+\newcommand{\answeritem}{\global\answertrue\item}
+\newcommand{\perhapsanswer}{%
+  \ifanswer
+    $\blacksquare$ \global\answerfalse
+  \else
+    $\square$ \global\answerfalse
+  \fi
+}
+\newif\ifanswer
+
+\setstretch{1.5}
+\setlength{\droptitle}{-8em}
+
+\begin{document}
+
+  \title{605.601 - Foundations of Software Engineering \\ Final Examination\vspace{-0.5em}}
+  \author{Sabbir Ahmed}
+  \maketitle
+  \vspace{-5em}
+
+  \section*{} Please answer any five (5) questions. Please type your answers below the question under ``Answer''.
+
+  \begin{enumerate}
+
+    % 1
+    \item
+    \begin{enumerate}[start=1,align=left]
+      \item What is a Use Case? Please provide an example.
+      \item Please elaborate on how you describe a Use Case?
+      \item Do you think there is a difference between a Use Case and a User Story? Do you have any preference in using any of them?
+      \item Since you may have used Use Cases in your group projects, can you list one or two benefits or limitations in using the Use Cases?
+    \end{enumerate}
+
+    % 2
+    \item
+    \begin{enumerate}[start=1,align=left]
+      \item What does design mean to you? What are the major steps in a software design process?
+      \item What does separation of concerns mean to you?
+      \item Are you familiar with the fundamental principles of design? Please list any three principles that you know.
+      \item What does architecture mean to you? Can you describe the relationship between design and architecture?
+      \item Why do we need architecture? Can you describe a basic form of architecture? Please elaborate.
+    \end{enumerate}
+
+    % 3
+    \item
+    \begin{enumerate}[start=1,align=left]
+      \item What does an architectural style mean to you? 
+      \item Do you believe that architectural style can add value to software engineering? And why? 
+      \item What are the different types of architectural frameworks do you know of? Please provide an example. 
+      \item How do you analyze an architectural design? Please list the steps. 
+      \item  Why would a software engineer use a partitioned architecture? Please describe in your own words.
+    \end{enumerate}
+
+    % 4
+    \item
+    \begin{enumerate}[start=1,align=left]
+      \item What is a software component (from a design perspective)? 
+      \item What are the different views that a component can be presented as? 
+      \item What does ‘refactoring’ mean to you? Does the concept of refactoring have any value to you as a software engineer? And why? 
+      \item What is a design pattern? 
+      \item How are the design patterns used in software engineering?
+    \end{enumerate}
+
+    % 5
+    \item
+    \begin{enumerate}[start=1,align=left]
+      \item What is software testing? Describe fault, error, and failure. 
+      \item Why do you think testing is important for software engineering? 
+      \item Can you provide an example of software testing? How does software testing impact software development? 
+      \item Can you describe how software testing can help an entire software development team? 
+      \item Please define what software tester means to you. What are the different types of software tester you know of? Can a software tester help improve the quality of a software?
+    \end{enumerate}
+
+    % 6
+    \item
+    \begin{enumerate}[start=1,align=left]
+      \item does ‘Agility’ mean to you? Do you believe ‘Agility’ must be a common characteristic of any software today? 
+      \item is ‘Agile’ methodology? Do you agree with the Manifesto of Agile software development? 
+      \item do you define DevOps? Do you see the difference between Agile and DevOps? If so, why? If not, why not? 
+      \item you had an opportunity to proceed with your group project, which software development approach would you use – Agile or DevOps? Please elaborate.
+      \item In a real practice, how would you decide to use waterfall, iterative and incremental, Agile or DevOps? Do you have any preference?
+    \end{enumerate}
+
+  \end{enumerate}
+
+
+\end{document}
