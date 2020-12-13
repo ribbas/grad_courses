@@ -71,7 +71,7 @@
       \end{enumerate}
 
       \item What does architecture mean to you? Can you describe the relationship between design and architecture?
-      Architecture in software design refers to the software system structures and how thy interact independently and with the system as a whole.
+      Architecture in software design refers to the software system structures and how thy interact independently and with the system as a whole. Software architecture and design represent different perspectives of the software system. Architecture is more abstract and emphasizes strategy, structure and purpose, while design focus on the implementation.
 
       \item Why do we need architecture? Can you describe a basic form of architecture? Please elaborate.
     \end{enumerate}
@@ -80,29 +80,59 @@
     \item
     \begin{enumerate}[start=1,align=left]
       \item What does an architectural style mean to you? 
-      \item Do you believe that architectural style can add value to software engineering? And why? 
-      \item What are the different types of architectural frameworks do you know of? Please provide an example. 
-      \item How do you analyze an architectural design? Please list the steps. 
+      Software architectural styles define a specific approach for handling performance limitations, high availability and minimization of a business risk of the system.
+
+      \item Do you believe that architectural style can add value to software engineering? And why?
+
+
+      \item What are the different types of architectural frameworks do you know of? Please provide an example.
+
+      \item How do you analyze an architectural design? Please list the steps.
+
       \item Why would a software engineer use a partitioned architecture? Please describe in your own words.
     \end{enumerate}
 
     % 4
     \item
     \begin{enumerate}[start=1,align=left]
-      \item What is a software component (from a design perspective)? 
+      \item What is a software component (from a design perspective)?
+      A software component is a modular portion of a system that covers a set of its implementation and exposes a set of its interfaces.
+
       \item What are the different views that a component can be presented as? 
+      The different views are:
+      \begin{enumerate}
+        \item conventional - a component is a functional element that encompasses processing logic
+        \item control component - coordinates interaction among domain components
+        \item domain component - implements required functionality
+        \item infrastructure component - supports processing
+        \item object oriented - a component comprises a set of collaborating classes
+      \end{enumerate}
+
       \item What does ‘refactoring’ mean to you? Does the concept of refactoring have any value to you as a software engineer? And why? 
+      Refactoring is the process of updating components in the software system in order to improve implementation functionality while maintaining the exterior behavior. This process is very valuable to a software engineer since maintenance is essential for a system to thrive. If a software product has a feature that can be upgraded due to new third party releases, the system should undergo a refactor to obtain the benefits of the upgrade.
+
       \item What is a design pattern? 
+      Design patterns are general established solutions to commonly occurring problems in software design.
+
       \item How are the design patterns used in software engineering?
+
     \end{enumerate}
 
     % 5
     \item
     \begin{enumerate}[start=1,align=left]
-      \item What is software testing? Describe fault, error, and failure. 
+      \item What is software testing? Describe fault, error, and failure.
+      Software testing is the discovery process to prevent failures in a software system. A fault is a physical defect within a hardware or software component. An error is any deviation from accuracy or correctness in behavior of a system. A failure is is an externally visible event representing a deviation from the system’s required behavior.
+
       \item Why do you think testing is important for software engineering? 
+      Testing is essential for software engineering because it exposes any weaknesses or flaws in the system before being introduced to the customers.
+
       \item Can you provide an example of software testing? How does software testing impact software development? 
+      An example of software testing is unit testing, where a small modular component of the system is tested for its validity. Software testing is a major step in the software development methodology. Oftentimes, the results of the testing step moves the development phase back into the implementation stages to improve the quality.
+
       \item Can you describe how software testing can help an entire software development team? 
+
+
       \item Please define what software tester means to you. What are the different types of software tester you know of? Can a software tester help improve the quality of a software?
     \end{enumerate}
 
@@ -112,7 +142,7 @@
       \item does ‘Agility’ mean to you? Do you believe ‘Agility’ must be a common characteristic of any software today? 
       \item is ‘Agile’ methodology? Do you agree with the Manifesto of Agile software development? 
       \item do you define DevOps? Do you see the difference between Agile and DevOps? If so, why? If not, why not?
-       \item you had an opportunity to proceed with your group project, which software development approach would you use – Agile or DevOps? Please elaborate.
+      \item you had an opportunity to proceed with your group project, which software development approach would you use – Agile or DevOps? Please elaborate.
       \item In a real practice, how would you decide to use waterfall, iterative and incremental, Agile or DevOps? Do you have any preference?
     \end{enumerate}
 
