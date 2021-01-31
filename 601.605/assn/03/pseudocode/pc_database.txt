@@ -1,0 +1,119 @@
+class CredentialManager {
+
+  operation init(username: String, password: String, db: CredentialManager) -> Boolean {
+    assign attribute username = encrypt(username)
+    assign attribute password = encrypt(password)
+    assign attribute db = dereference(db)
+    call db.synchronize()
+    if no errors raised {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  operation authenticate() -> Boolean {
+    call db.read(Integer: database_type = PatientRecord, username: Bytes = username, password: Bytes = password)
+    if return value is true {
+      assign attribute uuid = return value uuid
+      assign attribute user_type = return value user_type
+      return true
+    } else {
+      return false
+    }
+  }
+
+  operation get_uuid() -> String {
+    return attribute uuid
+  }
+
+  operation get_user_type() -> String {
+    return attribute user_type
+  }
+
+  operation update_creds(new_username: String, new_password: String) -> Boolean {
+    if user_type is valid {
+      call db.set_permission(Integer: mode = "read_write")
+      call db.update(Integer: database_type = PatientRecord, username: Bytes = new_username, password: Bytes = new_password)
+      call db.set_permission(Integer: mode = "read_only")
+      return true
+    } else {
+      return false
+    }
+  }
+
+}
+
+class DatabaseManager {
+
+  operation synchronize() -> Boolean {
+    open database and assign to attribute db
+    synchronize db
+    assign attribute permission to "read_only"
+    if no errors raised {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  operation create(query: QueryMap) -> Boolean {
+    check if attribute permission is valid {
+      parse and convert query into valid executable database query
+      call db.create(query)
+      if no errors raised {
+        return true
+      } else {
+        return false
+      }
+    }
+  }
+
+  operation read(query: QueryMap) -> String {
+    parse and convert query into valid executable database query
+    call db.read(query)
+    if no errors raised {
+      convert return value to String
+    } else {
+      return empty string
+    }
+  }
+
+  operation update(query: QueryMap) -> Boolean {
+    check if attribute permission is valid {
+      parse and convert query into valid executable database query
+      call db.update(query)
+      if no errors raised {
+        return true
+      } else {
+        return false
+      }
+    }
+  }
+
+  operation delete(query: QueryMap) -> Boolean {
+    check if attribute permission is valid {
+      parse and convert query into valid executable database query
+      call db.delete(query)
+      if no errors raised {
+        return true
+      } else {
+        return false
+      }
+    }
+  }
+
+  operation commit() -> Boolean {  
+    call db.commit()
+    if no errors raised {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  operation set_permission(Integer: permission = "read_only"){
+    assign attribute permission = permission
+  }
+
+}

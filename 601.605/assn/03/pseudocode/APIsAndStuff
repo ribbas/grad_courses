@@ -1,0 +1,68 @@
+##############################################
+# Interfaces (APIs), classes, and functions #
+############################################
+
+DatabaseManager:
+  Things it must do:
+    access_records:
+      find_record_by_uuid
+      find_record_by_name
+      find_record_by_criteria
+      encrpytion:
+        encrypt_record (AES128 or AES256?)
+        dencrypt_record
+        serialize_record
+        deserialize_record
+      CRUD_record (facade) (record is a class)
+        create_record
+        read_record
+        update_record
+        delete_record
+        crud_attribute (i.e. patient name, DOB, etc)
+        crud_sub_record
+record (class)
+  attributes:
+    (strings) name, dob, gender/sex, notes,
+    (bytes) pictures, documents
+    (array: type == record) department_visits
+      i.e. array<Record> visits = [obgyn, optometry, etc]
+  methods
+    update_field(field, value)
+    add_sub_record(department)
+    get_sub_record(department)
+
+auth_interface:
+  Things it must do:
+    session:
+      create_session
+        signin
+        create_account
+        reset_password
+      verify_session
+        validate_user
+        validate_token
+      verify_entitlement (Role Based Access Control)
+        validate_access
+        validate_role
+        get_role_entitlements
+
+admin_interface:
+  Things it must do:
+    access_calendar
+      load_calendar
+      create_event
+      share_event
+      delete_event
+    access_email
+      load_inbox
+      create_email
+      delete_email
+      send_email
+        encrypt_email
+
+webserver_interface:
+  Things it must do:
+    serve webpage based authenticated role (staff, patient, admin)
+    provide chat client
+    provide basic exposure to patient record (appointments, lab results, etc)
+    ability to schedule appointments

@@ -1,0 +1,81 @@
+class AdministrativeSuite:
+
+  operation init(uuid: String) -> Boolean:
+
+    ping SMTP server
+    if response value is valid:
+      assign attribute sender to uuid
+      open socket to SMTP server
+      return true
+    else:
+      return false
+
+  operation set_recipient(Integer: recipient_uuid):
+
+    assign attribute recipient_uuid = recipient_uuid
+
+  operation set_subject(subject: String):
+
+    encrypt(subject)
+    assign attribute subject = subject
+
+  operation set_body(body: String):
+
+    encrypt(body)
+    assign attribute body = body
+
+  operation set_attachment(Attachment: attachment):
+
+    encrypt(attachment)
+    assign attribute attachment = attachment
+
+  operation delete_recipient():
+
+    assign attribute sender = -1
+
+  operation delete_subject():
+
+    assign attribute subject = empty string
+
+  operation delete_body():
+
+    assign attribute body = empty string
+
+  operation delete_attachment():
+
+    call attachment.delete()
+    assign attribute attachment = null
+
+  operation send() -> Boolean:
+
+    ping SMTP server
+    if response value is valid:
+      assign attribute sender to uuid
+      open socket to SMTP server
+      pack recipient_uuid into buffer
+      pack subject into buffer
+      pack body into buffer
+      pack attachment into buffer
+      while buffer is not empty:
+        chunk buffer
+        send buffer chunks via socket
+        reduce buffer length
+        if buffer is empty:
+          return true
+
+    else:
+      return false
+
+  operation recv() -> String:
+
+    ping SMTP server
+    if response value is valid:
+      assign attribute sender to uuid
+      open socket to SMTP server
+      read from socket into buffer
+      if buffer is valid:
+        decrypt(buffer)
+        return buffer
+
+    else:
+      return empty string

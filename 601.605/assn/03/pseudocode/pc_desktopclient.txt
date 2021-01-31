@@ -1,0 +1,85 @@
+class DesktopClient {
+
+  operation create_session(creds: CredentialManager) -> Boolean {
+    instantiate CredentialManager object: creds
+    call creds.init(username: String, password: String, reference_to(db): CredentialManager)
+    call creds.authenticate()
+    while return value is false {
+      call creds.init(username: String, password: String, reference_to(db): CredentialManager)
+      if return value is true {
+        assign session_id = creds.get_session_id()
+        assign user_type = creds.get_user_type()
+        return true
+      }
+    }
+  }
+
+  operation connect_to_db(session_id: String) -> Boolean {
+    instantiate DatabaseManager object: db
+    call db.synchronize()
+    call db.create(database_type: Integer = logs, session_id: String, last_login: DateTime = time.now())
+  }
+
+  operation get_patient_uuid(first_name: String, last_name: String) -> String {
+    call db.read(database_type: Integer = PatientRecord, first_name: String = first_name, last_name: String = last_name)
+    return the return value
+  }
+
+  operation get_patient_data(patient_uuid: Integer) -> PatientRecord {
+    call db.read(database_type: Integer = PatientRecord, patient_uuid: String = patient_uuid)
+    return the return value
+  }
+
+  operation compose_mail(recipient_uuid: String, subject: String, message: String, Attachment: attachment) {
+    instantiate AdministrativeSuite object: admin
+    call admin.init(uuid: String)
+    call admin.set_recipient(recipient_uuid: String)
+    call admin.set_subject(subject: String)
+    call admin.set_body(body: String)
+    call admin.set_attachment(attachment: Attachment)
+  }
+
+  operation send_email() -> Boolean {
+    call admin.send()
+    return the return value
+  }
+}
+
+class DoctorView inherits from DesktopClient {
+
+  operation create_visit_record(user_type: Integer, patient_uuid: Integer, visit_datetime: DateTime, 
+    visit_reason: String, visit_dept: String, visit_summary: String) -> VisitRecord {
+    convert parameters to VisitRecord object
+  }
+
+  operation create_patient_record(user_type: Integer, patient_uuid: String, patient_name: String,
+    dob: DateTime, email: String, address: String, visit_data: VisitRecord) -> PatientRecord {
+    convert parameters to PatientRecord object
+  }
+
+  operation update_patient_data(user_type: Integer, patient_id: String, patient_data: PatientRecord) -> Boolean {
+    call db.update(database_type: Integer = PatientRecord, user_type: Integer = user_type,
+      patient_id: Integer = patient_id, patient_data: PatientRecord = patient_data)
+    call db.commit()
+    call compose_mail(recipient_uuid: String = patient_uuid, subject: String = "Record updated",
+      message: String = "Dear patient, your records have been updated.\n")
+    call send_mail()
+    return the return value
+  }
+
+}
+
+class ClientView inherits from DesktopClient {
+
+  operation get_doctor_uuid(first_name: String, last_name: String) -> String {
+    call db.read(database_type: Integer = DoctorRecords, first_name: String = first_name, last_name: String = last_name)
+    return the return value
+  }
+
+  operation update_contact_info(email: String, password: String, address: String) -> Boolean {
+    call create_patient_record(user_type: Integer, patient_uuid: Integer, email: String, address: String)
+    save reference to return object
+    call update_patient_data(user_type: Integer, patient_id: Integer, patient_data: PatientRecord)
+  }
+
+}
