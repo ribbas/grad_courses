@@ -3,7 +3,7 @@
 \usepackage{setspace}
 \usepackage{titling}
 
-\usepackage{amssymb}
+\usepackage{amsmath,amsthm,amssymb}
 \usepackage{graphicx}
 \usepackage{enumerate}
 \usepackage[shortlabels]{enumitem}
@@ -23,6 +23,7 @@
 
 \usepackage{xcolor}
 \usepackage{listings}
+\usepackage{/home/sabbir/texmf/longdivision}
 
 \lstset{language=Java, keywordstyle={\bfseries \color{black}}, showstringspaces=false}
 
@@ -39,41 +40,169 @@
     \item Convert the following from decimal to binary. Express numbers in 16 bits.
     \begin{enumerate}
       \item 14
+      \begin{align*}
+        &\intlongdivision{14}{2}\quad
+        \intlongdivision{7}{2}\quad
+        \intlongdivision{3}{2}\quad
+        \intlongdivision{1}{2} \\
+        &\Rightarrow (1110)_2
+      \end{align*}
+
       \item 97
+      \begin{align*}
+        &\intlongdivision{97}{2}\quad
+        \intlongdivision{48}{2}\quad
+        \intlongdivision{24}{2}\quad
+        \intlongdivision{12}{2}\quad
+        \intlongdivision{6}{2}\quad
+        \intlongdivision{3}{2}\quad
+        \intlongdivision{1}{2}\\
+        &\Rightarrow (0110 \ 0001)_2
+      \end{align*}
+
       \item 947
+      \begin{align*}
+        &\intlongdivision{947}{2}\quad
+        \intlongdivision{473}{2}\quad
+        \intlongdivision{236}{2}\quad
+        \intlongdivision{118}{2}\quad
+        \intlongdivision{59}{2}\\
+        &\intlongdivision{29}{2}\quad
+        \intlongdivision{14}{2}\quad
+        \intlongdivision{7}{2}\quad
+        \intlongdivision{3}{2}\quad
+        \intlongdivision{1}{2}\\
+        &\Rightarrow (0011 \ 1011 \ 0011)_2
+      \end{align*}
+
       \item 32768 (What is special about this number that makes it easy to calculate?)
+
+      32768 is a power of 2 i.e. $2^{15}$. This decimal integer is very easy to calculate since only the 15th bit is active and therefore $(32768)_{10} = (1000 \ 0000 \ 0000 \ 0000)_2$.
+
       \item 32767 (What is special about this number and the last one that makes it easy to calculate?)
+
+      32767 is 1 less than 32768 which is a power of 2 i.e. $2^{15}-1$. This decimal integer is very easy to calculate since all the 15 bits are active and therefore $(32767)_{10} = (0111 \ 1111 \ 1111 \ 1111)_2$.
+
     \end{enumerate}
 
     % 2
     \item Convert the following numbers from binary to decimal
     \begin{enumerate}
       \item 0000 0000 0000 1010
+      \begin{align*}
+        1 \cdot 2^3 + 0 \cdot 2^2 + 1 \cdot 2^1 + 0 \cdot 2^0 &= 10
+      \end{align*}
+
       \item 0000 0000 1001 1010
+      \begin{align*}
+        1 \cdot 2^7 + 0 \cdot 2^6 + 0 \cdot 2^5 + 1 \cdot 2^4 + 1 \cdot 2^3 + 0 \cdot 2^2 + 1 \cdot 2^1 + 0 \cdot 2^0 &= 154
+      \end{align*}
+
       \item 0000 0001 1011 1100
+      \begin{align*}
+        1 \cdot 2^8 + 1 \cdot 2^7 + 0 \cdot 2^6 + 1 \cdot 2^5 + 1 \cdot 2^4 + 1 \cdot 2^3 + 1 \cdot 2^2 + 0 \cdot 2^1 + 0 \cdot 2^0 &= 444
+      \end{align*}
+
     \end{enumerate}
 
     % 3
     \item Convert the following numbers from binary to hexadecimal
     \begin{enumerate}
       \item 0000 0000 0000 1010
+      \begin{align*}
+        1010 &= A
+      \end{align*}
+
       \item 0000 0000 1001 1010
+      \begin{align*}
+        1001 &= 9 \\
+        1010 &= A \\
+        &= 9A
+      \end{align*}
+
       \item 0000 0001 1011 1100
+      \begin{align*}
+        0001 &= 1 \\
+        1011 &= B \\
+        1100 &= C \\
+        &= 1BC
+      \end{align*}
     \end{enumerate}
 
     % 4
     \item Convert the following numbers from hex to binary.
     \begin{enumerate}
       \item 0x000C
+      \begin{align*}
+        0 \cdot 16^3 + 0 \cdot 16^2 + 0 \cdot 16^1 + 12 \cdot 16^0 &= 12
+      \end{align*}
+
       \item 0x07AD
+      \begin{align*}
+        7 \cdot 16^3 + 10 \cdot 16^2 + 0 \cdot 16^1 + 13 \cdot 16^0 &= 1965
+      \end{align*}
+
       \item 0xA49F
+      \begin{align*}
+        10 \cdot 16^3 + 4 \cdot 16^2 + 9 \cdot 16^1 + F \cdot 16^0 &= 42143
+      \end{align*}
     \end{enumerate}
 
     % 5
     \item Convert the ASCII string “Java.2” to binary. You must include the character for the period.
 
+    Looking up the ASCII values of the string:
+    \begin{align*}
+      J &= 74 \\
+      a &= 97 \\
+      v &= 118 \\
+      . &= 46 \\
+      2 &= 50
+    \end{align*}
+
+    And converting the decimals to binary,
+    \begin{align*}
+      74 &= \intlongdivision{74}{2}\quad
+      \intlongdivision{37}{2}\quad
+      \intlongdivision{18}{2}\quad
+      \intlongdivision{9}{2}\quad
+      \intlongdivision{4}{2}\quad
+      \intlongdivision{2}{2}\quad
+      \intlongdivision{1}{2}\\
+      &\Rightarrow (0100 \ 1010)_2 \\
+      97 &= (0110 \ 0001)_2 \ \text{(from part 1B)} \\
+      118 &= \intlongdivision{118}{2}\quad
+      \intlongdivision{59}{2}\quad
+      \intlongdivision{29}{2}\quad
+      \intlongdivision{14}{2}\quad
+      \intlongdivision{7}{2}\quad
+      \intlongdivision{3}{2}\quad
+      \intlongdivision{1}{2}\\
+      &\Rightarrow (0111 \ 0110)_2 \\
+      46 &= \intlongdivision{46}{2}\quad
+      \intlongdivision{23}{2}\quad
+      \intlongdivision{11}{2}\quad
+      \intlongdivision{5}{2}\quad
+      \intlongdivision{2}{2}\quad
+      \intlongdivision{1}{2}\\
+      &\Rightarrow (0010 \ 1110)_2 \\
+      50 &= \intlongdivision{50}{2}\quad
+      \intlongdivision{25}{2}\quad
+      \intlongdivision{12}{2}\quad
+      \intlongdivision{6}{2}\quad
+      \intlongdivision{3}{2}\quad
+      \intlongdivision{1}{2}\\
+      &\Rightarrow (0011 \ 0010)_2 \\
+    \end{align*}
+    Therefore, the ASCII string ``Java.2'' converted to binary is
+    \begin{equation*}
+      (01001010 \ 01100001 \ 01110110 \ 01100001 \ 00101110 \ 00110010)_2
+    \end{equation*}
+
     % 6
     \item Is the binary number 1001 1100 0111 1011 1101 1001 odd or even?
+
+    Since the binary number ends with a 1, it indicates that $2^0=1$, an odd integer, was added to powers of 2. Since adding an odd integer to an even integer makes it an odd integer, this binary number is odd.
 
     % 7
     \item What is the base 10 value of the following two’s complement numbers.
@@ -94,7 +223,7 @@
 
     % 9
     \item Using only the bitwise complement operation and addition, implement a function in the language of your choice to calculate the negative value of an int. The bitwise complement is the ~ operator in Java and C/C++. The program should be properly formatted and documented, including:
-    \begin{enumerate}[start=1,align=left,label={\protect\perhapsanswer(\alph*)}]
+    \begin{enumerate}
       \item A preamble statement that includes the name of the program, the purpose of the program, the author, and the data that it was written. The author attribute in Java can be documented using the @author Javadoc attribute.
       \item Functions should include a purpose and any parameters and return values. The parameters and return values can be documented a using the @param and @return Javadoc attributes.
       \item Proper style including variable naming, indentation, placement of brackets, etc.
