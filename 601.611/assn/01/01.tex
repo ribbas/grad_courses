@@ -1,0 +1,141 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{setspace}
+\usepackage{titling}
+
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage[shortlabels]{enumitem}
+
+\newcommand{\answeritem}{\global\answertrue\item}
+\newcommand{\perhapsanswer}{%
+  \ifanswer
+    $\blacksquare$ \global\answerfalse
+  \else
+    $\square$ \global\answerfalse
+  \fi
+}
+\newif\ifanswer
+
+\setstretch{1.5}
+\setlength{\droptitle}{-8em}
+
+\usepackage{xcolor}
+\usepackage{listings}
+
+\lstset{language=Java, keywordstyle={\bfseries \color{black}}, showstringspaces=false}
+
+\begin{document}
+
+  \title{605.611 - Foundations of Computer Architecture \\ Assignment 01\vspace{-0.5em}}
+  \author{Sabbir Ahmed}
+  \maketitle
+  \vspace{-1em}
+
+  \begin{enumerate}
+
+    % 1
+    \item Convert the following from decimal to binary. Express numbers in 16 bits.
+    \begin{enumerate}
+      \item 14
+      \item 97
+      \item 947
+      \item 32768 (What is special about this number that makes it easy to calculate?)
+      \item 32767 (What is special about this number and the last one that makes it easy to calculate?)
+    \end{enumerate}
+
+    % 2
+    \item Convert the following numbers from binary to decimal
+    \begin{enumerate}
+      \item 0000 0000 0000 1010
+      \item 0000 0000 1001 1010
+      \item 0000 0001 1011 1100
+    \end{enumerate}
+
+    % 3
+    \item Convert the following numbers from binary to hexadecimal
+    \begin{enumerate}
+      \item 0000 0000 0000 1010
+      \item 0000 0000 1001 1010
+      \item 0000 0001 1011 1100
+    \end{enumerate}
+
+    % 4
+    \item Convert the following numbers from hex to binary.
+    \begin{enumerate}
+      \item 0x000C
+      \item 0x07AD
+      \item 0xA49F
+    \end{enumerate}
+
+    % 5
+    \item Convert the ASCII string “Java.2” to binary. You must include the character for the period.
+
+    % 6
+    \item Is the binary number 1001 1100 0111 1011 1101 1001 odd or even?
+
+    % 7
+    \item What is the base 10 value of the following two’s complement numbers.
+    \begin{enumerate}
+      \item 01001 0111
+      \item 1101 1000
+    \end{enumerate}
+
+    % 8
+    \item Add the following numbers in 4-bit two’s complement format. Specify if there is an overflow or not.
+    \begin{enumerate}
+      \item 5+3
+      \item 7+5
+      \item 7+ (-5)
+      \item (-7) + (-5)
+      \item (-5) + (-3)
+    \end{enumerate}
+
+    % 9
+    \item Using only the bitwise complement operation and addition, implement a function in the language of your choice to calculate the negative value of an int. The bitwise complement is the ~ operator in Java and C/C++. The program should be properly formatted and documented, including:
+    \begin{enumerate}[start=1,align=left,label={\protect\perhapsanswer(\alph*)}]
+      \item A preamble statement that includes the name of the program, the purpose of the program, the author, and the data that it was written. The author attribute in Java can be documented using the @author Javadoc attribute.
+      \item Functions should include a purpose and any parameters and return values. The parameters and return values can be documented a using the @param and @return Javadoc attributes.
+      \item Proper style including variable naming, indentation, placement of brackets, etc.
+      \item Students unfamiliar with proper style should refer to: https://www.oracle.com/technetwork/java/codeconventions-150003.pdf
+    \end{enumerate}
+
+    % 10
+    \item Implement the following multiplication problems using only bit-shift operations and addition.
+    \begin{enumerate}
+      \item 7 * 4
+      \item 8 * 3
+      \item 9 * 13
+    \end{enumerate}
+
+    % 11
+    \item Implement the division of 13/4 using bit shift operations. What happens to the remainder. What does this tell you about the efficient implementation integer division? Does this match what you know about integer division in Java or C/C++?
+
+    % 12
+    \item Can 14 / 3 be implemented using simply bit shift operations? Why or why not?
+
+    % 13
+    \item Write a program in Java or C/C++ to convert a character to upper case, regardless of whether it started as upper of lower case. This is simply OR’ing the byte for the character 0x20. The bitwise OR operation in Java or C/C++ is “|”. The same rules of program style apply to the program as for Problem 9.
+
+    % 14
+    \item Write a program in Java or C/C++ to convert a character to lower case, regardless of whether it started as upper of lower case. This is simply AND’ing the byte for the character 0xCF. The bitwise AND operation in Java
+
+    % 15
+    \item Write a program in Java or C/C++ to convert a numeric value in a String to a valid integer. You must use the following algorithm, you may not use functions like “parseInt” or any other Java or C/C++ (or any language) libraries. The same rules of program style apply to the program as for Problem 9. The algorithm for this operation is:
+
+
+\begin{lstlisting}
+int toInt(char[] inputNumber) {
+  retval == 0;
+  foreach character c in the inputNumber {
+    retval = retval * 10;
+    retval = retval + c - `0';
+  }
+  return retval;
+}
+\end{lstlisting}
+
+  \end{enumerate}
+
+\end{document}
