@@ -24,6 +24,7 @@
 \usepackage{xcolor}
 \usepackage{listings}
 \usepackage{/home/sabbir/texmf/longdivision}
+\usepackage{xlop}
 
 \lstset{language=Java, keywordstyle={\bfseries \color{black}}, showstringspaces=false}
 
@@ -77,11 +78,11 @@
 
       \item 32768 (What is special about this number that makes it easy to calculate?)
 
-      32768 is a power of 2 i.e. $2^{15}$. This decimal integer is very easy to calculate since only the 15th bit is active and therefore $(32768)_{10} = (1000 \ 0000 \ 0000 \ 0000)_2$.
+      32768 is a power of 2 i.e. $2^{15}$. This decimal integer is very easy to calculate since only the 15th bit is active and therefore $(32768) = (1000 \ 0000 \ 0000 \ 0000)_2$.
 
       \item 32767 (What is special about this number and the last one that makes it easy to calculate?)
 
-      32767 is 1 less than 32768 which is a power of 2 i.e. $2^{15}-1$. This decimal integer is very easy to calculate since all the 15 bits are active and therefore $(32767)_{10} = (0111 \ 1111 \ 1111 \ 1111)_2$.
+      32767 is 1 less than 32768 which is a power of 2 i.e. $2^{15}-1$. This decimal integer is very easy to calculate since all the 15 bits are active and therefore $(32767) = (0111 \ 1111 \ 1111 \ 1111)_2$.
 
     \end{enumerate}
 
@@ -208,17 +209,94 @@
     \item What is the base 10 value of the following two’s complement numbers.
     \begin{enumerate}
       \item 01001 0111
+      \begin{align*}
+        (1001 0111)_2 &= 1 \cdot 2^7 + 0 \cdot 2^6 + 0 \cdot 2^5 + 1 \cdot 2^4 + 0 \cdot 2^3 + 1 \cdot 2^2 + 1 \cdot 2^1 + 1 \cdot 2^0 \\
+        &= +151
+      \end{align*}
+
       \item 1101 1000
+      \begin{align*}
+        ~(101 1000)_2 &= (0010 0111)_2 \\
+        (0010 0111)_2 + 1_2 &= (0010 1000)_2 \\
+        &= 0 \cdot 2^7 + 0 \cdot 2^6 + 1 \cdot 2^5 + 0 \cdot 2^4 + 1 \cdot 2^3 + 0 \cdot 2^2 + 0 \cdot 2^1 + 0 \cdot 2^0 \\
+        &= -40
+      \end{align*}
+
     \end{enumerate}
 
     % 8
     \item Add the following numbers in 4-bit two’s complement format. Specify if there is an overflow or not.
     \begin{enumerate}
-      \item 5+3
-      \item 7+5
-      \item 7+ (-5)
+      \item 5 + 3
+      \begin{align*}
+        (0101)_2 + (0011)_2 \\
+        = \begin{tabular}{ccccc}
+          & 0 & 1 & 0 & 1 \\
+        + & 0 & 0 & 1 & 1 \\
+        \hline
+          & 1 & 0 & 0 & 0 \\
+        \end{tabular} \\
+        = (1000)_2 \\
+        = 8
+      \end{align*}
+
+      \item 7 + 5
+      \begin{align*}
+        (0111)_2 + (0101)_2 \\
+        = \begin{tabular}{ccccc}
+          & 0 & 1 & 1 & 1 \\
+        + & 0 & 1 & 0 & 1 \\
+        \hline
+          & 1 & 1 & 0 & 0 \\
+        \end{tabular} \\
+        = (1100)_2 \\
+        = 12
+      \end{align*}
+
+      \item 7 + (-5)
+      \begin{align*}
+        (0111)_2 + (1011)_2 \\
+        = \begin{tabular}{ccccc}
+          & 0 & 1 & 1 & 1 \\
+        + & 1 & 0 & 1 & 1 \\
+        \hline
+          & 0 & 0 & 1 & 0 \\
+        \end{tabular} \\
+        = (0010)_2 \\
+        = 2
+      \end{align*}
+      The sum yields a carry over of $1_2$ and therefore there is an overflow.
+
       \item (-7) + (-5)
+      \begin{align*}
+        (1001)_2 + (1011)_2 \\
+        = \begin{tabular}{ccccc}
+          & 1 & 0 & 0 & 1 \\
+        + & 1 & 0 & 1 & 1 \\
+        \hline
+          & 0 & 1 & 0 & 0 \\
+        \end{tabular} \\
+        = ~(0100)_2 + (0001)_2 \\
+        = (1100)_2 \\
+        = -12
+      \end{align*}
+      The sum yields a carry over of $1_2$ and therefore there is an overflow.
+
       \item (-5) + (-3)
+      \begin{align*}
+        (1011)_2 + (1101)_2 \\
+        = \begin{tabular}{ccccc}
+          & 1 & 0 & 1 & 1 \\
+        + & 1 & 1 & 0 & 1 \\
+        \hline
+          & 1 & 0 & 0 & 0 \\
+        \end{tabular} \\
+        = ~(1000)_2 + (0001)_2 \\
+        = (1000)_2 \\
+        = -8
+      \end{align*}
+      The sum yields a carry over of $1_2$ and therefore there is an overflow.
+
     \end{enumerate}
 
     % 9
@@ -234,21 +312,73 @@
     \item Implement the following multiplication problems using only bit-shift operations and addition.
     \begin{enumerate}
       \item 7 * 4
+      \begin{align*}
+        7 \cdot 4 &= (4 + 3) \cdot 4 \\
+        &= ((00100)_2 + (00011)_2) \cdot (00100)_2 \\
+        &= ((00100)_2 << 2) + ((00011)_2 << 2) \\
+        &= (10000)_2 + (01100)_2 \\
+        &= \begin{tabular}{cccccc}
+          & 1 & 0 & 0 & 0 & 0\\
+        + & 0 & 1 & 1 & 0 & 0 \\
+        \hline
+          & 1 & 1 & 1 & 0 & 0 \\
+        \end{tabular} \\
+        &= (11100)_2 \\
+        &= 28
+      \end{align*}
+
       \item 8 * 3
+      \begin{align*}
+        8 \cdot 3 &= 8 \cdot (8 + -(3)) \\
+        &= (1000)_2 \cdot ((1000)_2 + (1101)_2) \\
+        &= ((1000)_2 << 3) + ((1101)_2 << 3) \\
+        &= (100 0000)_2 + (110 1000)_2 \\
+        &= \begin{tabular}{cccccccc}
+          & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        + & 1 & 1 & 0 & 1 & 0 & 0 & 0 \\
+        \hline
+          & 0 & 1 & 0 & 1 & 0 & 0 & 0 \\
+        \end{tabular} \\
+        &= ~(10 1000)_2 + (0001)_2 \\
+        &= (01 1000)_2 \\
+        &= 24
+      \end{align*}
+
       \item 9 * 13
+      \begin{align*}
+        9 \cdot 13 &= (8 + 1) \cdot (13) \\
+        &= ((1101)_2 \cdot (0001)_2) + ((1101)_2 \cdot (1000)_2) \\
+        &= (1101)_2+ (1101)_2 << 3 \\
+        &= (1101)_2+ (110 1000)_2 << 3 \\
+        &= \begin{tabular}{cccccccc}
+          & 1 & 1 & 0 & 1 & 0 & 0 & 0 \\
+        + & 0 & 0 & 0 & 1 & 1 & 0 & 1 \\
+        \hline
+          & 1 & 1 & 1 & 0 & 1 & 0 & 1 \\
+        \end{tabular} \\
+        &= (0111 0101)_2 \\
+        &= 117
+      \end{align*}
     \end{enumerate}
 
     % 11
     \item Implement the division of 13/4 using bit shift operations. What happens to the remainder. What does this tell you about the efficient implementation integer division? Does this match what you know about integer division in Java or C/C++?
+    \begin{align*}
+      \frac{13}{4} &= \frac{(1101)_2}{(0100)_2} \\
+      &= (1101)_2 >> 2 \\
+      &= (0011)_2 \\
+      &= 3
+    \end{align*}
+    The remainder $(0001)_2$ is discarded, which is the expected behavior for integer division in most programming languages.
 
     % 12
-    \item Can 14 / 3 be implemented using simply bit shift operations? Why or why not?
+    \item Can 14/3 be implemented using simply bit shift operations? Why or why not?
 
     % 13
-    \item Write a program in Java or C/C++ to convert a character to upper case, regardless of whether it started as upper of lower case. This is simply OR’ing the byte for the character 0x20. The bitwise OR operation in Java or C/C++ is “|”. The same rules of program style apply to the program as for Problem 9.
+    \item Write a program in Java or C/C++ to convert a character to upper case, regardless of whether it started as upper of lower case. This is simply OR’ing the byte for the character 0x20. The bitwise OR operation in Java or C/C++ is ``|''. The same rules of program style apply to the program as for Problem 9.
 
     % 14
-    \item Write a program in Java or C/C++ to convert a character to lower case, regardless of whether it started as upper of lower case. This is simply AND’ing the byte for the character 0xCF. The bitwise AND operation in Java
+    \item Write a program in Java or C/C++ to convert a character to lower case, regardless of whether it started as upper of lower case. This is simply AND’ing the byte for the character 0xCF. The bitwise AND operation in Java or C/C++ is ``\&''. The same rules of program style apply to the program as for Problem 9.
 
     % 15
     \item Write a program in Java or C/C++ to convert a numeric value in a String to a valid integer. You must use the following algorithm, you may not use functions like “parseInt” or any other Java or C/C++ (or any language) libraries. The same rules of program style apply to the program as for Problem 9. The algorithm for this operation is:
@@ -256,7 +386,7 @@
 
 \begin{lstlisting}
 int toInt(char[] inputNumber) {
-  retval == 0;
+  retval = 0;
   foreach character c in the inputNumber {
     retval = retval * 10;
     retval = retval + c - `0';
