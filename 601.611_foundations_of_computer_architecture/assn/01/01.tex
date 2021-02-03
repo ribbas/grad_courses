@@ -26,7 +26,7 @@
 \usepackage{/home/sabbir/texmf/longdivision}
 \usepackage{xlop}
 
-\lstset{language=Java, keywordstyle={\bfseries \color{black}}, showstringspaces=false}
+% \lstset{showstringspaces=false}
 
 \begin{document}
 
@@ -46,7 +46,7 @@
         \intlongdivision{7}{2}\quad
         \intlongdivision{3}{2}\quad
         \intlongdivision{1}{2} \\
-        &\Rightarrow (1110)_2
+        &\Rightarrow (0000 \ 0000 \ 0000 \ 1110)_2
       \end{align*}
 
       \item 97
@@ -58,7 +58,7 @@
         \intlongdivision{6}{2}\quad
         \intlongdivision{3}{2}\quad
         \intlongdivision{1}{2}\\
-        &\Rightarrow (0110 \ 0001)_2
+        &\Rightarrow (0000 \ 0000 \ 0110 \ 0001)_2
       \end{align*}
 
       \item 947
@@ -73,7 +73,7 @@
         \intlongdivision{7}{2}\quad
         \intlongdivision{3}{2}\quad
         \intlongdivision{1}{2}\\
-        &\Rightarrow (0011 \ 1011 \ 0011)_2
+        &\Rightarrow (0000 \ 0011 \ 1011 \ 0011)_2
       \end{align*}
 
       \item 32768 (What is special about this number that makes it easy to calculate?)
@@ -152,6 +152,7 @@
     % 5
     \item Convert the ASCII string “Java.2” to binary. You must include the character for the period.
 
+    \textbf{Answer:}
     Looking up the ASCII values of the string:
     \begin{align*}
       J &= 74 \\
@@ -163,37 +164,39 @@
 
     And converting the decimals to binary,
     \begin{align*}
-      74 &= \intlongdivision{74}{2}\quad
+      \Rightarrow 74 &= \intlongdivision{74}{2}\quad
       \intlongdivision{37}{2}\quad
       \intlongdivision{18}{2}\quad
       \intlongdivision{9}{2}\quad
       \intlongdivision{4}{2}\quad
       \intlongdivision{2}{2}\quad
-      \intlongdivision{1}{2}\\
-      &\Rightarrow (0100 \ 1010)_2 \\
-      97 &= (0110 \ 0001)_2 \ \text{(from part 1B)} \\
-      118 &= \intlongdivision{118}{2}\quad
+      \intlongdivision{1}{2} \\[0.5ex]
+      &\Rightarrow (0100 \ 1010)_2 \\[0.5ex]
+      \Rightarrow 97 &= (0110 \ 0001)_2 \ \text{(from part 1B)} \\
+      \Rightarrow 118 &= \intlongdivision{118}{2}\quad
       \intlongdivision{59}{2}\quad
       \intlongdivision{29}{2}\quad
       \intlongdivision{14}{2}\quad
       \intlongdivision{7}{2}\quad
       \intlongdivision{3}{2}\quad
       \intlongdivision{1}{2}\\
-      &\Rightarrow (0111 \ 0110)_2 \\
-      46 &= \intlongdivision{46}{2}\quad
+      &\Rightarrow (0111 \ 0110)_2 \\[0.5ex]
+      \Rightarrow 46 &= \intlongdivision{46}{2}\quad
       \intlongdivision{23}{2}\quad
       \intlongdivision{11}{2}\quad
       \intlongdivision{5}{2}\quad
       \intlongdivision{2}{2}\quad
       \intlongdivision{1}{2}\\
-      &\Rightarrow (0010 \ 1110)_2 \\
-      50 &= \intlongdivision{50}{2}\quad
+      &\Rightarrow (0010 \ 1110)_2
+    \end{align*}
+    \begin{align*}
+      \Rightarrow 50 &= \intlongdivision{50}{2}\quad
       \intlongdivision{25}{2}\quad
       \intlongdivision{12}{2}\quad
       \intlongdivision{6}{2}\quad
       \intlongdivision{3}{2}\quad
       \intlongdivision{1}{2}\\
-      &\Rightarrow (0011 \ 0010)_2 \\
+      &\Rightarrow (0011 \ 0010)_2
     \end{align*}
     Therefore, the ASCII string ``Java.2'' converted to binary is
     \begin{equation*}
@@ -203,10 +206,11 @@
     % 6
     \item Is the binary number 1001 1100 0111 1011 1101 1001 odd or even?
 
-    Since the binary number ends with a 1, it indicates that $2^0=1$, an odd integer, was added to powers of 2. Since adding an odd integer to an even integer makes it an odd integer, this binary number is odd.
+    \textbf{Answer:} Since the binary number ends with a 1, it indicates that $2^0=1$, an odd integer, was added to powers of 2. Since adding an odd integer to an even integer makes it an odd integer, this binary number is odd.
 
     % 7
     \item What is the base 10 value of the following two’s complement numbers.
+
     \begin{enumerate}
       \item 01001 0111
       \begin{align*}
@@ -216,7 +220,7 @@
 
       \item 1101 1000
       \begin{align*}
-        ~(101 1000)_2 &= (0010 0111)_2 \\
+        \ \sim(101 1000)_2 &= (0010 0111)_2 \\
         (0010 0111)_2 + 1_2 &= (0010 1000)_2 \\
         &= 0 \cdot 2^7 + 0 \cdot 2^6 + 1 \cdot 2^5 + 0 \cdot 2^4 + 1 \cdot 2^3 + 0 \cdot 2^2 + 0 \cdot 2^1 + 0 \cdot 2^0 \\
         &= -40
@@ -226,90 +230,96 @@
 
     % 8
     \item Add the following numbers in 4-bit two’s complement format. Specify if there is an overflow or not.
+
     \begin{enumerate}
       \item 5 + 3
       \begin{align*}
-        (0101)_2 + (0011)_2 \\
-        = \begin{tabular}{ccccc}
+        & (0101)_2 + (0011)_2 \\
+        &= \begin{tabular}{ccccc}
           & 0 & 1 & 0 & 1 \\
         + & 0 & 0 & 1 & 1 \\
         \hline
           & 1 & 0 & 0 & 0 \\
         \end{tabular} \\
-        = (1000)_2 \\
-        = 8
+        &= (1000)_2 \\
+        &= 8
       \end{align*}
 
       \item 7 + 5
       \begin{align*}
-        (0111)_2 + (0101)_2 \\
-        = \begin{tabular}{ccccc}
+        & (0111)_2 + (0101)_2 \\
+        &= \begin{tabular}{ccccc}
           & 0 & 1 & 1 & 1 \\
         + & 0 & 1 & 0 & 1 \\
         \hline
           & 1 & 1 & 0 & 0 \\
         \end{tabular} \\
-        = (1100)_2 \\
-        = 12
+        &= (1100)_2 \\
+        &= 12
       \end{align*}
 
       \item 7 + (-5)
       \begin{align*}
-        (0111)_2 + (1011)_2 \\
-        = \begin{tabular}{ccccc}
+        & (0111)_2 + (1011)_2 \\
+        &= \begin{tabular}{ccccc}
           & 0 & 1 & 1 & 1 \\
         + & 1 & 0 & 1 & 1 \\
         \hline
           & 0 & 0 & 1 & 0 \\
         \end{tabular} \\
-        = (0010)_2 \\
-        = 2
+        &= (0010)_2 \\
+        &= 2
       \end{align*}
       The sum yields a carry over of $1_2$ and therefore there is an overflow.
 
       \item (-7) + (-5)
       \begin{align*}
-        (1001)_2 + (1011)_2 \\
-        = \begin{tabular}{ccccc}
+        & (1001)_2 + (1011)_2 \\
+        &= \begin{tabular}{ccccc}
           & 1 & 0 & 0 & 1 \\
         + & 1 & 0 & 1 & 1 \\
         \hline
           & 0 & 1 & 0 & 0 \\
         \end{tabular} \\
-        = ~(0100)_2 + (0001)_2 \\
-        = (1100)_2 \\
-        = -12
+        &= \ \sim(0100)_2 + (0001)_2 \\
+        &= (1100)_2 \\
+        &= -12
       \end{align*}
       The sum yields a carry over of $1_2$ and therefore there is an overflow.
 
       \item (-5) + (-3)
       \begin{align*}
-        (1011)_2 + (1101)_2 \\
-        = \begin{tabular}{ccccc}
+        & (1011)_2 + (1101)_2 \\
+        &= \begin{tabular}{ccccc}
           & 1 & 0 & 1 & 1 \\
         + & 1 & 1 & 0 & 1 \\
         \hline
           & 1 & 0 & 0 & 0 \\
         \end{tabular} \\
-        = ~(1000)_2 + (0001)_2 \\
-        = (1000)_2 \\
-        = -8
+        &= \ \sim(1000)_2 + (0001)_2 \\
+        &= (1000)_2 \\
+        &= -8
       \end{align*}
       The sum yields a carry over of $1_2$ and therefore there is an overflow.
 
     \end{enumerate}
 
     % 9
-    \item Using only the bitwise complement operation and addition, implement a function in the language of your choice to calculate the negative value of an int. The bitwise complement is the ~ operator in Java and C/C++. The program should be properly formatted and documented, including:
+    \item Using only the bitwise complement operation and addition, implement a function in the language of your choice to calculate the negative value of an int. The bitwise complement is the \textasciitilde \ operator in Java and C/C++. The program should be properly formatted and documented, including:
     \begin{enumerate}
-      \item A preamble statement that includes the name of the program, the purpose of the program, the author, and the data that it was written. The author attribute in Java can be documented using the @author Javadoc attribute.
+      \item A preamble statement that includes the name of the program, the purpose of the program, the author, and the date that it was written. The author attribute in Java can be documented using the @author Javadoc attribute.
       \item Functions should include a purpose and any parameters and return values. The parameters and return values can be documented a using the @param and @return Javadoc attributes.
       \item Proper style including variable naming, indentation, placement of brackets, etc.
-      \item Students unfamiliar with proper style should refer to: https://www.oracle.com/technetwork/java/codeconventions-150003.pdf
+      \item Students unfamiliar with proper style should refer to: \newline https://www.oracle.com/technetwork/java/codeconventions-150003.pdf
     \end{enumerate}
+
+    \textbf{Answer:}
+    See the attached C file ``snippets.c'' lines 24-38 for the documentation and implementation of this function.
 
     % 10
     \item Implement the following multiplication problems using only bit-shift operations and addition.
+
+    \textbf{Answer:}
     \begin{enumerate}
       \item 7 * 4
       \begin{align*}
@@ -339,7 +349,7 @@
         \hline
           & 0 & 1 & 0 & 1 & 0 & 0 & 0 \\
         \end{tabular} \\
-        &= ~(10 1000)_2 + (0001)_2 \\
+        &= \ \sim(10 1000)_2 + (0001)_2 \\
         &= (01 1000)_2 \\
         &= 24
       \end{align*}
@@ -363,6 +373,8 @@
 
     % 11
     \item Implement the division of 13/4 using bit shift operations. What happens to the remainder. What does this tell you about the efficient implementation integer division? Does this match what you know about integer division in Java or C/C++?
+
+    \textbf{Answer:}
     \begin{align*}
       \frac{13}{4} &= \frac{(1101)_2}{(0100)_2} \\
       &= (1101)_2 >> 2 \\
@@ -374,17 +386,25 @@
     % 12
     \item Can 14/3 be implemented using simply bit shift operations? Why or why not?
 
+    \textbf{Answer:}
+    No, computing 14/3 requires more operations besides simple bit shifts. Division in binary can be done by shifting bits to the right only if the divisor is a power of 2.
+
     % 13
     \item Write a program in Java or C/C++ to convert a character to upper case, regardless of whether it started as upper of lower case. This is simply OR’ing the byte for the character 0x20. The bitwise OR operation in Java or C/C++ is ``|''. The same rules of program style apply to the program as for Problem 9.
+
+    \textbf{Answer:}
+    See the attached C file ``snippets.c'' lines 40-56 for the documentation and implementation of this function.
 
     % 14
     \item Write a program in Java or C/C++ to convert a character to lower case, regardless of whether it started as upper of lower case. This is simply AND’ing the byte for the character 0xCF. The bitwise AND operation in Java or C/C++ is ``\&''. The same rules of program style apply to the program as for Problem 9.
 
+    \textbf{Answer:}
+    See the attached C file ``snippets.c'' lines 58-74 for the documentation and implementation of this function.
+
     % 15
     \item Write a program in Java or C/C++ to convert a numeric value in a String to a valid integer. You must use the following algorithm, you may not use functions like “parseInt” or any other Java or C/C++ (or any language) libraries. The same rules of program style apply to the program as for Problem 9. The algorithm for this operation is:
 
-
-\begin{lstlisting}
+\begin{lstlisting}[language=Java, showstringspaces=false,]
 int toInt(char[] inputNumber) {
   retval = 0;
   foreach character c in the inputNumber {
@@ -394,6 +414,9 @@ int toInt(char[] inputNumber) {
   return retval;
 }
 \end{lstlisting}
+
+    \textbf{Answer:}
+    See the attached C file ``snippets.c'' lines 76-108 for the documentation and implementation of this function.
 
   \end{enumerate}
 
