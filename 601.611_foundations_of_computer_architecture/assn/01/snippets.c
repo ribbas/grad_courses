@@ -37,24 +37,6 @@ int to_negative(int integer) {
 
 }
 
-/* Returns the upper case of a character.
- * 
- *  @params:
- *      (char) character: character argument to be converted to upper case
- * 
- * This function accepts a single character argument and converts it to its
- * upper case by computing its bitwise conjunction (using the AND operator)
- * with the negated value of 0x20 (which is -33 in decimal). This function
- * does not distinguish between already converted characters.
- *
- * This function corresponds to Problem 13 of Assignment 1.
- */
-char to_upper_case(char character) {
-
-    return (character & -33);  // -33 is ~0x20
-
-}
-
 /* Returns the lower case of a character.
  * 
  *  @params:
@@ -65,11 +47,29 @@ char to_upper_case(char character) {
  * with 0x20. This function does not distinguish between already converted
  * characters.
  *
- * This function corresponds to Problem 14 of Assignment 1.
+ * This function corresponds to Problem 13 of Assignment 1.
  */
 char to_lower_case(char character) {
 
-    return (character | 32);  // 32 is 0x20
+    return (character | 0x20);
+
+}
+
+/* Returns the upper case of a character.
+ * 
+ *  @params:
+ *      (char) character: character argument to be converted to upper case
+ * 
+ * This function accepts a single character argument and converts it to its
+ * upper case by computing its bitwise conjunction (using the AND operator)
+ * with the negated value of 0x20 (which is -33 in decimal). This function
+ * does not distinguish between already converted characters.
+ *
+ * This function corresponds to Problem 14 of Assignment 1.
+ */
+char to_upper_case(char character) {
+
+    return (character & 0xDF);
 
 }
 
@@ -123,24 +123,21 @@ int main() {
 
     // ------------------------------------------------------------------------
 
-    char* test_string = "hElLO woRLd";
-
-    // the following loop will print out "HELLOWORLD"
-    // the space character ' ' will be converted to the null character
-    // since the bitwise conjunction of its ASCII value, 0x20, with its
-    // negative value will return 0x00
-    printf("Converting '%s' to upper case: ", test_string);
-    for (int i = 0; i < 11; i++) {
-        printf("%c", to_upper_case(test_string[i]));
-    }
-    printf("\n");
-
-    // ------------------------------------------------------------------------
+    const char* test_string = "hElLO woRLd";
 
     // the following loop will print out "hello world"
     printf("Converting '%s' to lower case: ", test_string);
     for (int i = 0; i < 11; i++) {
         printf("%c", to_lower_case(test_string[i]));
+    }
+    printf("\n");
+
+    // ------------------------------------------------------------------------
+
+    // the following loop will print out "HELLOWORLD"
+    printf("Converting '%s' to upper case: ", test_string);
+    for (int i = 0; i < 11; i++) {
+        printf("%c", to_upper_case(test_string[i]));
     }
     printf("\n");
 
