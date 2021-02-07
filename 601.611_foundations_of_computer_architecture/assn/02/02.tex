@@ -1,0 +1,125 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{setspace}
+\usepackage{titling}
+
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage[shortlabels]{enumitem}
+
+\newcommand{\answeritem}{\global\answertrue\item}
+\newcommand{\perhapsanswer}{%
+  \ifanswer
+    $\blacksquare$ \global\answerfalse
+  \else
+    $\square$ \global\answerfalse
+  \fi
+}
+\newif\ifanswer
+
+\setstretch{1.5}
+\setlength{\droptitle}{-8em}
+
+\usepackage[thinlines]{easytable}
+
+\begin{document}
+
+  \title{605.611 - Foundations of Computer Architecture \\ Assignment 02\vspace{-0.5em}}
+  \author{Sabbir Ahmed}
+  \maketitle
+  \vspace{-1em}
+
+  \begin{enumerate}
+
+    % 1
+    \item Convert the following fixed point numbers to binary fixed point. Give both the actual values, and normalize the values so that they have a binary 1 as the value for the left of the decimal point.
+    \begin{enumerate}
+      \item 7.25
+      \item 13.5
+      \item 0.5625
+      \item 0.125
+      \item 127.625
+      \item 51,025.025
+      \item 7.1
+      \item 5.2
+    \end{enumerate}
+
+    % 5
+    \setcounter{enumi}{4}
+    \item Convert the following from decimal to excess 127 format. Write your answers as hexadecimal digits.
+    \begin{enumerate}
+      \item -4
+
+      \item 4
+
+      \setcounter{enumii}{3}
+      \item 7
+
+      \item -7
+
+    \end{enumerate}
+
+    % 8
+    \setcounter{enumi}{7}
+    \item Single precision floating point numbers have 7 digit decimal precision and double floating point numbers have 15 digit precision. Explain how these precision values are arrived at, and what they mean.
+
+    % 9
+    \item Convert the following numbers to IEEE 754 single precision numbers. Give your answers as hexadecimal numbers (do not give me binary, I cannot read it accurately. I WILL misread it and you WILL lose points).
+    \begin{enumerate}
+      \item 7.25
+      \item 13.5
+      \item 0.5625
+      \item 0.125
+      \item 127.625
+      \item 51025.025
+    \end{enumerate}
+
+    % 10
+    \item For each of the following truth tables:
+    \begin{enumerate}
+      \item Give the DNF equation for the table.
+      \item Give the minimal equation.
+      \item Using Boolean algebra show the two Boolean equations are equivalent.
+      \item Draw the circuit in Logisim. Be prepared to draw the circuit by hand.
+    \end{enumerate}
+
+    \begin{TAB}(e,1cm,1cm){|c|c|c|c|}{|c|cccccccc|}
+      \textbf{A} & \textbf{B} & \textbf{C} & \textbf{f(A,B,C)} \\
+      0 & 0 & 0 & 0 \\
+      0 & 0 & 1 & 1 \\
+      0 & 1 & 0 & 1 \\
+      0 & 1 & 1 & 0 \\
+      1 & 0 & 0 & 0 \\
+      1 & 0 & 1 & 1 \\
+      1 & 1 & 0 & 1 \\
+      1 & 1 & 1 & 0
+    \end{TAB}
+
+    \begin{TAB}(e,1cm,1cm){|c|c|c|c|}{|c|cccccccc|}
+      \textbf{A} & \textbf{B} & \textbf{C} & \textbf{f(A,B,C)} \\
+      0 & 0 & 0 & 1 \\
+      0 & 0 & 1 & 1 \\
+      0 & 1 & 0 & 1 \\
+      0 & 1 & 1 & 1 \\
+      1 & 0 & 0 & 0 \\
+      1 & 0 & 1 & 1 \\
+      1 & 1 & 0 & 0 \\
+      1 & 1 & 1 & 1
+    \end{TAB}
+
+    \begin{TAB}(e,1cm,1cm){|c|c|c|c|}{|c|cccccccc|}
+      \textbf{A} & \textbf{B} & \textbf{C} & \textbf{f(A,B,C)} \\
+      0 & 0 & 0 & 1 \\
+      0 & 0 & 1 & 0 \\
+      0 & 1 & 0 & 0 \\
+      0 & 1 & 1 & 1 \\
+      1 & 0 & 0 & 1 \\
+      1 & 0 & 1 & 1 \\
+      1 & 1 & 0 & 1 \\
+      1 & 1 & 1 & 1
+    \end{TAB}
+
+  \end{enumerate}
+
+\end{document}
