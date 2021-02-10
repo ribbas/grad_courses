@@ -8,24 +8,11 @@
 \usepackage{enumerate}
 \usepackage[shortlabels]{enumitem}
 
-\newcommand{\answeritem}{\global\answertrue\item}
-\newcommand{\perhapsanswer}{%
-  \ifanswer
-    $\blacksquare$ \global\answerfalse
-  \else
-    $\square$ \global\answerfalse
-  \fi
-}
-\newif\ifanswer
-
 \setstretch{1.5}
 \setlength{\droptitle}{-8em}
 
-
 \usepackage{/home/sabbir/texmf/longdivision}
-\usepackage{karnaugh-map}
-\usepackage[thinlines]{easytable}
-\usepackage{xlop}
+\usepackage{/home/sabbir/texmf/karnaugh-map}
 
 \begin{document}
 
@@ -436,57 +423,167 @@
 
     % 10
     \item For each of the following truth tables:
-    \begin{enumerate}
+    \begin{itemize}
       \item Give the DNF equation for the table.
       \item Give the minimal equation.
       \item Using Boolean algebra show the two Boolean equations are equivalent.
       \item Draw the circuit in Logisim. Be prepared to draw the circuit by hand.
+    \end{itemize}
+
+    \begin{enumerate}
+      \item
+      \noindent
+      $\displaystyle
+      \left[
+        \begin{array}{c c c|c}
+          \textbf{A} & \textbf{B} & \textbf{C} & \textbf{f(A,B,C)} \\
+          \hline
+          0 & 0 & 0 & 0 \\
+          0 & 0 & 1 & 1 \\
+          0 & 1 & 0 & 1 \\
+          0 & 1 & 1 & 0 \\
+          1 & 0 & 0 & 0 \\
+          1 & 0 & 1 & 1 \\
+          1 & 1 & 0 & 1 \\
+          1 & 1 & 1 & 0
+        \end{array}
+      \right]$
+
+      \vspace{2em}
+      \textbf{Answer:}
+      \begin{Karnaughvuit}
+        \maxterms{0,3,4,7}
+        \minterms{1,2,5,6}
+        \implicant{1}{5}{green}
+        \implicant{2}{6}{red}
+      \end{Karnaughvuit}
+
+      DNF: $\overline{A}\overline{B}C + \overline{A}B\overline{C} + A\overline{B}C + AB\overline{C}$
+
+      Minimal equation: $\overline{B}C + B\overline{C}$
+
+      Show $\overline{A}\overline{B}C + \overline{A}B\overline{C} + A\overline{B}C + AB\overline{C} = \overline{B}C + B\overline{C}$
+      \begin{align*}
+        \overline{A}\overline{B}C + \overline{A}B\overline{C} + A\overline{B}C + AB\overline{C} &= \overline{A}(\overline{B}C + B\overline{C}) + A(\overline{B}C + B\overline{C}) \\
+        &= (\overline{A}+A)(\overline{B}C + B\overline{C})\\
+        &=(1)(\overline{B}C + B\overline{C})\\
+        &=\overline{B}C + B\overline{C}
+      \end{align*}
+
+      \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.5\textwidth]{assn/02/media/10a.png}
+        \caption{Circuit Diagram of the Truth Table 10a in Logisim}
+      \end{figure}
+      % \clearpage
+
+      \item
+      \noindent
+      $\displaystyle
+      \left[
+        \begin{array}{c c c|c}
+          \textbf{A} & \textbf{B} & \textbf{C} & \textbf{f(A,B,C)} \\
+          \hline
+          0 & 0 & 0 & 1 \\
+          0 & 0 & 1 & 1 \\
+          0 & 1 & 0 & 1 \\
+          0 & 1 & 1 & 1 \\
+          1 & 0 & 0 & 0 \\
+          1 & 0 & 1 & 1 \\
+          1 & 1 & 0 & 0 \\
+          1 & 1 & 1 & 1
+        \end{array}
+      \right]$
+
+      \vspace{2em}
+      \textbf{Answer:}
+      \begin{Karnaughvuit}
+        \maxterms{4,6}
+        \minterms{0,1,2,3,5,7}
+        \implicant{0}{2}{green}
+        \implicant{1}{7}{red}
+      \end{Karnaughvuit}
+
+      DNF: $\overline{A}\overline{B}\overline{C} + \overline{A}\overline{B}C + \overline{A}BC + \overline{A}B\overline{C} + \overline{A}\overline{B}C + A\overline{B}C + \overline{A}BC + ABC$
+
+      Minimal equation: $\overline{A} + C$
+
+      Show $\overline{A}\overline{B}\overline{C} + \overline{A}\overline{B}C + \overline{A}BC + \overline{A}B\overline{C} + \overline{A}\overline{B}C + A\overline{B}C + \overline{A}BC + ABC = \overline{A} + C$
+      \begin{align*}
+        &\overline{A}\overline{B}\overline{C} + \overline{A}\overline{B}C + \overline{A}BC + \overline{A}B\overline{C} + \overline{A}\overline{B}C + A\overline{B}C + \overline{A}BC + ABC\\
+        &= \overline{A}\overline{B}\overline{C} + \overline{A}\overline{B}C + \overline{A}BC + \overline{A}B\overline{C} + A\overline{B}C + ABC \\
+        &= \overline{A}(\overline{B}\overline{C} + \overline{B}C + BC + B\overline{C}) + AC(\overline{B} + B) \\
+        &= \overline{A}(\overline{B} + \overline{C} + BC + \overline{B}C + B\overline{C}) + AC(1) \\
+        &= \overline{A}(\overline{B} + \overline{B}C + \overline{C} + B\overline{C} + BC) + AC \\
+        &= \overline{A}(\overline{B} + \overline{C} + BC) + AC \\
+        &= \overline{A}(\overline{B} + \overline{C} + C) + AC \\
+        &= \overline{A}(\overline{B} + 1) + AC \\
+        &= \overline{A}(1) + AC \\
+        &= \overline{A} + AC \\
+        &= \overline{A} + C
+      \end{align*}
+
+      \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.5\textwidth]{assn/02/media/10b.png}
+        \caption{Circuit Diagram of the Truth Table 10b in Logisim}
+      \end{figure}
+      % \clearpage
+
+      \item
+      \noindent
+      $\displaystyle
+      \left[
+        \begin{array}{c c c|c}
+          \textbf{A} & \textbf{B} & \textbf{C} & \textbf{f(A,B,C)} \\
+          \hline
+          0 & 0 & 0 & 1 \\
+          0 & 0 & 1 & 0 \\
+          0 & 1 & 0 & 0 \\
+          0 & 1 & 1 & 1 \\
+          1 & 0 & 0 & 1 \\
+          1 & 0 & 1 & 1 \\
+          1 & 1 & 0 & 1 \\
+          1 & 1 & 1 & 1
+        \end{array}
+      \right]$
+
+      \vspace{2em}
+      \textbf{Answer:}
+      \begin{Karnaughvuit}
+        \maxterms{1,2}
+        \minterms{0,3,4,5,6,7}
+        \implicant{0}{4}{red}
+        \implicant{3}{7}{green}
+        \implicant{4}{6}{blue}
+      \end{Karnaughvuit}
+
+      DNF: $\overline{A}\overline{B}\overline{C} + A\overline{B}\overline{C} + \overline{A}BC + ABC + A\overline{B}\overline{C} + A\overline{B}C + ABC + AB\overline{C}$
+
+      Minimal equation: $A + \overline{B}\overline{C} + BC$
+
+      Show $\overline{A}\overline{B}\overline{C} + A\overline{B}\overline{C} + \overline{A}BC + ABC + A\overline{B}\overline{C} + A\overline{B}C + ABC + AB\overline{C} = A + \overline{B}\overline{C} + BC$
+      \begin{align*}
+        &\overline{A}\overline{B}\overline{C} + A\overline{B}\overline{C} + \overline{A}BC + ABC + A\overline{B}\overline{C} + A\overline{B}C + ABC + AB\overline{C}\\
+        &=\overline{A}\overline{B}\overline{C} + A\overline{B}\overline{C} + \overline{A}BC + ABC + A\overline{B}C + AB\overline{C}\\
+        &=\overline{A}\overline{B}\overline{C} + \overline{A}BC + A(\overline{B}\overline{C} + BC + \overline{B}C + B\overline{C})\\
+        &=\overline{A}\overline{B}\overline{C} + \overline{A}BC + A(\overline{B} + \overline{C} + BC + \overline{B}C + B\overline{C})\\
+        &=\overline{A}\overline{B}\overline{C} + \overline{A}BC + A(\overline{B} + \overline{C} + BC)\\
+        &=\overline{A}\overline{B}\overline{C} + \overline{A}BC + A(\overline{B} + \overline{C} + C)\\
+        &=\overline{A}\overline{B}\overline{C} + \overline{A}BC + A(\overline{B} + 1)\\
+        &=\overline{A}\overline{B}\overline{C} + \overline{A}BC + A(1)\\
+        &=\overline{A}(\overline{B}\overline{C} + BC) + A\\
+        &=\overline{B}\overline{C} + BC + A\\
+        &=A + \overline{B}\overline{C} + BC
+      \end{align*}
+
+      \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.5\textwidth]{assn/02/media/10c.png}
+        \caption{Circuit Diagram of the Truth Table 10c in Logisim}
+      \end{figure}
+
     \end{enumerate}
-
-    \begin{TAB}(e,1cm,1cm){|c|c|c|c|}{|c|cccccccc|}
-      \textbf{A} & \textbf{B} & \textbf{C} & \textbf{f(A,B,C)} \\
-      0 & 0 & 0 & 0 \\
-      0 & 0 & 1 & 1 \\
-      0 & 1 & 0 & 1 \\
-      0 & 1 & 1 & 0 \\
-      1 & 0 & 0 & 0 \\
-      1 & 0 & 1 & 1 \\
-      1 & 1 & 0 & 1 \\
-      1 & 1 & 1 & 0
-    \end{TAB}
-
-    \begin{karnaugh-map}
-        \manualterms{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
-        \implicant{0}{2}
-        \implicant{5}{15}
-        \implicantedge{1}{3}{9}{11}
-        \implicantcorner
-        \implicantedge{4}{12}{6}{14}
-    \end{karnaugh-map}
-
-    \begin{TAB}(e,1cm,1cm){|c|c|c|c|}{|c|cccccccc|}
-      \textbf{A} & \textbf{B} & \textbf{C} & \textbf{f(A,B,C)} \\
-      0 & 0 & 0 & 1 \\
-      0 & 0 & 1 & 1 \\
-      0 & 1 & 0 & 1 \\
-      0 & 1 & 1 & 1 \\
-      1 & 0 & 0 & 0 \\
-      1 & 0 & 1 & 1 \\
-      1 & 1 & 0 & 0 \\
-      1 & 1 & 1 & 1
-    \end{TAB}
-
-    \begin{TAB}(e,1cm,1cm){|c|c|c|c|}{|c|cccccccc|}
-      \textbf{A} & \textbf{B} & \textbf{C} & \textbf{f(A,B,C)} \\
-      0 & 0 & 0 & 1 \\
-      0 & 0 & 1 & 0 \\
-      0 & 1 & 0 & 0 \\
-      0 & 1 & 1 & 1 \\
-      1 & 0 & 0 & 1 \\
-      1 & 0 & 1 & 1 \\
-      1 & 1 & 0 & 1 \\
-      1 & 1 & 1 & 1
-    \end{TAB}
 
   \end{enumerate}
 
