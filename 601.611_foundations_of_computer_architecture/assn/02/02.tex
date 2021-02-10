@@ -21,7 +21,11 @@
 \setstretch{1.5}
 \setlength{\droptitle}{-8em}
 
+
+\usepackage{/home/sabbir/texmf/longdivision}
+\usepackage{karnaugh-map}
 \usepackage[thinlines]{easytable}
+\usepackage{xlop}
 
 \begin{document}
 
@@ -36,13 +40,260 @@
     \item Convert the following fixed point numbers to binary fixed point. Give both the actual values, and normalize the values so that they have a binary 1 as the value for the left of the decimal point.
     \begin{enumerate}
       \item 7.25
+
+      \textbf{Answer:}
+      Integral part: 7 = $(0111)_2$ \\
+      Repeatedly multiplying the fractional part by 2:
+      \begin{align*}
+        & 0.25 \\
+        &= \begin{tabular}{ccccc}
+          & 0 & . & 2 & 5 \\
+        $\times$ &  &  &  & 2 \\
+        \hline
+          & 0 & . & 5 & 0 \\
+        $\times$ &  &  &  & 2 \\
+        \hline
+          & 1 & . & 0 & 0 \\
+        \end{tabular} \\
+        &= (10)_2 \\
+        &\Rightarrow 7.25 = (111.01)_2, \text{(normalized to} \ (1.1101)_2 \times 2^{2})
+      \end{align*}
+
       \item 13.5
+
+      \textbf{Answer:}
+      Integral part: 13 = $(1101)_2$ \\
+      Repeatedly multiplying the fractional part by 2:
+      \begin{align*}
+        & 0.50 \\
+        &= \begin{tabular}{ccccc}
+          & 0 & . & 5 & 0 \\
+        $\times$ &  &  &  & 2 \\
+        \hline
+          & 1 & . & 0 & 0 \\
+        \end{tabular} \\
+        &= (1)_2 \\
+        &\Rightarrow 13.5 = (1101.1)_2, \text{(normalized to} \ (1.1011)_2 \times 2^{3})
+      \end{align*}
+
       \item 0.5625
+
+      \textbf{Answer:}
+      Integral part: 0 \\
+      Repeatedly multiplying the fractional part by 2:
+      \begin{align*}
+        & 0.5625 \\
+        &= \begin{tabular}{ccccccc}
+          & 0 & . & 5 & 6 & 2 & 5 \\
+        $\times$ & & & & & & 2 \\
+        \hline
+          & 1 & . & 1 & 2 & 5 & 0 \\
+        $\times$ & & & & & & 2 \\
+        \hline
+          & 0 & . & 2 & 5 & 0 & 0 \\
+        $\times$ & & & & & & 2 \\
+        \hline
+          & 0 & . & 5 & 0 & 0 & 0 \\
+        $\times$ & & & & & & 2 \\
+        \hline
+          & 1 & . & 0 & 0 & 0 & 0 \\
+        \end{tabular} \\
+        &= (1001)_2 \\
+        &\Rightarrow 0.5625 = (0.1001)_2, \text{(normalized to} \ (1.001)_2 \times 2^{-1})
+      \end{align*}
+
       \item 0.125
+
+      \textbf{Answer:}
+      Integral part: 0 \\
+      Repeatedly multiplying the fractional part by 2:
+      \begin{align*}
+        & 0.125 \\
+        &= \begin{tabular}{cccccc}
+          & 0 & . & 1 & 2 & 5 \\
+        $\times$ & & & & & 2 \\
+        \hline
+          & 0 & . & 2 & 5 & 0 \\
+        $\times$ & & & & & 2 \\
+        \hline
+          & 0 & . & 5 & 0 & 0 \\
+        $\times$ & & & & & 2 \\
+        \hline
+          & 1 & . & 0 & 0 & 0 \\
+        \end{tabular} \\
+        &= (001)_2 \\
+        &\Rightarrow 0.5625 = (0.001)_2, \text{(normalized to} \ (1.0)_2 \times 2^{-3})
+      \end{align*}
+
       \item 127.625
+
+      \textbf{Answer:}
+      Integral part: 127 = $(0111 1111)$ \\
+      Repeatedly multiplying the fractional part by 2:
+      \begin{align*}
+        & 0.625 \\
+        &= \begin{tabular}{cccccc}
+          & 0 & . & 6 & 2 & 5 \\
+        $\times$ & & & & & 2 \\
+        \hline
+          & 1 & . & 2 & 5 & 0 \\
+        $\times$ & & & & & 2 \\
+        \hline
+          & 0 & . & 5 & 0 & 0 \\
+        $\times$ & & & & & 2 \\
+        \hline
+          & 1 & . & 0 & 0 & 0 \\
+        \end{tabular} \\
+        &= (101)_2 \\
+        &\Rightarrow 127.625 = (1111111.101)_2, \text{(normalized to} \ (1.111111101)_2 \times 2^{6})
+      \end{align*}
+
       \item 51,025.025
+
+      \textbf{Answer:}
+      Integral part: 51025 =
+      \begin{align*}
+        &\Rightarrow 51025 \\
+        &= \intlongdivision{51025}{2}\quad
+        \intlongdivision{25512}{2}\quad
+        \intlongdivision{12756}{2}\quad
+        \intlongdivision{6378}{2}\quad
+        \intlongdivision{3189}{2}\quad
+        \intlongdivision{1594}{2}\\
+        &\intlongdivision{797}{2}\quad
+        \intlongdivision{398}{2}\quad
+        \intlongdivision{199}{2}\quad
+        \intlongdivision{99}{2}\quad
+        \intlongdivision{49}{2}\quad
+        \intlongdivision{24}{2}\quad
+        \intlongdivision{12}{2}\quad
+        \intlongdivision{6}{2}\\
+        &\intlongdivision{3}{2}\quad
+        \intlongdivision{1}{2}\\
+        &\Rightarrow (1100 \ 0111 \ 0101 \ 0001)_2
+      \end{align*}
+      Repeatedly multiplying the fractional part by 2:
+      \begin{align*}
+        & 0.025 \\
+        &= \begin{tabular}{cccccc}
+          & 0 & . & 0 & 2 & 5 \\
+        $\times$ & & & & & 2 \\
+        \hline
+          & 0 & . & 0 & 5 & 0 \\
+        $\times$ & & & & & 2 \\
+        \hline
+          & 0 & . & 1 & 0 & 0 \\
+        $\times$ & & & & & 2 \\
+        \hline
+          & 0 & . & 2 & 0 & 0 \\
+        $\times$ & & & & & 2 \\
+        \hline
+          & 0 & . & 4 & 0 & 0 \\
+        $\times$ & & & & & 2 \\
+        \hline
+          & 0 & . & 8 & 0 & 0 \\
+        $\times$ & & & & & 2 \\
+        \hline
+          & 1 & . & 6 & 0 & 0 \\
+        $\times$ & & & & & 2 \\
+        \hline
+          & 1 & . & 2 & 0 & 0 \\
+        $\times$ & & & & & 2 \\
+        \hline
+          & 0 & . & 4 & 0 & 0 \\
+        $\times$ & & & & & 2 \\
+        \hline
+          & 0 & . & 8 & 0 & 0 \\
+        $\times$ & & & 2 \\
+        \hline
+          & 1 & . & 6 & 0 & 0 \\
+        $\times$ & & & & & 2 \\
+        \hline
+          & 1 & . & 2 & 0 & 0 \\
+        \end{tabular} \\
+        &\text{The pattern $(0000011)_2$ appears to keep repeating}  \\
+        &\Rightarrow 51,025.025 = (1100011101010001.0000011)_2, \\
+        &\text{(normalized to} \ (1.1000111010100010000011)_2 \times 2^{15})
+      \end{align*}
+
       \item 7.1
+
+      \textbf{Answer:}
+      Integral part: 7 = $(111)_2$ \\
+      Repeatedly multiplying the fractional part by 2:
+      \begin{align*}
+        & 0.1 \\
+        &= \begin{tabular}{cccc}
+          & 0 & . & 1 \\
+        $\times$ & & & 2 \\
+        \hline
+          & 0 & . & 2 \\
+        $\times$ & & & 2 \\
+        \hline
+          & 0 & . & 4 \\
+        $\times$ & & & 2 \\
+        \hline
+          & 0 & . & 8 \\
+        $\times$ & & & 2 \\
+        \hline
+          & 1 & . & 6 \\
+        $\times$ & & & 2 \\
+        \hline
+          & 1 & . & 2 \\
+        $\times$ & & & 2 \\
+        \hline
+          & 0 & . & 4 \\
+        $\times$ & & & 2 \\
+        \hline
+          & 0 & . & 8 \\
+        $\times$ & & & 2 \\
+        \hline
+          & 1 & . & 6 \\
+        $\times$ & & & 2 \\
+        \hline
+          & 1 & . & 2 \\
+        \end{tabular} \\
+        &\text{The pattern $(0011)_2$ appears to keep repeating}  \\
+        &\Rightarrow 7.1 = (111.0\overline{00110011})_2, \\
+        &\text{(normalized to} \ (1.110\overline{00110011})_2 \times 2^{2})
+      \end{align*}
+
       \item 5.2
+
+      \textbf{Answer:}
+      Integral part: 5 = $(101)_2$ \\
+      Repeatedly multiplying the fractional part by 2:
+      \begin{align*}
+        & 0.2 \\
+        &= \begin{tabular}{cccc}
+          & 0 & . & 2 \\
+        $\times$ & & & 2 \\
+        \hline
+          & 0 & . & 4 \\
+        $\times$ & & & 2 \\
+        \hline
+          & 0 & . & 8 \\
+        $\times$ & & & 2 \\
+        \hline
+          & 1 & . & 6 \\
+        $\times$ & & & 2 \\
+        \hline
+          & 1 & . & 2 \\
+        $\times$ & & & 2 \\
+        \hline
+          & 0 & . & 4 \\
+        $\times$ & & & 2 \\
+        \hline
+          & 0 & . & 8 \\
+        $\times$ & & & 2 \\
+        \hline
+          & 1 & . & 6 \\
+        \end{tabular} \\
+        &\text{The pattern $(0011)_2$ appears to keep repeating}  \\
+        &\Rightarrow 7.1 = (101.\overline{00110011})_2, \\
+        &\text{(normalized to} \ (1.01\overline{00110011})_2 \times 2^{2})
+      \end{align*}
+
     \end{enumerate}
 
     % 5
@@ -51,12 +302,36 @@
     \begin{enumerate}
       \item -4
 
+      \textbf{Answer:}
+      \begin{align*}
+        &-4 + 127 \\
+        &= 123 = 7B_{16}
+      \end{align*}
+
       \item 4
+
+      \textbf{Answer:}
+      \begin{align*}
+        &4 + 127 \\
+        &= 131 = 83_{16}
+      \end{align*}
 
       \setcounter{enumii}{3}
       \item 7
 
+      \textbf{Answer:}
+      \begin{align*}
+        &7 + 127 \\
+        &= 134 = 86_{16}
+      \end{align*}
+
       \item -7
+
+      \textbf{Answer:}
+      \begin{align*}
+        &-7 + 127 \\
+        &= 120 = 78_{16}
+      \end{align*}
 
     \end{enumerate}
 
@@ -68,11 +343,95 @@
     \item Convert the following numbers to IEEE 754 single precision numbers. Give your answers as hexadecimal numbers (do not give me binary, I cannot read it accurately. I WILL misread it and you WILL lose points).
     \begin{enumerate}
       \item 7.25
+
+      \textbf{Answer:}
+      Since the decimal is positive, the sign bit is 0
+      \begin{align*}
+        7.25 &= (1.1101)_2 \times 2^{2} \ \text{from Part 1a}\\
+      \end{align*}
+      Mantissa: $(1101)_2$ \\
+      Exponent: +2
+      \begin{align*}
+        &2 + 127 \\
+        &= (1000 \ 0001)_2 \\
+        &\Rightarrow (0100 \ 0000 \ 1110 \ 1000)_2 = (40E8 \ 0000)_{16}
+      \end{align*}
+
       \item 13.5
+
+      \textbf{Answer:}
+      Since the decimal is positive, the sign bit is 0
+      \begin{align*}
+        13.5 &= (1.1011)_2 \times 2^{3} \ \text{from Part 1b}\\
+      \end{align*}
+      Mantissa: $(1011)_2$ \\
+      Exponent: +3
+      \begin{align*}
+        &3 + 127 \\
+        &= (1000 \ 0010)_2 \\
+        &\Rightarrow (0100 \ 0001 \ 0101 \ 1000)_2 = (4158 \ 0000)_{16}
+      \end{align*}
+
       \item 0.5625
+
+      \textbf{Answer:}
+      Since the decimal is positive, the sign bit is 0
+      \begin{align*}
+        0.5625 &= (1.001)_2 \times 2^{-1} \ \text{from Part 1c}\\
+      \end{align*}
+      Mantissa: $(001)_2$ \\
+      Exponent: -1
+      \begin{align*}
+        &-1 + 127 \\
+        &= (0111 \ 1110)_2 \\
+        &\Rightarrow (0011 \ 1111 \ 0001 \ 0000)_2 = (3F10 \ 0000)_{16}
+      \end{align*}
+
       \item 0.125
+
+      \textbf{Answer:}
+      Since the decimal is positive, the sign bit is 0
+      \begin{align*}
+        0.125 &= (1.0)_2 \times 2^{-3} \ \text{from Part 1d}\\
+      \end{align*}
+      Mantissa: 0 \\
+      Exponent: -3
+      \begin{align*}
+        &-3 + 127 \\
+        &= (0111 \ 1100)_2 \\
+        &\Rightarrow (0011 \ 1110 \ 0000 \ 0000)_2 = (3E00 \ 0000)_{16}
+      \end{align*}
+
       \item 127.625
+
+      \textbf{Answer:}
+      Since the decimal is positive, the sign bit is 0
+      \begin{align*}
+        127.625 &= (1.111111101)_2 \times 2^{6} \ \text{from Part 1e}\\
+      \end{align*}
+      Mantissa: $(111111101)_2$ \\
+      Exponent: 6
+      \begin{align*}
+        &6 + 127 \\
+        &= (1000 \ 0101)_2 \\
+        &\Rightarrow (0100 \ 0010 \ 1111 \ 1111 \ 0100)_2 = (42FF \ 4000)_{16}
+      \end{align*}
+
       \item 51025.025
+
+      \textbf{Answer:}
+      Since the decimal is positive, the sign bit is 0
+      \begin{align*}
+        51025.025 &= (1.1000111010100010000011)_2 \times 2^{15} \ \text{from Part 1f}\\
+      \end{align*}
+      Mantissa: $(1000111010100010000011)_2$ \\
+      Exponent: 15
+      \begin{align*}
+        &15 + 127 \\
+        &= (1000 \ 1110)_2 \\
+        &\Rightarrow (0100 \ 0111 \ 0100 \ 0111 \ 0101 \ 0001 \ 0000 \ 0110)_2 = (4747 \ 5106)_{16}
+      \end{align*}
+
     \end{enumerate}
 
     % 10
@@ -95,6 +454,15 @@
       1 & 1 & 0 & 1 \\
       1 & 1 & 1 & 0
     \end{TAB}
+
+    \begin{karnaugh-map}
+        \manualterms{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+        \implicant{0}{2}
+        \implicant{5}{15}
+        \implicantedge{1}{3}{9}{11}
+        \implicantcorner
+        \implicantedge{4}{12}{6}{14}
+    \end{karnaugh-map}
 
     \begin{TAB}(e,1cm,1cm){|c|c|c|c|}{|c|cccccccc|}
       \textbf{A} & \textbf{B} & \textbf{C} & \textbf{f(A,B,C)} \\
