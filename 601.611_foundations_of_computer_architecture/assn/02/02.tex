@@ -326,6 +326,8 @@
     \setcounter{enumi}{7}
     \item Single precision floating point numbers have 7 digit decimal precision and double floating point numbers have 15 digit precision. Explain how these precision values are arrived at, and what they mean.
 
+    Single and double precision floating point numbers are represented by 32 and 64 bits respectively. Single precision floats allocates 1 bit for the sign and 8 bits for the exponent, leaving the remaining 23 bits to represent the mantissa. The largest 23-bit decimal is $2^{23}-1=8,388,607$ which is a 7 digit decimal. Similarly, double precision floats allocate 52 bits to represent the mantissa with the largest decimal being $2^{52}-1$. To find the number of digits in this large decimal, we can compute $\log_{10}(2^{52})=52\cdot \log_{10}(2)$ which approximates to 15.65 decimals.
+
     % 9
     \item Convert the following numbers to IEEE 754 single precision numbers. Give your answers as hexadecimal numbers (do not give me binary, I cannot read it accurately. I WILL misread it and you WILL lose points).
     \begin{enumerate}
