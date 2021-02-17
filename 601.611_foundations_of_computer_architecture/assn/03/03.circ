@@ -60,53 +60,64 @@
     <a name="clabel" val=""/>
     <a name="clabelup" val="east"/>
     <a name="clabelfont" val="SansSerif plain 12"/>
-    <wire from="(170,90)" to="(170,220)"/>
-    <wire from="(150,70)" to="(460,70)"/>
-    <wire from="(160,80)" to="(160,220)"/>
-    <wire from="(150,70)" to="(150,220)"/>
-    <wire from="(160,80)" to="(450,80)"/>
-    <wire from="(440,140)" to="(480,140)"/>
-    <wire from="(430,260)" to="(460,260)"/>
-    <wire from="(450,200)" to="(480,200)"/>
-    <wire from="(360,220)" to="(390,220)"/>
-    <wire from="(350,140)" to="(380,140)"/>
-    <wire from="(370,280)" to="(390,280)"/>
-    <wire from="(370,160)" to="(390,160)"/>
-    <wire from="(430,200)" to="(450,200)"/>
-    <wire from="(460,260)" to="(480,260)"/>
-    <wire from="(430,140)" to="(440,140)"/>
-    <wire from="(170,90)" to="(440,90)"/>
-    <wire from="(360,210)" to="(370,210)"/>
-    <wire from="(360,230)" to="(370,230)"/>
+    <wire from="(150,120)" to="(460,120)"/>
+    <wire from="(170,140)" to="(170,220)"/>
+    <wire from="(440,140)" to="(440,160)"/>
+    <wire from="(160,130)" to="(160,220)"/>
+    <wire from="(160,130)" to="(450,130)"/>
+    <wire from="(450,130)" to="(450,220)"/>
+    <wire from="(440,160)" to="(480,160)"/>
+    <wire from="(430,280)" to="(460,280)"/>
+    <wire from="(450,220)" to="(480,220)"/>
+    <wire from="(150,120)" to="(150,220)"/>
+    <wire from="(360,240)" to="(390,240)"/>
+    <wire from="(350,160)" to="(380,160)"/>
+    <wire from="(460,120)" to="(460,280)"/>
+    <wire from="(370,300)" to="(390,300)"/>
+    <wire from="(370,180)" to="(390,180)"/>
+    <wire from="(430,220)" to="(450,220)"/>
+    <wire from="(460,280)" to="(480,280)"/>
+    <wire from="(430,160)" to="(440,160)"/>
+    <wire from="(170,140)" to="(440,140)"/>
     <wire from="(330,240)" to="(340,240)"/>
-    <wire from="(380,260)" to="(390,260)"/>
-    <wire from="(380,200)" to="(390,200)"/>
-    <wire from="(380,140)" to="(390,140)"/>
+    <wire from="(360,250)" to="(370,250)"/>
+    <wire from="(380,280)" to="(390,280)"/>
+    <wire from="(380,220)" to="(390,220)"/>
+    <wire from="(380,160)" to="(390,160)"/>
+    <wire from="(360,230)" to="(370,230)"/>
     <wire from="(180,240)" to="(190,240)"/>
-    <wire from="(440,90)" to="(440,140)"/>
-    <wire from="(370,230)" to="(370,280)"/>
-    <wire from="(370,160)" to="(370,210)"/>
-    <wire from="(460,70)" to="(460,260)"/>
-    <wire from="(380,140)" to="(380,200)"/>
-    <wire from="(380,200)" to="(380,260)"/>
-    <wire from="(450,80)" to="(450,200)"/>
+    <wire from="(370,250)" to="(370,300)"/>
+    <wire from="(370,180)" to="(370,230)"/>
+    <wire from="(380,160)" to="(380,220)"/>
+    <wire from="(380,220)" to="(380,280)"/>
+    <comp lib="4" loc="(430,160)" name="D Flip-Flop"/>
     <comp lib="0" loc="(340,240)" name="Splitter">
       <a name="fanout" val="3"/>
       <a name="incoming" val="3"/>
+      <a name="appear" val="center"/>
     </comp>
-    <comp lib="0" loc="(350,140)" name="Clock"/>
-    <comp lib="0" loc="(480,260)" name="Pin">
-      <a name="facing" val="west"/>
-      <a name="output" val="true"/>
-      <a name="labelloc" val="east"/>
-    </comp>
-    <comp lib="4" loc="(430,200)" name="D Flip-Flop"/>
-    <comp lib="4" loc="(430,260)" name="D Flip-Flop"/>
     <comp lib="0" loc="(180,240)" name="Splitter">
       <a name="facing" val="north"/>
       <a name="fanout" val="3"/>
       <a name="incoming" val="3"/>
     </comp>
+    <comp lib="0" loc="(480,160)" name="Pin">
+      <a name="facing" val="west"/>
+      <a name="output" val="true"/>
+      <a name="labelloc" val="east"/>
+    </comp>
+    <comp lib="0" loc="(480,280)" name="Pin">
+      <a name="facing" val="west"/>
+      <a name="output" val="true"/>
+      <a name="labelloc" val="east"/>
+    </comp>
+    <comp lib="4" loc="(430,220)" name="D Flip-Flop"/>
+    <comp lib="0" loc="(480,220)" name="Pin">
+      <a name="facing" val="west"/>
+      <a name="output" val="true"/>
+      <a name="labelloc" val="east"/>
+    </comp>
+    <comp lib="0" loc="(350,160)" name="Clock"/>
     <comp lib="4" loc="(330,240)" name="ROM">
       <a name="addrWidth" val="3"/>
       <a name="dataWidth" val="3"/>
@@ -114,16 +125,6 @@
 1 2 3 4 5 6
 </a>
     </comp>
-    <comp lib="4" loc="(430,140)" name="D Flip-Flop"/>
-    <comp lib="0" loc="(480,140)" name="Pin">
-      <a name="facing" val="west"/>
-      <a name="output" val="true"/>
-      <a name="labelloc" val="east"/>
-    </comp>
-    <comp lib="0" loc="(480,200)" name="Pin">
-      <a name="facing" val="west"/>
-      <a name="output" val="true"/>
-      <a name="labelloc" val="east"/>
-    </comp>
+    <comp lib="4" loc="(430,280)" name="D Flip-Flop"/>
   </circuit>
 </project>
