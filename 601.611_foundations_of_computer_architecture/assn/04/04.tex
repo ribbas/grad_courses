@@ -1,0 +1,226 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{setspace}
+\usepackage{titling}
+
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage[shortlabels]{enumitem}
+
+\setstretch{1.5}
+\setlength{\droptitle}{-8em}
+
+\newcommand{\specialcell}[2][c]{%
+  \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+
+\begin{document}
+
+  \title{605.611 - Foundations of Computer Architecture \\ Assignment 04\vspace{-0.5em}}
+  \author{Sabbir Ahmed}
+  \maketitle
+  \vspace{-1em}
+
+  \begin{enumerate}
+    \item Implement the table to show the steps in the multiplication using Figure 3.7.  Use 8 bit numbers.
+
+    \begin{enumerate}
+      \item 3 * 5
+      \begin{center}
+      \begin{tabular}{|c|c|c|c|} 
+        \hline
+        \textbf{Iteration} & \textbf{Multiplicand} & \textbf{Product} & \textbf{Steps} \\ 
+        \hline
+        0 & 0000 0011 & 0000 0000 0000 0101 & Start \\
+        \hline
+        1 & 0000 0011 & 0000 0001 1000 0010 & \specialcell{LSB = 1 \\ Add \\ Shift right} \\
+        \hline
+        2 & 0000 0011 & 0000 0000 1100 0001 & \specialcell{LSB = 0 \\ Shift right} \\
+        \hline
+        3 & 0000 0011 & 0000 0001 1110 0000 & \specialcell{LSB = 1 \\ Add \\ Shift right} \\
+        \hline
+        4 & 0000 0011 & 0000 0000 1111 0000 & \specialcell{LSB = 0 \\ Shift right} \\
+        \hline
+        5 & 0000 0011 & 0000 0000 0111 1000 & \specialcell{LSB = 0 \\ Shift right} \\
+        \hline
+        6 & 0000 0011 & 0000 0000 0011 1100 & \specialcell{LSB = 0 \\ Shift right} \\
+        \hline
+        7 & 0000 0011 & 0000 0000 0001 1110 & \specialcell{LSB = 0 \\ Shift right} \\
+        \hline
+        8 & 0000 0011 & 0000 0000 0000 1111 & \specialcell{LSB = 0 \\ Shift right} \\
+        \hline
+      \end{tabular}
+      \end{center}
+
+      \item 4 * 6
+      \begin{center}
+      \begin{tabular}{|c|c|c|c|} 
+        \hline
+        \textbf{Iteration} & \textbf{Multiplicand} & \textbf{Product} & \textbf{Steps} \\ 
+        \hline
+        0 & 0000 0100 & 0000 0000 0000 0110 & Start \\
+        \hline
+        1 & 0000 0100 & 0000 0000 0000 0011 & \specialcell{LSB = 0 \\ Shift right} \\
+        \hline
+        2 & 0000 0100 & 0000 0010 0000 0001 & \specialcell{LSB = 1 \\ Add \\ Shift right} \\
+        \hline
+        3 & 0000 0100 & 0000 0011 0000 0000 & \specialcell{LSB = 1 \\ Add \\ Shift right} \\
+        \hline
+        4 & 0000 0100 & 0000 0001 1000 0000 & \specialcell{LSB = 0 \\ Shift right} \\
+        \hline
+        5 & 0000 0100 & 0000 0000 1100 0000 & \specialcell{LSB = 0 \\ Shift right} \\
+        \hline
+        6 & 0000 0100 & 0000 0000 0110 0000 & \specialcell{LSB = 0 \\ Shift right} \\
+        \hline
+        7 & 0000 0100 & 0000 0000 0011 0000 & \specialcell{LSB = 0 \\ Shift right} \\
+        \hline
+        8 & 0000 0100 & 0000 0000 0001 1000 & \specialcell{LSB = 0 \\ Shift right} \\
+        \hline
+      \end{tabular}
+      \end{center}
+    \end{enumerate}
+
+    \item Implement the table to show the steps in division using Figure 3.13
+
+    \begin{enumerate}
+      \item 15 / 6
+      \begin{center}
+      \begin{tabular}{|c|c|c|c|c|} 
+        \hline
+        \textbf{Iteration} & \textbf{Divisor} & \textbf{Complement} & \textbf{Remainder} & \textbf{Steps} \\ 
+        \hline
+        0 & 0000 0110 & 1111 1010 & 0000 0000 0000 1111 & Start \\
+        \hline
+
+        1a & 0000 0110 & 1111 1010 & 0000 0000 0001 1110 & Shift left \\
+        \hline
+        1b & 0000 0110 & 1111 1010 & 1111 1010 0001 1110 & Add complement \\
+        \hline
+        1c & 0000 0110 & 1111 1010 & 0000 0000 0001 1110 & Add divisor \\
+        \hline
+
+        2a & 0000 0110 & 1111 1010 & 0000 0000 0011 1100 & Shift left \\
+        \hline
+        2b & 0000 0110 & 1111 1010 & 1111 1010 0011 1100 & Add complement \\
+        \hline
+        2c & 0000 0110 & 1111 1010 & 0000 0000 0011 1100 & Add divisor \\
+        \hline
+
+        3a & 0000 0110 & 1111 1010 & 0000 0000 0111 1000 & Shift left \\
+        \hline
+        3b & 0000 0110 & 1111 1010 & 1111 1010 0111 1000 & Add complement \\
+        \hline
+        3c & 0000 0110 & 1111 1010 & 0000 0000 0111 1000 & Add divisor \\
+        \hline
+
+        4a & 0000 0110 & 1111 1010 & 0000 0000 1111 0000 & Shift left \\
+        \hline
+        4b & 0000 0110 & 1111 1010 & 1111 1010 1111 0000 & Add complement \\
+        \hline
+        4c & 0000 0110 & 1111 1010 & 0000 0000 1111 0000 & Add divisor \\
+        \hline
+
+        5a & 0000 0110 & 1111 1010 & 0000 0001 1110 0000 & Shift left \\
+        \hline
+        5b & 0000 0110 & 1111 1010 & 1111 1011 1110 0000 & Add complement \\
+        \hline
+        5c & 0000 0110 & 1111 1010 & 0000 0001 1110 0000 & Add divisor \\
+        \hline
+
+        6a & 0000 0110 & 1111 1010 & 0000 0011 1100 0000 & Shift left \\
+        \hline
+        6b & 0000 0110 & 1111 1010 & 1111 1101 1100 0000 & Add complement \\
+        \hline
+        6c & 0000 0110 & 1111 1010 & 0000 0011 1100 0000 & Add divisor \\
+        \hline
+
+        7a & 0000 0110 & 1111 1010 & 0000 0111 1000 0000 & Shift left \\
+        \hline
+        7b & 0000 0110 & 1111 1010 & 0000 0001 1000 0000 & Add complement \\
+        \hline
+        7c & 0000 0110 & 1111 1010 & 0000 0001 1000 0001 & Invert LSB \\
+        \hline
+
+        8a & 0000 0110 & 1111 1010 & 0000 0011 0000 0010 & Shift left \\
+        \hline
+        8b & 0000 0110 & 1111 1010 & 1111 1101 0000 0010 & Add complement \\
+        \hline
+        8c & 0000 0110 & 1111 1010 & 0000 0011 0000 0010 & Add divisor \\
+        \hline
+      \end{tabular}
+      \end{center}
+
+      \item 13 / 3
+      \begin{center}
+      \begin{tabular}{|c|c|c|c|c|} 
+        \hline
+        \textbf{Iteration} & \textbf{Divisor} & \textbf{Complement} & \textbf{Remainder} & \textbf{Steps} \\ 
+        \hline
+        0 & 0000 0011 & 1111 1101 & 0000 0000 0000 1101 & Start \\
+        \hline
+
+        1a & 0000 0011 & 1111 1101 & 0000 0000 0001 1010 & Shift left \\
+        \hline
+        1b & 0000 0011 & 1111 1101 & 1111 1101 0001 1010 & Add complement \\
+        \hline
+        1c & 0000 0011 & 1111 1101 & 0000 0000 0001 1010 & Add divisor \\
+        \hline
+
+        2a & 0000 0011 & 1111 1101 & 0000 0000 0011 0100 & Shift left \\
+        \hline
+        2b & 0000 0011 & 1111 1101 & 1111 1101 0011 0100 & Add complement \\
+        \hline
+        2c & 0000 0011 & 1111 1101 & 0000 0000 0011 0100 & Add divisor \\
+        \hline
+
+        3a & 0000 0011 & 1111 1101 & 0000 0000 0110 1000 & Shift left \\
+        \hline
+        3b & 0000 0011 & 1111 1101 & 1111 1101 0110 1000 & Add complement \\
+        \hline
+        3c & 0000 0011 & 1111 1101 & 0000 0000 0110 1000 & Add divisor \\
+        \hline
+
+        4a & 0000 0011 & 1111 1101 & 0000 0000 1101 0000 & Shift left \\
+        \hline
+        4b & 0000 0011 & 1111 1101 & 1111 1101 1101 0000 & Add complement \\
+        \hline
+        4c & 0000 0011 & 1111 1101 & 0000 0000 1101 0000 & Add divisor \\
+        \hline
+
+        5a & 0000 0011 & 1111 1101 & 0000 0001 1010 0000 & Shift left \\
+        \hline
+        5b & 0000 0011 & 1111 1101 & 1111 1110 1010 0000 & Add complement \\
+        \hline
+        5c & 0000 0011 & 1111 1101 & 0000 0001 1010 0000 & Add divisor \\
+        \hline
+
+        6a & 0000 0011 & 1111 1101 & 0000 0011 0100 0000 & Shift left \\
+        \hline
+        6b & 0000 0011 & 1111 1101 & 0000 0000 0100 0000 & Add complement \\
+        \hline
+        6c & 0000 0011 & 1111 1101 & 0000 0000 0100 0001 & Invert LSB \\
+        \hline
+
+        7a & 0000 0011 & 1111 1101 & 0000 0000 1000 0010 & Shift left \\
+        \hline
+        7b & 0000 0110 & 1111 1010 & 1111 1101 1000 0010 & Add complement \\
+        \hline
+        7c & 0000 0110 & 1111 1010 & 0000 0000 1000 0010 & Add divisor \\
+        \hline
+
+        8a & 0000 0110 & 1111 1010 & 0000 0001 0000 0100 & Shift left \\
+        \hline
+        8b & 0000 0110 & 1111 1010 & 1111 1101 0000 0100 & Add complement \\
+        \hline
+        8c & 0000 0110 & 1111 1010 & 0000 0001 0000 0100 & Add divisor \\
+        \hline
+      \end{tabular}
+      \end{center}
+
+    \end{enumerate}
+
+    \item Implement the hardware multiplication and division algorithms in software.  You can use addition and subtraction and any bit-wise operations you need.  You can do this in any language you choose.
+
+  \end{enumerate}
+
+\end{document}
