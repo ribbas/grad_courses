@@ -1,0 +1,61 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{setspace}
+\usepackage{titling}
+
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage[shortlabels]{enumitem}
+
+\setstretch{1.5}
+\setlength{\droptitle}{-8em}
+
+\begin{document}
+
+  \title{605.611 - Foundations of Computer Architecture \\ Assignment 06 - MIPS Machine Code Translation\vspace{-0.5em}}
+  \author{Sabbir Ahmed}
+  \maketitle
+  \vspace{-1em}
+
+  \begin{enumerate}
+
+    \item Translate the following MIPS assembly language instructions into machine code.
+
+    \begin{enumerate}
+
+      \item \texttt{ori \$t0, \$zero, 15}
+
+      \item \texttt{addi \$t1, \$zero, 3}
+
+      \item \texttt{add \$t1, \$zero \$t1}
+
+      \item \texttt{sub \$t2, \$t0, \$s0}
+
+      \item \texttt{slt \$s0, \$t1, \$t3}
+
+      \item \texttt{sra \$t2, \$s2, 2}
+
+      \item \texttt{andi \$v0, \$zero, 1}
+
+      \item \texttt{lw \$t0, 4(\$t1)}
+
+      \item \texttt{sw t2, 4(\$s1)}
+
+    \end{enumerate}
+
+    \item Translate the following MIPS machine code into MIPS assembly language.
+
+    \begin{enumerate}
+
+      \item 0x2010000a
+      \item 0x34110005
+      \item 0x012ac022
+      \item 0x00184082
+      \item 0x030f9024
+
+    \end{enumerate}
+
+  \end{enumerate}
+
+\end{document}
