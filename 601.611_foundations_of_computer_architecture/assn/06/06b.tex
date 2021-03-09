@@ -34,7 +34,7 @@
   breaklines=true,                % sets automatic line breaking
   breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
   title=\lstname,                 % show the filename of files included with \lstinputlisting;
-                                  % also try caption instead of title
+belowskip=-0.8 \baselineskip,                                  % also try caption instead of title
   keywordstyle=\color{blue},          % keyword style
   commentstyle=\color{dkgreen},       % comment style
   stringstyle=\color{mauve},         % string literal style
@@ -51,21 +51,147 @@
 
   \begin{enumerate}
 
-    \item Translate statements 1, 2, and 5 into machine code.  Assumes the program loads at 0x0040 0000.
+    \item Translate statements 1, 2, and 5 into machine code.  Assumes the program loads at 0x0040 \ 0000.
 
     \begin{lstlisting}
 label_1:
-    b label_2
+    beq $zero, $zero, label_2
     j label_3
     addi $t0, $t1, 100
     sub $t0, $t1, $t2
 label_2:
-    b label_1
+    beq $zero, $zero, label_1
 label_3:
     addi $t0, $t1, 100
     \end{lstlisting}
 
+    \textbf{Answer:} The statements 1, 2, and 5 are
+
+    \begin{lstlisting}
+beq $zero, $zero, label_2
+j label_3
+beq $zero, $zero, label_1
+    \end{lstlisting}
+
+    Putting the program with its address space:
+
+    \begin{center}
+      \begin{tabular}{ |l|l| } 
+        \hline
+        \textbf{Address} & \textbf{Instruction} \\
+        \hline
+        0x0040 \ 0000 & \begin{tabular}{@{}l@{}}
+          label\_1:\\ beq \$zero, \$zero, label\_2
+        \end{tabular} \\
+        \hline
+        0x0040 \ 0004 & j label\_3 \\
+        \hline
+        0x0040 \ 0008 & addi \$t0, \$t1, 100 \\
+        \hline
+        0x0040 \ 000C & sub \$t0, \$t1, \$t2 \\
+        \hline
+        0x0040 \ 0010 & \begin{tabular}{@{}l@{}}
+          label\_2:\\ beq \$zero, \$zero, label\_1
+          \end{tabular} \\
+        \hline
+        0x0040 \ 0014 & \begin{tabular}{@{}l@{}}
+          label\_3:\\ addi \$t0, \$t1, 100
+          \end{tabular} \\
+        \hline
+      \end{tabular}
+    \end{center}
+    % \vspace{0.5em}
+
+    The addresses of the labels are as follows:
+
+    \begin{center}
+      \begin{tabular}{ |l|l| } 
+        \hline
+        \textbf{Address} & \textbf{Instruction} \\
+        \hline
+          0x0040 \ 0000 & label\_1 \\
+          0x0040 \ 0010 & label\_2 \\
+          0x0040 \ 0014 & label\_3 \\
+        \hline
+      \end{tabular}
+    \end{center}
+    % \vspace{0.5em}
+
+    Replacing addresses in absolute jumps:
+
+    \begin{center}
+      \begin{tabular}{ |l|l| } 
+        \hline
+        \textbf{Address} & \textbf{Instruction} \\
+        \hline
+        0x0040 \ 0000 & beq \$zero, \$zero, label\_2 \\
+        \hline
+        0x0040 \ 0004 & j 0x0040 \ 0014 \\
+        \hline
+        0x0040 \ 0010 & beq \$zero, \$zero, label\_1\\
+        \hline
+      \end{tabular}
+    \end{center}
+
+    For the relative branches, label\_2 is +3 PC (0x0000 \ 0003) from label\_1 and label\_1 is -5 PC (0xFFFF \ FFFB) from label\_2.  Therefore,
+
+    \begin{center}
+      \begin{tabular}{ |l|l| } 
+        \hline
+        \textbf{Address} & \textbf{Instruction} \\
+        \hline
+        0x0040 \ 0000 & beq \$zero, \$zero, 0x0000 \ 0003 \\
+        \hline
+        0x0040 \ 0004 & j 0x0040 \ 0014 \\
+        \hline
+        0x0040 \ 0010 & beq \$zero, \$zero, 0xFFFF FFFB \\
+        \hline
+      \end{tabular}
+    \end{center}
+
+    \begin{enumerate}
+
+      \item \texttt{beq \$zero, \$zero, 0x0000 \ 0003}
+      \begin{align*}
+        \text{opcode(beq)} &= 04_{16} \\
+        &= 000100_2\\
+        \text{rs(\$zero)} &= 00000_2 \\
+        \text{rt(\$zero)} &= 00000_2 \\
+        \text{sign\_ext\_imm(3)} &\Rightarrow 0003_{16}\\
+        &\Rightarrow 000100 \ 00000 \ 00000_2 \ | \ 0003_{16}\\
+        &\Rightarrow 0001 \ 0000 \ 0000 \ 0000 \ | \ 0003_{16}\\
+        &\Rightarrow 10000003_{16}
+      \end{align*}
+
+      \item \texttt{j 0x0040 \ 0014}
+      \begin{align*}
+        \text{opcode(j)} &= 02_{16} \\
+        &= 000010_2\\
+        \text{imm(0x0040 \ 0014)} &\Rightarrow 0040 \ 0014_{16}\\
+        &\Rightarrow 000010 \ 0000_2 \ | \ 40 \ 0014_{16} \ | \ 00_2 \\
+        &\Rightarrow 000010 \ 0000 \ 0100  \ 0000 \ 0000 \ 0000 \ 0001 \ 0100 \ 00 \\
+        &\Rightarrow 0000 \ 1000 \ 0001 \ 0000 \ 0000 \ 0000 \ 0000 \ 0101 \ 0000\\
+        &\Rightarrow 08100005_{16}
+      \end{align*}
+
+      \setcounter{enumi}{5}
+      \item \texttt{beq \$zero, \$zero, 0xFFFF \ FFFB}
+      \begin{align*}
+        \text{opcode(beq)} &= 04_{16} \\
+        &= 000100_2\\
+        \text{rs(\$zero)} &= 00000_2 \\
+        \text{rt(\$zero)} &= 00000_2 \\
+        \text{sign\_ext\_imm(-5)} &\Rightarrow FFFB_{16}\\
+        &\Rightarrow 000100 \ 00000 \ 00000_2 \ | \ FFFB_{16}\\
+        &\Rightarrow 0001 \ 0000 \ 0000 \ 0000 \ | \ FFFB_{16}\\
+        &\Rightarrow 1000FFFB_{16}
+      \end{align*}
+
+    \end{enumerate}
+
     \item Explain, in your own words, how a 26 bit address in the \texttt{jmp} instruction can access any executable statement in a program. This must be your own words. Copying something from the internet does not count.
+
+    \textbf{Answer:} All of the instructions in a MIPS machine allocate 6 bits for their opcodes. This limits 26 bits for the address for the \texttt{jmp} instruction. However, the memory is configured in a MIPS machine such that some areas are protected and reserved from the program text, i.e. the kernel space, operating system instructions, etc. The program text is limited to 0x1000 \ 0000, which leaves a highest address of 0x0fff \ ffff. The most significant bit of the addresses are therefore always 0 (in hexadecimal), and 4-bits are regained. The other 2 bits come for the 2 zeros on the least significant bits that account for the word alignment of the addresses.
 
   \end{enumerate}
 
