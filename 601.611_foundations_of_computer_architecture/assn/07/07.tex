@@ -91,7 +91,9 @@
 
     \item Add unit in the upper right, the ALU result bit 0 and result bit 31 are stuck at 0 \& 1.  Note that this will always work correctly or always fail.
 
-    \textbf{Answer:} 
+    \textbf{Answer:} If the bit 0 of the ALU result has a stuck-at-0 fault, and the 31st bit operated normally, the processor will execute as intended. This is because in the MIPS architecture, all the instructions are word-aligned with the last 2 bits always set to 0. If the 0-th bit has a stuck-at-1 fault, the program counter will end up non-aligned and would cascade the effects over the remaining set of instructions.
+
+    If the bit 31 of the ALU result has a stuck-at-0 fault, then the program counter would be accessing memory beyond the segments allocated for the data segments and breach into kernel memory. It is possible for the processor to still function properly while accessing these memory segments as long as the kernel is not modified and deemed unusable. A stack-at-1 fault on the 31st bit results in no issues with the processor.
 
   \end{enumerate}
 
