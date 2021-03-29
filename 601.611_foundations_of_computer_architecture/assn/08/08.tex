@@ -1,0 +1,51 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{setspace}
+\usepackage{titling}
+
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage[shortlabels]{enumitem}
+
+\setstretch{1.5}
+\setlength{\droptitle}{-8em}
+
+\begin{document}
+
+  \title{605.611 - Foundations of Computer Architecture \\ Assignment 08 - Pipelining\vspace{-0.5em}}
+  \author{Sabbir Ahmed}
+  \maketitle
+  \vspace{-1em}
+
+  \begin{enumerate}
+
+  \item Identify the size and bits values for each of the pipe line registers \texttt{IF/ID}, \texttt{ID/EX}, \texttt{EX/MEM}, \texttt{MEM/WB}. You should use slides 66 and  75 combined for this. Be sure to include the control bits in the registers. So for the \texttt{IF/ID} register, you would say "size is 64 bits, contains Instruction (32) and PC(32)".
+
+  \begin{center}
+    \begin{tabular}{ |l|l|l| } 
+      \hline
+      \textbf{Pipeline Register} & \textbf{Size (bits)} & \textbf{Values} \\
+      \hline
+      \texttt{IF/ID} & 64 & \begin{tabular}{@{}l@{}}
+          Instruction (32)\\PC (32)
+        \end{tabular} \\
+      \hline
+      \texttt{ID/EX} & 128 & \begin{tabular}{@{}l@{}}
+          \texttt{rs} and \texttt{rt} from \texttt{IF/ID} (64)\\Sign-extended immediate (32)\\PC (32)
+        \end{tabular} \\
+      \hline
+      \texttt{EX/MEM} & 97 & \begin{tabular}{@{}l@{}}
+          ALU result (33)\\ALU zero (1)\\\texttt{rt} (32)\\PC (32)
+        \end{tabular} \\
+      \hline
+      \texttt{MEM/WB} & 64 & \begin{tabular}{@{}l@{}}
+          Read data (32)\\ALU result from \texttt{EX/MEM} (32)
+        \end{tabular} \\
+      \hline
+    \end{tabular}
+  \end{center}
+
+  \end{enumerate}
+
+\end{document}
