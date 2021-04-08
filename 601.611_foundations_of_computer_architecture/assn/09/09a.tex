@@ -1,0 +1,175 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{setspace}
+\usepackage{titling}
+
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage[shortlabels]{enumitem}
+
+\setstretch{1.5}
+\setlength{\droptitle}{-8em}
+
+\newcommand{\answeritem}{\global\answertrue\item}
+\newcommand{\perhapsanswer}{%
+  \ifanswer
+    $\blacksquare$ \global\answerfalse
+  \else
+    $\square$ \global\answerfalse
+  \fi
+}
+\newif\ifanswer
+
+\begin{document}
+
+  \title{605.611 - Foundations of Computer Architecture \\ Assignment 09 - Paging\vspace{-0.5em}}
+  \author{Sabbir Ahmed}
+  \maketitle
+  \vspace{-1em}
+
+  \begin{enumerate}
+
+  \item Calculate the size of memory if its address consists of 22 bits and the memory is 2-byte addressable.
+
+  \textbf{Answer:}  
+  22 bits = $2^{22}$ locations possible. Since one location is 2 bytes:
+  \begin{align*}
+    &= 2^{22} \cdot 2 \text{ bytes}\\
+    &= 2^{23} \text{ bytes}\\
+    &= 8 \text{ MB}
+  \end{align*}
+
+  \item Calculate the number of bits required in the address for memory having size of 16 GB. Assume the memory is 4-byte addressable.
+
+  \textbf{Answer:} The memory is $2^n \cdot 4$ bytes, where $n$ is the number of bits required.
+  \begin{align*}
+    2^n \cdot 4 &= 16 \text{ GB}\\
+    2^n \cdot 4 &= 16 \text{ GB}\\
+    2^n \cdot 2^2 &= 2^{34} \text{ GB}\\
+    2^n &= 2^{32} \text{ GB}
+  \end{align*}
+
+  Therefore, $n = 32$ bits.
+
+  \item Consider a system with byte-addressable memory, 32 bit logical addresses, 4 kilobyte page size and page table entries of 4 bytes each. The size of the page table in the system in megabytes is \rule{1cm}{0.15mm}.
+
+  \begin{enumerate}[start=1,align=left,label={\protect\perhapsanswer(\alph*)}]
+    \item 2
+    \answeritem 4
+    \item 8
+    \item 16
+  \end{enumerate}
+
+  \textbf{Answer:}
+  \begin{itemize}
+    \item Number of bits in logical address: 32 bits
+    \item Page size: 4 KB
+    \item Page table entry size: 4 bytes
+  \end{itemize}
+
+  32 bits = $2^{32}$ locations possible. The number of entries in the page table:
+  \begin{align*}
+    &= 4 \text{ GB} / 4 \text{ KB}\\
+    &= 2^{32} / 2^{12}\\
+    &= 2^{20} \text{ pages}
+  \end{align*}
+
+  Therefore, the page table size is:
+  \begin{align*}
+    &= 2^{20} \cdot 4 \text{ bytes} \\
+    &= 4 \text{ MB}
+  \end{align*}
+
+  \item Consider a machine with 64 MB physical memory and a 32 bit virtual address space. If the page size is 4 KB, what is the approximate size of the page table?
+
+  \begin{enumerate}[start=1,align=left,label={\protect\perhapsanswer(\alph*)}]
+    \item 16 MB
+    \item 8 MB
+    \answeritem 2 MB
+    \item 24 MB
+  \end{enumerate}
+
+  \textbf{Answer:}
+  \begin{itemize}
+    \item Size of main memory: 64 MB
+    \item Number of bits in virtual address space: 32 bits
+    \item Page size: 4 KB
+  \end{itemize}
+
+  Number of bits in physical address:
+  \begin{align*}
+    &= 64 \text{ MB}\\
+    &= 2^{26} \text{ bits}
+  \end{align*}
+
+  Number of frames:
+  \begin{align*}
+    &= \text{Size of main memory} / \text{Frame size} \\
+    &= 64 \text{ MB} / 4 \text{ KB} \\
+    &= 2^{26} / 2^{12} \text{ bits} \\
+    &= 2^{14} \text{ bits}
+  \end{align*}
+
+  Number of page offset bits:
+  \begin{align*}
+    &= 4 \text{ KB}\\
+    &= 2^{12} \text{ bits}
+  \end{align*}
+
+  Number of entries in page table:
+  \begin{align*}
+    &= \text{Process size} / \text{Page size}\\
+    &= 2^{32} / 2^{12}\\
+    &= 2^{20}
+  \end{align*}
+ 
+  Page table size:
+  \begin{align*}
+    &= 2^{20} \cdot 14 \text{ bits}\\
+    &\approx 2^{20} \cdot 2 \text{ bytes} \\
+    &\approx 2 \text{ MB}
+  \end{align*}
+
+  \item In a virtual memory system, size of virtual address is 32-bit, size of physical address is 30-bit, page size is 4 Kbyte and size of each page table entry is 32-bit. The main memory is byte addressable. Which one of the following is the maximum number of bits that can be used for storing protection and other information in each page table entry?
+
+  \begin{enumerate}[start=1,align=left,label={\protect\perhapsanswer(\alph*)}]
+    \item 2
+    \item 10
+    \item 12
+    \answeritem 14
+  \end{enumerate} 
+
+\textbf{Answer:}
+
+  \begin{itemize}
+    \item Number of bits in virtual address = 32 bits
+    \item Number of bits in physical address = 30 bits
+    \item Page size = 4 KB
+    \item Page table entry size = 32 bits
+  \end{itemize}
+
+  Size of main memory:
+  \begin{align*}
+    &= 2^{30} \text{ bits} \\
+    &= 1 \text{ GB}
+  \end{align*}
+
+  Number of frames:
+  \begin{align*}
+    &= \text{Size of main memory} / \text{Frame size} \\
+    &= 1 \text{ GB} / 4 \text{ KB} \\
+    &= 2^{30} / 2^{12} \text{ bits} \\
+    &= 2^{18} \text{ bits}
+  \end{align*}
+
+  Number of bits used for storing other information:
+  \begin{align*}
+    &= \text{Page table entry size} - \text{Number of bits in frame number} \\
+    &= 32 \text{ bits} - 18 \text{ bits} \\
+    &= 14 \text{ bits}
+  \end{align*}
+
+  \end{enumerate}
+
+\end{document}

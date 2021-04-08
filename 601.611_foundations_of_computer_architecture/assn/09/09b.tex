@@ -1,0 +1,186 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{setspace}
+\usepackage{titling}
+
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage[shortlabels]{enumitem}
+
+\setstretch{1.5}
+\setlength{\droptitle}{-8em}
+
+\newcommand{\answeritem}{\global\answertrue\item}
+\newcommand{\perhapsanswer}{%
+  \ifanswer
+    $\blacksquare$ \global\answerfalse
+  \else
+    $\square$ \global\answerfalse
+  \fi
+}
+\newif\ifanswer
+
+\begin{document}
+
+  \title{605.611 - Foundations of Computer Architecture \\ Assignment 09 - Caching\vspace{-0.5em}}
+  \author{Sabbir Ahmed}
+  \maketitle
+  \vspace{-1em}
+
+  \begin{enumerate}
+
+  \item The main memory of a computer has 2 cm blocks while the cache has 2c blocks. If the cache uses the set associative mapping scheme with 2 blocks per set, then block k of the main memory maps to the set.
+
+  \begin{enumerate}[start=1,align=left,label={\protect\perhapsanswer(\alph*)}]
+    \item $(k \ mod \ m)$ of the cache
+    \answeritem $(k \ mod \ c)$ of the cache
+    \item $(k \ mod \ 2 c)$ of the cache
+    \item $(k \ mod \ 2 cm)$ of the cache
+  \end{enumerate}
+
+  \textbf{Answer:}
+  Number of sets in cache
+  \begin{align*}
+    &= \text{Number of blocks in cache} / \text{Number of blocks in one set} \\
+    &= 2 \cdot c / 2 \\
+    &= c
+  \end{align*}
+
+  \item In a k-way set associative cache, the cache is divided into v sets, each of which consists of k lines. The lines of a set placed in sequence one after another. The lines in set s are sequenced before the lines in set (s+1). The main memory blocks are numbered 0 on wards. The main memory block numbered ‘j’ must be mapped to any one of the cache lines from-
+
+  \begin{enumerate}[start=1,align=left,label={\protect\perhapsanswer(\alph*)}]
+    \answeritem $(j \ mod \ v) \cdot k$ to $(j \ mod \ v) \cdot k + (k - 1)$
+    \item $(j \ mod \ v)$ to $(j \ mod \ v) + (k - 1)$
+    \item $(j \ mod \ k)$ to $(j \ mod \ k) + (v - 1)$
+    \item $(j \ mod \ k) \cdot v$ to $(j \ mod \ k) \cdot v + (v - 1)$
+  \end{enumerate}
+
+  \textbf{Answer:}
+  \begin{itemize}
+    \item 2-way set associative mapping is used, then $k = 2$
+    \item Number of sets in cache is 4, then $v = 4$
+    \item Block number $3$ has to be mapped, then $j = 3$
+  \end{itemize}
+
+  Substituting these values:
+
+  \begin{enumerate}
+    \item $(3 \ mod \ 4) \cdot 2$ to $(j \ mod \ 4) \cdot 2 + (2 - 1)$ = 6 to 7
+    \item $(3 \ mod \ 4)$ to $(3 \ mod \ 4) + (2 - 1)$ = 3 to 4
+    \item $(3 \ mod \ 2)$ to $(3 \ mod \ 2) + (4 - 1)$ = 1 to 4
+    \item $(3 \ mod \ 2) \cdot 4$ to $(3 \ mod \ 2) \cdot 4 + (4 - 1)$ = 4 to 7
+  \end{enumerate}
+ 
+  Within set number 3, block 3 can be mapped to any of the cache lines and can therefore be mapped to cache lines ranging from 6 to 7.
+ 
+  \item A block-set associative cache memory consists of 128 blocks divided into four block sets . The main memory consists of 16,384 blocks and each block contains 256 eight bit words.
+
+  \begin{enumerate}
+    \item How many bits are required for addressing the main memory?
+    \item How many bits are needed to represent the TAG, SET and WORD fields?
+  \end{enumerate}
+
+  \textbf{Answer:}
+  Main memory
+  \begin{align*}
+    &= 16384 \text{ blocks} \\
+    &= 16384 \cdot 256 \text{ bytes} \\
+    &= 2^{22} \text{ bytes} \\
+    &= 22 \text{ bits}
+  \end{align*}
+
+  Block size:
+  \begin{align*}
+    &= 256 \text{ bytes} \\
+    &= 2^8 \text{ bytes}\\
+    &= 8 \text{ bits}
+  \end{align*}
+
+  Number of sets in cache:
+  \begin{align*}
+    &= 128 / 4 \text{ blocks} \\
+    &= 32 \text{ sets} \\
+    &= 2^5 \text{ sets} \\
+    &= 5 \text{ bits}
+  \end{align*}
+
+  Number of bits in tag
+
+  \begin{align*}
+    &= 22 - (5 + 8) \text{ bits} \\
+    &= 22 - 13 \text{ bits} \\
+    &= 9 \text{ bits} \\
+  \end{align*}
+
+  \setcounter{enumi}{7}
+  \item Consider a direct mapped cache with 8 cache blocks (0-7). If the memory block requests are in the order-
+
+  \begin{equation*}
+    3, 5, 2, 8, 0, 6, 3, 9, 16, 20, 17, 25, 18, 30, 24, 2, 63, 5, 82, 17, 24
+  \end{equation*}
+
+  Which of the following memory blocks will not be in the cache at the end of the sequence?
+  \begin{enumerate}[start=1,align=left,label={\protect\perhapsanswer(\alph*)}]
+    \item 3
+    \answeritem 18
+    \item 20
+    \item 30
+  \end{enumerate}
+
+  Also, calculate the hit ratio and miss ratio.
+
+  \textbf{Answer:}
+  \begin{align*}
+    3 \ mod \ 8 = 3 \\
+    5 \ mod \ 8 = 5 \\
+    2 \ mod \ 8 = 2 \\
+    8 \ mod \ 8 = 0 \\
+    0 \ mod \ 8 = 0 \\
+    6 \ mod \ 8 = 6 \\
+    3 \ mod \ 8 = 3 \text{ (hit)} \\
+    9 \ mod \ 8 = 1 \\
+    16 \ mod \ 8 = 0 \\
+    20 \ mod \ 8 = 4 \\
+    17 \ mod \ 8 = 1 \\
+    25 \ mod \ 8 = 1 \\
+    18 \ mod \ 8 = 2 \\
+    30 \ mod \ 8 = 6 \\
+    24 \ mod \ 8 = 0 \\
+    2 \ mod \ 8 = 2 \\
+    63 \ mod \ 8 = 7 \\
+    5 \ mod \ 8 = 5 \text{ (hit)} \\
+    82 \ mod \ 8 = 2 \\
+    17 \ mod \ 8 = 1 \\
+    24 \ mod \ 8 = 0 \text{ (hit)}
+  \end{align*}
+
+  \begin{center}
+    \begin{tabular}{ |l|l| } 
+      \hline
+      \textbf{Line} & \textbf{Requests} \\
+      \hline
+      0 & 8, 0, 16, 24 \\
+      \hline
+      1 & 9, 17, 25, 17 \\
+      \hline
+      2 & 2, 18, 2, 82 \\
+      \hline
+      3 & 3 \\
+      \hline
+      4 & 20 \\
+      \hline
+      5 & 5 \\
+      \hline
+      6 & 6, 30 \\
+      \hline
+      7 & 63 \\
+      \hline
+    \end{tabular}
+  \end{center}
+
+  The hit ratio is $3/20$ and the miss ratio is $17/20$.
+
+  \end{enumerate}
+
+\end{document}
