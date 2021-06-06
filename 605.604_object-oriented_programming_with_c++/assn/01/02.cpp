@@ -52,7 +52,7 @@ int main() {
 
     std::cout << "\nSwapping as references:\n";
     std::cout << "Before: (a=" << a << ", b=" << b << ")\n";
-    swap_ptr(&a, &b);
+    swap_ref(a, b);
     std::cout << "After:  (a=" << a << ", b=" << b << ")\n";
 
     return 0;
