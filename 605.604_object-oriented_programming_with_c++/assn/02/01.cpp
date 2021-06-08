@@ -1,4 +1,5 @@
-#include "date.cpp"
+#include "date.hpp"
+#include <iostream> // for displaying output to stdout
 
 int main() {
     Date date1(2021, 6, 7);

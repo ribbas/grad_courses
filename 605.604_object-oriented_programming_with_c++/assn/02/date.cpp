@@ -64,6 +64,7 @@ void Date::set_day(int day) {
             }
 
             this->day = day;
+            this->day_set = true;
         }
 
     } else {
@@ -95,7 +96,7 @@ void Date::set_year(int year) {
 
 int Date::get_month() { return this->month; }
 
-std::string Date::get_month_name(bool shortened = false) {
+std::string Date::get_month_name(bool shortened) {
 
     std::string _month = this->month_name[this->month - 1];
     return shortened ? _month.substr(0, 3) : _month;
@@ -110,9 +111,9 @@ bool Date::check_leap() {
     return ((!(this->year % 4) && (this->year % 100)) || !(this->year % 400));
 }
 
-void Date::print_date(std::string fmt = "YMD") {
+void Date::print_date(std::string fmt) {
 
-    if (this->year_set && this->month_set) {
+    if (this->year_set && this->month_set && this->day_set) {
         if (fmt == "YMD") {
             std::cout << this->year << '/' << this->month << '/' << this->day << '\n';
         } else if (fmt == "DMY") {

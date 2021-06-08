@@ -1,14 +1,17 @@
 CXX = g++
 CFLAGS = -Wall -fpermissive
+DEP = date.h
+OBJ = date.o 01.o
 EXE = 01
 
 all: $(EXE)
 
-01: 01.cpp
-	@$(CXX) -o 01 $(CFLAGS) 01.cpp
+%.o: %.c $(DEPS)
+	@$(CXX) -c -o $@ $< $(CFLAGS)
 
-02: 02.cpp
-	@$(CXX) -o 02 $(CFLAGS) 02.cpp
+$(EXE): $(OBJ)
+	@$(CXX) -o $@ $^ $(CFLAGS)
 
 clean:
+	@rm -f *.o
 	@rm -rf $(EXE)

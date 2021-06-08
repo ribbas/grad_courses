@@ -1,3 +1,6 @@
+#ifndef DATE_HPP
+#define DATE_HPP
+
 /*
  * date.hpp
  * Sabbir Ahmed
@@ -25,7 +28,7 @@ public:
 
     int get_month();
 
-    std::string get_month_name(bool);
+    std::string get_month_name(bool = false);
 
     int get_day();
 
@@ -33,11 +36,12 @@ public:
 
     bool check_leap();
 
-    void print_date(std::string);
+    void print_date(std::string = "YMD");
 
 private:
-    bool month_set = false;
     bool year_set = false;
+    bool month_set = false;
+    bool day_set = false;
     bool is_leap = false;
     int month = -1;
     int day = -1;
@@ -46,3 +50,5 @@ private:
                                   "May",       "June",     "July",     "August",
                                   "September", "October",  "November", "December"};
 };
+
+#endif
