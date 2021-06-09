@@ -6,8 +6,6 @@
 class Item {
 
 public:
-    Item();
-
     Item(std::string, float, int = 0);
 
     void set_name(std::string);
@@ -15,8 +13,6 @@ public:
     void set_price(float);
 
     void set_count(int);
-
-    void inc_count();
 
     void dec_count();
 
