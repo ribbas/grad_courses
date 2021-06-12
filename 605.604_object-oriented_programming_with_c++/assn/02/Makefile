@@ -6,6 +6,9 @@ EXE = 01
 
 all: $(EXE)
 
+debug: CXXFLAGS += -DDEBUG -g
+debug: $(EXE)
+
 %.o: %.c $(DEPS)
 	@$(CXX) -c -o $@ $< $(CFLAGS)
 

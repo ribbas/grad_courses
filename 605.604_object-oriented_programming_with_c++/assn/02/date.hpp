@@ -5,50 +5,57 @@
  * date.hpp
  * Sabbir Ahmed
  * 605.604: Object-Oriented Programming Using C++
- * Assignment 1
+ * Assignment 2
  *
- * This file displays the values and sizes of the constants in climits that
- * represent the maximum and minimum values of various in-built data types.
+ * This file contains the declaration of the methods for the Date class.
  *
  */
-#include <string> // for displaying output to stdout
+
+#include <string> // for string objects
 
 class Date {
 
 public:
+    // default constructor
     Date();
 
+    // constructor with parameters
     Date(int, int, int);
 
-    void set_day(int);
+    // setter methods
+    void set_year(int);
 
     void set_month(int);
 
-    void set_year(int);
+    void set_day(int);
+
+    // getter methods
+    int get_year();
 
     int get_month();
 
-    std::string get_month_name(bool = false);
-
     int get_day();
 
-    int get_year();
+    std::string get_month_name(bool = false);
 
-    bool check_leap();
-
+    // print the month, day and year attributes of the date
     void print_date(std::string = "YMD");
 
 private:
-    bool year_set = false;
-    bool month_set = false;
-    bool day_set = false;
-    bool is_leap = false;
-    int month = -1;
-    int day = -1;
-    int year = -1;
-    std::string month_name[12] = {"January",   "February", "March",    "April",
-                                  "May",       "June",     "July",     "August",
-                                  "September", "October",  "November", "December"};
+    // check if the year is leap
+    bool check_leap();
+
+    // member attributes
+    bool year_set_;
+    bool month_set_;
+    bool day_set_;
+    bool is_leap_;
+    int month_;
+    int day_;
+    int year_;
+    std::string month_name_[12] = {"January",   "February", "March",    "April",
+                                   "May",       "June",     "July",     "August",
+                                   "September", "October",  "November", "December"};
 };
 
 #endif
