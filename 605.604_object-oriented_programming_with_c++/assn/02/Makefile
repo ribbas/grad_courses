@@ -1,5 +1,5 @@
-CXX = g++
-CFLAGS = -Wall -fpermissive
+CXX ?= g++
+CFLAGS = -Wall -Wextra -fpermissive -std=c++17 -pedantic
 DEP = date.h
 OBJ = date.o 01.o
 EXE = 01
@@ -10,10 +10,10 @@ debug: CXXFLAGS += -DDEBUG -g
 debug: $(EXE)
 
 %.o: %.c $(DEPS)
-	@$(CXX) -c -o $@ $< $(CFLAGS)
+	$(CXX) -c -o $@ $< $(CFLAGS)
 
 $(EXE): $(OBJ)
-	@$(CXX) -o $@ $^ $(CFLAGS)
+	$(CXX) -o $@ $^ $(CFLAGS)
 
 clean:
 	@rm -f *.o

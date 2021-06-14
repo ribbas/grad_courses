@@ -38,7 +38,7 @@ Date::Date()
  *  day <int>: day of the date
  *
  */
-Date::Date(int year, int month, int day)
+Date::Date(const int year, const int month, const int day)
     : year_set_(false), month_set_(false), day_set_(false), is_leap_(false), month_(-1), day_(-1),
       year_(-1) {
     set_year(year);
@@ -58,7 +58,7 @@ Date::Date(int year, int month, int day)
  *  None
  *
  */
-void Date::set_year(int year) {
+void Date::set_year(const int year) {
 
     if (year > 0) {
         year_ = year;
@@ -79,7 +79,7 @@ void Date::set_year(int year) {
  *  None
  *
  */
-void Date::set_month(int month) {
+void Date::set_month(const int month) {
 
     if (month > 0 && month < 13) {
         month_ = month;
@@ -100,7 +100,7 @@ void Date::set_month(int month) {
  *  None
  *
  */
-void Date::set_day(int day) {
+void Date::set_day(const int day) {
 
     // the year and month must be set first
     if (month_set_ && year_set_) {
@@ -145,6 +145,8 @@ void Date::set_day(int day) {
                     }
                 }
 
+                // if any of the conditions above fail, invoke the default case of throwing a
+                // std::invalid_argument exception
                 default: {
                     throw std::invalid_argument("Invalid date for " + get_month_name(false));
                 }
@@ -155,7 +157,8 @@ void Date::set_day(int day) {
         }
 
     } else {
-
+        // if day is trying to be set before the year and month, throw a std::invalid_argument
+        // exception
         throw std::invalid_argument("Please initialize the month and year of the date first");
     }
 }
@@ -172,7 +175,7 @@ void Date::set_day(int day) {
  *  year_ <int>: year of the date
  *
  */
-int Date::get_year() {
+const int Date::get_year() {
     return year_;
 }
 
@@ -186,7 +189,7 @@ int Date::get_year() {
  *  month_ <int>: month of the date
  *
  */
-int Date::get_month() {
+const int Date::get_month() {
     return month_;
 }
 
@@ -200,7 +203,7 @@ int Date::get_month() {
  *  day_ <int>: day of the date
  *
  */
-int Date::get_day() {
+const int Date::get_day() {
     return day_;
 }
 
@@ -214,7 +217,7 @@ int Date::get_day() {
  *  <std::string>: month name of the date
  *
  */
-std::string Date::get_month_name(bool shortened) {
+const std::string Date::get_month_name(const bool shortened) {
 
     // get the (month_ - 1)-th index of the month_name_ array
     std::string _month = month_name_[month_ - 1];
@@ -233,7 +236,7 @@ std::string Date::get_month_name(bool shortened) {
  *  None
  *
  */
-void Date::print_date(std::string format) {
+void Date::print_date(const std::string format) {
 
     // if all attributes are set
     if (year_set_ && month_set_ && day_set_) {
@@ -244,6 +247,7 @@ void Date::print_date(std::string format) {
         } else if (format == "MDY") {
             std::cout << month_ << '/' << day_ << '/' << year_ << '\n';
         } else {
+            // if an invalid format is inputted, throw a std::invalid_argument exception
             throw std::invalid_argument("Please input a valid format");
         }
     }
@@ -259,7 +263,7 @@ void Date::print_date(std::string format) {
  *  <bool>: is leap
  *
  */
-bool Date::check_leap() {
+const bool Date::check_leap() {
     // if year is divisible by 400 or divisible by 4 and not 100
     return ((!(year_ % 4) && (year_ % 100)) || !(year_ % 400));
 }

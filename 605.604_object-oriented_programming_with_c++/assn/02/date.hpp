@@ -20,30 +20,30 @@ public:
     Date();
 
     // constructor with parameters
-    Date(int, int, int);
+    Date(const int, const int, const int);
 
     // setter methods
-    void set_year(int);
+    void set_year(const int);
 
-    void set_month(int);
+    void set_month(const int);
 
-    void set_day(int);
+    void set_day(const int);
 
     // getter methods
-    int get_year();
+    const int get_year();
 
-    int get_month();
+    const int get_month();
 
-    int get_day();
+    const int get_day();
 
-    std::string get_month_name(bool = false);
+    const std::string get_month_name(const bool = false);
 
     // print the month, day and year attributes of the date
-    void print_date(std::string = "YMD");
+    void print_date(const std::string = "YMD");
 
 private:
     // check if the year is leap
-    bool check_leap();
+    const bool check_leap();
 
     // member attributes
     bool year_set_;
@@ -53,7 +53,7 @@ private:
     int month_;
     int day_;
     int year_;
-    std::string month_name_[12] = {"January",   "February", "March",    "April",
+    const std::string month_name_[12] = {"January",   "February", "March",    "April",
                                    "May",       "June",     "July",     "August",
                                    "September", "October",  "November", "December"};
 };
