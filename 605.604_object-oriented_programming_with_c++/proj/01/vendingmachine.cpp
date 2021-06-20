@@ -4,7 +4,7 @@
 #include <iostream>
 
 VendingMachine::VendingMachine(std::string name, int num_cols, int num_rows)
-    : _name(name), _num_cols(num_cols), _num_rows(num_rows), _balance(0.0), _row_min_offset(65) {
+    : _name(name), _num_cols(num_cols), _num_rows(num_rows), _row_min_offset(65) {
 
     _row_max_offset = _row_min_offset + _num_cols;
     for (int i = 0; i < _num_cols; i++) {
@@ -68,8 +68,8 @@ void VendingMachine::display_menu() {
 }
 
 void VendingMachine::add_money(float amount) {
-    _balance += amount;
-    std::cout << "Balance: $" << _balance << '\n';
+    balance_ += amount;
+    std::cout << "Balance: $" << balance_ << '\n';
 }
 
 std::string VendingMachine::get_item_name(int col, int row) {
@@ -94,14 +94,14 @@ void VendingMachine::pick_item(int col, int row) {
 
     auto picked_item = locate_item(col, row);
 
-    if (picked_item && picked_item->get_price() <= _balance) {
+    if (picked_item && picked_item->get_price() <= balance_) {
 
         if (picked_item->get_count()) {
 
             picked_item->dec_count();
             std::cout << "Dispensing 1 " << picked_item->get_name() << '\n';
-            std::cout << "Returning change: $" << _balance - picked_item->get_price() << '\n';
-            _balance = 0;
+            std::cout << "Returning change: $" << balance_ - picked_item->get_price() << '\n';
+            balance_ = 0;
 
         } else {
             std::cout << picked_item->get_name() << " is out of stock!\n";

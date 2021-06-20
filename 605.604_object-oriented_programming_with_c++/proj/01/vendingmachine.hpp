@@ -31,7 +31,7 @@ private:
 
     std::vector<std::vector<Item*>> _inventory;
     std::string _name;
-    float _balance;
+    float balance_;
     int _num_rows;
     int _num_cols;
     int _row_min_offset;
