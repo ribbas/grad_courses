@@ -23,9 +23,9 @@ public:
     int get_count();
 
 private:
-    std::string _name;
-    float _price;
-    int _count;
+    std::string name_;
+    float price_;
+    int count_;
 };
 
 #endif

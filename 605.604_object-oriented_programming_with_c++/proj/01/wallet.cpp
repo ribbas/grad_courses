@@ -4,7 +4,6 @@
 
 Wallet::Wallet(int max_amount) {
 
-    srand(0);
     balance_ = (rand() % max_amount) + (rand() % 10 + 1) / 10.0;
 }
 

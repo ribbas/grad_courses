@@ -1,30 +1,30 @@
 #include "item.hpp"
 
-Item::Item(std::string name, float price, int count) : _name(name), _price(price), _count(count) {}
+Item::Item(std::string name, float price, int count) : name_(name), price_(price), count_(count) {}
 
 void Item::set_name(std::string name) {
-    _name = name;
+    name_ = name;
 }
 
 void Item::set_price(float price) {
-    _price = price;
+    price_ = price;
 }
 
 void Item::set_count(int count) {
-    _count = count;
+    count_ = count;
 }
 
 void Item::dec_count() {
-    _count--;
+    count_--;
 }
 
 std::string Item::get_name() {
-    return _name;
+    return name_;
 }
 
 float Item::get_price() {
-    return _price;
+    return price_;
 }
 int Item::get_count() {
-    return _count;
+    return count_;
 }

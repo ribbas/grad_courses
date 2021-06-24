@@ -24,18 +24,18 @@ public:
 
     int get_item_count(int, int);
 
-    void pick_item(int, int);
+    bool pick_item(int, int);
 
 private:
     Item* locate_item(int, int);
 
-    std::vector<std::vector<Item*>> _inventory;
-    std::string _name;
-    float balance_;
-    int _num_rows;
-    int _num_cols;
-    int _row_min_offset;
-    int _row_max_offset;
+    std::vector<std::vector<Item*>> inventory_;
+    std::string name_;
+    float _balance;
+    int num_rows_;
+    int num_cols_;
+    int row_min_offset_;
+    int row_max_offset_;
 };
 
 #endif
