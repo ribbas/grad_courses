@@ -26,7 +26,7 @@ public:
         }
     };
 
-    const int at(int index) {
+    int at(int index) {
         if (index > -1 && index < size) {
             return data[index];
 
@@ -36,9 +36,13 @@ public:
         }
     }
 
-    const int* get_array() { return data; }
+    const int* get_array() {
+        return data;
+    }
 
-    const int get_size() { return size; }
+    int get_size() {
+        return size;
+    }
 
 private:
     int* data;

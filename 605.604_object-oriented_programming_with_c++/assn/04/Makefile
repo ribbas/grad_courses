@@ -1,18 +1,19 @@
 CXX ?= g++
 CFLAGS = -Wall -Wextra -fpermissive -std=c++17 -pedantic
-DEP =
-OBJ = myarray.o
-EXE = 01
+EXE = myarray counter
 
 all: $(EXE)
 
 debug: CXXFLAGS += -DDEBUG -g
 debug: $(EXE)
 
-%.o: %.c $(DEPS)
+%.o: %.cpp %.hpp
 	$(CXX) -c -o $@ $< $(CFLAGS)
 
-$(EXE): $(OBJ)
+counter: counter.o
+	$(CXX) -o $@ $^ $(CFLAGS)
+
+myarray: myarray.o
 	$(CXX) -o $@ $^ $(CFLAGS)
 
 clean:
