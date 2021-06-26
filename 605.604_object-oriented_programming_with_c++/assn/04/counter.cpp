@@ -1,3 +1,13 @@
+/*
+ * counter.cpp
+ * Sabbir Ahmed
+ * 605.604: Object-Oriented Programming Using C++
+ * Week 4 Assignment
+ *
+ * Driver file for the MemoryCounter and Counter classes
+ *
+ */
+
 #include <iostream>
 
 #include "counter.hpp"

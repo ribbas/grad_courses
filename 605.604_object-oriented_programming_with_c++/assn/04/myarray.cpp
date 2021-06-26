@@ -1,53 +1,14 @@
-#include <iostream>
+/*
+ * myarray.cpp
+ * Sabbir Ahmed
+ * 605.604: Object-Oriented Programming Using C++
+ * Week 4 Assignment
+ *
+ * Driver file for the MyArray class
+ *
+ */
 
-class MyArray {
-public:
-    // Default constructor
-    MyArray(int sz) : data(new int[sz]), size(sz) {}
-
-    // Copy constructor
-    MyArray(const MyArray& p1) : MyArray(p1.size) {}
-
-    // Default destructor
-    ~MyArray() {
-        if (data) {
-            delete[] data;
-            data = nullptr;
-            size = 0;
-        }
-    }
-
-    /* --------------- SETTERS/GETTERS --------------- */
-    void assign(const int index, const int value) {
-        if (index > -1 && index < size) {
-            data[index] = value;
-        } else {
-            std::cout << "Index is out of range\n";
-        }
-    };
-
-    int at(int index) {
-        if (index > -1 && index < size) {
-            return data[index];
-
-        } else {
-            std::cout << "Index is out of range\n";
-            return 0;
-        }
-    }
-
-    const int* get_array() {
-        return data;
-    }
-
-    int get_size() {
-        return size;
-    }
-
-private:
-    int* data;
-    int size;
-};
+#include "myarray.hpp"
 
 int main() {
     MyArray existingObj(3);
