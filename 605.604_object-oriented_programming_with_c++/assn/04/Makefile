@@ -1,7 +1,7 @@
 CXX ?= g++
 CFLAGS = -Wall -Wextra -fpermissive -std=c++17 -pedantic
-DEP = date.h
-OBJ = date.o 01.o
+DEP =
+OBJ = myarray.o
 EXE = 01
 
 all: $(EXE)
