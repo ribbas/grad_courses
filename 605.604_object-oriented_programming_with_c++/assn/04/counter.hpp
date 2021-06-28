@@ -160,6 +160,7 @@ public:
      */
     void decrement() {
         counter_->decrement();
+        // the memory counter does not allow negative values
         if (current_value() < 0) {
             reset();
         }

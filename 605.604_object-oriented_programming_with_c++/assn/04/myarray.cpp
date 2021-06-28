@@ -11,20 +11,37 @@
 #include "myarray.hpp"
 
 int main() {
+
+    std::cout << "Creating MyArray object existingObj with size: 3\n";
     MyArray existingObj(3);
 
+    std::cout << "Assigning existingObj value at(0)=50\n";
     existingObj.assign(0, 50);
+    std::cout << "Assigning existingObj value at(1)=40\n";
     existingObj.assign(1, 40);
-    existingObj.assign(2, 60);
-    std::cout << existingObj.get_size() << '\n';
-    std::cout << existingObj.at(0) << '\n';
-    std::cout << existingObj.at(1) << '\n';
-    std::cout << existingObj.at(2) << '\n';
+    std::cout << "Assigning existingObj value at(2)=99999\n";
+    existingObj.assign(2, 99999);
 
+    std::cout << "Size of existingObj array: " << existingObj.get_size()
+              << '\n';
+    std::cout << "Checking existingObj value at(0)=" << existingObj.at(0)
+              << '\n';
+    std::cout << "Checking existingObj value at(1)=" << existingObj.at(1)
+              << '\n';
+    std::cout << "Checking existingObj value at(2)=" << existingObj.at(2)
+              << '\n';
+
+    std::cout << "\nCopying existingObj to another MyArray object newObj\n";
     MyArray newObj = existingObj;
-    newObj.assign(2, 60000);
-    std::cout << existingObj.get_size() << '\n';
-    std::cout << existingObj.at(2) << '\n';
-    std::cout << newObj.get_size() << '\n';
-    std::cout << newObj.at(2) << '\n';
+
+    std::cout << "Assigning newObj value at(1)=40\n";
+    newObj.assign(1, -42);
+
+    std::cout << "Size of existingObj array: " << existingObj.get_size()
+              << '\n';
+    std::cout << "Checking existingObj value at(1)=" << existingObj.at(1)
+              << '\n';
+
+    std::cout << "Size of existingObj array: " << newObj.get_size() << '\n';
+    std::cout << "Checking existingObj value at(1)=" << newObj.at(1) << '\n';
 }
