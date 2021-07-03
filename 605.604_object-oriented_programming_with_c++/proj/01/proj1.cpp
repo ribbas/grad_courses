@@ -84,7 +84,8 @@ void display_choice_menu() {
  * Params:
  *  wallet: <Wallet>: pointer to the Wallet object
  *  machine <VendingMachine*>: pointer to the VendingMachine object
- *  choice: <int>: user option
+ *  choice: <int>: user option. This function does NOT handle invalid data types
+ *                 for user choice.
  *
  * Returns:
  *  None
