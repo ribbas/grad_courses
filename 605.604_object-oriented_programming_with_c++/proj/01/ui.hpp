@@ -28,7 +28,8 @@ public:
 
 private:
     /* ------------------------ PRIVATE ATTRIBUTES ------------------------ */
+    int cols_, rows_;
+    std::string machine_name_;
     Wallet* wallet_;
     VendingMachine* vendingmachine_;
-    int cols_, rows_;
 };

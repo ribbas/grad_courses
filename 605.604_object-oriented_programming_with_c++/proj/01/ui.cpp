@@ -25,7 +25,8 @@
  *
  */
 Proj1UI::Proj1UI(std::string machine_name, int cols, int rows, int max_amount)
-    : cols_(cols), rows_(rows), wallet_(new Wallet(max_amount)),
+    : cols_(cols), rows_(rows), machine_name_(machine_name),
+      wallet_(new Wallet(max_amount)),
       vendingmachine_(new VendingMachine(machine_name, cols, rows)) {}
 
 /*
@@ -166,12 +167,17 @@ void Proj1UI::parse_choice(int choice) {
             break;
         }
 
+        // exit
+        case 5: {
+            std::cout << "Thank you for using " << machine_name_ << "!\n";
+            return;
+        }
+
         default: {
             std::cout << "Please select a valid option\n";
             break;
         }
     }
-
     display_choice_menu();
 }
 
@@ -194,8 +200,9 @@ void Proj1UI::loop() {
     init_vending_machine();
 
     // main loop to prompt for user choices
-    int choice = 1;
-    parse_choice(choice);
+    int choice = 0;
+    // parse_choice(choice);
+    display_choice_menu();
     while (choice != 5) {
         std::cin >> choice;
         parse_choice(choice);
