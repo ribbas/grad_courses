@@ -17,6 +17,9 @@
  *
  * Initializes member attributes
  *
+ * Params:
+ *  max_amount <int>: maximum amount for the amount
+ *
  */
 Wallet::Wallet(int max_amount) {
 

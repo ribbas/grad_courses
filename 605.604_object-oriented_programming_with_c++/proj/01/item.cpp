@@ -15,6 +15,11 @@
  *
  * Initializes member attributes
  *
+ * Params:
+ *  name <std::string>: name of item
+ *  price <float>: price of item
+ *  count <int>: count of item
+ *
  */
 Item::Item(std::string name, float price, int count)
     : name_(name), price_(price), count_(count) {}

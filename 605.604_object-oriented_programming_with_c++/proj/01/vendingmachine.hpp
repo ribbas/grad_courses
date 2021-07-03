@@ -49,8 +49,8 @@ private:
     float balance_;
     int num_rows_;
     int num_cols_;
-    int row_min_offset_;
-    int row_max_offset_;
+    int col_min_offset_;
+    int col_max_offset_;
 };
 
 #endif
