@@ -1,10 +1,8 @@
 CXX = g++
 CFLAGS = -Wall -fpermissive
 DEP = item.hpp vendingmachine.hpp wallet.hpp
-OBJ = item.o vendingmachine.o wallet.o proj.o
-# DEP = wallet.hpp
-# OBJ = wallet.o proj.o
-EXE = proj
+OBJ = item.o vendingmachine.o wallet.o proj1.o
+EXE = proj1
 
 all: $(EXE)
 
