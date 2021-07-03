@@ -47,10 +47,7 @@ private:
     std::vector<std::vector<Item*>> inventory_;
     std::string name_;
     float balance_;
-    int num_rows_;
-    int num_cols_;
-    int col_min_offset_;
-    int col_max_offset_;
+    int num_rows_, num_cols_, col_min_offset_, col_max_offset_;
 };
 
 #endif
