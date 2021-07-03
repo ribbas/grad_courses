@@ -13,5 +13,4 @@ $(EXE): $(OBJ)
 	$(CXX) -o $@ $^ $(CFLAGS)
 
 clean:
-	@rm -f *.o
-	@rm -rf $(EXE)
+	@rm -rf $(OBJ) $(EXE)
