@@ -1,15 +1,15 @@
 CXX ?= g++
 CFLAGS = -Wall -Wextra -fpermissive -std=c++17 -pedantic
-DEP = date.hpp
-OBJ = date.o 01.o
-EXE = 01
+DEP = templatearray.hpp date.hpp
+OBJ = templatearray.o date.o 08.o 
+EXE = 08
 
 all: $(EXE)
 
 debug: CXXFLAGS += -DDEBUG -g
 debug: $(EXE)
 
-%.o: %.cpp $(DEPS)
+%.o: %.cpp %.hpp
 	$(CXX) -c -o $@ $< $(CFLAGS)
 
 $(EXE): $(OBJ)
