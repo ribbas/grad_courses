@@ -15,6 +15,9 @@ debug: $(EXE)
 $(EXE): $(OBJ)
 	$(CXX) -o $@ $^ $(CFLAGS)
 
+memcheck: $(EXE)
+	valgrind ./$(EXE)
+
 clean:
 	@rm -f *.o
 	@rm -rf $(EXE)

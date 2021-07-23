@@ -1,6 +1,19 @@
+/*
+ * templatearray.cpp
+ * Sabbir Ahmed
+ * 605.604: Object-Oriented Programming Using C++
+ * Week 8 Assignment
+ *
+ * This file contains the implementation of the methods for the TemplateAarray
+ * class.
+ *
+ */
+
 #include "templatearray.hpp"
 #include "date.hpp"
 
+// Explicitly instantiate the template class with data types specified in the
+// project prompt
 template class TemplateArray<int>;
 template class TemplateArray<float>;
 template class TemplateArray<std::string>;

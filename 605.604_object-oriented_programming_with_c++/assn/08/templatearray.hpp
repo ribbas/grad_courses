@@ -1,3 +1,14 @@
+/*
+ * templatearray.hpp
+ * Sabbir Ahmed
+ * 605.604: Object-Oriented Programming Using C++
+ * Week 8 Assignment
+ *
+ * This file contains the declaration of the methods for the TemplateAarray
+ * class.
+ *
+ */
+
 #ifndef TEMPLATEARRAY_HPP
 #define TEMPLATEARRAY_HPP
 
