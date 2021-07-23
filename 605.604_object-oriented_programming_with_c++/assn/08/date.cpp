@@ -5,6 +5,8 @@
  * Assignment 2
  *
  * This file contains the implementation of the methods for the Date class.
+ * This implementation has been copied over and modified from the Week 2
+ * Assignment.
  *
  */
 

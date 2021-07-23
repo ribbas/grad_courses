@@ -1,22 +1,29 @@
 #ifndef TEMPLATEARRAY_HPP
 #define TEMPLATEARRAY_HPP
 
-// function template
-#include <iostream>
-
-template <class T> class TemplateArray {
+template <class T>
+class TemplateArray {
 private:
-    T* data_;
     int size_;
+    T* data_;
 
 public:
-    int size();
+    /* --------------- CONSTRUCTORS/DESTRUCTORS --------------- */
+    TemplateArray();
 
-    TemplateArray(int size = 0);
+    TemplateArray(int = 0);
+
+    TemplateArray(const TemplateArray&);
 
     ~TemplateArray();
 
-    T& operator[](int index);
+    /* --------------- METHODS --------------- */
+    int size();
+
+    void resize(int);
+
+    /* --------------- OVERLOADED OPERATORS --------------- */
+    T& operator[](int);
 };
 
 #endif

@@ -1,15 +1,16 @@
-#ifndef DATE_HPP
-#define DATE_HPP
-
 /*
  * date.hpp
  * Sabbir Ahmed
  * 605.604: Object-Oriented Programming Using C++
- * Assignment 2
+ * Week 8 Assignment
  *
  * This file contains the declaration of the methods for the Date class.
+ * This implementation has been copied over and modified from the Week 2
+ * Assignment.
  *
  */
+#ifndef DATE_HPP
+#define DATE_HPP
 
 #include <iostream>
 #include <string> // for string objects
@@ -40,7 +41,7 @@ public:
     std::string get_month_name(bool = false);
 
     // print the month, day and year attributes of the date
-    friend std::ostream& operator<<(std::ostream& os, const Date& dt);
+    friend std::ostream& operator<<(std::ostream&, const Date&);
 
 private:
     // check if the year is leap
