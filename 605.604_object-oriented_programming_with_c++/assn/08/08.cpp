@@ -22,7 +22,7 @@ int main() {
     }
 
     // instantiate a TemplateArray of type 'float'
-    std::cout << "Instantiated a TemplateArray of type 'float'\n";
+    std::cout << "\nInstantiated a TemplateArray of type 'float'\n";
     TemplateArray<float> float_array(size);
 
     for (int i = 0; i < float_array.size(); i++) {
@@ -34,7 +34,7 @@ int main() {
     }
 
     // instantiate a TemplateArray of type 'string'
-    std::cout << "Instantiated a TemplateArray of type 'string'\n";
+    std::cout << "\nInstantiated a TemplateArray of type 'string'\n";
     TemplateArray<std::string> str_array(size);
 
     for (int i = 0; i < str_array.size(); i++) {
@@ -46,7 +46,7 @@ int main() {
     }
 
     auto str_array_copy = str_array;
-    std::cout << "Instantiated a copy of TemplateArray of type 'string'\n";
+    std::cout << "\nInstantiated a copy of TemplateArray of type 'string'\n";
     str_array_copy.resize(size * 2);
     std::cout << "Resizing string TemplateArray copy\n";
     for (int i = 0; i < str_array_copy.size(); i++) {
@@ -58,7 +58,7 @@ int main() {
     }
 
     // instantiate a TemplateArray of type 'Date'
-    std::cout << "Instantiated a TemplateArray of type 'Date'\n";
+    std::cout << "\nInstantiated a TemplateArray of type 'Date'\n";
     TemplateArray<Date*> date_array(size);
 
     for (int i = 0; i < str_array.size(); i++) {
