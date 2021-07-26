@@ -1,15 +1,15 @@
 CXX ?= g++
 CFLAGS = -Wall -Wextra -fpermissive -std=c++17 -pedantic
-DEP = rng.hpp
-OBJ = rng.o
-EXE = rng
+SRC = rng.cpp customer.cpp proj2.cpp
+OBJ = $(SRC:.cpp=.o)
+EXE = proj2
 
 all: $(EXE)
 
 debug: CXXFLAGS += -DDEBUG -g
 debug: $(EXE)
 
-%.o: %.cpp %.hpp
+$(%.o): %.cpp %.hpp
 	$(CXX) -c -o $@ $< $(CFLAGS)
 
 $(EXE): $(OBJ)

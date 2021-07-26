@@ -1,5 +1,5 @@
 /*
- * customer.hpp
+ * rng.hpp
  * Sabbir Ahmed
  * 605.604: Object-Oriented Programming Using C++
  * Mini-project 2
@@ -17,18 +17,13 @@ template <class T>
 class RNG {
 
 public:
-    RNG() {}
+    RNG(int = 0);
 
     ~RNG() {}
 
-    void reseed(int seed) {
-        distribution_.reset();
-        srand(seed);
-    }
+    void reseed(int);
 
-    double get() {
-        return distribution_(generator_);
-    }
+    double get();
 
 protected:
     T distribution_;
@@ -41,30 +36,12 @@ private:
 class ExponentialDistribution
     : public RNG<std::exponential_distribution<double>> {
 public:
-    ExponentialDistribution(double upper_bound, int seed = 0) {
-
-        srand(seed);
-
-        this->random_num_ = 0.0;
-
-        typename std::exponential_distribution<double>::param_type new_lambda(
-            upper_bound);
-        this->distribution_.param(new_lambda);
-    }
+    ExponentialDistribution(double, int = 0);
 };
 
 class UniformDistribution : public RNG<std::uniform_real_distribution<double>> {
 public:
-    UniformDistribution(double lower_bound, double upper_bound, int seed = 0) {
-
-        srand(seed);
-
-        this->random_num_ = 0.0;
-
-        typename std::uniform_real_distribution<double>::param_type new_lambda(
-            lower_bound, upper_bound);
-        this->distribution_.param(new_lambda);
-    }
+    UniformDistribution(double, double, int = 0);
 };
 
 #endif

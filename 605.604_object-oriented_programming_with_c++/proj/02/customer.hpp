@@ -19,13 +19,27 @@ public:
     /* ------------------------ PUBLIC METHODS ------------------------ */
     bool is_senior();
 
-    bool take_money_out(float);
+    int get_state();
 
-    float check();
+    bool is_unknown();
+
+    bool is_arrived();
+
+    bool is_verified();
+
+    bool is_in_line();
+
+    bool is_vaccinated();
+
+    bool is_exited();
+
+    void progress();
 
 private:
     /* ------------------------ PRIVATE ATTRIBUTES ------------------------ */
     bool is_senior_;
+    enum states_ { unknown, arrived, verified, in_line, vaccinated, exited };
+    int current_state_;
 };
 
 #endif
