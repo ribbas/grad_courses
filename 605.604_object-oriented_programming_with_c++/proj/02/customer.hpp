@@ -17,6 +17,8 @@ public:
     Customer();
 
     /* ------------------------ PUBLIC METHODS ------------------------ */
+    void make_senior();
+
     bool is_senior();
 
     int get_state();

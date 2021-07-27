@@ -1,9 +1,13 @@
 #include "customer.hpp"
 
-Customer::Customer() : current_state_(unknown) {}
+Customer::Customer() : current_state_(unknown), is_senior_(false) {}
 
 bool Customer::is_senior() {
     return is_senior_;
+}
+
+void Customer::make_senior() {
+    is_senior_ = true;
 }
 
 void Customer::progress() {

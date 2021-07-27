@@ -2,6 +2,16 @@
 #include "rng.hpp"
 
 #include <iostream>
+#include <vector>
+
+void shuffle(std::vector<Customer*>::iterator first,
+             std::vector<Customer*>::iterator last) {
+    auto g = std::default_random_engine(0);
+    for (auto i = (last - first) - 1; i > 0; --i) {
+        std::uniform_int_distribution<int> d(0, i);
+        std::swap(first[i], first[d(g)]);
+    }
+}
 
 int main() {
 
@@ -19,26 +29,30 @@ int main() {
         if (arrivalTime <= 60.0) {
 
             std::cout << "InterArrival Time = " << v
-                      << "\tArrivalTime = " << arrivalTime << std::endl;
+                      << "\tArrivalTime = " << arrivalTime << '\n';
         }
     }
 
-    std::cout << num_customers << '\n';
+    std::vector<Customer*> new_arrivals_array;
+    int percentage_seniors = num_customers * 0.60;
+
+    for (int i = 0; i < num_customers; i++) {
+        auto c = new Customer();
+        new_arrivals_array.push_back(c);
+        if (percentage_seniors) {
+            c->make_senior();
+            percentage_seniors--;
+        }
+        c->progress();
+    }
+
+    shuffle(new_arrivals_array.begin(), new_arrivals_array.end());
+
+    for (auto i : new_arrivals_array) {
+        std::cout << i->is_senior() << '\n';
+    }
 
     delete rng;
-
-    auto c = new Customer();
-
-    c->progress();
-    c->progress();
-    c->progress();
-    c->progress();
-    c->progress();
-    c->progress();
-    c->progress();
-    c->progress();
-
-    std::cout << c->get_state() << '\n';
 
     return 0;
 }
