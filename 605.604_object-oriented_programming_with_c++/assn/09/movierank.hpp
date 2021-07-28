@@ -16,9 +16,6 @@ using str_list = std::list<std::string>;
 
 class MovieRanker {
 public:
-    /* ------------------------ CONSTRUCTORS ------------------------ */
-    MovieRanker();
-
     /* ------------------------ DESTRUCTORS ------------------------ */
     ~MovieRanker();
 

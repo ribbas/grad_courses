@@ -16,9 +16,6 @@ public:
     /* ------------------------ CONSTRUCTORS ------------------------ */
     State(std::string, std::string);
 
-    /* ------------------------ DESTRUCTORS ------------------------ */
-    ~State();
-
     /* ------------------------ PUBLIC METHODS ------------------------ */
     std::string& get_name();
 

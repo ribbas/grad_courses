@@ -14,18 +14,6 @@
 #include <iostream>
 
 /*
- * Instantiates a VendingMachine and Wallet objects.
- *
- * Params:
- *  machine_name <std::string>: name of VendingMachine object
- *  cols <int>: number of columns in the VendingMachine object
- *  rows <int>: number of rows in the VendingMachine object
- *  max_amount <int>: maximum amount for the Wallet object balance
- *
- */
-MovieRanker::MovieRanker() {}
-
-/*
  * Destructor
  *
  */

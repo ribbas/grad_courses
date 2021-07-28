@@ -14,7 +14,8 @@ int main() {
     state_set.insert(new State("Alaska", "Juneau"));
 
     for (auto s : state_set) {
-        std::cout << s->get_name() << '\n';
+        std::cout << "State: " << s->get_name()
+                  << ", Capital: " << s->get_capital_name() << '\n';
     }
 
     for (auto s : state_set) {
