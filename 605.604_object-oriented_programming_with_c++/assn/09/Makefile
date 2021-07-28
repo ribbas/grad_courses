@@ -1,6 +1,6 @@
 CXX ?= g++
 CFLAGS = -Wall -Wextra -fpermissive -std=c++17 -pedantic
-EXE = 01
+EXE = 01 02
 
 all: $(EXE)
 
@@ -11,6 +11,9 @@ debug: $(EXE)
 	$(CXX) -c -o $@ $< $(CFLAGS)
 
 01: 01.o movierank.o
+	$(CXX) -o $@ $^ $(CFLAGS)
+
+02: 02.o state.o
 	$(CXX) -o $@ $^ $(CFLAGS)
 
 memcheck: $(EXE)

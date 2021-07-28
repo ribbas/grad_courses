@@ -168,7 +168,7 @@ void MovieRanker::parse_choice(int choice) {
                 std::cin >> down;
                 swap_rank(rank - 1, down);
                 std::cout << "Rank: " << rank << " moved "
-                          << (down ? "up\n" : "down\n");
+                          << (down ? "down\n" : "up\n");
                 display_movies_list();
             } else {
                 std::cout << "No movies added yet!\n";
