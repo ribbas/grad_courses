@@ -19,11 +19,13 @@ public:
         int percentage_seniors = num_customers * 0.60;
 
         auto check_in_times_rng = new UniformDistribution(1.0, 4.0);
+        auto vaccination_times_rng = new ExponentialDistribution(15.0);
 
         for (int i = 0; i < num_customers; i++) {
             auto c = new Customer();
             c->set_arrival_time((*arrival_times)[i]);
             c->set_check_in_time(check_in_times_rng->get());
+            c->set_vaccination_time(vaccination_times_rng->get() * 60.0);
             new_arrivals_array_.push_back(c);
             if (percentage_seniors) {
                 c->make_senior();
@@ -67,7 +69,8 @@ public:
     void send_to_station(std::vector<Customer*> waiting_line) {
         for (auto c : waiting_line) {
             std::cout << c->is_senior() << ' ' << c->get_arrival_time() << ' '
-                      << c->get_check_in_time() << '\n';
+                      << c->get_check_in_time() << ' '
+                      << c->get_vaccination_time() << '\n';
         }
     }
 
@@ -87,7 +90,7 @@ private:
 
 int main() {
 
-    auto arrival_times_rng = new ExponentialDistribution(30.0, 123);
+    auto arrival_times_rng = new ExponentialDistribution(30.0);
 
     double total_arrival_time = 0;
     auto arrival_times = new std::deque<double>;

@@ -41,6 +41,14 @@ public:
         return check_in_time_;
     }
 
+    void set_vaccination_time(double v) {
+        vaccination_time_ = v;
+    }
+
+    double get_vaccination_time() {
+        return vaccination_time_;
+    }
+
     bool is_arrived();
 
     bool is_verified();
@@ -56,7 +64,7 @@ public:
 private:
     /* ------------------------ PRIVATE ATTRIBUTES ------------------------ */
     bool is_senior_;
-    double arrival_time_, check_in_time_;
+    double arrival_time_, check_in_time_, vaccination_time_;
     enum states_ { unknown, arrived, verified, in_line, vaccinated, exited };
     int current_state_;
 };
