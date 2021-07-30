@@ -161,7 +161,7 @@ void MovieRank::parse_choice(int choice) {
             std::string movie_title;
             for (int i = 0; i < 5; i++) {
                 std::cout << "Add movie title for rank " << i + 1 << ": ";
-                std::cin >> movie_title;
+                std::getline(std::cin >> std::ws, movie_title);
                 add_movie(movie_title);
             }
             std::cout << "Movies added to list!\n";
