@@ -1,12 +1,17 @@
 #ifndef WAITING_LINE_HPP
 #define WAITING_LINE_HPP
 
-class WaitingLine {
-public:
-    WaitingLine() : capacity_(15) {}
+#include "customer.hpp"
 
-    void add_to_line() {
-        capacity_--;
+class VaccinationStation {
+public:
+    VaccinationStation() : capacity_(3) {}
+
+    void vaccinate(Customer* customer) {
+        if (capacity_) {
+            capacity_--;
+            customers_in_stations[capacity_] = customer;
+        }
     }
 
     bool is_empty() {
@@ -14,6 +19,7 @@ public:
     }
 
 private:
+    Customer* customers_in_stations[3];
     int capacity_;
 };
 
