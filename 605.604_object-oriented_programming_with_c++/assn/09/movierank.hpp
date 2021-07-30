@@ -1,11 +1,10 @@
 /*
- * ui.hpp
+ * movierank.hpp
  * Sabbir Ahmed
  * 605.604: Object-Oriented Programming Using C++
- * Mini-project 1
+ * Week 9 Assignment #1
  *
- * This file contains the function declarations for a simple user interface
- * class for the Mini-project 1.
+ * This file contains the declarations for the MovieRank class
  *
  */
 
@@ -14,10 +13,10 @@
 
 using str_list = std::list<std::string>;
 
-class MovieRanker {
+class MovieRank {
 public:
     /* ------------------------ DESTRUCTORS ------------------------ */
-    ~MovieRanker();
+    ~MovieRank();
 
     /* ------------------------ PUBLIC METHODS ------------------------ */
     void display_choice_menu();
@@ -30,17 +29,12 @@ public:
 
     void add_movie(std::string&);
 
-    int get_size();
-
-    bool is_empty();
-
-    void clear();
-
-    void swap_rank(int, bool);
+    void move_rank(unsigned int, bool);
 
 private:
     /* ------------------------ PRIVATE ATTRIBUTES ------------------------ */
     str_list movies_;
 
+    /* ------------------------ PRIVATE METHODS ------------------------ */
     str_list::iterator find_at_rank(const int);
 };

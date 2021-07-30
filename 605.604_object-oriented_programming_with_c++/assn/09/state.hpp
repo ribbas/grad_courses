@@ -1,11 +1,10 @@
 /*
- * ui.hpp
+ * state.hpp
  * Sabbir Ahmed
  * 605.604: Object-Oriented Programming Using C++
- * Mini-project 1
+ * Week 9 Assignment #2
  *
- * This file contains the function declarations for a simple user interface
- * class for the Mini-project 1.
+ * This file contains the declarations for the State class
  *
  */
 
@@ -14,12 +13,18 @@
 class State {
 public:
     /* ------------------------ CONSTRUCTORS ------------------------ */
+    State();
+
     State(std::string, std::string);
 
     /* ------------------------ PUBLIC METHODS ------------------------ */
     std::string& get_name();
 
+    void set_name(std::string&);
+
     std::string& get_capital_name();
+
+    void set_capital_name(std::string&);
 
 private:
     /* ------------------------ PRIVATE ATTRIBUTES ------------------------ */

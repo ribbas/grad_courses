@@ -1,11 +1,10 @@
 /*
- * ui.cpp
+ * movierank.cpp
  * Sabbir Ahmed
  * 605.604: Object-Oriented Programming Using C++
- * Mini-project 1
+ * Week 9 Assignment #1
  *
- * This file contains the implementation for a simple user interface class for
- * the Mini-project 1.
+ * This file contains the implementation for the MovieRank class
  *
  */
 
@@ -14,58 +13,17 @@
 #include <iostream>
 
 /*
- * Destructor
+ * Default destructor
  *
  */
-MovieRanker::~MovieRanker() {
+MovieRank::~MovieRank() {
 
-    // free up dynamically allocated variables
     movies_.resize(0);
 }
 
-void MovieRanker::display_movies_list() {
-    int rank = 0;
-    for (std::string& movie : movies_) {
-        rank++;
-        std::cout << rank << ' ' << movie << '\n';
-    }
-}
-
-void MovieRanker::add_movie(std::string& movie) {
-    movies_.push_back(movie);
-}
-
-int MovieRanker::get_size() {
-    return movies_.size();
-}
-
-bool MovieRanker::is_empty() {
-    return movies_.empty();
-}
-
-void MovieRanker::clear() {
-    movies_.clear();
-}
-
-void MovieRanker::swap_rank(int rank, bool down) {
-    auto source = find_at_rank(rank);
-    if (down) {
-        if (rank < get_size() - 1) {
-            auto destination = find_at_rank(rank + 2);
-            movies_.splice(destination, movies_, source);
-        }
-    } else {
-        if (rank > 0) {
-            auto destination = find_at_rank(rank - 1);
-            movies_.splice(destination, movies_, source);
-        }
-    }
-}
-
 /*
- * Initializes a VendingMachine object by prefilling it with item names,
- * prices, and quantities. The item names are provided by a prefilled array of
- * strings and the prices are generated randomly.
+ * Loop through the movies list to display each of the elements along with their
+ * ranks
  *
  * Params:
  *  None
@@ -74,8 +32,72 @@ void MovieRanker::swap_rank(int rank, bool down) {
  *  None
  *
  */
+void MovieRank::display_movies_list() {
+    int rank = 0;
+    for (std::string& movie : movies_) {
+        rank++;
+        std::cout << rank << ' ' << movie << '\n';
+    }
+}
 
-str_list::iterator MovieRanker::find_at_rank(const int rank) {
+/*
+ * Add movie to movies list
+ *
+ * Params:
+ *  movie <std::string&>: movie to add to list
+ *
+ * Returns:
+ *  None
+ *
+ */
+void MovieRank::add_movie(std::string& movie) {
+    movies_.push_back(movie);
+}
+
+/*
+ * Swap ranks of a movie by moving it forward or backward 1 index in the movies
+ * list
+ *
+ * Params:
+ *  rank <unsigned int>: the current rank of the movie to swap
+ *  down <bool>:    flag to swap rank down or up - false for moving rank of the
+ *                  movie up, and true for moving it down
+ *
+ * Returns:
+ *  None
+ *
+ */
+void MovieRank::move_rank(unsigned int rank, bool down) {
+    // get iterator to movie at rank
+    auto source = find_at_rank(rank);
+
+    // to swap rank down
+    if (down) {
+        if (rank < movies_.size() - 1) {
+            // move it forward 2 ranks
+            auto destination = find_at_rank(rank + 2);
+            movies_.splice(destination, movies_, source);
+        }
+    } else {
+        if (rank > 0) {
+            // move it backward 1 rank
+            auto destination = find_at_rank(rank - 1);
+            movies_.splice(destination, movies_, source);
+        }
+    }
+}
+
+/*
+ * Find movie at given rank
+ *
+ * Params:
+ *  rank <const unsigned int>: index at which to locate the movie
+ *
+ * Returns:
+ *  <std::list<std::string>::iterator>: iterator to movie at rank
+ *
+ */
+str_list::iterator MovieRank::find_at_rank(const int rank) {
     int iterations = 0;
     auto first = movies_.begin();
     while (iterations != rank) {
@@ -95,7 +117,7 @@ str_list::iterator MovieRanker::find_at_rank(const int rank) {
  *  None
  *
  */
-void MovieRanker::display_choice_menu() {
+void MovieRank::display_choice_menu() {
     std::cout << std::string(40, '-') << '\n';
     std::cout << "\nPick an option from the menu below: \n\n";
     std::cout << std::string(40, '-') << "\n\n";
@@ -120,12 +142,12 @@ void MovieRanker::display_choice_menu() {
  *  None
  *
  */
-void MovieRanker::parse_choice(int choice) {
+void MovieRank::parse_choice(int choice) {
 
     switch (choice) {
-        // displays the vending machine menu
+        // displays the movie rank menu
         case 1: {
-            if (!is_empty()) {
+            if (!movies_.empty()) {
                 display_movies_list();
             } else {
                 std::cout << "No movies added yet!\n";
@@ -133,9 +155,9 @@ void MovieRanker::parse_choice(int choice) {
             break;
         }
 
-        // displays the balance in the user's wallet
+        // prompt user to generate a new movie list
         case 2: {
-            clear();
+            movies_.clear();
             std::string movie_title;
             for (int i = 0; i < 5; i++) {
                 std::cout << "Add movie title for rank " << i + 1 << ": ";
@@ -146,15 +168,15 @@ void MovieRanker::parse_choice(int choice) {
             break;
         }
 
-        // prompts user for item column and row to display its price
+        // prompts user to move the rank of a movie up or down
         case 3: {
-            if (!is_empty()) {
-                int rank, down;
+            if (!movies_.empty()) {
+                unsigned int rank, down;
                 std::cout << "Pick rank to swap from: ";
                 std::cin >> rank;
                 std::cout << "0 for up, 1 for down: ";
                 std::cin >> down;
-                swap_rank(rank - 1, down);
+                move_rank(rank - 1, down);
                 std::cout << "Rank: " << rank << " moved "
                           << (down ? "down\n" : "up\n");
                 display_movies_list();
@@ -187,7 +209,7 @@ void MovieRanker::parse_choice(int choice) {
  * Returns:
  *  None
  */
-void MovieRanker::loop() {
+void MovieRank::loop() {
 
     // main loop to prompt for user choices
     int choice = 0;

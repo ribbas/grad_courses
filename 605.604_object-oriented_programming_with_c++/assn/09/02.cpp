@@ -1,5 +1,15 @@
-// constructing lists
+/*
+ * 02.cpp
+ * Sabbir Ahmed
+ * 605.604: Object-Oriented Programming Using C++
+ * Week 9 Assignment #2
+ *
+ * This file contains the main function to drive the State class
+ *
+ */
+
 #include "state.hpp"
+
 #include <iostream>
 #include <set>
 
