@@ -17,7 +17,8 @@ debug: $(EXE)
 	$(CXX) -o $@ $^ $(CFLAGS)
 
 memcheck: $(EXE)
-	valgrind ./$(EXE)
+	valgrind ./01
+	valgrind ./02
 
 clean:
 	@rm -f *.o

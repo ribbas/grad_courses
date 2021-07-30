@@ -20,11 +20,11 @@ public:
     /* ------------------------ PUBLIC METHODS ------------------------ */
     std::string& get_name();
 
-    void set_name(std::string&);
+    void set_name(std::string);
 
     std::string& get_capital_name();
 
-    void set_capital_name(std::string&);
+    void set_capital_name(std::string);
 
 private:
     /* ------------------------ PRIVATE ATTRIBUTES ------------------------ */

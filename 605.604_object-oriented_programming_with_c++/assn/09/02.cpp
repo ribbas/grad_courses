@@ -15,19 +15,21 @@
 
 int main() {
 
-    auto state_set = std::set<State*>();
+    std::set<State*> state_set;
 
+    // insert State pointers into the set
     state_set.insert(new State("Illinois", "Springfield"));
     state_set.insert(new State("Wisconsin", "Madison"));
     state_set.insert(new State("California", "Sacramento"));
     state_set.insert(new State("New York", "Albany"));
     state_set.insert(new State("Alaska", "Juneau"));
 
+    // print out contents of the set
     for (auto s : state_set) {
-        std::cout << "State: " << s->get_name()
-                  << ", Capital: " << s->get_capital_name() << '\n';
+        std::cout << s->get_name() << ", " << s->get_capital_name() << '\n';
     }
 
+    // empty the set
     for (auto s : state_set) {
         delete s;
     }

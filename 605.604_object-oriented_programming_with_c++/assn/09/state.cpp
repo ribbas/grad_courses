@@ -41,13 +41,13 @@ std::string& State::get_name() {
  * Set state name
  *
  * Params:
- *  name <std::string&>: name of state
+ *  name <std::string>: name of state
  *
  * Returns:
  *  None
  *
  */
-void State::set_name(std::string& name) {
+void State::set_name(std::string name) {
     name_ = name;
 }
 
@@ -69,12 +69,12 @@ std::string& State::get_capital_name() {
  * Set capital name
  *
  * Params:
- *  name <std::string&>: name of capital
+ *  name <std::string>: name of capital
  *
  * Returns:
  *  None
  *
  */
-void State::set_capital_name(std::string& capital_name) {
+void State::set_capital_name(std::string capital_name) {
     capital_name_ = capital_name;
 }
