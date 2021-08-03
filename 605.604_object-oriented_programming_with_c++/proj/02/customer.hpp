@@ -21,56 +21,42 @@ public:
 
     bool is_senior();
 
-    int get_state();
-
-    bool is_unknown();
-
     void set_arrival_time(double v) {
         arrival_time_ = v;
-    }
-
-    double get_arrival_time() {
-        return arrival_time_;
     }
 
     void set_check_in_time(double v) {
         check_in_time_ = v;
     }
 
-    double get_check_in_time() {
-        return check_in_time_;
-    }
-
     void set_vaccination_time(double v) {
         vaccination_time_ = v;
+    }
+
+    double get_arrival_time() {
+        return arrival_time_;
+    }
+
+    double get_check_in_time() {
+        return check_in_time_;
     }
 
     double get_vaccination_time() {
         return vaccination_time_;
     }
 
-    double get_total_time() {
-        return arrival_time_ + check_in_time_ + vaccination_time_;
+    double get_wait_time() {
+        return arrival_time_ + check_in_time_;
     }
 
-    bool is_arrived();
-
-    bool is_verified();
-
-    bool is_in_line();
-
-    bool is_vaccinated();
-
-    bool is_exited();
-
-    void progress();
+    // double get_wait_time() {
+    //     return arrival_time_ + check_in_time_ + vaccination_time_;
+    // }
 
 private:
     /* ------------------------ PRIVATE ATTRIBUTES ------------------------ */
     bool is_senior_;
     double arrival_time_, check_in_time_, vaccination_time_;
-    enum states_ { unknown, arrived, verified, in_line, vaccinated, exited };
-    int current_state_;
 };
 
 #endif

@@ -13,8 +13,7 @@
 
 #include <random>
 
-template <class T>
-class RNG {
+template <class T> class RNG {
 
 public:
     RNG(int = 0);

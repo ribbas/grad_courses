@@ -24,30 +24,29 @@ public:
 
     void assign_phase_times() {
 
-        for (int i = 0; i < num_customers_; i++) {
+        double total_arrival_time = arrival_times_rng.get();
+        for (auto c : new_arrivals_array_) {
 
-            auto c = new Customer();
-
-            c->set_arrival_time(arrival_times_rng.get() * MINUTES_PER_HOUR);
+            c->set_arrival_time(total_arrival_time * MINUTES_PER_HOUR);
             c->set_check_in_time(check_in_times_rng.get());
             c->set_vaccination_time(vaccination_times_rng.get() *
                                     MINUTES_PER_HOUR);
-
-            new_arrivals_array_.push_back(c);
+            total_arrival_time += arrival_times_rng.get();
         }
     }
 
     void assign_seniors() {
 
         int percentage_seniors = num_customers_ * 0.60;
-        for (auto c : new_arrivals_array_) {
+        for (int i = 0; i < num_customers_; i++) {
+
+            auto c = new Customer();
 
             if (percentage_seniors) {
                 c->make_senior();
                 percentage_seniors--;
-            } else {
-                break;
             }
+            new_arrivals_array_.push_back(c);
         }
 
         shuffle(new_arrivals_array_.begin(), new_arrivals_array_.end());
@@ -56,19 +55,33 @@ public:
     void queue_new_arrivals() {
 
         int tick = 0;
-        double total_time = 0;
+        double total_time = new_arrivals_array_.front()->get_wait_time();
 
         while (tick < MINUTES_PER_HOUR && !new_arrivals_array_.empty()) {
 
-            send_to_station(tick, total_time);
-            station.send_home(tick, total_time);
+            std::cout << new_arrivals_array_.front() << " arr: "
+                      << new_arrivals_array_.front()->get_arrival_time()
+                      << " chk: "
+                      << new_arrivals_array_.front()->get_check_in_time()
+                      << " vax: "
+                      << new_arrivals_array_.front()->get_vaccination_time()
+                      << " tot: "
+                      << new_arrivals_array_.front()->get_wait_time() << '\n';
+            std::cout << "current time: " << total_time << '\n';
 
-            if (total_time < tick) {
-                total_time += new_arrivals_array_.front()->get_arrival_time() +
-                              new_arrivals_array_.front()->get_check_in_time();
+            // send_to_station(tick, total_time);
+            // station.send_home(tick, total_time);
+
+            if (total_time <= tick && new_arrivals_array_.size()) {
+                std::cout << "vaxxing " << new_arrivals_array_.front() << ' '
+                          << new_arrivals_array_.size() << "\n\n\n";
+                new_arrivals_array_.pop_front();
+                if (!new_arrivals_array_.empty()) {
+                    total_time = new_arrivals_array_.front()->get_wait_time();
+                }
             } else {
-                std::cout << "ticking " << tick << '\n';
                 tick++;
+                std::cout << "ticking " << tick << '\n';
             }
         }
     }
@@ -109,8 +122,8 @@ private:
 int main() {
 
     Simulation sim;
-    sim.assign_phase_times();
     sim.assign_seniors();
+    sim.assign_phase_times();
     sim.queue_new_arrivals();
 
     return 0;

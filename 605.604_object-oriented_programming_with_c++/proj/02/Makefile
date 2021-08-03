@@ -9,7 +9,7 @@ all: $(EXE)
 debug: CXXFLAGS += -DDEBUG -g
 debug: $(EXE)
 
-$(%.o): %.cpp %.hpp
+%.o: %.cpp %.hpp
 	$(CXX) -c -o $@ $< $(CFLAGS)
 
 $(EXE): $(OBJ)
