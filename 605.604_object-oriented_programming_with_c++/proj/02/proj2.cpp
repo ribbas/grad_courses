@@ -1,5 +1,6 @@
 #include "customer.hpp"
 #include "rng.hpp"
+#include "station.hpp"
 
 #include <deque>
 #include <iostream>
@@ -12,7 +13,7 @@ public:
     Simulation()
         : arrival_times_rng(30.0), check_in_times_rng(1.0, 4.0),
           vaccination_times_rng(15.0) {
-        num_customers_ = 100;
+        num_customers_ = 10;
     }
 
     ~Simulation() {
@@ -44,6 +45,8 @@ public:
             if (percentage_seniors) {
                 c->make_senior();
                 percentage_seniors--;
+            } else {
+                break;
             }
         }
 
@@ -53,46 +56,33 @@ public:
     void queue_new_arrivals() {
 
         int tick = 0;
-        double total_arrival_time = 0;
-
-        std::vector<Customer*> waiting_line;
+        double total_time = 0;
 
         while (tick < MINUTES_PER_HOUR && !new_arrivals_array_.empty()) {
 
-            if (total_arrival_time < tick) {
-                total_arrival_time +=
-                    new_arrivals_array_.front()->get_arrival_time();
-                auto c = new_arrivals_array_.front();
-                new_arrivals_array_.pop_front();
-                waiting_line.push_back(c);
-                // std::cout << tick << '\n';
-                std::cout << tick << ' ' << c->is_senior() << ' '
-                          << c->get_arrival_time() << ' '
-                          << c->get_check_in_time() << ' '
-                          << c->get_vaccination_time() << ' '
-                          << total_arrival_time << '\n';
+            send_to_station(tick, total_time);
+            station.send_home(tick, total_time);
+
+            if (total_time < tick) {
+                total_time += new_arrivals_array_.front()->get_arrival_time() +
+                              new_arrivals_array_.front()->get_check_in_time();
             } else {
-                std::cout << "Next\n";
-                send_to_station(waiting_line);
-                waiting_line.clear();
-                // std::vector<Customer*> waiting_line;
-                // auto waiting_line = new std::vector<Customer*>;
+                std::cout << "ticking " << tick << '\n';
                 tick++;
             }
         }
     }
 
-    void send_to_station(std::vector<Customer*> waiting_line) {
-        // for (auto c : waiting_line) {
-        //     std::cout << c->is_senior() << ' ' << c->get_arrival_time() << '
-        //     '
-        //               << c->get_check_in_time() << ' '
-        //               << c->get_vaccination_time() << '\n';
-        // }
+    void send_to_station(int tick, double total_time) {
+        // auto c = new_arrivals_array_.front();
+        if (station.vaccinate(new_arrivals_array_.front(), tick, total_time)) {
+            std::cout << new_arrivals_array_.front() << " sent\n";
+            new_arrivals_array_.pop_front();
+        }
     }
 
     void generate_num_customers() {
-        num_customers_ = 100;
+        num_customers_ = 10;
     }
 
 private:
@@ -101,6 +91,8 @@ private:
     ExponentialDistribution vaccination_times_rng;
 
     std::deque<Customer*> new_arrivals_array_;
+
+    VaccinationStation station;
 
     int num_customers_;
 

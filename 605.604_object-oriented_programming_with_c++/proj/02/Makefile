@@ -1,6 +1,6 @@
 CXX ?= g++
 CFLAGS = -Wall -Wextra -fpermissive -std=c++17 -pedantic
-SRC = rng.cpp customer.cpp proj2.cpp
+SRC = rng.cpp customer.cpp station.cpp proj2.cpp
 OBJ = $(SRC:.cpp=.o)
 EXE = proj2
 
