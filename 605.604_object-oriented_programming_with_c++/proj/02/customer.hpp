@@ -49,9 +49,9 @@ public:
         return arrival_time_ + check_in_time_;
     }
 
-    // double get_wait_time() {
-    //     return arrival_time_ + check_in_time_ + vaccination_time_;
-    // }
+    double get_total_time() {
+        return arrival_time_ + check_in_time_ + vaccination_time_;
+    }
 
 private:
     /* ------------------------ PRIVATE ATTRIBUTES ------------------------ */

@@ -13,7 +13,7 @@ public:
     Simulation()
         : arrival_times_rng(30.0), check_in_times_rng(1.0, 4.0),
           vaccination_times_rng(15.0) {
-        num_customers_ = 10;
+        num_customers_ = 40;
     }
 
     ~Simulation() {
@@ -55,7 +55,7 @@ public:
     void queue_new_arrivals() {
 
         int tick = 0;
-        double total_time = new_arrivals_array_.front()->get_wait_time();
+        double wait_time = new_arrivals_array_.front()->get_wait_time();
 
         while (tick < MINUTES_PER_HOUR && !new_arrivals_array_.empty()) {
 
@@ -65,20 +65,21 @@ public:
                       << new_arrivals_array_.front()->get_check_in_time()
                       << " vax: "
                       << new_arrivals_array_.front()->get_vaccination_time()
+                      << " wait: "
+                      << new_arrivals_array_.front()->get_wait_time()
                       << " tot: "
-                      << new_arrivals_array_.front()->get_wait_time() << '\n';
-            std::cout << "current time: " << total_time << '\n';
+                      << new_arrivals_array_.front()->get_total_time() << '\n';
 
-            // send_to_station(tick, total_time);
-            // station.send_home(tick, total_time);
+            station.send_home(tick);
 
-            if (total_time <= tick && new_arrivals_array_.size()) {
-                std::cout << "vaxxing " << new_arrivals_array_.front() << ' '
-                          << new_arrivals_array_.size() << "\n\n\n";
-                new_arrivals_array_.pop_front();
+            if (wait_time <= tick && new_arrivals_array_.size() &&
+                send_to_station(tick)) {
+
+                // if there are still customers left, keep looping
                 if (!new_arrivals_array_.empty()) {
-                    total_time = new_arrivals_array_.front()->get_wait_time();
+                    wait_time = new_arrivals_array_.front()->get_wait_time();
                 }
+
             } else {
                 tick++;
                 std::cout << "ticking " << tick << '\n';
@@ -86,11 +87,18 @@ public:
         }
     }
 
-    void send_to_station(int tick, double total_time) {
+    bool send_to_station(int tick) {
         // auto c = new_arrivals_array_.front();
-        if (station.vaccinate(new_arrivals_array_.front(), tick, total_time)) {
-            std::cout << new_arrivals_array_.front() << " sent\n";
+        if (station.vaccinate(new_arrivals_array_.front())) {
+            std::cout << "vaxxing " << new_arrivals_array_.front() << " at "
+                      << tick << "\n\n\n";
+
+            // std::cout << new_arrivals_array_.front() << " sent\n";
             new_arrivals_array_.pop_front();
+            return true;
+        } else {
+            std::cout << "can't vax " << new_arrivals_array_.front() << "yet\n";
+            return false;
         }
     }
 
@@ -104,6 +112,8 @@ private:
     ExponentialDistribution vaccination_times_rng;
 
     std::deque<Customer*> new_arrivals_array_;
+
+    std::vector<Customer*> waiting_line_;
 
     VaccinationStation station;
 

@@ -6,54 +6,43 @@
 
 #include "customer.hpp"
 
-const unsigned int NUM_STATIONS = 3;
+const int NUM_STATIONS = 3;
 
 class VaccinationStation {
 public:
-    VaccinationStation() : capacity_(NUM_STATIONS) {
+    VaccinationStation() {
         for (int i = 0; i < NUM_STATIONS; i++) {
             customers_in_stations_[i] = nullptr;
         }
     }
 
-    bool vaccinate(Customer* customer, int tick, double total_time) {
-        if (capacity_) {
-            customers_in_stations_[NUM_STATIONS - capacity_] = customer;
-            std::cout << "putting in station " << NUM_STATIONS - capacity_
-                      << ' ' << customers_in_stations_[NUM_STATIONS - capacity_]
-                      << " capacity " << capacity_ << '\n';
-            capacity_--;
-            return true;
+    bool vaccinate(Customer* customer) {
+        for (int i = 0; i < NUM_STATIONS; i++) {
+            std::cout << "checking station " << i << '\n';
+            if (!customers_in_stations_[i]) {
+                customers_in_stations_[i] = customer;
+                std::cout << "putting " << customers_in_stations_[i]
+                          << " in station " << i << '\n';
+                return true;
+            }
         }
 
         return false;
     }
 
-    bool is_empty() {
-        return capacity_;
+    bool check_station_time(int station_num, int tick) {
+        return customers_in_stations_[station_num]->get_total_time() < tick;
     }
 
-    bool check_station_time(int station_num, int tick, double total_time) {
-        std::cout << customers_in_stations_[station_num] << ' '
-                  << customers_in_stations_[station_num]->get_wait_time() << ' '
-                  << total_time << ' ' << tick << '\n';
-        return (customers_in_stations_[station_num]->get_wait_time()) < tick;
-    }
+    void send_home(int tick) {
 
-    void send_home(int tick, double total_time) {
-
-        if (capacity_ != NUM_STATIONS) {
-            for (int i = 0; i < NUM_STATIONS; i++) {
-                if (customers_in_stations_[i] &&
-                    check_station_time(i, tick, total_time)) {
-                    std::cout
-                        << "found someone " << customers_in_stations_[i] << ' '
-                        << customers_in_stations_[i]->get_wait_time() << ' '
-                        << tick << '\n';
-                    delete customers_in_stations_[i];
-                    customers_in_stations_[i] = nullptr;
-                    capacity_++;
-                }
+        for (int i = 0; i < NUM_STATIONS; i++) {
+            if (customers_in_stations_[i] && check_station_time(i, tick)) {
+                std::cout << "found someone " << customers_in_stations_[i]
+                          << ' ' << customers_in_stations_[i]->get_total_time()
+                          << ' ' << tick << '\n';
+                delete customers_in_stations_[i];
+                customers_in_stations_[i] = nullptr;
             }
         }
     }
