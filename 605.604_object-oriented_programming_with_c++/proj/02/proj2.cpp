@@ -2,6 +2,7 @@
 #include "rng.hpp"
 #include "station.hpp"
 
+#include <algorithm>
 #include <deque>
 #include <iostream>
 #include <vector>
@@ -19,6 +20,7 @@ public:
     ~Simulation() {
         for (auto i : new_arrivals_array_) {
             delete i;
+            i = nullptr;
         }
     }
 
@@ -55,6 +57,8 @@ public:
     void queue_new_arrivals() {
 
         int tick = 0;
+        // std::sort(new_arrivals_array_.begin(), new_arrivals_array_.end(),
+        //           compare_customers);
         double wait_time = new_arrivals_array_.front()->get_wait_time();
 
         while (tick < MINUTES_PER_HOUR && !new_arrivals_array_.empty()) {
@@ -88,16 +92,16 @@ public:
     }
 
     bool send_to_station(int tick) {
-        // auto c = new_arrivals_array_.front();
         if (station.vaccinate(new_arrivals_array_.front())) {
-            std::cout << "vaxxing " << new_arrivals_array_.front() << " at "
-                      << tick << "\n\n\n";
+            std::cout << "vaxxing " << new_arrivals_array_.front() << ' '
+                      << new_arrivals_array_.begin()[1] << " at " << tick
+                      << "\n\n\n";
 
-            // std::cout << new_arrivals_array_.front() << " sent\n";
             new_arrivals_array_.pop_front();
             return true;
         } else {
-            std::cout << "can't vax " << new_arrivals_array_.front() << "yet\n";
+            std::cout << "can't vax " << new_arrivals_array_.front()
+                      << " yet\n";
             return false;
         }
     }
@@ -118,6 +122,10 @@ private:
     VaccinationStation station;
 
     int num_customers_;
+
+    static bool compare_customers(Customer* c1, Customer* c2) {
+        return c1->get_wait_time() < c2->get_wait_time();
+    }
 
     void shuffle(std::deque<Customer*>::iterator first,
                  std::deque<Customer*>::iterator last) {

@@ -11,7 +11,12 @@ const int NUM_STATIONS = 3;
 class VaccinationStation {
 public:
     VaccinationStation() {
+        customers_in_stations_.fill(nullptr);
+    }
+
+    ~VaccinationStation() {
         for (int i = 0; i < NUM_STATIONS; i++) {
+            delete customers_in_stations_[i];
             customers_in_stations_[i] = nullptr;
         }
     }
