@@ -22,6 +22,12 @@ public:
             delete i;
             i = nullptr;
         }
+
+        std::cout << "deleting waiting line\n";
+        for (auto j : waiting_line_) {
+            std::cout << j << '\n';
+            delete j;
+        }
     }
 
     void assign_phase_times() {
@@ -76,12 +82,17 @@ public:
 
             station.send_home(tick);
 
-            if (wait_time <= tick && new_arrivals_array_.size() &&
-                send_to_station(tick)) {
+            if (wait_time <= tick && new_arrivals_array_.size()) {
 
-                // if there are still customers left, keep looping
-                if (!new_arrivals_array_.empty()) {
-                    wait_time = new_arrivals_array_.front()->get_wait_time();
+                if (add_to_line(tick)) {
+
+                    // if there are still customers left, keep looping
+                    if (!new_arrivals_array_.empty()) {
+                        wait_time =
+                            new_arrivals_array_.front()->get_wait_time();
+                    }
+                } else {
+                    tick++;
                 }
 
             } else {
@@ -92,16 +103,57 @@ public:
     }
 
     bool send_to_station(int tick) {
-        if (station.vaccinate(new_arrivals_array_.front())) {
-            std::cout << "vaxxing " << new_arrivals_array_.front() << ' '
-                      << new_arrivals_array_.begin()[1] << " at " << tick
-                      << "\n\n\n";
 
-            new_arrivals_array_.pop_front();
-            return true;
+        Customer* first = waiting_line_.front();
+        Customer* last = waiting_line_.begin()[1];
+        if (!first->is_senior() && last->is_senior()) {
+            std::cout << "in line found front" << last << " at " << tick
+                      << " with " << last->is_senior() << '\n';
+            station.vaccinate(last);
+            waiting_line_.pop_back();
         } else {
+            std::cout << "in line found last" << first << " at " << tick
+                      << " with " << first->is_senior() << '\n';
+            station.vaccinate(first);
+            waiting_line_.pop_front();
+        }
+
+        return true;
+    }
+
+    bool add_to_line(int tick) {
+
+        if (station.find_available_station() != -1) {
+
+            if (waiting_line_.size() > 1) {
+                send_to_station(tick);
+                // std::cout << "vaxxing from line" << waiting_line_.back()
+                //           << " at " << tick << "\n\n\n";
+                // station.vaccinate(waiting_line_.back());
+                // waiting_line_.pop_back();
+                // } else {
+                // station.vaccinate(new_arrivals_array_.front());
+            } else {
+
+                std::cout << "vaxxing " << new_arrivals_array_.front() << " at "
+                          << tick << "\n\n\n";
+                station.vaccinate(new_arrivals_array_.front());
+
+                new_arrivals_array_.pop_front();
+            }
+            return true;
+
+        } else {
+
+            waiting_line_.insert(
+                waiting_line_.end(),
+                std::make_move_iterator(new_arrivals_array_.begin()),
+                std::make_move_iterator(new_arrivals_array_.begin() + 1));
+            // std::cout << "moved\n";
             std::cout << "can't vax " << new_arrivals_array_.front()
                       << " yet\n";
+            new_arrivals_array_.pop_front();
+
             return false;
         }
     }
@@ -117,7 +169,7 @@ private:
 
     std::deque<Customer*> new_arrivals_array_;
 
-    std::vector<Customer*> waiting_line_;
+    std::deque<Customer*> waiting_line_;
 
     VaccinationStation station;
 

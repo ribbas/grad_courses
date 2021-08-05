@@ -21,18 +21,33 @@ public:
         }
     }
 
-    bool vaccinate(Customer* customer) {
+    void vaccinate(Customer* customer) {
+        int available_station_num = find_available_station();
+        if (available_station_num != -1) {
+            customers_in_stations_[available_station_num] = customer;
+            std::cout << "putting "
+                      << customers_in_stations_[available_station_num]
+                      << " in station " << available_station_num << '\n';
+        }
+        // for (int i = 0; i < NUM_STATIONS; i++) {
+        //     std::cout << "checking station " << i << '\n';
+        //     if (!customers_in_stations_[i]) {
+        //         return true;
+        //     }
+        // }
+
+        // return false;
+    }
+
+    int find_available_station() {
         for (int i = 0; i < NUM_STATIONS; i++) {
             std::cout << "checking station " << i << '\n';
             if (!customers_in_stations_[i]) {
-                customers_in_stations_[i] = customer;
-                std::cout << "putting " << customers_in_stations_[i]
-                          << " in station " << i << '\n';
-                return true;
+                return i;
             }
         }
 
-        return false;
+        return -1;
     }
 
     bool check_station_time(int station_num, int tick) {
