@@ -1,10 +1,8 @@
 #ifndef STATION_HPP
 #define STATION_HPP
 
-#include <array>
-#include <iostream>
-
 #include "customer.hpp"
+#include <array>
 
 const int NUM_STATIONS = 3;
 
@@ -25,23 +23,11 @@ public:
         int available_station_num = find_available_station();
         if (available_station_num != -1) {
             customers_in_stations_[available_station_num] = customer;
-            std::cout << "putting "
-                      << customers_in_stations_[available_station_num]
-                      << " in station " << available_station_num << '\n';
         }
-        // for (int i = 0; i < NUM_STATIONS; i++) {
-        //     std::cout << "checking station " << i << '\n';
-        //     if (!customers_in_stations_[i]) {
-        //         return true;
-        //     }
-        // }
-
-        // return false;
     }
 
     int find_available_station() {
         for (int i = 0; i < NUM_STATIONS; i++) {
-            std::cout << "checking station " << i << '\n';
             if (!customers_in_stations_[i]) {
                 return i;
             }
@@ -58,9 +44,6 @@ public:
 
         for (int i = 0; i < NUM_STATIONS; i++) {
             if (customers_in_stations_[i] && check_station_time(i, tick)) {
-                std::cout << "found someone " << customers_in_stations_[i]
-                          << ' ' << customers_in_stations_[i]->get_total_time()
-                          << ' ' << tick << '\n';
                 delete customers_in_stations_[i];
                 customers_in_stations_[i] = nullptr;
             }

@@ -21,37 +21,21 @@ public:
 
     bool is_senior();
 
-    void set_arrival_time(double v) {
-        arrival_time_ = v;
-    }
+    void set_arrival_time(double);
 
-    void set_check_in_time(double v) {
-        check_in_time_ = v;
-    }
+    void set_check_in_time(double);
 
-    void set_vaccination_time(double v) {
-        vaccination_time_ = v;
-    }
+    void set_vaccination_time(double);
 
-    double get_arrival_time() {
-        return arrival_time_;
-    }
+    double get_arrival_time();
 
-    double get_check_in_time() {
-        return check_in_time_;
-    }
+    double get_check_in_time();
 
-    double get_vaccination_time() {
-        return vaccination_time_;
-    }
+    double get_vaccination_time();
 
-    double get_wait_time() {
-        return arrival_time_ + check_in_time_;
-    }
+    double get_wait_time();
 
-    double get_total_time() {
-        return arrival_time_ + check_in_time_ + vaccination_time_;
-    }
+    double get_total_time();
 
 private:
     /* ------------------------ PRIVATE ATTRIBUTES ------------------------ */
