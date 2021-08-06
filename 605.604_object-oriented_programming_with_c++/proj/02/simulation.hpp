@@ -39,9 +39,11 @@ private:
 
     int days_;
 
+    int total_customers_served_;
+
     void generate_num_customers();
 
-    bool add_to_line(int);
+    bool add_to_line();
 
     static bool customer_comparator(Customer*, Customer*);
 

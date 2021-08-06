@@ -8,51 +8,23 @@ const int NUM_STATIONS = 3;
 
 class VaccinationStation {
 public:
-    VaccinationStation() {
-        customers_in_stations_.fill(nullptr);
-    }
+    VaccinationStation();
 
-    ~VaccinationStation() {
-        for (int i = 0; i < NUM_STATIONS; i++) {
-            delete customers_in_stations_[i];
-            customers_in_stations_[i] = nullptr;
-        }
-    }
+    ~VaccinationStation();
 
-    void vaccinate(Customer* customer) {
-        int available_station_num = find_available_station();
-        if (available_station_num != -1) {
-            customers_in_stations_[available_station_num] = customer;
-        }
-    }
+    void reset();
 
-    int find_available_station() {
-        for (int i = 0; i < NUM_STATIONS; i++) {
-            if (!customers_in_stations_[i]) {
-                return i;
-            }
-        }
+    void vaccinate(Customer*);
 
-        return -1;
-    }
+    int find_available_station();
 
-    bool check_station_time(int station_num, int tick) {
-        return customers_in_stations_[station_num]->get_total_time() < tick;
-    }
-
-    void send_home(int tick) {
-
-        for (int i = 0; i < NUM_STATIONS; i++) {
-            if (customers_in_stations_[i] && check_station_time(i, tick)) {
-                delete customers_in_stations_[i];
-                customers_in_stations_[i] = nullptr;
-            }
-        }
-    }
+    void poll(int);
 
 private:
     std::array<Customer*, NUM_STATIONS> customers_in_stations_;
     int capacity_;
+
+    bool check_station_time(int, int);
 };
 
 #endif

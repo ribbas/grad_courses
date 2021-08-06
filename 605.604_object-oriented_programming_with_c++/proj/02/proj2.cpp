@@ -3,9 +3,7 @@
 int main() {
 
     Simulation sim;
-    sim.simulate_days(1);
-    // sim.assign_phase_times();
-    // sim.queue_new_arrivals();
+    sim.simulate_days(5);
 
     return 0;
 }
