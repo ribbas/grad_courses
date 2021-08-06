@@ -14,32 +14,30 @@ const float SENIOR_PERCENTAGE = 0.60;
 
 class Simulation {
 public:
-    Simulation();
+    Simulation(int);
 
     ~Simulation();
+
+    void simulate_days();
+
+    void get_statistics();
+
+private:
+    ExponentialDistribution arrival_times_rng_;
+    UniformDistribution check_in_times_rng_;
+    ExponentialDistribution vaccination_times_rng_;
+    std::deque<Customer*> new_arrivals_array_;
+    VaccinationStation station_;
+
+    int num_customers_, num_days_;
+    int total_customers_served_;
+    double ave_check_in_time_, ave_vaccination_time_;
 
     void assign_phase_times();
 
     void assign_seniors();
 
     void queue_new_arrivals();
-
-    void simulate_days(int);
-
-private:
-    ExponentialDistribution arrival_times_rng_;
-    UniformDistribution check_in_times_rng_;
-    ExponentialDistribution vaccination_times_rng_;
-
-    std::deque<Customer*> new_arrivals_array_;
-
-    VaccinationStation station_;
-
-    int num_customers_;
-
-    int days_;
-
-    int total_customers_served_;
 
     void generate_num_customers();
 

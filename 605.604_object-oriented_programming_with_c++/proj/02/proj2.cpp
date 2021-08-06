@@ -2,8 +2,9 @@
 
 int main() {
 
-    Simulation sim;
-    sim.simulate_days(5);
+    Simulation sim(5);
+    sim.simulate_days();
+    sim.get_statistics();
 
     return 0;
 }

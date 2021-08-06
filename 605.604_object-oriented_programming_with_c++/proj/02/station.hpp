@@ -14,7 +14,7 @@ public:
 
     void reset();
 
-    void vaccinate(Customer*);
+    void vaccinate(Customer*, int);
 
     int find_available_station();
 

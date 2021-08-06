@@ -15,11 +15,9 @@ void VaccinationStation::reset() {
     }
 }
 
-void VaccinationStation::vaccinate(Customer* customer) {
-    int available_station_num = find_available_station();
-    if (available_station_num != -1) {
-        customers_in_stations_[available_station_num] = customer;
-    }
+void VaccinationStation::vaccinate(Customer* customer,
+                                   int available_station_num) {
+    customers_in_stations_[available_station_num] = customer;
 }
 
 int VaccinationStation::find_available_station() {
