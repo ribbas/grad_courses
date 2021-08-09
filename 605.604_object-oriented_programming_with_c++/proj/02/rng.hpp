@@ -18,18 +18,15 @@ template <class T>
 class RNG {
 
 public:
-    /* ---------- CONSTRUCTORS ---------- */
-    RNG(int = 0);
-
-    /* ---------- DESTRUCTORS ---------- */
-    ~RNG() {}
-
     /* ---------- PUBLIC METHODS ---------- */
     void reseed(int);
 
     double get();
 
 protected:
+    /* ---------- CONSTRUCTORS ---------- */
+    RNG(int = 0);
+
     T distribution_;
     double random_num_;
 
