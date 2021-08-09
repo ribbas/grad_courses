@@ -1,19 +1,19 @@
 CXX ?= g++
-CFLAGS = -Wall -Wextra -fpermissive -std=c++17 -pedantic
+CXXFLAGS = -Wall -Wextra -fpermissive -std=c++17 -pedantic
 SRC = rng.cpp customer.cpp station.cpp simulation.cpp proj2.cpp
 OBJ = $(SRC:.cpp=.o)
 EXE = proj2
 
 all: $(EXE)
 
-debug: CXXFLAGS += -DDEBUG -g
-debug: $(EXE)
+verbose: CXXFLAGS += -DVERBOSE -g
+verbose: $(EXE)
 
 %.o: %.cpp %.hpp
-	$(CXX) -c -o $@ $< $(CFLAGS)
+	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
 $(EXE): $(OBJ)
-	$(CXX) -o $@ $^ $(CFLAGS)
+	$(CXX) -o $@ $^ $(CXXFLAGS)
 
 memcheck: $(EXE)
 	valgrind ./$(EXE)

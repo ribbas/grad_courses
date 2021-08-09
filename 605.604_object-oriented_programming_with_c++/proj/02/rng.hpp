@@ -4,7 +4,8 @@
  * 605.604: Object-Oriented Programming Using C++
  * Mini-project 2
  *
- * This file contains the function declarations for the Customer class.
+ * This file contains the function declarations for the RNG base class and its
+ * derived subclasses, ExponentialDistribution and UniformDistribution.
  *
  */
 
@@ -13,13 +14,17 @@
 
 #include <random>
 
-template <class T> class RNG {
+template <class T>
+class RNG {
 
 public:
+    /* ---------- CONSTRUCTORS ---------- */
     RNG(int = 0);
 
+    /* ---------- DESTRUCTORS ---------- */
     ~RNG() {}
 
+    /* ---------- PUBLIC METHODS ---------- */
     void reseed(int);
 
     double get();
@@ -35,11 +40,13 @@ private:
 class ExponentialDistribution
     : public RNG<std::exponential_distribution<double>> {
 public:
+    /* ---------- CONSTRUCTORS ---------- */
     ExponentialDistribution(double, int = 0);
 };
 
 class UniformDistribution : public RNG<std::uniform_real_distribution<double>> {
 public:
+    /* ---------- CONSTRUCTORS ---------- */
     UniformDistribution(double, double, int = 0);
 };
 

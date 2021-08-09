@@ -4,7 +4,7 @@
 #include "customer.hpp"
 #include <array>
 
-const int NUM_STATIONS = 3;
+const unsigned int NUM_STATIONS = 3;
 
 class VaccinationStation {
 public:
@@ -21,10 +21,10 @@ public:
     void poll(int);
 
 private:
-    std::array<Customer*, NUM_STATIONS> customers_in_stations_;
-    int capacity_;
+    bool is_customer_done(int, int);
 
-    bool check_station_time(int, int);
+    std::array<Customer*, NUM_STATIONS> stations_;
+    int capacity_;
 };
 
 #endif

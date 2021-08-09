@@ -4,12 +4,14 @@
 #include "customer.hpp"
 #include "rng.hpp"
 #include "station.hpp"
+
 #include <algorithm>
 #include <deque>
 #include <iostream>
 
-const double MINUTES_PER_HOUR = 60.0;
-const int HOURS_OF_OPERATION = 12;
+const unsigned int MINUTES_PER_HOUR = 60;
+const unsigned int HOURS_OF_OPERATION = 12;
+const unsigned int MAX_CUSTOMERS = 500;
 const float SENIOR_PERCENTAGE = 0.60;
 
 class Simulation {
@@ -23,30 +25,30 @@ public:
     void get_statistics();
 
 private:
-    ExponentialDistribution arrival_times_rng_;
-    UniformDistribution check_in_times_rng_;
-    ExponentialDistribution vaccination_times_rng_;
-    std::deque<Customer*> new_arrivals_array_;
-    VaccinationStation station_;
-
-    int num_customers_, num_days_;
-    int total_customers_served_;
-    double ave_check_in_time_, ave_vaccination_time_;
-
     void assign_phase_times();
 
     void assign_seniors();
 
-    void queue_new_arrivals();
+    void simulate_queue();
 
     void generate_num_customers();
 
-    bool add_to_line();
+    bool add_to_line(int);
 
-    static bool customer_comparator(Customer*, Customer*);
+    void sort_customers();
 
-    void shuffle(std::deque<Customer*>::iterator,
-                 std::deque<Customer*>::iterator);
+    void shuffle_customers();
+
+    ExponentialDistribution arrival_times_rng_;
+    UniformDistribution check_in_times_rng_;
+    ExponentialDistribution vaccination_times_rng_;
+    std::deque<Customer*> customers_;
+    VaccinationStation station_;
+
+    int num_days_;
+    int total_customers_served_, customers_served_today_;
+    double ave_check_queue_time_, ave_vax_queue_time_, ave_total_time_,
+        check_queue_time_today_, vax_queue_time_today_, total_time_today_;
 };
 
 #endif
