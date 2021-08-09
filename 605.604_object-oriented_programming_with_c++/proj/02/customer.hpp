@@ -7,6 +7,7 @@
  * This file contains the function declarations for the Customer class.
  *
  */
+
 #ifndef CUSTOMER_HPP
 #define CUSTOMER_HPP
 

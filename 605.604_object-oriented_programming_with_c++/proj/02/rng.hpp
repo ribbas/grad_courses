@@ -8,6 +8,7 @@
  * derived subclasses, ExponentialDistribution and UniformDistribution.
  *
  */
+
 #ifndef RNG_HPP
 #define RNG_HPP
 

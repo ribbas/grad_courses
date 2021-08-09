@@ -1,5 +1,5 @@
 /*
- * customer.hpp
+ * customer.cpp
  * Sabbir Ahmed
  * 605.604: Object-Oriented Programming Using C++
  * Mini-project 2
@@ -7,6 +7,7 @@
  * This file contains the implementation for the Customer class.
  *
  */
+
 #include "customer.hpp"
 #include <iomanip>
 

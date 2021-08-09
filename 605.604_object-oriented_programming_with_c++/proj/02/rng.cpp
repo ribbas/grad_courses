@@ -51,6 +51,7 @@ void RNG<T>::reseed(int seed) {
  * Returns:
  *  <double>: generated random double
  */
+
 template <class T>
 double RNG<T>::get() {
     return distribution_(generator_);
