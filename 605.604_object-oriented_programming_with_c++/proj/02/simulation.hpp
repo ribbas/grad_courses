@@ -1,3 +1,13 @@
+/*
+ * simulation.hpp
+ * Sabbir Ahmed
+ * 605.604: Object-Oriented Programming Using C++
+ * Mini-project 2
+ *
+ * This file contains the declarations for the Simulation class.
+ *
+ */
+
 #ifndef SIMULATION_HPP
 #define SIMULATION_HPP
 
@@ -16,15 +26,19 @@ const float SENIOR_PERCENTAGE = 0.60;
 
 class Simulation {
 public:
-    Simulation(int);
+    /* ---------- CONSTRUCTORS ---------- */
+    Simulation(int, int = 0);
 
+    /* ---------- DESTRUCTORS ---------- */
     ~Simulation();
 
+    /* ---------- PUBLIC METHODS ---------- */
     void simulate_days();
 
     void get_statistics();
 
 private:
+    /* ---------- PRIVATE METHODS ---------- */
     void assign_phase_times();
 
     void assign_seniors();
@@ -39,6 +53,7 @@ private:
 
     void shuffle_customers();
 
+    /* ---------- MEMBER ATTRIBUTES ---------- */
     ExponentialDistribution arrival_times_rng_;
     UniformDistribution check_in_times_rng_;
     ExponentialDistribution vaccination_times_rng_;
