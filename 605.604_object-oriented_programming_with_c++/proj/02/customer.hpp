@@ -7,7 +7,6 @@
  * This file contains the function declarations for the Customer class.
  *
  */
-
 #ifndef CUSTOMER_HPP
 #define CUSTOMER_HPP
 
@@ -15,19 +14,20 @@
 
 class Customer {
 public:
-    /* ------------------------ CONSTRUCTORS ------------------------ */
+    /* ---------- CONSTRUCTORS ---------- */
     Customer();
 
-    /* ------------------------ PUBLIC METHODS ------------------------ */
+    /* ---------- PUBLIC SETTERS ---------- */
     void make_senior();
-
-    bool is_senior() const;
 
     void set_arrival_time(double);
 
     void set_check_in_time(double);
 
     void set_vaccination_time(double);
+
+    /* ---------- PUBLIC GETTERS ---------- */
+    bool is_senior() const;
 
     double get_arrival_time() const;
 
@@ -39,11 +39,13 @@ public:
 
     double get_total_time() const;
 
+    /* ---------- OVERLOADED OPERATORS ---------- */
     friend std::ostream& operator<<(std::ostream&, const Customer&);
 
 private:
-    /* ------------------------ PRIVATE ATTRIBUTES ------------------------ */
-    static unsigned int customer_id_gen_;
+    /* ---------- MEMBER ATTRIBUTES ---------- */
+    static unsigned int
+        customer_id_gen_; // to assign a unique ID to every Customer object
     int customer_id_;
     bool is_senior_;
     double arrival_time_, check_in_time_, vaccination_time_;
