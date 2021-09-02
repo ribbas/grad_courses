@@ -21,9 +21,13 @@ Although it may appear that the underlying implementation is simple (i.e. `o.is_
 
 Since the expected behavior of the method would be to act as a list terminator, there would be a requirement for an additional NullObject implementation for a list that holds `Obj2` classes. In the case of the NullObject classes being standalone classes, it is possible to implement a single NullObject class that abstracts the base class comparisons with templated methods. In the case of the NullObject classes being inheritances, there would be an additional class implementation for every base class. Regardless of the method of implementation of the NullObject, this would introduce some code bloat especially for a class that is intended to "do nothing".
 
+Therefore, I do not think using the NullObject as a list terminator is appropriate.
+
 ## 2
 
 The pattern description states circumstances in which NullObject should be applied. What behaviors would not benefit from representation as a NullObject?
+
+A case where adding a null object would not be beneficial would be during error handling. The null object is not very useful if it simply returns nothing in a method where the real object would have returned an error with useful information. Another behavior that will not be helpful would be if the null object was too complex to yield identical results due to external factors such as randomness, time, system architectures, etc. The null object is intended to be simple, but in this case would not be reusable.
 
 ## 3
 
