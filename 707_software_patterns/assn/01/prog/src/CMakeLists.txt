@@ -5,36 +5,38 @@
 # This implementation builds the regex source directly into the application
 # instead of linking a separate libboost_regex.so.
 #
-cmake_minimum_required (VERSION 3.12)
-project (Patterns)
+cmake_minimum_required(VERSION 3.12)
+project(Patterns)
 
-add_definitions(-DBOOST_REGEX_STANDALONE)
-include_directories(regexpp5)
-add_executable(Patterns Test.cpp)
-target_sources(Patterns PUBLIC
-	Attr.cpp
-	Attr.hpp
-	Document.cpp
-	Document.hpp
-	Element.cpp
-	Element.hpp
-	NamedNodeMap.cpp
-	NamedNodeMap.hpp
-	Node.cpp
-	Node.hpp
-	NodeList.hpp
-	Test.cpp
-	Text.cpp
-	Text.hpp
-	XMLSerializer.cpp
-	XMLSerializer.hpp
-	XMLTokenizer.cpp
-	XMLTokenizer.hpp
-	XMLValidator.cpp
-	XMLValidator.hpp
-	regexpp5/libs/regex/src/posix_api.cpp
-	regexpp5/libs/regex/src/regex.cpp
-	regexpp5/libs/regex/src/regex_debug.cpp
-	regexpp5/libs/regex/src/static_mutex.cpp
-	regexpp5/libs/regex/src/wide_posix_api.cpp
-)
+FIND_PACKAGE(Boost COMPONENTS regex)
+
+if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS})
+
+	add_executable(Patterns Test.cpp)
+	target_sources(Patterns PUBLIC
+		Attr.cpp
+		Attr.hpp
+		Document.cpp
+		Document.hpp
+		Element.cpp
+		Element.hpp
+		NamedNodeMap.cpp
+		NamedNodeMap.hpp
+		Node.cpp
+		Node.hpp
+		NodeList.hpp
+		Test.cpp
+		Text.cpp
+		Text.hpp
+		XMLSerializer.cpp
+		XMLSerializer.hpp
+		XMLTokenizer.cpp
+		XMLTokenizer.hpp
+		XMLValidator.cpp
+		XMLValidator.hpp
+	)
+	
+	target_link_libraries(Patterns Boost::regex)
+endif()
+
