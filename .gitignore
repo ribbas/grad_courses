@@ -2,3 +2,4 @@
 *.log
 .ipynb_checkpoints/
 *.fdb_latexmk
+.build/

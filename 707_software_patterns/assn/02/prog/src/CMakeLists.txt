@@ -10,31 +10,31 @@ project (Patterns)
 
 add_definitions(-DBOOST_REGEX_STANDALONE)
 include_directories(regexpp5)
-add_executable(Patterns Test.cpp)
+add_executable(Patterns Test.C)
 target_sources(Patterns PUBLIC
-	Attr.cpp
-	Attr.hpp
-	Document.cpp
-	Document.hpp
-	Element.cpp
-	Element.hpp
-	NamedNodeMap.cpp
-	NamedNodeMap.hpp
-	Node.cpp
-	Node.hpp
-	NodeList.hpp
-	Test.cpp
-	Text.cpp
-	Text.hpp
-	XMLSerializer.cpp
-	XMLSerializer.hpp
-	XMLTokenizer.cpp
-	XMLTokenizer.hpp
-	XMLValidator.cpp
-	XMLValidator.hpp
+	Attr.C
+	Attr.H
+	Document.C
+	Document.H
+	Element.C
+	Element.H
+	NamedNodeMap.C
+	NamedNodeMap.H
+	Node.C
+	Node.H
+	NodeList.H
+	Test.C
+	Text.C
+	Text.H
+	XMLSerializer.C
+	XMLSerializer.H
+	XMLTokenizer.C
+	XMLTokenizer.H
+	XMLValidator.C
+	XMLValidator.H
 	regexpp5/libs/regex/src/posix_api.cpp
 	regexpp5/libs/regex/src/regex.cpp
 	regexpp5/libs/regex/src/regex_debug.cpp
 	regexpp5/libs/regex/src/static_mutex.cpp
 	regexpp5/libs/regex/src/wide_posix_api.cpp
-)
+	)

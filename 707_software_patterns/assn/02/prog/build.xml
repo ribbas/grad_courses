@@ -1,0 +1,15 @@
+<project default="compile" basedir=".">
+
+	<property name="src" value="src"/>
+	<property name="dest" value="classes"/>
+
+	<target name="compile" description="Compiles the source files">
+		<javac srcdir="${src}" destdir="${dest}">
+			<!-- <classpath>
+				<pathelement location="${dest}" />
+				<path refid="libs-classpath"/>
+				<path refid="libs-build-classpath"/>
+			</classpath> -->
+		</javac>
+	</target>
+</project>
