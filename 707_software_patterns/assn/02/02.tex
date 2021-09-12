@@ -1,0 +1,43 @@
+\documentclass{article}
+\usepackage[margin=1.0in]{geometry}
+
+\title{Assignment 02}
+\author{Sabbir Ahmed}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{enumerate}
+    \item Add Factory Methods as necessary to create DOM or other objects.
+    \item The XMLSerializer class implements two different serialization algorithms. There are three opportunities for applying Strategy to this class: extracting the necessary data from each node in the DOM tree, inserting white space according to the desired output format, and selecting and initializing the output stream. Implement at least the first of these and one of the others. Two of the Strategy implementations do not require the creation of any classes not already present in the framework.
+    \item The XMLValidator class that allows the parser to determine whether or not an input document follows some particular structure, i.e., what kinds of elements are permissible, what elements may contain other elements and which kind, and what attributes are permitted in each element. (In a proper XML implementation this is Schema or DTD validation.) Decorate the DOM classes to distribute the algorithm among them.
+          \begin{enumerate}
+              \item Consider following Kerievsky’s refactoring “Move Embellishment to Decorator” where the validation process is the embellishment to be moved.\\
+                    http://www.industriallogic.com/xp/refactoring/embellishmentToDecorator.html
+          \end{enumerate}
+\end{enumerate}
+
+Consider these questions when thinking about how to implement the assignment.
+\begin{enumerate}
+    \item Factory Method:
+          \begin{enumerate}
+              \item What classes need to be created?
+              \item Is there an existing class that can take on the role of Creator or ConcreteCreator?
+          \end{enumerate}
+    \item Strategy:
+          \begin{enumerate}
+              \item What behavior in the current design is chosen based on the type that the behavior applies to?
+              \item Can this behavior be distributed to the classes of that type?
+              \item What class uses that behavior in the role of Context?
+          \end{enumerate}
+    \item Decorator:
+          \begin{enumerate}
+              \item To what methods on which DOM objects does the validation behavior apply?
+              \item Can a wrapper method be applied to those methods to contain the validation behavior?
+              \item Can another pattern implementation be used or modified to simplify the creation of decorated DOM objects?
+          \end{enumerate}
+\end{enumerate}
+
+\end{document}
