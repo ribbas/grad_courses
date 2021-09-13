@@ -1,0 +1,8 @@
+{
+  "cmake.configureOnOpen": true,
+  "files.associations": {
+    "*.html": "jinja-html",
+    "Node.C": "cpp",
+    "Document.H": "cpp"
+  }
+}
