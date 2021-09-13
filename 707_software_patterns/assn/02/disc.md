@@ -13,6 +13,7 @@
 2. Strategy
 
    1. Is XMLTokenizer.XMLToken a Strategy class?
+
    2. When the book discusses the applicability of Strategy it says that one use is to remove many conditional statements by putting each block in a concrete Strategy.
       1. What conditional statements are removed in the assignment? What kind of conditions are usually considered for this pattern?
       2. How does their removal reduce coupling?
