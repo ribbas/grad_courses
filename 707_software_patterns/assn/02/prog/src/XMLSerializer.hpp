@@ -6,8 +6,8 @@
 
 class XMLSerializer {
 private:
-    std::fstream file;
     int indentationLevel;
+    std::fstream file;
 
     virtual void prettyIndentation();
 
@@ -16,6 +16,6 @@ public:
         : indentationLevel(0), file(filename.c_str(), std::ios_base::out) {}
     ~XMLSerializer() {}
 
-    virtual void serializePretty(dom::Node* node);
-    virtual void serializeMinimal(dom::Node* node);
+    virtual void serializePretty(dom::Node*);
+    virtual void serializeMinimal(dom::Node*);
 };

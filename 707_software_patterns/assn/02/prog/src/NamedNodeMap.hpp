@@ -10,13 +10,13 @@ class Document;
 
 class NamedNodeMap : public NodeList {
 public:
-    virtual Node* getNamedItem(const std::string& name) {
+    virtual Node* getNamedItem(const std::string&) {
         return 0;
     }
-    virtual Node* setNamedItem(Node* arg) {
+    virtual Node* setNamedItem(Node*) {
         return 0;
     }
-    virtual Node* removeNamedItem(const std::string& name) {
+    virtual Node* removeNamedItem(const std::string&) {
         return 0;
     }
 };
@@ -27,13 +27,13 @@ private:
     dom::Document* document;
 
 public:
-    NamedNodeMap_Impl(dom::Document* document);
+    NamedNodeMap_Impl(dom::Document*);
 
     virtual ~NamedNodeMap_Impl();
 
-    virtual dom::Node* getNamedItem(const std::string& name);
-    virtual dom::Node* setNamedItem(dom::Node* arg);
-    virtual dom::Node* removeNamedItem(const std::string& name);
+    virtual dom::Node* getNamedItem(const std::string&);
+    virtual dom::Node* setNamedItem(dom::Node*);
+    virtual dom::Node* removeNamedItem(const std::string&);
 };
 
 #endif // NAMEDNODEMAP_H

@@ -7,3 +7,5 @@ build/
 __pycache__/
 *.out
 .venv/
+.vscode/
+.clang-format
