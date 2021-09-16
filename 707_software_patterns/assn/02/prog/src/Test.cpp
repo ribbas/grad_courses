@@ -128,10 +128,12 @@ void testSerializer(int argc, char** argv) {
     //
     // Serialize
     //
-    XMLSerializer xmlSerializer(argv[2]);
-    xmlSerializer.serializePretty(document);
-    XMLSerializer xmlSerializer2(argv[3]);
-    xmlSerializer2.serializeMinimal(document);
+    XMLSerializerContext* xmlSerializerContext =
+        new XMLSerializerContext(new XMLSerializerPretty(argv[2]));
+    xmlSerializerContext->serialize(document);
+    xmlSerializerContext->set_strategy(new XMLSerializerMinimal(argv[3]));
+    xmlSerializerContext->serialize(document);
+    delete xmlSerializerContext;
 
     // delete Document and tree.
 }
@@ -252,8 +254,10 @@ void testValidator(int argc, char** argv) {
     //
     // Serialize
     //
-    XMLSerializer xmlSerializer(argv[2]);
-    xmlSerializer.serializePretty(document);
+    XMLSerializerContext* xmlSerializerContext =
+        new XMLSerializerContext(new XMLSerializerPretty(argv[2]));
+    xmlSerializerContext->serialize(document);
+    delete xmlSerializerContext;
 
     // delete Document and tree.
 }
