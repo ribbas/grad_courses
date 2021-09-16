@@ -8,13 +8,14 @@ class XMLSerializerStrategy {
 protected:
     int indentationLevel;
     std::fstream file;
-    virtual void prettyIndentation();
+    std::string newline;
+    virtual void prettyIndentation() = 0;
+    virtual void multipleAttr() = 0;
 
 public:
-    XMLSerializerStrategy(const std::string& filename)
-        : indentationLevel(0), file(filename.c_str(), std::ios_base::out) {}
+    XMLSerializerStrategy(const std::string&, const std::string&);
     virtual ~XMLSerializerStrategy() {}
-    virtual void serialize(dom::Node*) = 0;
+    void serialize(dom::Node*);
 };
 
 class XMLSerializerContext {
@@ -48,16 +49,20 @@ public:
     }
 };
 
-class XMLSerializerMinimal : public XMLSerializerStrategy {
+class XMLSerializerPretty : public XMLSerializerStrategy {
+private:
+    void prettyIndentation() override;
+    void multipleAttr() override;
+
 public:
-    XMLSerializerMinimal(const std::string& filename)
-        : XMLSerializerStrategy(filename) {}
-    void serialize(dom::Node*) override;
+    XMLSerializerPretty(const std::string&);
 };
 
-class XMLSerializerPretty : public XMLSerializerStrategy {
+class XMLSerializerMinimal : public XMLSerializerStrategy {
+private:
+    void prettyIndentation() override;
+    void multipleAttr() override;
+
 public:
-    XMLSerializerPretty(const std::string& filename)
-        : XMLSerializerStrategy(filename) {}
-    void serialize(dom::Node*) override;
+    XMLSerializerMinimal(const std::string&);
 };
