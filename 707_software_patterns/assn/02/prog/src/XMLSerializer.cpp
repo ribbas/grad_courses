@@ -5,6 +5,26 @@
 #include "Element.hpp"
 #include "Text.hpp"
 
+XMLSerializerContext::XMLSerializerContext(XMLSerializerStrategy* strategy)
+    : strategy_(strategy) {}
+
+XMLSerializerContext::~XMLSerializerContext() {
+    delete this->strategy_;
+}
+
+void XMLSerializerContext::serialize(dom::Node* node) {
+    this->strategy_->serialize(node);
+}
+
+/**
+ * Usually, the XMLSerializerContext allows replacing a Strategy object at
+ * runtime.
+ */
+void XMLSerializerContext::set_strategy(XMLSerializerStrategy* strategy) {
+    delete this->strategy_;
+    this->strategy_ = strategy;
+}
+
 XMLSerializerStrategy::XMLSerializerStrategy(const std::string& filename,
                                              const std::string& newline)
     : indentationLevel(0), file(filename.c_str(), std::ios_base::out),

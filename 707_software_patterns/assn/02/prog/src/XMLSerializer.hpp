@@ -29,24 +29,16 @@ private:
     XMLSerializerStrategy* strategy_;
 
 public:
-    XMLSerializerContext(XMLSerializerStrategy* strategy = nullptr)
-        : strategy_(strategy) {}
-    ~XMLSerializerContext() {
-        delete this->strategy_;
-    }
+    XMLSerializerContext(XMLSerializerStrategy* = nullptr);
+    ~XMLSerializerContext();
 
-    void serialize(dom::Node* node) {
-        this->strategy_->serialize(node);
-    }
+    void serialize(dom::Node*);
 
     /**
      * Usually, the XMLSerializerContext allows replacing a Strategy object at
      * runtime.
      */
-    void set_strategy(XMLSerializerStrategy* strategy) {
-        delete this->strategy_;
-        this->strategy_ = strategy;
-    }
+    void set_strategy(XMLSerializerStrategy*);
 };
 
 class XMLSerializerPretty : public XMLSerializerStrategy {
