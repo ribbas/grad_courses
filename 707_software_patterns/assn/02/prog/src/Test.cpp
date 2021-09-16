@@ -131,7 +131,7 @@ void testSerializer(int argc, char** argv) {
     XMLSerializerContext* xmlSerializerContext =
         new XMLSerializerContext(new XMLSerializerPretty(argv[2]));
     xmlSerializerContext->serialize(document);
-    xmlSerializerContext->set_strategy(new XMLSerializerMinimal(argv[3]));
+    xmlSerializerContext->setStrategy(new XMLSerializerMinimal(argv[3]));
     xmlSerializerContext->serialize(document);
     delete xmlSerializerContext;
 
