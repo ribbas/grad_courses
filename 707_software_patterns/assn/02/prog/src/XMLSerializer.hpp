@@ -18,7 +18,7 @@ public:
     virtual ~XMLSerializerStrategy() {}
     void serialize(dom::Node*);
     virtual void prettyIndentation() = 0;
-    virtual void multipleAttr() = 0;
+    virtual void multipleAttr(int) = 0;
 };
 
 class XMLSerializerContext {
@@ -38,7 +38,7 @@ public:
 class XMLSerializerPretty : public XMLSerializerStrategy {
 private:
     void prettyIndentation() override;
-    void multipleAttr() override;
+    void multipleAttr(int) override;
 
 public:
     XMLSerializerPretty(const std::string&);
@@ -47,7 +47,7 @@ public:
 class XMLSerializerMinimal : public XMLSerializerStrategy {
 private:
     void prettyIndentation() override;
-    void multipleAttr() override;
+    void multipleAttr(int) override;
 
 public:
     XMLSerializerMinimal(const std::string&);

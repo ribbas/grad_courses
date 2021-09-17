@@ -47,9 +47,11 @@ void XMLSerializerPretty::prettyIndentation() {
     }
 }
 
-void XMLSerializerPretty::multipleAttr() {
+void XMLSerializerPretty::multipleAttr(int attrCount) {
 
-    file << " ";
+    if (attrCount > 0) {
+        file << " ";
+    }
 }
 
 XMLSerializerMinimal::XMLSerializerMinimal(const std::string& filename)
@@ -57,7 +59,7 @@ XMLSerializerMinimal::XMLSerializerMinimal(const std::string& filename)
 
 void XMLSerializerMinimal::prettyIndentation() {}
 
-void XMLSerializerMinimal::multipleAttr() {}
+void XMLSerializerMinimal::multipleAttr(int) {}
 
 DOMSerializerContext::DOMSerializerContext(DOMSerializerStrategy* strategy)
     : strategy_(strategy) {}
@@ -114,10 +116,7 @@ ElementSerializer::ElementSerializer(
         attrCount++;
     }
 
-    if (attrCount > 0) {
-
-        xmlSerializerStrategy->multipleAttr();
-    }
+    xmlSerializerStrategy->multipleAttr(attrCount);
 
     if (dynamic_cast<dom::Element*>(node)->getChildNodes()->size() == 0) {
 
