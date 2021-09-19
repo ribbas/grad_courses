@@ -14,11 +14,11 @@ Attr_Impl::Attr_Impl(const std::string& tagName, const std::string& value,
 
 Attr_Impl::~Attr_Impl() {}
 
-const std::string& Attr_Impl::getName(void) {
+const std::string& Attr_Impl::getName() {
     return Node_Impl::getNodeName();
 }
 
-const std::string& Attr_Impl::getValue(void) {
+const std::string& Attr_Impl::getValue() {
     return Node_Impl::getNodeValue();
 }
 
@@ -26,6 +26,6 @@ void Attr_Impl::setValue(const std::string& value) {
     Node_Impl::setNodeValue(value);
 }
 
-dom::Element* Attr_Impl::getOwnerElement(void) {
+dom::Element* Attr_Impl::getOwnerElement() {
     return (dom::Element*)Node_Impl::getParentNode();
 }

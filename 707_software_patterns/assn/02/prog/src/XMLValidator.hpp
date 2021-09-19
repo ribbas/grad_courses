@@ -26,8 +26,8 @@ public:
         _canHaveText = __canHaveText;
     }
 
-    virtual void addValidChild(const std::string& child, bool isAttribute);
-    virtual bool childIsValid(const std::string& child, bool isAttribute);
+    virtual void addValidChild(const std::string&, bool);
+    virtual bool childIsValid(const std::string&, bool);
 };
 
 class XMLValidator {
@@ -42,12 +42,11 @@ public:
         }
     }
 
-    virtual ValidChildren* addSchemaElement(std::string element);
+    virtual ValidChildren* addSchemaElement(std::string);
     virtual std::vector<ValidChildren*>::iterator
-    findSchemaElement(std::string element);
-    virtual bool canRootElement(std::string newElement);
-    virtual bool canAddElement(dom::Element* element, std::string newElement);
-    virtual bool canAddText(dom::Element* element);
-    virtual bool canAddAttribute(dom::Element* element,
-                                 std::string newAttribute);
+        findSchemaElement(std::string);
+    virtual bool canRootElement(std::string);
+    virtual bool canAddElement(dom::Element*, std::string);
+    virtual bool canAddText(dom::Element*);
+    virtual bool canAddAttribute(dom::Element*, std::string);
 };
