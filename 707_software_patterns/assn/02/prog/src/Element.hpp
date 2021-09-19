@@ -62,4 +62,8 @@ public:
     }
 };
 
+// element, attr and text inherit Node_Impl but have completely different
+// derived methods from their parents. Make a Node factory that generates these
+// subclasses
+
 #endif // ELEMENT_H

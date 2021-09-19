@@ -16,10 +16,10 @@ public:
     ValidChildren(std::string _thisElement)
         : thisElement(_thisElement), _canHaveText(false) {}
 
-    virtual std::string getThisElement(void) {
+    virtual std::string getThisElement() {
         return thisElement;
     }
-    virtual bool canHaveText(void) {
+    virtual bool canHaveText() {
         return _canHaveText;
     }
     virtual void setCanHaveText(bool __canHaveText) {
@@ -35,10 +35,11 @@ private:
     std::vector<ValidChildren*> schema;
 
 public:
-    XMLValidator(void) {}
+    XMLValidator() {}
     ~XMLValidator() {
-        for (int i = 0; i < schema.size(); i++)
+        for (int i = 0; i < schema.size(); i++) {
             delete schema[i];
+        }
     }
 
     virtual ValidChildren* addSchemaElement(std::string element);

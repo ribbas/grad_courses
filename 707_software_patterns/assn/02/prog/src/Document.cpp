@@ -24,9 +24,10 @@ dom::Attr* Document_Impl::createAttribute(const std::string& name) {
 
 dom::Element* Document_Impl::getDocumentElement() {
     for (dom::NodeList::iterator i = getChildNodes()->begin();
-         i != getChildNodes()->end(); i++)
-        if (dynamic_cast<dom::Element*>(*i.operator->()) != 0)
+         i != getChildNodes()->end(); i++) {
+        if (dynamic_cast<dom::Element*>(*i.operator->()) != 0) {
             return dynamic_cast<dom::Element*>(*i.operator->());
-
+        }
+    }
     return 0;
 }
