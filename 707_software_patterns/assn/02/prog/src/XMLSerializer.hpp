@@ -62,12 +62,6 @@ public:
 };
 
 class DOMSerializerContext {
-    /**
-     * @var Strategy The DOMSerializerContext maintains a reference to one of
-     * the Strategy objects. The DOMSerializerContext does not know the concrete
-     * class of a strategy. It should work with all strategies via the Strategy
-     * interface.
-     */
 private:
     DOMSerializerStrategy* strategy_;
 

@@ -16,10 +16,6 @@ void XMLSerializerContext::serialize(dom::Node* node) {
     this->strategy_->serialize(node);
 }
 
-/**
- * Usually, the XMLSerializerContext allows replacing a Strategy object at
- * runtime.
- */
 void XMLSerializerContext::setStrategy(XMLSerializerStrategy* strategy) {
     delete this->strategy_;
     this->strategy_ = strategy;
