@@ -1,6 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""
+calc.py
+
+This file uses the lex and yacc scripts implemented in the PLY library (Python 
+Lex-Yacc). All the functions defined in the file are rules for tokenizing and
+parsing. The docstrings of the functions are also parsed as the grammar rules.
+"""
+
 from ply import lex, yacc
 
 # tokens supported by the script
@@ -93,4 +101,5 @@ def p_error(p):
 lex.lex()
 yacc.yacc()
 
-yacc.parse("(-1 + (2 * 3 + 4) * -5) / 10")
+# parse an example input string
+yacc.parse("-1 + (2 * 3 + 4) * -5")
