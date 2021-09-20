@@ -178,18 +178,26 @@ void testValidator(int argc, char** argv) {
     dom::Element* child = 0;
     dom::Attr* attr = 0;
 
-    if (xmlValidator.canRootElement("document")) {
+    ElementComponent* elementComp = new ElementComponent;
+    AttrComponent* attrComp = new AttrComponent;
+    TextComponent* textComp = new TextComponent;
+
+    elementComp->setElement(root);
+    if (elementComp->validate("element")) {
         root = document->createElement("document");
+
         document->appendChild(root);
     } else {
         printf("Attempted invalid schema operation.");
         exit(0);
     }
 
-    if (xmlValidator.canAddElement(root, "element")) {
+    elementComp->setElement(root);
+    if (elementComp->validate("element")) {
         child = document->createElement("element");
 
-        if (xmlValidator.canAddAttribute(child, "attribute")) {
+        attrComp->setElement(child);
+        if (attrComp->validate("attribute")) {
             attr = document->createAttribute("attribute");
             attr->setValue("attribute value");
             child->setAttributeNode(attr);
@@ -204,7 +212,8 @@ void testValidator(int argc, char** argv) {
         exit(0);
     }
 
-    if (xmlValidator.canAddElement(root, "element")) {
+    elementComp->setElement(root);
+    if (elementComp->validate("element")) {
         child = document->createElement("element");
         root->appendChild(child);
     } else {
@@ -212,24 +221,28 @@ void testValidator(int argc, char** argv) {
         exit(0);
     }
 
-    if (xmlValidator.canAddElement(root, "element")) {
+    elementComp->setElement(root);
+    if (elementComp->validate("element")) {
         child = document->createElement("element");
 
-        if (xmlValidator.canAddAttribute(child, "attribute"))
+        attrComp->setElement(child);
+        if (attrComp->validate("attribute"))
             child->setAttribute("attribute", "attribute value");
         else {
             printf("Attempted invalid schema operation.");
             exit(0);
         }
 
-        if (xmlValidator.canAddAttribute(child, "attribute2"))
+        attrComp->setElement(child);
+        if (attrComp->validate("attribute2"))
             child->setAttribute("attribute2", "attribute2 value");
         else {
             printf("Attempted invalid schema operation.");
             exit(0);
         }
 
-        if (xmlValidator.canAddText(child)) {
+        textComp->setElement(child);
+        if (textComp->validate()) {
             dom::Text* text = document->createTextNode("Element Value");
             child->appendChild(text);
         } else {
@@ -243,7 +256,8 @@ void testValidator(int argc, char** argv) {
         exit(0);
     }
 
-    if (xmlValidator.canAddElement(root, "element")) {
+    elementComp->setElement(root);
+    if (elementComp->validate("element")) {
         child = document->createElement("element");
         root->appendChild(child);
     } else {

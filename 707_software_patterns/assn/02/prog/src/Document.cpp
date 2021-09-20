@@ -54,6 +54,6 @@ dom::Node* DocumentNodeFactory::createDocumentNode(dom::Document* document,
         }
 
         default:
-            break;
+            return nullptr;
     }
 }
