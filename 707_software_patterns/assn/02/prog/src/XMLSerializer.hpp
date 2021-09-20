@@ -16,6 +16,7 @@ public:
 
     XMLSerializerStrategy(const std::string&, const std::string&);
     virtual ~XMLSerializerStrategy() {}
+
     void serialize(dom::Node*);
     virtual void prettyIndentation() = 0;
     virtual void multipleAttr(int) = 0;

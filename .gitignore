@@ -1,11 +1,21 @@
+# LaTex log files
 *.aux
 *.log
-.ipynb_checkpoints/
+*.fls
 *.fdb_latexmk
+
+# Python cache and venv
+__pycache__/
+.venv/
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Build files
+*.out
 .build/
 build/
-__pycache__/
-*.out
-.venv/
+
+# IDE
 .vscode/
 .clang-format
