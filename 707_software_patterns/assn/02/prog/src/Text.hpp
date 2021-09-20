@@ -33,6 +33,7 @@ protected:
 
 public:
     friend class Document_Impl;
+    friend class DocumentNodeFactory;
 
     virtual ~Text_Impl();
 

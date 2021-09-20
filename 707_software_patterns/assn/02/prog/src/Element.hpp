@@ -40,6 +40,7 @@ protected:
 
 public:
     friend class Document_Impl;
+    friend class DocumentNodeFactory;
 
     virtual ~Element_Impl();
 

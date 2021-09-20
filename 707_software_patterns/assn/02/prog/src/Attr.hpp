@@ -28,6 +28,7 @@ protected:
 public:
     friend class Document_Impl;
     friend class Element_Impl;
+    friend class DocumentNodeFactory;
 
     virtual ~Attr_Impl();
 
