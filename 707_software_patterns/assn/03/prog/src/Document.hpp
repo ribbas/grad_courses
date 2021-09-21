@@ -22,7 +22,7 @@ public:
 
 class Document_Impl : public virtual dom::Document, public virtual Node_Impl {
 public:
-    Document_Impl(void);
+    Document_Impl();
 
     virtual ~Document_Impl();
 
