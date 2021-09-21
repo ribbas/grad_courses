@@ -13,9 +13,9 @@ class NodeList;
 
 class Document : public virtual Node {
 public:
-    virtual Element* createElement(const std::string& tagName) = 0;
-    virtual Text* createTextNode(const std::string& data) = 0;
-    virtual Attr* createAttribute(const std::string& name) = 0;
+    virtual Element* createElement(const std::string&) = 0;
+    virtual Text* createTextNode(const std::string&) = 0;
+    virtual Attr* createAttribute(const std::string&) = 0;
     virtual Element* getDocumentElement() = 0;
 };
 }; // namespace dom
@@ -26,9 +26,9 @@ public:
 
     virtual ~Document_Impl();
 
-    virtual dom::Element* createElement(const std::string& tagName);
-    virtual dom::Text* createTextNode(const std::string& data);
-    virtual dom::Attr* createAttribute(const std::string& name);
+    virtual dom::Element* createElement(const std::string&);
+    virtual dom::Text* createTextNode(const std::string&);
+    virtual dom::Attr* createAttribute(const std::string&);
     virtual dom::Element* getDocumentElement();
 };
 

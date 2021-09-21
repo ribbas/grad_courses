@@ -9,15 +9,15 @@ Text_Impl::Text_Impl(const std::string value, dom::Document* document)
 
 Text_Impl::~Text_Impl() {}
 
-const std::string& Text_Impl::getName(void) {
+const std::string& Text_Impl::getName() {
     return getNodeName();
 }
 
-const std::string& Text_Impl::getData(void) {
+const std::string& Text_Impl::getData() {
     return getNodeValue();
 }
 
-const std::string& Text_Impl::getValue(void) {
+const std::string& Text_Impl::getValue() {
     return getData();
 }
 
@@ -29,7 +29,7 @@ void Text_Impl::setValue(const std::string& value) {
     setNodeValue(value);
 }
 
-int Text_Impl::getLength(void) {
+int Text_Impl::getLength() {
     return getValue().size();
 }
 

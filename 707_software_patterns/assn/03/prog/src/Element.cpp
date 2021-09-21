@@ -49,7 +49,7 @@ dom::NodeList* Element_Impl::getElementsByTagName(const std::string& tagName) {
     return nodeList;
 }
 
-const std::string& Element_Impl::getTagName(void) {
+const std::string& Element_Impl::getTagName() {
     return getNodeName();
 }
 

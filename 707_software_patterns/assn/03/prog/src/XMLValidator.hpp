@@ -16,18 +16,18 @@ public:
     ValidChildren(std::string _thisElement)
         : thisElement(_thisElement), _canHaveText(false) {}
 
-    virtual std::string getThisElement(void) {
+    virtual std::string getThisElement() {
         return thisElement;
     }
-    virtual bool canHaveText(void) {
+    virtual bool canHaveText() {
         return _canHaveText;
     }
     virtual void setCanHaveText(bool __canHaveText) {
         _canHaveText = __canHaveText;
     }
 
-    virtual void addValidChild(const std::string& child, bool isAttribute);
-    virtual bool childIsValid(const std::string& child, bool isAttribute);
+    virtual void addValidChild(const std::string&, bool);
+    virtual bool childIsValid(const std::string&, bool);
 };
 
 class XMLValidator {
@@ -35,18 +35,17 @@ private:
     std::vector<ValidChildren*> schema;
 
 public:
-    XMLValidator(void) {}
+    XMLValidator() {}
     ~XMLValidator() {
         for (int i = 0; i < schema.size(); i++)
             delete schema[i];
     }
 
-    virtual ValidChildren* addSchemaElement(std::string element);
+    virtual ValidChildren* addSchemaElement(std::string);
     virtual std::vector<ValidChildren*>::iterator
-    findSchemaElement(std::string element);
-    virtual bool canRootElement(std::string newElement);
-    virtual bool canAddElement(dom::Element* element, std::string newElement);
-    virtual bool canAddText(dom::Element* element);
-    virtual bool canAddAttribute(dom::Element* element,
-                                 std::string newAttribute);
+        findSchemaElement(std::string);
+    virtual bool canRootElement(std::string);
+    virtual bool canAddElement(dom::Element*, std::string);
+    virtual bool canAddText(dom::Element*);
+    virtual bool canAddAttribute(dom::Element*, std::string);
 };

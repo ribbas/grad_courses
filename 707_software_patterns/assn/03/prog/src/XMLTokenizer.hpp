@@ -40,7 +40,7 @@ private:
     boost::regex space_to_eol;
 
     virtual void update_matchers(const boost::ssub_match&,
-                                 const boost::ssub_match& suffix);
+                                 const boost::ssub_match&);
 
 public:
     class XMLToken {
@@ -65,27 +65,27 @@ public:
         TokenTypes token_type;
 
     public:
-        XMLToken(const std::string& t, TokenTypes tt);
+        XMLToken(const std::string&, TokenTypes);
 
         virtual ~XMLToken() {}
 
-        virtual const std::string& getToken(void) {
+        virtual const std::string& getToken() {
             return token;
         }
-        virtual TokenTypes getTokenType(void) {
+        virtual TokenTypes getTokenType() {
             return token_type;
         }
-        virtual const char* toString(void);
+        virtual const char* toString();
     };
 
-    XMLTokenizer(const std::string& filename);
+    XMLTokenizer(const std::string&);
     ~XMLTokenizer() {}
 
-    virtual int getLineNumber(void) {
+    virtual int getLineNumber() {
         return line_number;
     }
-    virtual int getLineCharacter(void) {
+    virtual int getLineCharacter() {
         return index;
     }
-    virtual XMLToken* getNextToken(void);
+    virtual XMLToken* getNextToken();
 };

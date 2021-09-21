@@ -16,23 +16,23 @@ public:
 
     virtual ~Node() {}
 
-    virtual const std::string& getNodeName(void) = 0;
-    virtual const std::string& getNodeValue(void) = 0;
-    virtual void setNodeValue(const std::string& nodeValue) = 0;
-    virtual short getNodeType(void) = 0;
-    virtual Node* getParentNode(void) = 0;
-    virtual NodeList* getChildNodes(void) = 0;
-    virtual Node* getFirstChild(void) = 0;
-    virtual Node* getLastChild(void) = 0;
-    virtual Node* getPreviousSibling(void) = 0;
-    virtual Node* getNextSibling(void) = 0;
-    virtual Document* getOwnerDocument(void) = 0;
-    virtual Node* insertBefore(Node* newChild, Node* refChild) = 0;
-    virtual Node* replaceChild(Node* newChild, Node* oldChild) = 0;
-    virtual Node* removeChild(Node* oldChild) = 0;
-    virtual Node* appendChild(Node* newChild) = 0;
-    virtual bool hasChildNodes(void) = 0;
-    virtual const std::string& getLocalName(void) = 0;
+    virtual const std::string& getNodeName() = 0;
+    virtual const std::string& getNodeValue() = 0;
+    virtual void setNodeValue(const std::string&) = 0;
+    virtual short getNodeType() = 0;
+    virtual Node* getParentNode() = 0;
+    virtual NodeList* getChildNodes() = 0;
+    virtual Node* getFirstChild() = 0;
+    virtual Node* getLastChild() = 0;
+    virtual Node* getPreviousSibling() = 0;
+    virtual Node* getNextSibling() = 0;
+    virtual Document* getOwnerDocument() = 0;
+    virtual Node* insertBefore(Node*, Node*) = 0;
+    virtual Node* replaceChild(Node*, Node*) = 0;
+    virtual Node* removeChild(Node*) = 0;
+    virtual Node* appendChild(Node*) = 0;
+    virtual bool hasChildNodes() = 0;
+    virtual const std::string& getLocalName() = 0;
 };
 
 class DOMException {
@@ -45,10 +45,10 @@ public:
 
     virtual ~DOMException() {}
 
-    int getReason(void) {
+    int getReason() {
         return reason;
     }
-    const std::string& getDescription(void) {
+    const std::string& getDescription() {
         return description;
     }
 
@@ -70,35 +70,35 @@ private:
     dom::Node* parent;
     dom::NodeList nodes;
 
-    dom::Node* getSibling(int direction);
+    dom::Node* getSibling(int);
 
 protected:
     dom::Document* document;
 
-    Node_Impl(const std::string& name, short type);
+    Node_Impl(const std::string&, short);
 
 public:
     virtual ~Node_Impl();
 
-    virtual const std::string& getNodeName(void);
-    virtual const std::string& getNodeValue(void);
-    virtual void setNodeValue(const std::string& nodeValue);
-    virtual short getNodeType(void);
-    virtual dom::Node* getParentNode(void);
-    virtual dom::NodeList* getChildNodes(void);
-    virtual dom::Node* getFirstChild(void);
-    virtual dom::Node* getLastChild(void);
-    virtual dom::Node* getPreviousSibling(void);
-    virtual dom::Node* getNextSibling(void);
-    virtual dom::Document* getOwnerDocument(void);
-    virtual dom::Node* insertBefore(dom::Node* newChild, dom::Node* refChild);
-    virtual dom::Node* replaceChild(dom::Node* newChild, dom::Node* oldChild);
-    virtual dom::Node* removeChild(dom::Node* oldChild);
-    virtual dom::Node* appendChild(dom::Node* newChild);
-    virtual bool hasChildNodes(void);
-    virtual const std::string& getLocalName(void);
+    virtual const std::string& getNodeName();
+    virtual const std::string& getNodeValue();
+    virtual void setNodeValue(const std::string&);
+    virtual short getNodeType();
+    virtual dom::Node* getParentNode();
+    virtual dom::NodeList* getChildNodes();
+    virtual dom::Node* getFirstChild();
+    virtual dom::Node* getLastChild();
+    virtual dom::Node* getPreviousSibling();
+    virtual dom::Node* getNextSibling();
+    virtual dom::Document* getOwnerDocument();
+    virtual dom::Node* insertBefore(dom::Node*, dom::Node*);
+    virtual dom::Node* replaceChild(dom::Node*, dom::Node*);
+    virtual dom::Node* removeChild(dom::Node*);
+    virtual dom::Node* appendChild(dom::Node*);
+    virtual bool hasChildNodes();
+    virtual const std::string& getLocalName();
 
-    virtual void setParent(dom::Node* parent);
+    virtual void setParent(dom::Node*);
 };
 
 #endif // NODE_H
