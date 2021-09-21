@@ -6,8 +6,8 @@
 
 class XMLSerializer {
 private:
-    std::fstream file;
     int indentationLevel;
+    std::fstream file;
 
     virtual void prettyIndentation();
 

@@ -2,7 +2,7 @@
 #include "Attr.hpp"
 #include "Element.hpp"
 
-NamedNodeMap_Impl::NamedNodeMap_Impl(dom::Document* document) : document(0) {}
+NamedNodeMap_Impl::NamedNodeMap_Impl(dom::Document*) : document(0) {}
 
 NamedNodeMap_Impl::~NamedNodeMap_Impl() {}
 
