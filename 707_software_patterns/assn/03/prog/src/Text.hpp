@@ -3,20 +3,20 @@
 
 #include <string>
 
-#include "Node.hpp"
+#include "DocumentNode.hpp"
 
 namespace dom {
 class Document;
 
-class Text : public virtual Node {
+class Text : public virtual DocumentNode {
 public:
     virtual ~Text() {}
 
-    virtual const std::string& getName() = 0;
-    virtual const std::string& getData() = 0;
-    virtual const std::string& getValue() = 0;
-    virtual void setData(const std::string&) = 0;
-    virtual void setValue(const std::string&) = 0;
+    // virtual const std::string& getName() = 0;
+    // virtual const std::string& getData() = 0;
+    // virtual const std::string& getValue() = 0;
+    // virtual void setData(const std::string&) = 0;
+    // virtual void setValue(const std::string&) = 0;
     virtual int getLength() = 0;
     virtual const std::string& substringData(int, int) = 0;
     virtual void appendData(const std::string&) = 0;
@@ -27,7 +27,7 @@ public:
 };
 }; // namespace dom
 
-class Text_Impl : public virtual dom::Text, Node_Impl {
+class Text_Impl : public virtual dom::Text, DocumentNode_Impl {
 protected:
     Text_Impl(const std::string value, dom::Document* document);
 
@@ -36,11 +36,11 @@ public:
 
     virtual ~Text_Impl();
 
-    virtual const std::string& getName();
-    virtual const std::string& getData();
-    virtual const std::string& getValue();
-    virtual void setData(const std::string&);
-    virtual void setValue(const std::string&);
+    // virtual const std::string& getName();
+    // virtual const std::string& getData();
+    // virtual const std::string& getValue();
+    // virtual void setData(const std::string&);
+    // virtual void setValue(const std::string&);
     virtual int getLength();
     virtual const std::string& substringData(int, int);
     virtual void appendData(const std::string&);

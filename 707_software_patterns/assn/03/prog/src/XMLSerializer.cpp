@@ -18,7 +18,7 @@ void XMLSerializer::serializePretty(dom::Node* node) {
             dynamic_cast<dom::Document*>(node)->getDocumentElement());
     } else if (dynamic_cast<dom::Element*>(node) != 0) {
         prettyIndentation();
-        file << "<" << dynamic_cast<dom::Element*>(node)->getTagName();
+        file << "<" << dynamic_cast<dom::Element*>(node)->getNodeName();
 
         int attrCount = 0;
 
@@ -53,15 +53,15 @@ void XMLSerializer::serializePretty(dom::Node* node) {
             indentationLevel--;
             prettyIndentation();
             file << "</"
-                 << dynamic_cast<dom::Element*>(node)->getTagName() + ">";
+                 << dynamic_cast<dom::Element*>(node)->getNodeName() + ">";
             file << "\n";
         }
     } else if (dynamic_cast<dom::Attr*>(node) != 0) {
-        file << " " << dynamic_cast<dom::Attr*>(node)->getName() << "=\""
-             << dynamic_cast<dom::Attr*>(node)->getValue() << "\"";
+        file << " " << dynamic_cast<dom::Attr*>(node)->getNodeName() << "=\""
+             << dynamic_cast<dom::Attr*>(node)->getNodeValue() << "\"";
     } else if (dynamic_cast<dom::Text*>(node) != 0) {
         prettyIndentation();
-        file << dynamic_cast<dom::Text*>(node)->getData();
+        file << dynamic_cast<dom::Text*>(node)->getNodeValue();
         file << "\n";
     }
 }
@@ -72,7 +72,7 @@ void XMLSerializer::serializeMinimal(dom::Node* node) {
         serializeMinimal(
             dynamic_cast<dom::Document*>(node)->getDocumentElement());
     } else if (dynamic_cast<dom::Element*>(node) != 0) {
-        file << "<" << dynamic_cast<dom::Element*>(node)->getTagName();
+        file << "<" << dynamic_cast<dom::Element*>(node)->getNodeName();
 
         for (dom::NamedNodeMap::iterator i =
                  dynamic_cast<dom::Element*>(node)->getAttributes()->begin();
@@ -95,11 +95,11 @@ void XMLSerializer::serializeMinimal(dom::Node* node) {
                     serializeMinimal(*i);
 
             file << "</"
-                 << dynamic_cast<dom::Element*>(node)->getTagName() + ">";
+                 << dynamic_cast<dom::Element*>(node)->getNodeName() + ">";
         }
     } else if (dynamic_cast<dom::Attr*>(node) != 0) {
-        file << " " << dynamic_cast<dom::Attr*>(node)->getName() << "=\""
-             << dynamic_cast<dom::Attr*>(node)->getValue() << "\"";
+        file << " " << dynamic_cast<dom::Attr*>(node)->getNodeName() << "=\""
+             << dynamic_cast<dom::Attr*>(node)->getNodeValue() << "\"";
     } else if (dynamic_cast<dom::Text*>(node) != 0)
-        file << dynamic_cast<dom::Text*>(node)->getData();
+        file << dynamic_cast<dom::Text*>(node)->getNodeValue();
 }

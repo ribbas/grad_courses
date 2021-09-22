@@ -3,8 +3,9 @@
 #include "Document.hpp"
 
 Element_Impl::Element_Impl(const std::string& tagName, dom::Document* document)
-    : Node_Impl(tagName, dom::Node::ELEMENT_NODE), attributes(document) {
-    Node_Impl::document = document;
+    : DocumentNode_Impl(tagName, dom::Node::ELEMENT_NODE, document),
+      attributes(document) {
+    // Node_Impl::document = document;
 }
 
 Element_Impl::~Element_Impl() {}
@@ -14,8 +15,8 @@ const std::string& Element_Impl::getAttribute(const std::string& name) {
          i++) {
         dom::Attr* attr = dynamic_cast<dom::Attr*>(*i.operator->());
 
-        if (attr->getName().compare(name) == 0)
-            return attr->getValue();
+        if (attr->getNodeName().compare(name) == 0)
+            return attr->getNodeValue();
     }
 
     static const std::string empty_string("");
@@ -27,7 +28,7 @@ dom::Attr* Element_Impl::getAttributeNode(const std::string& name) {
          i++) {
         dom::Attr* attr = dynamic_cast<dom::Attr*>(*i.operator->());
 
-        if (attr->getName().compare(name) == 0)
+        if (attr->getNodeName().compare(name) == 0)
             return attr;
     }
 
@@ -37,28 +38,28 @@ dom::Attr* Element_Impl::getAttributeNode(const std::string& name) {
 dom::NodeList* Element_Impl::getElementsByTagName(const std::string& tagName) {
     dom::NodeList* nodeList = new dom::NodeList();
 
-    for (dom::NodeList::iterator i = getChildNodes()->begin();
-         i != getChildNodes()->end(); i++) {
+    for (dom::NodeList::iterator i = Node_Impl::getChildNodes()->begin();
+         i != Node_Impl::getChildNodes()->end(); i++) {
         dom::Element* element;
 
         if ((element = dynamic_cast<dom::Element*>(*i.operator->())) &&
-            element->getTagName().compare(tagName) == 0)
+            element->getNodeName().compare(tagName) == 0)
             nodeList->push_back(*i.operator->());
     }
 
     return nodeList;
 }
 
-const std::string& Element_Impl::getTagName() {
-    return getNodeName();
-}
+// const std::string& Element_Impl::getTagName() {
+//     return getNodeName();
+// }
 
 bool Element_Impl::hasAttribute(const std::string& name) {
     for (dom::NodeList::iterator i = attributes.begin(); i != attributes.end();
          i++) {
         dom::Attr* attr = dynamic_cast<dom::Attr*>(*i.operator->());
 
-        if (attr->getName().compare(name) == 0)
+        if (attr->getNodeName().compare(name) == 0)
             return true;
     }
 
@@ -70,7 +71,7 @@ void Element_Impl::removeAttribute(const std::string& name) {
          i++) {
         dom::Attr* attr = dynamic_cast<dom::Attr*>(*i.operator->());
 
-        if (attr->getName().compare(name) == 0) {
+        if (attr->getNodeName().compare(name) == 0) {
             attributes.erase(i);
             return;
         }
@@ -96,8 +97,8 @@ void Element_Impl::setAttribute(const std::string& name,
          i++) {
         dom::Attr* attr = dynamic_cast<dom::Attr*>(*i.operator->());
 
-        if (attr->getName().compare(name) == 0) {
-            attr->setValue(value);
+        if (attr->getNodeName().compare(name) == 0) {
+            attr->setNodeValue(value);
             return;
         }
     }
@@ -122,8 +123,8 @@ dom::Attr* Element_Impl::setAttributeNode(dom::Attr* newAttr) {
 
     for (dom::NodeList::iterator i = attributes.begin(); i != attributes.end();
          i++)
-        if (dynamic_cast<dom::Attr*>(*i)->getName().compare(
-                newAttr->getName()) == 0) {
+        if (dynamic_cast<dom::Attr*>(*i)->getNodeName().compare(
+                newAttr->getNodeName()) == 0) {
             oldAttribute = (dom::Attr*)i.operator->();
             attributes.erase(i);
             break;

@@ -2,35 +2,35 @@
 #include <stdexcept>
 
 Text_Impl::Text_Impl(const std::string value, dom::Document* document)
-    : Node_Impl("", dom::Node::TEXT_NODE) {
+    : DocumentNode_Impl("", dom::Node::TEXT_NODE, document) {
     setNodeValue(value);
-    Node_Impl::document = document;
+    // DocumentNode_Impl::document = document;
 }
 
 Text_Impl::~Text_Impl() {}
 
-const std::string& Text_Impl::getName() {
-    return getNodeName();
-}
+// const std::string& Text_Impl::getName() {
+//     return getNodeName();
+// }
 
-const std::string& Text_Impl::getData() {
-    return getNodeValue();
-}
+// const std::string& Text_Impl::getData() {
+//     return getNodeValue();
+// }
 
-const std::string& Text_Impl::getValue() {
-    return getData();
-}
+// const std::string& Text_Impl::getValue() {
+//     return getData();
+// }
 
-void Text_Impl::setData(const std::string& value) {
-    setNodeValue(value);
-}
+// void Text_Impl::setData(const std::string& value) {
+//     setNodeValue(value);
+// }
 
-void Text_Impl::setValue(const std::string& value) {
-    setNodeValue(value);
-}
+// void Text_Impl::setValue(const std::string& value) {
+//     setNodeValue(value);
+// }
 
 int Text_Impl::getLength() {
-    return getValue().size();
+    return getNodeValue().size();
 }
 
 const std::string& Text_Impl::substringData(int offset, int count) {
@@ -39,7 +39,7 @@ const std::string& Text_Impl::substringData(int offset, int count) {
         // This is not thread-safe, of course.
         //
         static std::string value;
-        value = getValue().substr(offset, count);
+        value = getNodeValue().substr(offset, count);
 
         return value;
     } catch (std::out_of_range&) {
@@ -49,27 +49,27 @@ const std::string& Text_Impl::substringData(int offset, int count) {
 }
 
 void Text_Impl::appendData(const std::string& arg) {
-    std::string value = getValue();
+    std::string value = getNodeValue();
 
-    setValue(value.append(arg));
+    setNodeValue(value.append(arg));
 }
 
 void Text_Impl::insertData(int offset, const std::string& arg) {
-    std::string value = getValue();
+    std::string value = getNodeValue();
 
-    setValue(value.insert(offset, arg));
+    setNodeValue(value.insert(offset, arg));
 }
 
 void Text_Impl::deleteData(int offset, int count) {
-    std::string value = getValue();
+    std::string value = getNodeValue();
 
-    setValue(value.erase(offset, count));
+    setNodeValue(value.erase(offset, count));
 }
 
 void Text_Impl::replaceData(int offset, int count, const std::string& arg) {
-    std::string value = getValue();
+    std::string value = getNodeValue();
 
-    setValue(value.erase(offset, count).insert(offset, arg));
+    setNodeValue(value.erase(offset, count).insert(offset, arg));
 }
 
 dom::Text* Text_Impl::splitText(int offset) {
@@ -77,7 +77,7 @@ dom::Text* Text_Impl::splitText(int offset) {
         dom::Text* text = new Text_Impl(
             substringData(offset, getLength() - offset), document);
 
-        setValue(substringData(0, offset));
+        setNodeValue(substringData(0, offset));
 
         if (getParentNode() != 0)
             insertBefore(text, getNextSibling());

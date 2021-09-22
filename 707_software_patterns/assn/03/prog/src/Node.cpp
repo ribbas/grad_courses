@@ -1,28 +1,27 @@
 #include "Node.hpp"
 
-Node_Impl::Node_Impl(const std::string& n, short type)
-    : name(n), nodeType(type), parent(0), document(0) {
+Node_Impl::Node_Impl() : parent(0), document(0) {
     // this->name = name;
-    nodeType = type;
+    // nodeType = type;
 }
 
 Node_Impl::~Node_Impl() {}
 
-const std::string& Node_Impl::getNodeName() {
-    return name;
-}
+// const std::string& Node_Impl::getNodeName() {
+//     return name;
+// }
 
-const std::string& Node_Impl::getNodeValue() {
-    return value;
-}
+// const std::string& Node_Impl::getNodeValue() {
+//     return value;
+// }
 
-void Node_Impl::setNodeValue(const std::string& nodeValue) {
-    value = nodeValue;
-}
+// void Node_Impl::setNodeValue(const std::string& nodeValue) {
+//     value = nodeValue;
+// }
 
-short Node_Impl::getNodeType() {
-    return nodeType;
-}
+// short Node_Impl::getNodeType() {
+//     return nodeType;
+// }
 
 dom::Node* Node_Impl::getParentNode() {
     return parent;
@@ -131,9 +130,9 @@ bool Node_Impl::hasChildNodes() {
     return nodes.size() > 0;
 }
 
-const std::string& Node_Impl::getLocalName() {
-    return name;
-}
+// const std::string& Node_Impl::getLocalName() {
+//     return name;
+// }
 
 void Node_Impl::setParent(dom::Node* parent) {
     this->parent = parent;
