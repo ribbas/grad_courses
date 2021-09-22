@@ -18,7 +18,6 @@ public:
     virtual const std::string& getAttribute(const std::string&) = 0;
     virtual Attr* getAttributeNode(const std::string&) = 0;
     virtual NodeList* getElementsByTagName(const std::string&) = 0;
-    // virtual const std::string& getTagName() = 0;
     virtual bool hasAttribute(const std::string&) = 0;
     virtual void removeAttribute(const std::string&) = 0;
     virtual Attr* removeAttributeNode(Attr*) = 0;
@@ -46,7 +45,6 @@ public:
     virtual const std::string& getAttribute(const std::string&);
     virtual dom::Attr* getAttributeNode(const std::string&);
     virtual dom::NodeList* getElementsByTagName(const std::string&);
-    // virtual const std::string& getTagName();
     virtual bool hasAttribute(const std::string&);
     virtual void removeAttribute(const std::string&);
     virtual dom::Attr* removeAttributeNode(dom::Attr*);

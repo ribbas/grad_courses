@@ -12,11 +12,6 @@ class Text : public virtual DocumentNode {
 public:
     virtual ~Text() {}
 
-    // virtual const std::string& getName() = 0;
-    // virtual const std::string& getData() = 0;
-    // virtual const std::string& getValue() = 0;
-    // virtual void setData(const std::string&) = 0;
-    // virtual void setValue(const std::string&) = 0;
     virtual int getLength() = 0;
     virtual const std::string& substringData(int, int) = 0;
     virtual void appendData(const std::string&) = 0;
@@ -36,11 +31,6 @@ public:
 
     virtual ~Text_Impl();
 
-    // virtual const std::string& getName();
-    // virtual const std::string& getData();
-    // virtual const std::string& getValue();
-    // virtual void setData(const std::string&);
-    // virtual void setValue(const std::string&);
     virtual int getLength();
     virtual const std::string& substringData(int, int);
     virtual void appendData(const std::string&);

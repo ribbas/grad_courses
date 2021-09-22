@@ -1,27 +1,8 @@
 #include "Node.hpp"
 
-Node_Impl::Node_Impl() : parent(0), document(0) {
-    // this->name = name;
-    // nodeType = type;
-}
+Node_Impl::Node_Impl() : parent(0), document(0) {}
 
 Node_Impl::~Node_Impl() {}
-
-// const std::string& Node_Impl::getNodeName() {
-//     return name;
-// }
-
-// const std::string& Node_Impl::getNodeValue() {
-//     return value;
-// }
-
-// void Node_Impl::setNodeValue(const std::string& nodeValue) {
-//     value = nodeValue;
-// }
-
-// short Node_Impl::getNodeType() {
-//     return nodeType;
-// }
 
 dom::Node* Node_Impl::getParentNode() {
     return parent;

@@ -15,7 +15,6 @@ public:
     virtual const std::string& getNodeValue() = 0;
     virtual void setNodeValue(const std::string&) = 0;
     virtual short getNodeType() = 0;
-    // virtual dom::Node* getParentNode() = 0;
 };
 }; // namespace dom
 
@@ -26,9 +25,8 @@ private:
     short nodeType;
 
 protected:
-    // NamedNodeMap_Impl attributes;
     DocumentNode_Impl(const std::string& n, short type, dom::Document* document)
-        : Node_Impl(), name(n), value(""), nodeType(type) {
+        : name(n), value(""), nodeType(type) {
         Node_Impl::document = document;
     }
 

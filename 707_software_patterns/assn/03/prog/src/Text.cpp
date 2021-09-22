@@ -4,30 +4,9 @@
 Text_Impl::Text_Impl(const std::string value, dom::Document* document)
     : DocumentNode_Impl("", dom::Node::TEXT_NODE, document) {
     setNodeValue(value);
-    // DocumentNode_Impl::document = document;
 }
 
 Text_Impl::~Text_Impl() {}
-
-// const std::string& Text_Impl::getName() {
-//     return getNodeName();
-// }
-
-// const std::string& Text_Impl::getData() {
-//     return getNodeValue();
-// }
-
-// const std::string& Text_Impl::getValue() {
-//     return getData();
-// }
-
-// void Text_Impl::setData(const std::string& value) {
-//     setNodeValue(value);
-// }
-
-// void Text_Impl::setValue(const std::string& value) {
-//     setNodeValue(value);
-// }
 
 int Text_Impl::getLength() {
     return getNodeValue().size();

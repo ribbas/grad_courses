@@ -4,9 +4,7 @@
 
 Element_Impl::Element_Impl(const std::string& tagName, dom::Document* document)
     : DocumentNode_Impl(tagName, dom::Node::ELEMENT_NODE, document),
-      attributes(document) {
-    // Node_Impl::document = document;
-}
+      attributes(document) {}
 
 Element_Impl::~Element_Impl() {}
 
@@ -49,10 +47,6 @@ dom::NodeList* Element_Impl::getElementsByTagName(const std::string& tagName) {
 
     return nodeList;
 }
-
-// const std::string& Element_Impl::getTagName() {
-//     return getNodeName();
-// }
 
 bool Element_Impl::hasAttribute(const std::string& name) {
     for (dom::NodeList::iterator i = attributes.begin(); i != attributes.end();

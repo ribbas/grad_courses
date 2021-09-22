@@ -13,9 +13,6 @@ class Attr : public virtual DocumentNode {
 public:
     virtual ~Attr() {}
 
-    // virtual const std::string& getName() = 0;
-    // virtual const std::string& getValue() = 0;
-    // virtual void setValue(const std::string& value) = 0;
     virtual Element* getOwnerElement() = 0;
 };
 }; // namespace dom
@@ -32,9 +29,6 @@ public:
 
     virtual ~Attr_Impl();
 
-    // virtual const std::string& getName();
-    // virtual const std::string& getValue();
-    // virtual void setValue(const std::string& value);
     virtual dom::Element* getOwnerElement();
 };
 

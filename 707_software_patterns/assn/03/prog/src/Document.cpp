@@ -4,7 +4,7 @@
 #include "NodeList.hpp"
 #include "Text.hpp"
 
-Document_Impl::Document_Impl() : Node_Impl() {
+Document_Impl::Document_Impl() {
     Node_Impl::document = this;
 }
 

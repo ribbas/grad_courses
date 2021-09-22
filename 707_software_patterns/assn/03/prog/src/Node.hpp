@@ -16,10 +16,6 @@ public:
 
     virtual ~Node() {}
 
-    // virtual const std::string& getNodeName() = 0;
-    // virtual const std::string& getNodeValue() = 0;
-    // virtual void setNodeValue(const std::string&) = 0;
-    // virtual short getNodeType() = 0;
     virtual Node* getParentNode() = 0;
     virtual NodeList* getChildNodes() = 0;
     virtual Node* getFirstChild() = 0;
@@ -32,7 +28,6 @@ public:
     virtual Node* removeChild(Node*) = 0;
     virtual Node* appendChild(Node*) = 0;
     virtual bool hasChildNodes() = 0;
-    // virtual const std::string& getLocalName() = 0;
 };
 
 class DOMException {
@@ -64,9 +59,6 @@ public:
 
 class Node_Impl : public virtual dom::Node {
 private:
-    // std::string name;
-    // std::string value;
-    // short nodeType;
     dom::Node* parent;
     dom::NodeList nodes;
 
@@ -80,10 +72,6 @@ protected:
 public:
     virtual ~Node_Impl();
 
-    // virtual const std::string& getNodeName();
-    // virtual const std::string& getNodeValue();
-    // virtual void setNodeValue(const std::string&);
-    // virtual short getNodeType();
     virtual dom::Node* getParentNode();
     virtual dom::NodeList* getChildNodes();
     virtual dom::Node* getFirstChild();
@@ -96,7 +84,6 @@ public:
     virtual dom::Node* removeChild(dom::Node*);
     virtual dom::Node* appendChild(dom::Node*);
     virtual bool hasChildNodes();
-    // virtual const std::string& getLocalName();
 
     virtual void setParent(dom::Node*);
 };
