@@ -101,8 +101,10 @@ void testSerializer(int argc, char** argv) {
     //   </element>
     // </document>
     //
+
     dom::Document* document = new Document_Impl;
     dom::Element* root = document->createElement("document");
+
     document->appendChild(root);
 
     dom::Element* child = document->createElement("element");
