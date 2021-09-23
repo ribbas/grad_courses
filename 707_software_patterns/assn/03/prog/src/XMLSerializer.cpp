@@ -25,48 +25,7 @@ void DocumentContainer::containerize(dom::Node* document, bool init) {
 
     if (document->hasChildNodes()) {
         for (auto i : *document->getChildNodes()) {
-            // if (dynamic_cast<dom::Document*>(i) != 0) {
-            //     std::cout << "Document " << i << std::endl;
-            // } else if (dynamic_cast<dom::Element*>(i) != 0) {
-            //     std::cout << "Element " << i << std::endl;
-            // } else if (dynamic_cast<dom::Attr*>(i) != 0) {
-            //     std::cout << "Attr " << i << std::endl;
-            // } else if (dynamic_cast<dom::Text*>(i) != 0) {
-            //     std::cout << "Text " << i << std::endl;
-            // }
-            // std::cout << i << std::endl;
-            if (dynamic_cast<dom::Element*>(i) != 0) {
-
-                m_data_.push_back(i);
-                for (dom::NamedNodeMap::iterator j =
-                         dynamic_cast<dom::Element*>(i)
-                             ->getAttributes()
-                             ->begin();
-                     j !=
-                     dynamic_cast<dom::Element*>(i)->getAttributes()->end();
-                     j++) {
-                    m_data_.push_back(*j);
-                }
-
-                if (dynamic_cast<dom::Element*>(i)->getChildNodes()->size()) {
-
-                    for (dom::NodeList::iterator j =
-                             dynamic_cast<dom::Element*>(i)
-                                 ->getChildNodes()
-                                 ->begin();
-                         j !=
-                         dynamic_cast<dom::Element*>(i)->getChildNodes()->end();
-                         j++) {
-                        if (dynamic_cast<dom::Element*>(*j) != 0 ||
-                            dynamic_cast<dom::Text*>(*j) != 0) {
-                            m_data_.push_back(*j);
-                        }
-                    }
-                }
-            } else {
-                m_data_.push_back(i);
-            }
-            containerize(i, false);
+            m_data_.push_back(i);
         }
     }
 }
@@ -104,7 +63,7 @@ void XMLSerializer::serializeElement(dom::Node* node) {
     for (dom::NamedNodeMap::iterator i =
              dynamic_cast<dom::Element*>(node)->getAttributes()->begin();
          i != dynamic_cast<dom::Element*>(node)->getAttributes()->end(); i++) {
-        // serialize(*i);
+        serialize(*i);
         attrCount++;
     }
 
@@ -128,7 +87,7 @@ void XMLSerializer::serializeElement(dom::Node* node) {
              i++) {
             if (dynamic_cast<dom::Element*>(*i) != 0 ||
                 dynamic_cast<dom::Text*>(*i) != 0) {
-                // serialize(*i);
+                serialize(*i);
                 // serializePretty(*i);
             }
         }
@@ -168,45 +127,107 @@ void XMLSerializer::serializePretty(dom::Node* node) {
 }
 
 void XMLSerializer::serializeMinimal(dom::Node* node) {
-    if (dynamic_cast<dom::Document*>(node) != 0) {
 
-        file << "<? xml version=\"1.0\" encoding=\"UTF-8\"?>";
-        serializeMinimal(
-            dynamic_cast<dom::Document*>(node)->getDocumentElement());
+    std::stack<dom::Node*> nodeStack;
+    dom::Node* cur;
+    nodeStack.push(node);
 
-    } else if (dynamic_cast<dom::Element*>(node) != 0) {
+    dom::NamedNodeMap::iterator iter, iter2;
+    bool init = true;
+    bool init2 = true;
 
-        file << "<" << dynamic_cast<dom::Element*>(node)->getNodeName();
+    while (nodeStack.size()) {
 
-        for (dom::NamedNodeMap::iterator i =
-                 dynamic_cast<dom::Element*>(node)->getAttributes()->begin();
-             i != dynamic_cast<dom::Element*>(node)->getAttributes()->end();
-             i++)
-            serializeMinimal(*i);
+        std::cout << "size a" << nodeStack.size() << std::endl;
+        cur = nodeStack.top();
+        nodeStack.pop();
+        std::cout << "wrk " << cur << std::endl;
+        std::cout << "size b" << nodeStack.size() << std::endl;
 
-        if (dynamic_cast<dom::Element*>(node)->getChildNodes()->size() == 0) {
-            file << "/>";
-        } else {
-            file << ">";
+        if (dynamic_cast<dom::Document*>(cur) != 0) {
 
-            for (dom::NodeList::iterator i = dynamic_cast<dom::Element*>(node)
-                                                 ->getChildNodes()
-                                                 ->begin();
-                 i != dynamic_cast<dom::Element*>(node)->getChildNodes()->end();
-                 i++) {
-                if (dynamic_cast<dom::Element*>(*i) != 0 ||
-                    dynamic_cast<dom::Text*>(*i) != 0) {
-                    serializeMinimal(*i);
+            file << "<? xml version=\"1.0\" encoding=\"UTF-8\"?>";
+            nodeStack.push(
+                dynamic_cast<dom::Document*>(cur)->getDocumentElement());
+
+        } else if (dynamic_cast<dom::Element*>(cur) != 0) {
+
+            file << "<" << dynamic_cast<dom::Element*>(cur)->getNodeName();
+
+            if (iter !=
+                dynamic_cast<dom::Element*>(cur)->getAttributes()->end()) {
+
+                if (iter != dynamic_cast<dom::Element*>(cur)
+                                ->getAttributes()
+                                ->begin() &&
+                    init) {
+                    std::cout << "initing 1\n";
+                    iter = dynamic_cast<dom::Element*>(cur)
+                               ->getAttributes()
+                               ->begin();
+                    init = false;
                 }
+                nodeStack.push(*iter);
+                iter++;
+                // continue;
             }
 
-            file << "</"
-                 << dynamic_cast<dom::Element*>(node)->getNodeName() + ">";
+            // for (dom::NamedNodeMap::iterator i =
+            //          dynamic_cast<dom::Element*>(cur)->getAttributes()->begin();
+            //      i !=
+            //      dynamic_cast<dom::Element*>(cur)->getAttributes()->end();
+            //      i++) {
+            //     nodeStack.push(*i);
+            // }
+
+            if (dynamic_cast<dom::Element*>(cur)->getChildNodes()->size() ==
+                0) {
+                file << "/>";
+            } else {
+                file << ">";
+
+                if (iter2 !=
+                    dynamic_cast<dom::Element*>(cur)->getChildNodes()->end()) {
+
+                    if (iter2 != dynamic_cast<dom::Element*>(cur)
+                                     ->getChildNodes()
+                                     ->begin() &&
+                        init2) {
+                        std::cout << "initing 2\n";
+                        iter2 = dynamic_cast<dom::Element*>(cur)
+                                    ->getChildNodes()
+                                    ->begin();
+                        init2 = false;
+                    }
+                    if (dynamic_cast<dom::Element*>(*iter2) != 0 ||
+                        dynamic_cast<dom::Text*>(*iter2) != 0) {
+                        nodeStack.push(*iter2);
+                    }
+                    iter2++;
+                    // continue;
+                }
+
+                // for (dom::NodeList::iterator i =
+                //          dynamic_cast<dom::Element*>(cur)
+                //              ->getChildNodes()
+                //              ->begin();
+                //      i !=
+                //      dynamic_cast<dom::Element*>(cur)->getChildNodes()->end();
+                //      i++) {
+                //     if (dynamic_cast<dom::Element*>(*i) != 0 ||
+                //         dynamic_cast<dom::Text*>(*i) != 0) {
+                //         nodeStack.push(*i);
+                //     }
+                // }
+
+                file << "</"
+                     << dynamic_cast<dom::Element*>(cur)->getNodeName() + ">";
+            }
+        } else if (dynamic_cast<dom::Attr*>(cur) != 0) {
+            file << " " << dynamic_cast<dom::Attr*>(cur)->getNodeName() << "=\""
+                 << dynamic_cast<dom::Attr*>(cur)->getNodeValue() << "\"";
+        } else if (dynamic_cast<dom::Text*>(cur) != 0) {
+            file << dynamic_cast<dom::Text*>(cur)->getNodeValue();
         }
-    } else if (dynamic_cast<dom::Attr*>(node) != 0) {
-        file << " " << dynamic_cast<dom::Attr*>(node)->getNodeName() << "=\""
-             << dynamic_cast<dom::Attr*>(node)->getNodeValue() << "\"";
-    } else if (dynamic_cast<dom::Text*>(node) != 0) {
-        file << dynamic_cast<dom::Text*>(node)->getNodeValue();
     }
 }
