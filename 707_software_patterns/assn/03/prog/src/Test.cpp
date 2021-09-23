@@ -129,6 +129,7 @@ void testSerializer(int argc, char** argv) {
     //
     // Serialize
     //
+
     XMLSerializer xmlSerializer(argv[2]);
     xmlSerializer.serializePretty(document);
     XMLSerializer xmlSerializer2(argv[3]);

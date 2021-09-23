@@ -4,6 +4,7 @@
 #include <fstream>
 #include <ios>
 #include <iostream>
+#include <stack>
 #include <string>
 #include <vector>
 
@@ -71,28 +72,11 @@ private:
     iter_type m_it_;
 };
 
-/**
- * Generic Collections/Containers provides one or several methods for retrieving
- * fresh iterator instances, compatible with the collection class.
- */
-
 class DocumentContainer {
     friend class XMLSerializerIterator<DocumentContainer>;
 
 public:
-    void containerize(dom::Node* document, bool init = true) {
-
-        if (init) {
-            m_data_.push_back(document);
-        }
-
-        if (document->hasChildNodes()) {
-            for (auto i : *document->getChildNodes()) {
-                m_data_.push_back(i);
-                containerize(i, false);
-            }
-        }
-    }
+    void containerize(dom::Node*, bool = true);
 
     XMLSerializerIterator<DocumentContainer>* createIterator() {
         return new XMLSerializerIterator<DocumentContainer>(this);
