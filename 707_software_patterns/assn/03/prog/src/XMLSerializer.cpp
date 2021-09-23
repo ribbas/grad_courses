@@ -1,3 +1,4 @@
+#include <set>
 #include <stack>
 
 #include "XMLSerializer.hpp"
@@ -126,6 +127,17 @@ void XMLSerializer::serializePretty(dom::Node* node) {
     }
 }
 
+// doc
+// ele
+// ele
+// att
+// ele
+// ele
+// att
+// att
+// tex
+// ele
+
 void XMLSerializer::serializeMinimal(dom::Node* node) {
 
     std::stack<dom::Node*> nodeStack;
@@ -135,56 +147,56 @@ void XMLSerializer::serializeMinimal(dom::Node* node) {
     dom::NamedNodeMap::iterator iter, iter2;
     bool init = true;
     bool init2 = true;
+    std::set<dom::Node*> l;
 
     while (nodeStack.size()) {
 
-        std::cout << "size a" << nodeStack.size() << std::endl;
+        std::cout << "size " << nodeStack.size() << '\n';
         cur = nodeStack.top();
         nodeStack.pop();
-        std::cout << "wrk " << cur << std::endl;
-        std::cout << "size b" << nodeStack.size() << std::endl;
+        std::cout << "grabbing " << cur << '\n';
 
         if (dynamic_cast<dom::Document*>(cur) != 0) {
+
+            std::cout << "doc\n";
 
             file << "<? xml version=\"1.0\" encoding=\"UTF-8\"?>";
             nodeStack.push(
                 dynamic_cast<dom::Document*>(cur)->getDocumentElement());
 
         } else if (dynamic_cast<dom::Element*>(cur) != 0) {
+            std::cout << "ele\n";
 
             file << "<" << dynamic_cast<dom::Element*>(cur)->getNodeName();
 
-            if (iter !=
-                dynamic_cast<dom::Element*>(cur)->getAttributes()->end()) {
+            if (dynamic_cast<dom::Element*>(cur)->getAttributes()->size() !=
+                0) {
+                if (iter !=
+                    dynamic_cast<dom::Element*>(cur)->getAttributes()->end()) {
 
-                if (iter != dynamic_cast<dom::Element*>(cur)
-                                ->getAttributes()
-                                ->begin() &&
-                    init) {
-                    std::cout << "initing 1\n";
-                    iter = dynamic_cast<dom::Element*>(cur)
-                               ->getAttributes()
-                               ->begin();
-                    init = false;
+                    if (iter != dynamic_cast<dom::Element*>(cur)
+                                    ->getAttributes()
+                                    ->begin() &&
+                        init) {
+                        iter = dynamic_cast<dom::Element*>(cur)
+                                   ->getAttributes()
+                                   ->begin();
+                        init = false;
+                        std::cout << *iter << '\n';
+                    }
+                    std::cout << "pushing " << *iter << '\n';
+                    nodeStack.push(*iter);
+                    iter++;
+                    continue;
                 }
-                nodeStack.push(*iter);
-                iter++;
-                // continue;
             }
-
-            // for (dom::NamedNodeMap::iterator i =
-            //          dynamic_cast<dom::Element*>(cur)->getAttributes()->begin();
-            //      i !=
-            //      dynamic_cast<dom::Element*>(cur)->getAttributes()->end();
-            //      i++) {
-            //     nodeStack.push(*i);
-            // }
 
             if (dynamic_cast<dom::Element*>(cur)->getChildNodes()->size() ==
                 0) {
                 file << "/>";
             } else {
                 file << ">";
+                std::cout << "hmm?\n";
 
                 if (iter2 !=
                     dynamic_cast<dom::Element*>(cur)->getChildNodes()->end()) {
@@ -193,7 +205,6 @@ void XMLSerializer::serializeMinimal(dom::Node* node) {
                                      ->getChildNodes()
                                      ->begin() &&
                         init2) {
-                        std::cout << "initing 2\n";
                         iter2 = dynamic_cast<dom::Element*>(cur)
                                     ->getChildNodes()
                                     ->begin();
@@ -204,30 +215,81 @@ void XMLSerializer::serializeMinimal(dom::Node* node) {
                         nodeStack.push(*iter2);
                     }
                     iter2++;
-                    // continue;
+                    continue;
                 }
 
-                // for (dom::NodeList::iterator i =
-                //          dynamic_cast<dom::Element*>(cur)
-                //              ->getChildNodes()
-                //              ->begin();
-                //      i !=
-                //      dynamic_cast<dom::Element*>(cur)->getChildNodes()->end();
-                //      i++) {
-                //     if (dynamic_cast<dom::Element*>(*i) != 0 ||
-                //         dynamic_cast<dom::Text*>(*i) != 0) {
-                //         nodeStack.push(*i);
-                //     }
-                // }
-
+                std::cout << "hello?\n";
                 file << "</"
                      << dynamic_cast<dom::Element*>(cur)->getNodeName() + ">";
             }
         } else if (dynamic_cast<dom::Attr*>(cur) != 0) {
+            std::cout << "att\n";
+
             file << " " << dynamic_cast<dom::Attr*>(cur)->getNodeName() << "=\""
                  << dynamic_cast<dom::Attr*>(cur)->getNodeValue() << "\"";
+            nodeStack.push(cur->getParentNode());
+
         } else if (dynamic_cast<dom::Text*>(cur) != 0) {
+            std::cout << "tex\n";
+
             file << dynamic_cast<dom::Text*>(cur)->getNodeValue();
+            nodeStack.push(cur->getParentNode());
+        } else {
+            std::cout << "NODNOSNDS\n";
         }
     }
 }
+
+// void XMLSerializer::serializeMinimal(dom::Node* node) {
+
+//     if (dynamic_cast<dom::Document*>(node) != 0) {
+//         std::cout << "doc\n";
+//         file << "<? xml version=\"1.0\" encoding=\"UTF-8\"?>";
+//         serializeMinimal(
+//             dynamic_cast<dom::Document*>(node)->getDocumentElement());
+//     } else if (dynamic_cast<dom::Element*>(node) != 0) {
+//         std::cout << "ele\n";
+//         file << "<" << dynamic_cast<dom::Element*>(node)->getNodeName();
+
+//         std::cout << "size "
+//                   <<
+//                   dynamic_cast<dom::Element*>(node)->getAttributes()->size()
+//                   << '\n';
+//         for (dom::NamedNodeMap::iterator i =
+//                  dynamic_cast<dom::Element*>(node)->getAttributes()->begin();
+//              i != dynamic_cast<dom::Element*>(node)->getAttributes()->end();
+//              i++) {
+//             serializeMinimal(*i);
+//         }
+
+//         if (dynamic_cast<dom::Element*>(node)->getChildNodes()->size() == 0)
+//         {
+//             file << "/>";
+//         } else {
+//             file << ">";
+
+//             for (dom::NodeList::iterator i =
+//             dynamic_cast<dom::Element*>(node)
+//                                                  ->getChildNodes()
+//                                                  ->begin();
+//                  i !=
+//                  dynamic_cast<dom::Element*>(node)->getChildNodes()->end();
+//                  i++) {
+//                 if (dynamic_cast<dom::Element*>(*i) != 0 ||
+//                     dynamic_cast<dom::Text*>(*i) != 0) {
+//                     serializeMinimal(*i);
+//                 }
+//             }
+
+//             file << "</"
+//                  << dynamic_cast<dom::Element*>(node)->getNodeName() + ">";
+//         }
+//     } else if (dynamic_cast<dom::Attr*>(node) != 0) {
+//         std::cout << "att\n";
+//         file << " " << dynamic_cast<dom::Attr*>(node)->getNodeName() << "=\""
+//              << dynamic_cast<dom::Attr*>(node)->getNodeValue() << "\"";
+//     } else if (dynamic_cast<dom::Text*>(node) != 0) {
+//         std::cout << "tex\n";
+//         file << dynamic_cast<dom::Text*>(node)->getNodeValue();
+//     }
+// }
