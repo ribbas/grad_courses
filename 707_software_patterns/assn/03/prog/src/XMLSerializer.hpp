@@ -21,6 +21,13 @@ public:
         : indentationLevel(0), file(filename.c_str(), std::ios_base::out) {}
     ~XMLSerializer() {}
 
+    virtual void serializeDocument(dom::Node*);
+    virtual void serializeElement(dom::Node*);
+    virtual void serializeAttr(dom::Node*);
+    virtual void serializeText(dom::Node*);
+
+    virtual void serialize(dom::Node*);
+
     virtual void serializePretty(dom::Node*);
     virtual void serializeMinimal(dom::Node*);
 };
@@ -55,7 +62,7 @@ public:
     //     return *m_it_;
     // }
 
-    iter_type Current() {
+    iter_type data() {
         return m_it_;
     }
 
@@ -77,19 +84,17 @@ public:
 
         if (init) {
             m_data_.push_back(document);
-            std::cout << "con " << document << std::endl;
         }
 
         if (document->hasChildNodes()) {
             for (auto i : *document->getChildNodes()) {
-                std::cout << "con " << i << std::endl;
                 m_data_.push_back(i);
                 containerize(i, false);
             }
         }
     }
 
-    XMLSerializerIterator<DocumentContainer>* CreateIterator() {
+    XMLSerializerIterator<DocumentContainer>* createIterator() {
         return new XMLSerializerIterator<DocumentContainer>(this);
     }
 
