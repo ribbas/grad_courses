@@ -2,6 +2,7 @@
 #define NODE_H
 
 #include "NodeList.hpp"
+#include "WhitespaceStrategy.hpp"
 #include <string>
 
 namespace dom {
@@ -16,6 +17,7 @@ public:
 
     virtual ~Node() {}
 
+    virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
     virtual const std::string& getNodeName() = 0;
     virtual const std::string& getNodeValue() = 0;
     virtual void setNodeValue(const std::string&) = 0;
@@ -80,6 +82,7 @@ protected:
 public:
     virtual ~Node_Impl();
 
+    virtual void serialize(std::fstream*, WhitespaceStrategy*){};
     virtual const std::string& getNodeName();
     virtual const std::string& getNodeValue();
     virtual void setNodeValue(const std::string&);

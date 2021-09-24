@@ -15,6 +15,11 @@ class Element : public virtual Node {
 public:
     virtual ~Element() {}
 
+    //
+    // Serialization Data Extraction Strategy
+    //
+    virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
+
     virtual const std::string& getAttribute(const std::string& name) = 0;
     virtual Attr* getAttributeNode(const std::string& name) = 0;
     virtual NodeList* getElementsByTagName(const std::string& tagName) = 0;
@@ -31,7 +36,7 @@ public:
 };
 }; // namespace dom
 
-class Element_Impl : public virtual dom::Element, Node_Impl {
+class Element_Impl : public virtual dom::Element, public virtual Node_Impl {
 private:
     NamedNodeMap_Impl attributes;
 
@@ -40,9 +45,13 @@ protected:
 
 public:
     friend class Document_Impl;
-    friend class DocumentNodeFactory;
 
     virtual ~Element_Impl();
+
+    //
+    // Serialization Data Extraction Strategy
+    //
+    virtual void serialize(std::fstream*, WhitespaceStrategy*);
 
     virtual const std::string& getAttribute(const std::string&);
     virtual dom::Attr* getAttributeNode(const std::string&);

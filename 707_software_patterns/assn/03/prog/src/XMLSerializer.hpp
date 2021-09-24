@@ -4,92 +4,57 @@
 
 #include "Node.hpp"
 
-class DOMSerializerContext;
-
-class XMLSerializerStrategy {
+//
+// XMLSerializer is Serialization Strategy Context
+// Node is Serialization Strategy and output stream Strategy Context
+// Document, Element, Attr, Text are Serialization Concrete Strategies
+// java.io.Writer is output stream Strategy
+// java.io.BufferedWriter is output stream Concrete Strategy
+//
+class XMLSerializer {
+private:
+    std::fstream* file;
 
 public:
-    DOMSerializerContext* domSerializerContext;
-    int indentationLevel;
-    std::fstream file;
-    std::string newline;
-
-    XMLSerializerStrategy(const std::string&, const std::string&);
-    virtual ~XMLSerializerStrategy() {}
-
-    void serialize(dom::Node*);
-    virtual void prettyIndentation() = 0;
-    virtual void multipleAttr(int) = 0;
-};
-
-class XMLSerializerContext {
+    XMLSerializer(std::fstream* _file) : file(_file) {}
+    ~XMLSerializer() {}
 
 private:
-    XMLSerializerStrategy* strategy_;
+    class PrettyWhitespaceStrategy : public WhitespaceStrategy {
+    private:
+        int indentationLevel;
+
+    public:
+        PrettyWhitespaceStrategy() : indentationLevel(0) {}
+
+        virtual void prettyIndentation(std::fstream* wwriter) {
+            for (int i = 0; i < indentationLevel; i++)
+                *wwriter << "\t";
+        }
+
+        virtual void incrementIndentation() {
+            indentationLevel++;
+        }
+        virtual void decrementIndentation() {
+            indentationLevel--;
+        }
+        virtual void newLine(std::fstream* wwriter) {
+            *wwriter << "\n";
+        }
+    };
+
+    class MinimalWhitespaceStrategy : public WhitespaceStrategy {
+    public:
+        virtual void prettyIndentation(std::fstream*) {}
+        virtual void incrementIndentation() {}
+        virtual void decrementIndentation() {}
+        virtual void newLine(std::fstream*) {}
+    };
 
 public:
-    XMLSerializerContext(XMLSerializerStrategy* = nullptr);
-    ~XMLSerializerContext();
-
-    void serialize(dom::Node*);
-
-    void setStrategy(XMLSerializerStrategy*);
-};
-
-class XMLSerializerPretty : public XMLSerializerStrategy {
-private:
-    void prettyIndentation() override;
-    void multipleAttr(int) override;
-
-public:
-    XMLSerializerPretty(const std::string&);
-};
-
-class XMLSerializerMinimal : public XMLSerializerStrategy {
-private:
-    void prettyIndentation() override;
-    void multipleAttr(int) override;
-
-public:
-    XMLSerializerMinimal(const std::string&);
-};
-
-class DOMSerializerStrategy {
-
-public:
-    DOMSerializerStrategy(dom::Node*) {}
-    virtual ~DOMSerializerStrategy() {}
-};
-
-class DOMSerializerContext {
-private:
-    DOMSerializerStrategy* strategy_;
-
-public:
-    DOMSerializerContext(DOMSerializerStrategy* = nullptr);
-    ~DOMSerializerContext();
-
-    void findNodeType(dom::Node*, XMLSerializerStrategy*);
-
-    void setStrategy(DOMSerializerStrategy*);
-};
-
-class DocumentSerializer : public DOMSerializerStrategy {
-public:
-    DocumentSerializer(dom::Node*, XMLSerializerStrategy*);
-};
-
-class ElementSerializer : public DOMSerializerStrategy {
-public:
-    ElementSerializer(dom::Node*, XMLSerializerStrategy*);
-};
-
-class AttrSerializer : public DOMSerializerStrategy {
-public:
-    AttrSerializer(dom::Node*, XMLSerializerStrategy*);
-};
-
-class TextSerializer : public DOMSerializerStrategy {
-public:
-    TextSerializer(dom::Node*, XMLSerializerStrategy*);
+    //
+    // Strategized serialization
+    //
+    virtual void serializePretty(dom::Node* node);
+    virtual void serializeMinimal(dom::Node* node);
 };

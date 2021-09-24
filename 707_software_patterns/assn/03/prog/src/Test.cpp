@@ -128,12 +128,15 @@ void testSerializer(int argc, char** argv) {
     //
     // Serialize
     //
-    XMLSerializerContext* xmlSerializerContext =
-        new XMLSerializerContext(new XMLSerializerPretty(argv[2]));
-    xmlSerializerContext->serialize(document);
-    xmlSerializerContext->setStrategy(new XMLSerializerMinimal(argv[3]));
-    xmlSerializerContext->serialize(document);
-    delete xmlSerializerContext;
+    std::fstream* file = 0;
+    XMLSerializer xmlSerializer(
+        file = new std::fstream(argv[2], std::ios_base::out));
+    xmlSerializer.serializePretty(document);
+    delete file;
+    XMLSerializer xmlSerializer2(
+        file = new std::fstream(argv[3], std::ios_base::out));
+    xmlSerializer2.serializeMinimal(document);
+    delete file;
 
     // delete Document and tree.
 }
@@ -268,10 +271,13 @@ void testValidator(int argc, char** argv) {
     //
     // Serialize
     //
-    XMLSerializerContext* xmlSerializerContext =
-        new XMLSerializerContext(new XMLSerializerPretty(argv[2]));
-    xmlSerializerContext->serialize(document);
-    delete xmlSerializerContext;
-
+    //
+    // Serialize
+    //
+    std::fstream* file = 0;
+    XMLSerializer xmlSerializer(
+        file = new std::fstream(argv[2], std::ios_base::out));
+    xmlSerializer.serializePretty(document);
+    delete file;
     // delete Document and tree.
 }

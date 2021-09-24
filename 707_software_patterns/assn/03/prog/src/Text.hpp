@@ -12,6 +12,7 @@ class Text : public virtual Node {
 public:
     virtual ~Text() {}
 
+    virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
     virtual const std::string& getName() = 0;
     virtual const std::string& getData() = 0;
     virtual const std::string& getValue() = 0;
@@ -33,10 +34,10 @@ protected:
 
 public:
     friend class Document_Impl;
-    friend class DocumentNodeFactory;
 
     virtual ~Text_Impl();
 
+    virtual void serialize(std::fstream*, WhitespaceStrategy*);
     virtual const std::string& getName();
     virtual const std::string& getData();
     virtual const std::string& getValue();
@@ -49,6 +50,19 @@ public:
     virtual void deleteData(int, int);
     virtual void replaceData(int, int, const std::string&);
     virtual dom::Text* splitText(int);
+
+    virtual Node* insertBefore(Node*, Node*) {
+        return 0;
+    }
+    virtual Node* replaceChild(Node*, Node*) {
+        return 0;
+    }
+    virtual Node* removeChild(Node*) {
+        return 0;
+    }
+    virtual Node* appendChild(Node*) {
+        return 0;
+    }
 };
 
 #endif // TEXT_H
