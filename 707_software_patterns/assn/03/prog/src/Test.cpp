@@ -11,6 +11,7 @@
 void testTokenizer(int argc, char** argv);
 void testSerializer(int argc, char** argv);
 void testValidator(int argc, char** argv);
+void testIterator(int argc, char** argv);
 
 void printUsage() {
     printf("Usage:\n");
@@ -20,7 +21,7 @@ void printUsage() {
 }
 
 int main(int argc, char** argv) {
-    if (argc < 3) {
+    if (argc < 2) {
         printUsage();
         exit(0);
     }
@@ -37,6 +38,10 @@ int main(int argc, char** argv) {
         case 'V':
         case 'v':
             testValidator(argc, argv);
+            break;
+        case 'I':
+        case 'i':
+            testIterator(argc, argv);
             break;
     }
 }
@@ -181,26 +186,18 @@ void testValidator(int argc, char** argv) {
     dom::Element* child = 0;
     dom::Attr* attr = 0;
 
-    ElementComponent* elementComp = new ElementComponent;
-    AttrComponent* attrComp = new AttrComponent;
-    TextComponent* textComp = new TextComponent;
-
-    elementComp->setElement(root);
-    if (elementComp->validate("element")) {
+    if (xmlValidator.canRootElement("document")) {
         root = document->createElement("document");
-
         document->appendChild(root);
     } else {
         printf("Attempted invalid schema operation.");
         exit(0);
     }
 
-    elementComp->setElement(root);
-    if (elementComp->validate("element")) {
+    if (xmlValidator.canAddElement(root, "element")) {
         child = document->createElement("element");
 
-        attrComp->setElement(child);
-        if (attrComp->validate("attribute")) {
+        if (xmlValidator.canAddAttribute(child, "attribute")) {
             attr = document->createAttribute("attribute");
             attr->setValue("attribute value");
             child->setAttributeNode(attr);
@@ -215,8 +212,7 @@ void testValidator(int argc, char** argv) {
         exit(0);
     }
 
-    elementComp->setElement(root);
-    if (elementComp->validate("element")) {
+    if (xmlValidator.canAddElement(root, "element")) {
         child = document->createElement("element");
         root->appendChild(child);
     } else {
@@ -224,28 +220,24 @@ void testValidator(int argc, char** argv) {
         exit(0);
     }
 
-    elementComp->setElement(root);
-    if (elementComp->validate("element")) {
+    if (xmlValidator.canAddElement(root, "element")) {
         child = document->createElement("element");
 
-        attrComp->setElement(child);
-        if (attrComp->validate("attribute"))
+        if (xmlValidator.canAddAttribute(child, "attribute"))
             child->setAttribute("attribute", "attribute value");
         else {
             printf("Attempted invalid schema operation.");
             exit(0);
         }
 
-        attrComp->setElement(child);
-        if (attrComp->validate("attribute2"))
+        if (xmlValidator.canAddAttribute(child, "attribute2"))
             child->setAttribute("attribute2", "attribute2 value");
         else {
             printf("Attempted invalid schema operation.");
             exit(0);
         }
 
-        textComp->setElement(child);
-        if (textComp->validate()) {
+        if (xmlValidator.canAddText(child)) {
             dom::Text* text = document->createTextNode("Element Value");
             child->appendChild(text);
         } else {
@@ -259,8 +251,7 @@ void testValidator(int argc, char** argv) {
         exit(0);
     }
 
-    elementComp->setElement(root);
-    if (elementComp->validate("element")) {
+    if (xmlValidator.canAddElement(root, "element")) {
         child = document->createElement("element");
         root->appendChild(child);
     } else {
@@ -271,13 +262,68 @@ void testValidator(int argc, char** argv) {
     //
     // Serialize
     //
-    //
-    // Serialize
-    //
     std::fstream* file = 0;
     XMLSerializer xmlSerializer(
         file = new std::fstream(argv[2], std::ios_base::out));
     xmlSerializer.serializePretty(document);
     delete file;
+    // delete Document and tree.
+}
+
+void testIterator(int argc, char** argv) {
+    //
+    // Create tree of this document:
+    // <? xml version="1.0" encoding="UTF-8"?>
+    // <document>
+    //   <element attribute="attribute value"/>
+    //   <element/>
+    //   <element attribute="attribute value" attribute2="attribute2 value">
+    //     Element Value
+    //   </element>
+    //   <element>
+    //   </element>
+    // </document>
+    //
+    dom::Document* document = new Document_Impl;
+    dom::Element* root = document->createElement("document");
+    document->appendChild(root);
+    printf("< 0x%08lx > (Last and highest node out of iterator)\n",
+           (unsigned long)root);
+
+    dom::Element* child = document->createElement("element");
+    dom::Attr* attr = document->createAttribute("attribute");
+    attr->setValue("attribute value");
+    child->setAttributeNode(attr);
+    root->appendChild(child);
+    printf("  < 0x%08lx > (First node out of iterator)\n",
+           (unsigned long)child);
+
+    child = document->createElement("element");
+    root->appendChild(child);
+    printf("  < 0x%08lx > (Second node out of iterator)\n",
+           (unsigned long)child);
+
+    child = document->createElement("element");
+    child->setAttribute("attribute", "attribute value");
+    child->setAttribute("attribute2", "attribute2 value");
+    dom::Text* text = document->createTextNode("Element Value");
+    child->appendChild(text);
+    root->appendChild(child);
+    printf("  < 0x%08lx > (Fourth node out of iterator)\n",
+           (unsigned long)child);
+    printf("    < 0x%08lx > (Third and deepest node out of iterator)\n",
+           (unsigned long)text);
+
+    child = document->createElement("element");
+    root->appendChild(child);
+    printf("  < 0x%08lx > (Fifth node out of iterator)\n",
+           (unsigned long)child);
+
+    printf("\nDepth first iteration:\n");
+    dom::Iterator* domIterator;
+    for (domIterator = document->createIterator(); domIterator->hasNext();)
+        printf("node:  0x%08lx\n", (unsigned long)domIterator->next());
+    delete domIterator;
+
     // delete Document and tree.
 }

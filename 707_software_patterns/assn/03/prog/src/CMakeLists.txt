@@ -11,6 +11,7 @@ if(Boost_FOUND)
 		Attr.cpp
 		Document.cpp
 		Element.cpp
+		Iterator.cpp
 		NamedNodeMap.cpp
 		Node.cpp
 		Test.cpp

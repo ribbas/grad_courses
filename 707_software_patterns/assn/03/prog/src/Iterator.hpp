@@ -1,6 +1,7 @@
 #ifndef ITERATOR_H
 #define ITERATOR_H
 
+#include "Node.hpp"
 #include "NodeList.hpp"
 #include <stack>
 
@@ -9,6 +10,9 @@ class Node;
 
 class Iterator {
 public:
+    virtual ~Iterator() {}
+
+    virtual Node* elementAt(NodeList*, int) = 0;
     virtual bool hasNext() = 0;
     virtual Node* next() = 0;
 };
@@ -21,12 +25,12 @@ private:
     std::stack<dom::NodeList*> listStack;
     std::stack<int> indexStack;
 
-    friend class Document_Impl;
-
-    DOMIterator(dom::Node* startWithNode, Document_Impl* document);
-    dom::Node* elementAt(dom::NodeList* currentList, int currentIndex);
-
 public:
+    friend class Document_Impl;
+    DOMIterator(dom::Node*);
+    // virtual ~DOMIterator();
+
+    virtual dom::Node* elementAt(dom::NodeList* currentList, int currentIndex);
     virtual bool hasNext();
     virtual dom::Node* next();
 };

@@ -3,6 +3,7 @@
 
 #include <string>
 
+#include "Iterator.hpp"
 #include "Node.hpp"
 
 namespace dom {
@@ -10,6 +11,7 @@ class Element;
 class Text;
 class Attr;
 class NodeList;
+class Iterator;
 
 class Document : public virtual Node {
 public:
@@ -17,6 +19,7 @@ public:
     // Serialization Data Extraction Strategy
     //
     virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
+    virtual Iterator* createIterator() = 0;
     virtual Element* createElement(const std::string&) = 0;
     virtual Text* createTextNode(const std::string&) = 0;
     virtual Attr* createAttribute(const std::string&) = 0;
@@ -34,6 +37,7 @@ public:
     // Serialization Data Extraction Strategy
     //
     virtual void serialize(std::fstream*, WhitespaceStrategy*);
+    virtual dom::Iterator* createIterator();
 
     virtual dom::Element* createElement(const std::string&);
     virtual dom::Text* createTextNode(const std::string&);
