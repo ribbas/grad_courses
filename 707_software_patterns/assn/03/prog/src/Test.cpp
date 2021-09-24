@@ -5,6 +5,7 @@
 #include "XMLSerializer.hpp"
 #include "XMLTokenizer.hpp"
 #include "XMLValidator.hpp"
+
 #include <stdio.h>
 
 void testTokenizer(int argc, char** argv);
@@ -47,12 +48,12 @@ void testTokenizer(int argc, char** argv) {
     dom::Text* text = document->createTextNode("Text Data");
     dom::Attr* attr = document->createAttribute("NewAttribute");
 
-    printf("Element Tag = '%s'\n", element->getNodeName().c_str());
-    printf("Text Data = '%s'\n", text->getNodeValue().c_str());
-    printf("Attr Name = '%s'\n", attr->getNodeName().c_str());
+    printf("Element Tag = '%s'\n", element->getTagName().c_str());
+    printf("Text Data = '%s'\n", text->getValue().c_str());
+    printf("Attr Name = '%s'\n", attr->getName().c_str());
 
     element->setAttributeNode(attr);
-    printf("Element attribute '%s'='%s'\n", element->getNodeName().c_str(),
+    printf("Element attribute '%s'='%s'\n", element->getTagName().c_str(),
            element->getAttribute("NewAttribute").c_str());
 
     delete element;
@@ -101,15 +102,13 @@ void testSerializer(int argc, char** argv) {
     //   </element>
     // </document>
     //
-
     dom::Document* document = new Document_Impl;
     dom::Element* root = document->createElement("document");
-
     document->appendChild(root);
 
     dom::Element* child = document->createElement("element");
     dom::Attr* attr = document->createAttribute("attribute");
-    attr->setNodeValue("attribute value");
+    attr->setValue("attribute value");
     child->setAttributeNode(attr);
     root->appendChild(child);
 
@@ -129,11 +128,12 @@ void testSerializer(int argc, char** argv) {
     //
     // Serialize
     //
-
-    XMLSerializer xmlSerializer(argv[2]);
-    xmlSerializer.serializePretty(document);
-    XMLSerializer xmlSerializer2(argv[3]);
-    xmlSerializer2.serializeMinimal(document);
+    XMLSerializerContext* xmlSerializerContext =
+        new XMLSerializerContext(new XMLSerializerPretty(argv[2]));
+    xmlSerializerContext->serialize(document);
+    xmlSerializerContext->setStrategy(new XMLSerializerMinimal(argv[3]));
+    xmlSerializerContext->serialize(document);
+    delete xmlSerializerContext;
 
     // delete Document and tree.
 }
@@ -178,84 +178,100 @@ void testValidator(int argc, char** argv) {
     dom::Element* child = 0;
     dom::Attr* attr = 0;
 
-    if (xmlValidator.canRootElement("document")) {
+    ElementComponent* elementComp = new ElementComponent;
+    AttrComponent* attrComp = new AttrComponent;
+    TextComponent* textComp = new TextComponent;
+
+    elementComp->setElement(root);
+    if (elementComp->validate("element")) {
         root = document->createElement("document");
+
         document->appendChild(root);
     } else {
-        printf("Attempted invalid schema operation.1");
+        printf("Attempted invalid schema operation.");
         exit(0);
     }
 
-    if (xmlValidator.canAddElement(root, "element")) {
+    elementComp->setElement(root);
+    if (elementComp->validate("element")) {
         child = document->createElement("element");
 
-        if (xmlValidator.canAddAttribute(child, "attribute")) {
+        attrComp->setElement(child);
+        if (attrComp->validate("attribute")) {
             attr = document->createAttribute("attribute");
-            attr->setNodeValue("attribute value");
+            attr->setValue("attribute value");
             child->setAttributeNode(attr);
         } else {
-            printf("Attempted invalid schema operation.2");
+            printf("Attempted invalid schema operation.");
             exit(0);
         }
 
         root->appendChild(child);
     } else {
-        printf("Attempted invalid schema operation. couldnt add3");
+        printf("Attempted invalid schema operation.");
         exit(0);
     }
 
-    if (xmlValidator.canAddElement(root, "element")) {
+    elementComp->setElement(root);
+    if (elementComp->validate("element")) {
         child = document->createElement("element");
         root->appendChild(child);
     } else {
-        printf("Attempted invalid schema operation.4");
+        printf("Attempted invalid schema operation.");
         exit(0);
     }
 
-    if (xmlValidator.canAddElement(root, "element")) {
+    elementComp->setElement(root);
+    if (elementComp->validate("element")) {
         child = document->createElement("element");
 
-        if (xmlValidator.canAddAttribute(child, "attribute"))
+        attrComp->setElement(child);
+        if (attrComp->validate("attribute"))
             child->setAttribute("attribute", "attribute value");
         else {
-            printf("Attempted invalid schema operation.5");
+            printf("Attempted invalid schema operation.");
             exit(0);
         }
 
-        if (xmlValidator.canAddAttribute(child, "attribute2"))
+        attrComp->setElement(child);
+        if (attrComp->validate("attribute2"))
             child->setAttribute("attribute2", "attribute2 value");
         else {
-            printf("Attempted invalid schema operation.6");
+            printf("Attempted invalid schema operation.");
             exit(0);
         }
 
-        if (xmlValidator.canAddText(child)) {
+        textComp->setElement(child);
+        if (textComp->validate()) {
             dom::Text* text = document->createTextNode("Element Value");
             child->appendChild(text);
         } else {
-            printf("Attempted invalid schema operation.7");
+            printf("Attempted invalid schema operation.");
             exit(0);
         }
 
         root->appendChild(child);
     } else {
-        printf("Attempted invalid schema operation.8");
+        printf("Attempted invalid schema operation.");
         exit(0);
     }
 
-    if (xmlValidator.canAddElement(root, "element")) {
+    elementComp->setElement(root);
+    if (elementComp->validate("element")) {
         child = document->createElement("element");
         root->appendChild(child);
     } else {
-        printf("Attempted invalid schema operation.9");
+        printf("Attempted invalid schema operation.");
         exit(0);
     }
 
     //
     // Serialize
     //
-    XMLSerializer xmlSerializer(argv[2]);
-    xmlSerializer.serializePretty(document);
+    XMLSerializerContext* xmlSerializerContext =
+        new XMLSerializerContext(new XMLSerializerPretty(argv[2]));
+    xmlSerializerContext->serialize(document);
+    delete xmlSerializerContext;
 
     // delete Document and tree.
 }

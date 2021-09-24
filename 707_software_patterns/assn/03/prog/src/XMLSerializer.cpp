@@ -1,6 +1,3 @@
-#include <set>
-#include <stack>
-
 #include "XMLSerializer.hpp"
 
 #include "Attr.hpp"
@@ -8,79 +5,123 @@
 #include "Element.hpp"
 #include "Text.hpp"
 
-void DocumentContainer::containerize(dom::Node* document, bool init) {
+XMLSerializerContext::XMLSerializerContext(XMLSerializerStrategy* strategy)
+    : strategy_(strategy) {}
 
-    if (init) {
-        m_data_.push_back(document);
-    }
-
-    if (dynamic_cast<dom::Document*>(document) != 0) {
-        std::cout << "Document " << document << std::endl;
-    } else if (dynamic_cast<dom::Element*>(document) != 0) {
-        std::cout << "Element " << document << std::endl;
-    } else if (dynamic_cast<dom::Attr*>(document) != 0) {
-        std::cout << "Attr " << document << std::endl;
-    } else if (dynamic_cast<dom::Text*>(document) != 0) {
-        std::cout << "Text " << document << std::endl;
-    }
-
-    if (document->hasChildNodes()) {
-        for (auto i : *document->getChildNodes()) {
-            m_data_.push_back(i);
-        }
-    }
+XMLSerializerContext::~XMLSerializerContext() {
+    delete this->strategy_;
 }
 
-void XMLSerializer::prettyIndentation() {
+void XMLSerializerContext::serialize(dom::Node* node) {
+    this->strategy_->serialize(node);
+}
+
+void XMLSerializerContext::setStrategy(XMLSerializerStrategy* strategy) {
+    delete this->strategy_;
+    this->strategy_ = strategy;
+}
+
+XMLSerializerStrategy::XMLSerializerStrategy(const std::string& filename,
+                                             const std::string& newline)
+    : indentationLevel(0), file(filename.c_str(), std::ios_base::out),
+      newline(newline) {
+    domSerializerContext = new DOMSerializerContext();
+}
+
+void XMLSerializerStrategy::serialize(dom::Node* node) {
+
+    domSerializerContext->findNodeType(node, this);
+}
+
+XMLSerializerPretty::XMLSerializerPretty(const std::string& filename)
+    : XMLSerializerStrategy(filename, "\n") {}
+
+void XMLSerializerPretty::prettyIndentation() {
+
     for (int i = 0; i < indentationLevel; i++) {
         file << "\t";
     }
 }
 
-void XMLSerializer::serialize(dom::Node* node) {
-    if (dynamic_cast<dom::Document*>(node) != 0) {
-        serializeDocument(node);
-    } else if (dynamic_cast<dom::Element*>(node) != 0) {
-        serializeElement(node);
-    } else if (dynamic_cast<dom::Attr*>(node) != 0) {
-        serializeAttr(node);
-    } else if (dynamic_cast<dom::Text*>(node) != 0) {
-        serializeText(node);
+void XMLSerializerPretty::multipleAttr(int attrCount) {
+
+    if (attrCount > 0) {
+        file << " ";
     }
 }
 
-void XMLSerializer::serializeDocument(dom::Node* node) {
-    file << "<? xml version=\"1.0\" encoding=\"UTF-8\"?>";
-    file << "\n";
+XMLSerializerMinimal::XMLSerializerMinimal(const std::string& filename)
+    : XMLSerializerStrategy(filename, "") {}
+
+void XMLSerializerMinimal::prettyIndentation() {}
+
+void XMLSerializerMinimal::multipleAttr(int) {}
+
+DOMSerializerContext::DOMSerializerContext(DOMSerializerStrategy* strategy)
+    : strategy_(strategy) {}
+
+void DOMSerializerContext::setStrategy(DOMSerializerStrategy* strategy) {
+    if (this->strategy_) {
+        delete this->strategy_;
+    }
+    this->strategy_ = strategy;
 }
 
-void XMLSerializer::serializeElement(dom::Node* node) {
+void DOMSerializerContext::findNodeType(
+    dom::Node* node, XMLSerializerStrategy* xmlSerializerStrategy) {
 
-    prettyIndentation();
-    file << "<" << dynamic_cast<dom::Element*>(node)->getNodeName();
+    if (dynamic_cast<dom::Document*>(node) != 0) {
+        setStrategy(new DocumentSerializer(node, xmlSerializerStrategy));
+
+    } else if (dynamic_cast<dom::Element*>(node) != 0) {
+        setStrategy(new ElementSerializer(node, xmlSerializerStrategy));
+
+    } else if (dynamic_cast<dom::Attr*>(node) != 0) {
+        setStrategy(new AttrSerializer(node, xmlSerializerStrategy));
+
+    } else if (dynamic_cast<dom::Text*>(node) != 0) {
+        setStrategy(new TextSerializer(node, xmlSerializerStrategy));
+    }
+}
+
+DocumentSerializer::DocumentSerializer(
+    dom::Node* node, XMLSerializerStrategy* xmlSerializerStrategy)
+    : DOMSerializerStrategy(node) {
+
+    xmlSerializerStrategy->file << "<? xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                                << xmlSerializerStrategy->newline;
+    xmlSerializerStrategy->serialize(
+        dynamic_cast<dom::Document*>(node)->getDocumentElement());
+}
+
+ElementSerializer::ElementSerializer(
+    dom::Node* node, XMLSerializerStrategy* xmlSerializerStrategy)
+    : DOMSerializerStrategy(node) {
+
+    xmlSerializerStrategy->prettyIndentation();
+    xmlSerializerStrategy->file
+        << "<" << dynamic_cast<dom::Element*>(node)->getTagName();
 
     int attrCount = 0;
 
     for (dom::NamedNodeMap::iterator i =
              dynamic_cast<dom::Element*>(node)->getAttributes()->begin();
          i != dynamic_cast<dom::Element*>(node)->getAttributes()->end(); i++) {
-        serialize(*i);
+
+        xmlSerializerStrategy->serialize(*i);
         attrCount++;
     }
 
-    if (attrCount > 0) {
-        file << " ";
-    }
+    xmlSerializerStrategy->multipleAttr(attrCount);
 
     if (dynamic_cast<dom::Element*>(node)->getChildNodes()->size() == 0) {
-        file << "/>";
-        file << "\n";
+
+        xmlSerializerStrategy->file << "/>" << xmlSerializerStrategy->newline;
 
     } else {
 
-        file << ">";
-        file << "\n";
-        indentationLevel++;
+        xmlSerializerStrategy->file << ">" << xmlSerializerStrategy->newline;
+        xmlSerializerStrategy->indentationLevel++;
 
         for (dom::NodeList::iterator i =
                  dynamic_cast<dom::Element*>(node)->getChildNodes()->begin();
@@ -88,208 +129,30 @@ void XMLSerializer::serializeElement(dom::Node* node) {
              i++) {
             if (dynamic_cast<dom::Element*>(*i) != 0 ||
                 dynamic_cast<dom::Text*>(*i) != 0) {
-                serialize(*i);
-                // serializePretty(*i);
+                xmlSerializerStrategy->serialize(*i);
             }
         }
 
-        indentationLevel--;
-        prettyIndentation();
-        file << "</" << dynamic_cast<dom::Element*>(node)->getNodeName() + ">";
-        file << "\n";
+        xmlSerializerStrategy->indentationLevel--;
+        xmlSerializerStrategy->prettyIndentation();
+        xmlSerializerStrategy->file
+            << "</" << dynamic_cast<dom::Element*>(node)->getTagName() << ">"
+            << xmlSerializerStrategy->newline;
     }
 }
 
-void XMLSerializer::serializeAttr(dom::Node* node) {
-
-    file << " " << dynamic_cast<dom::Attr*>(node)->getNodeName() << "=\""
-         << dynamic_cast<dom::Attr*>(node)->getNodeValue() << "\"";
+AttrSerializer::AttrSerializer(dom::Node* node,
+                               XMLSerializerStrategy* xmlSerializerStrategy)
+    : DOMSerializerStrategy(node) {
+    xmlSerializerStrategy->file
+        << " " << dynamic_cast<dom::Attr*>(node)->getName() << "=\""
+        << dynamic_cast<dom::Attr*>(node)->getValue() << "\"";
 }
 
-void XMLSerializer::serializeText(dom::Node* node) {
-    prettyIndentation();
-    file << dynamic_cast<dom::Text*>(node)->getNodeValue();
-    file << "\n";
+TextSerializer::TextSerializer(dom::Node* node,
+                               XMLSerializerStrategy* xmlSerializerStrategy)
+    : DOMSerializerStrategy(node) {
+    xmlSerializerStrategy->prettyIndentation();
+    xmlSerializerStrategy->file << dynamic_cast<dom::Text*>(node)->getData()
+                                << xmlSerializerStrategy->newline;
 }
-
-void XMLSerializer::serializePretty(dom::Node* node) {
-
-    DocumentContainer docContainer;
-    docContainer.containerize(node);
-
-    XMLSerializerIterator<DocumentContainer>* it =
-        docContainer.createIterator();
-
-    for (it->begin(); !it->end(); it->next()) {
-
-        // std::cout << "hey " << *it->data() << std::endl;
-        serialize(*it->data());
-    }
-}
-
-// doc
-// ele
-// ele
-// att
-// ele
-// ele
-// att
-// att
-// tex
-// ele
-
-void XMLSerializer::serializeMinimal(dom::Node* node) {
-
-    std::stack<dom::Node*> nodeStack;
-    dom::Node* cur;
-    nodeStack.push(node);
-
-    dom::NamedNodeMap::iterator iter, iter2;
-    bool init = true;
-    bool init2 = true;
-    std::set<dom::Node*> l;
-
-    while (nodeStack.size()) {
-
-        std::cout << "size " << nodeStack.size() << '\n';
-        cur = nodeStack.top();
-        nodeStack.pop();
-        std::cout << "grabbing " << cur << '\n';
-
-        if (dynamic_cast<dom::Document*>(cur) != 0) {
-
-            std::cout << "doc\n";
-
-            file << "<? xml version=\"1.0\" encoding=\"UTF-8\"?>";
-            nodeStack.push(
-                dynamic_cast<dom::Document*>(cur)->getDocumentElement());
-
-        } else if (dynamic_cast<dom::Element*>(cur) != 0) {
-            std::cout << "ele\n";
-
-            file << "<" << dynamic_cast<dom::Element*>(cur)->getNodeName();
-
-            if (dynamic_cast<dom::Element*>(cur)->getAttributes()->size() !=
-                0) {
-                if (iter !=
-                    dynamic_cast<dom::Element*>(cur)->getAttributes()->end()) {
-
-                    if (iter != dynamic_cast<dom::Element*>(cur)
-                                    ->getAttributes()
-                                    ->begin() &&
-                        init) {
-                        iter = dynamic_cast<dom::Element*>(cur)
-                                   ->getAttributes()
-                                   ->begin();
-                        init = false;
-                        std::cout << *iter << '\n';
-                    }
-                    std::cout << "pushing " << *iter << '\n';
-                    nodeStack.push(*iter);
-                    iter++;
-                    continue;
-                }
-            }
-
-            if (dynamic_cast<dom::Element*>(cur)->getChildNodes()->size() ==
-                0) {
-                file << "/>";
-            } else {
-                file << ">";
-                std::cout << "hmm?\n";
-
-                if (iter2 !=
-                    dynamic_cast<dom::Element*>(cur)->getChildNodes()->end()) {
-
-                    if (iter2 != dynamic_cast<dom::Element*>(cur)
-                                     ->getChildNodes()
-                                     ->begin() &&
-                        init2) {
-                        iter2 = dynamic_cast<dom::Element*>(cur)
-                                    ->getChildNodes()
-                                    ->begin();
-                        init2 = false;
-                    }
-                    if (dynamic_cast<dom::Element*>(*iter2) != 0 ||
-                        dynamic_cast<dom::Text*>(*iter2) != 0) {
-                        nodeStack.push(*iter2);
-                    }
-                    iter2++;
-                    continue;
-                }
-
-                std::cout << "hello?\n";
-                file << "</"
-                     << dynamic_cast<dom::Element*>(cur)->getNodeName() + ">";
-            }
-        } else if (dynamic_cast<dom::Attr*>(cur) != 0) {
-            std::cout << "att\n";
-
-            file << " " << dynamic_cast<dom::Attr*>(cur)->getNodeName() << "=\""
-                 << dynamic_cast<dom::Attr*>(cur)->getNodeValue() << "\"";
-            nodeStack.push(cur->getParentNode());
-
-        } else if (dynamic_cast<dom::Text*>(cur) != 0) {
-            std::cout << "tex\n";
-
-            file << dynamic_cast<dom::Text*>(cur)->getNodeValue();
-            nodeStack.push(cur->getParentNode());
-        } else {
-            std::cout << "NODNOSNDS\n";
-        }
-    }
-}
-
-// void XMLSerializer::serializeMinimal(dom::Node* node) {
-
-//     if (dynamic_cast<dom::Document*>(node) != 0) {
-//         std::cout << "doc\n";
-//         file << "<? xml version=\"1.0\" encoding=\"UTF-8\"?>";
-//         serializeMinimal(
-//             dynamic_cast<dom::Document*>(node)->getDocumentElement());
-//     } else if (dynamic_cast<dom::Element*>(node) != 0) {
-//         std::cout << "ele\n";
-//         file << "<" << dynamic_cast<dom::Element*>(node)->getNodeName();
-
-//         std::cout << "size "
-//                   <<
-//                   dynamic_cast<dom::Element*>(node)->getAttributes()->size()
-//                   << '\n';
-//         for (dom::NamedNodeMap::iterator i =
-//                  dynamic_cast<dom::Element*>(node)->getAttributes()->begin();
-//              i != dynamic_cast<dom::Element*>(node)->getAttributes()->end();
-//              i++) {
-//             serializeMinimal(*i);
-//         }
-
-//         if (dynamic_cast<dom::Element*>(node)->getChildNodes()->size() == 0)
-//         {
-//             file << "/>";
-//         } else {
-//             file << ">";
-
-//             for (dom::NodeList::iterator i =
-//             dynamic_cast<dom::Element*>(node)
-//                                                  ->getChildNodes()
-//                                                  ->begin();
-//                  i !=
-//                  dynamic_cast<dom::Element*>(node)->getChildNodes()->end();
-//                  i++) {
-//                 if (dynamic_cast<dom::Element*>(*i) != 0 ||
-//                     dynamic_cast<dom::Text*>(*i) != 0) {
-//                     serializeMinimal(*i);
-//                 }
-//             }
-
-//             file << "</"
-//                  << dynamic_cast<dom::Element*>(node)->getNodeName() + ">";
-//         }
-//     } else if (dynamic_cast<dom::Attr*>(node) != 0) {
-//         std::cout << "att\n";
-//         file << " " << dynamic_cast<dom::Attr*>(node)->getNodeName() << "=\""
-//              << dynamic_cast<dom::Attr*>(node)->getNodeValue() << "\"";
-//     } else if (dynamic_cast<dom::Text*>(node) != 0) {
-//         std::cout << "tex\n";
-//         file << dynamic_cast<dom::Text*>(node)->getNodeValue();
-//     }
-// }

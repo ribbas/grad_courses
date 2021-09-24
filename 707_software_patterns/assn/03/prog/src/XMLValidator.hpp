@@ -31,21 +31,67 @@ public:
 };
 
 class XMLValidator {
-private:
+protected:
     std::vector<ValidChildren*> schema;
+    dom::Element* element_;
 
 public:
     XMLValidator() {}
     ~XMLValidator() {
-        for (int i = 0; i < schema.size(); i++)
+        for (int i = 0; i < schema.size(); i++) {
             delete schema[i];
+        }
+    }
+
+    void setElement(dom::Element* element) {
+        element_ = element;
     }
 
     virtual ValidChildren* addSchemaElement(std::string);
     virtual std::vector<ValidChildren*>::iterator
         findSchemaElement(std::string);
-    virtual bool canRootElement(std::string);
-    virtual bool canAddElement(dom::Element*, std::string);
-    virtual bool canAddText(dom::Element*);
-    virtual bool canAddAttribute(dom::Element*, std::string);
+};
+
+class ElementComponent : public XMLValidator {
+
+public:
+    ElementComponent() {}
+    bool validate(std::string newElement) {
+
+        std::vector<ValidChildren*>::iterator schemaElement =
+            findSchemaElement(element_ == 0 ? "" : element_->getTagName());
+
+        return schemaElement == schema.end()
+                   ? true
+                   : (*schemaElement)->childIsValid(newElement, false);
+    }
+};
+
+class AttrComponent : public XMLValidator {
+
+public:
+    AttrComponent() {}
+    bool validate(std::string newAttribute) {
+
+        std::vector<ValidChildren*>::iterator schemaElement =
+            findSchemaElement(element_->getTagName());
+
+        return schemaElement == schema.end()
+                   ? true
+                   : (*schemaElement)->childIsValid(newAttribute, true);
+    }
+};
+
+class TextComponent : public XMLValidator {
+
+public:
+    TextComponent() {}
+    bool validate() {
+
+        std::vector<ValidChildren*>::iterator schemaElement =
+            findSchemaElement(element_->getTagName());
+
+        return schemaElement == schema.end() ? true
+                                             : (*schemaElement)->canHaveText();
+    }
 };

@@ -1,16 +1,31 @@
 #include "Attr.hpp"
 
 Attr_Impl::Attr_Impl(const std::string& tagName, dom::Document* document)
-    : DocumentNode_Impl(tagName, dom::Node::ATTRIBUTE_NODE, document) {}
+    : Node_Impl(tagName, dom::Node::ATTRIBUTE_NODE) {
+    Node_Impl::document = document;
+}
 
 Attr_Impl::Attr_Impl(const std::string& tagName, const std::string& value,
                      dom::Document* document)
-    : DocumentNode_Impl(tagName, dom::Node::ATTRIBUTE_NODE, document) {
-    setNodeValue(value);
+    : Node_Impl(tagName, dom::Node::ATTRIBUTE_NODE) {
+    Node_Impl::document = document;
+    setValue(value);
 }
 
 Attr_Impl::~Attr_Impl() {}
 
-dom::Element* Attr_Impl::getOwnerElement(void) {
-    return (dom::Element*)DocumentNode_Impl::getParentNode();
+const std::string& Attr_Impl::getName() {
+    return Node_Impl::getNodeName();
+}
+
+const std::string& Attr_Impl::getValue() {
+    return Node_Impl::getNodeValue();
+}
+
+void Attr_Impl::setValue(const std::string& value) {
+    Node_Impl::setNodeValue(value);
+}
+
+dom::Element* Attr_Impl::getOwnerElement() {
+    return (dom::Element*)Node_Impl::getParentNode();
 }

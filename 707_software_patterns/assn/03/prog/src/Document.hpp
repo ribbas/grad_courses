@@ -10,6 +10,7 @@ class Element;
 class Text;
 class Attr;
 class NodeList;
+class DocumentNodeFactory;
 
 class Document : public virtual Node {
 public:
@@ -20,7 +21,11 @@ public:
 };
 }; // namespace dom
 
+class DocumentNodeFactory;
 class Document_Impl : public virtual dom::Document, public virtual Node_Impl {
+private:
+    DocumentNodeFactory* documentNodeFactory;
+
 public:
     Document_Impl();
 
@@ -30,6 +35,14 @@ public:
     virtual dom::Text* createTextNode(const std::string&);
     virtual dom::Attr* createAttribute(const std::string&);
     virtual dom::Element* getDocumentElement();
+};
+
+class DocumentNodeFactory : public virtual dom::Document,
+                            public virtual Node_Impl {
+public:
+    DocumentNodeFactory();
+    dom::Node* createDocumentNode(dom::Document* document, int nodeType,
+                                  const std::string& value);
 };
 
 #endif // DOCUMENT_H

@@ -1,89 +1,95 @@
-#ifndef XMLSERIALIZER_H
-#define XMLSERIALIZER_H
-
 #include <fstream>
 #include <ios>
-#include <iostream>
-#include <stack>
 #include <string>
-#include <vector>
 
 #include "Node.hpp"
 
-class XMLSerializer {
-private:
+class DOMSerializerContext;
+
+class XMLSerializerStrategy {
+
+public:
+    DOMSerializerContext* domSerializerContext;
     int indentationLevel;
     std::fstream file;
+    std::string newline;
 
-    virtual void prettyIndentation();
+    XMLSerializerStrategy(const std::string&, const std::string&);
+    virtual ~XMLSerializerStrategy() {}
 
-public:
-    XMLSerializer(const std::string& filename)
-        : indentationLevel(0), file(filename.c_str(), std::ios_base::out) {}
-    ~XMLSerializer() {}
-
-    virtual void serializeDocument(dom::Node*);
-    virtual void serializeElement(dom::Node*);
-    virtual void serializeAttr(dom::Node*);
-    virtual void serializeText(dom::Node*);
-
-    virtual void serialize(dom::Node*);
-
-    virtual void serializePretty(dom::Node*);
-    virtual void serializeMinimal(dom::Node*);
+    void serialize(dom::Node*);
+    virtual void prettyIndentation() = 0;
+    virtual void multipleAttr(int) = 0;
 };
 
-template <typename U>
-class XMLSerializerIterator {
-public:
-    typedef typename std::vector<dom::Node*>::iterator iter_type;
-    XMLSerializerIterator(U* p_data) : m_p_data_(p_data) {
-        m_it_ = m_p_data_->m_data_.begin();
-    }
-
-    void begin() {
-        m_it_ = m_p_data_->m_data_.begin();
-    }
-
-    void next() {
-        m_it_++;
-    }
-
-    bool end() {
-        return (m_it_ == m_p_data_->m_data_.end());
-    }
-
-    XMLSerializerIterator* operator++() {
-        XMLSerializerIterator* temp;
-        temp->m_it_ = m_it_++;
-        return temp;
-    }
-
-    // explicit iter_type operator*() const {
-    //     return *m_it_;
-    // }
-
-    iter_type data() {
-        return m_it_;
-    }
+class XMLSerializerContext {
 
 private:
-    U* m_p_data_;
-    iter_type m_it_;
-};
-
-class DocumentContainer {
-    friend class XMLSerializerIterator<DocumentContainer>;
+    XMLSerializerStrategy* strategy_;
 
 public:
-    void containerize(dom::Node*, bool = true);
+    XMLSerializerContext(XMLSerializerStrategy* = nullptr);
+    ~XMLSerializerContext();
 
-    XMLSerializerIterator<DocumentContainer>* createIterator() {
-        return new XMLSerializerIterator<DocumentContainer>(this);
-    }
+    void serialize(dom::Node*);
 
-private:
-    std::vector<dom::Node*> m_data_;
+    void setStrategy(XMLSerializerStrategy*);
 };
 
-#endif
+class XMLSerializerPretty : public XMLSerializerStrategy {
+private:
+    void prettyIndentation() override;
+    void multipleAttr(int) override;
+
+public:
+    XMLSerializerPretty(const std::string&);
+};
+
+class XMLSerializerMinimal : public XMLSerializerStrategy {
+private:
+    void prettyIndentation() override;
+    void multipleAttr(int) override;
+
+public:
+    XMLSerializerMinimal(const std::string&);
+};
+
+class DOMSerializerStrategy {
+
+public:
+    DOMSerializerStrategy(dom::Node*) {}
+    virtual ~DOMSerializerStrategy() {}
+};
+
+class DOMSerializerContext {
+private:
+    DOMSerializerStrategy* strategy_;
+
+public:
+    DOMSerializerContext(DOMSerializerStrategy* = nullptr);
+    ~DOMSerializerContext();
+
+    void findNodeType(dom::Node*, XMLSerializerStrategy*);
+
+    void setStrategy(DOMSerializerStrategy*);
+};
+
+class DocumentSerializer : public DOMSerializerStrategy {
+public:
+    DocumentSerializer(dom::Node*, XMLSerializerStrategy*);
+};
+
+class ElementSerializer : public DOMSerializerStrategy {
+public:
+    ElementSerializer(dom::Node*, XMLSerializerStrategy*);
+};
+
+class AttrSerializer : public DOMSerializerStrategy {
+public:
+    AttrSerializer(dom::Node*, XMLSerializerStrategy*);
+};
+
+class TextSerializer : public DOMSerializerStrategy {
+public:
+    TextSerializer(dom::Node*, XMLSerializerStrategy*);
+};
