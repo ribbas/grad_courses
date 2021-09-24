@@ -16,6 +16,8 @@ public:
     ValidChildren(std::string _thisElement)
         : thisElement(_thisElement), _canHaveText(false) {}
 
+    virtual ~ValidChildren() {}
+
     virtual std::string getThisElement() {
         return thisElement;
     }
@@ -38,7 +40,7 @@ protected:
 public:
     XMLValidator() {}
     ~XMLValidator() {
-        for (int i = 0; i < schema.size(); i++) {
+        for (unsigned int i = 0; i < schema.size(); i++) {
             delete schema[i];
         }
     }

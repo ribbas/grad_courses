@@ -8,11 +8,11 @@ Node_Impl::Node_Impl(const std::string& n, short type)
 
 Node_Impl::~Node_Impl() {}
 
-const std::string& Node_Impl::getNodeName(void) {
+const std::string& Node_Impl::getNodeName() {
     return name;
 }
 
-const std::string& Node_Impl::getNodeValue(void) {
+const std::string& Node_Impl::getNodeValue() {
     return value;
 }
 
@@ -20,35 +20,35 @@ void Node_Impl::setNodeValue(const std::string& nodeValue) {
     value = nodeValue;
 }
 
-short Node_Impl::getNodeType(void) {
+short Node_Impl::getNodeType() {
     return nodeType;
 }
 
-dom::Node* Node_Impl::getParentNode(void) {
+dom::Node* Node_Impl::getParentNode() {
     return parent;
 }
 
-dom::NodeList* Node_Impl::getChildNodes(void) {
+dom::NodeList* Node_Impl::getChildNodes() {
     return &nodes;
 }
 
-dom::Node* Node_Impl::getFirstChild(void) {
+dom::Node* Node_Impl::getFirstChild() {
     return *nodes.begin();
 }
 
-dom::Node* Node_Impl::getLastChild(void) {
+dom::Node* Node_Impl::getLastChild() {
     return *(--nodes.end());
 }
 
-dom::Node* Node_Impl::getPreviousSibling(void) {
+dom::Node* Node_Impl::getPreviousSibling() {
     return getSibling(-1);
 }
 
-dom::Node* Node_Impl::getNextSibling(void) {
+dom::Node* Node_Impl::getNextSibling() {
     return getSibling(1);
 }
 
-dom::Document* Node_Impl::getOwnerDocument(void) {
+dom::Document* Node_Impl::getOwnerDocument() {
     return document;
 }
 
@@ -127,11 +127,11 @@ dom::Node* Node_Impl::appendChild(dom::Node* newChild) {
     return newChild;
 }
 
-bool Node_Impl::hasChildNodes(void) {
+bool Node_Impl::hasChildNodes() {
     return nodes.size() > 0;
 }
 
-const std::string& Node_Impl::getLocalName(void) {
+const std::string& Node_Impl::getLocalName() {
     return name;
 }
 

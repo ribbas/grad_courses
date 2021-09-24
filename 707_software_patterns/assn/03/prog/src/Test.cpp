@@ -12,7 +12,7 @@ void testTokenizer(int argc, char** argv);
 void testSerializer(int argc, char** argv);
 void testValidator(int argc, char** argv);
 
-void printUsage(void) {
+void printUsage() {
     printf("Usage:\n");
     printf("\tTest t [file] ...\n");
     printf("\tTest s [file1] [file2]\n");

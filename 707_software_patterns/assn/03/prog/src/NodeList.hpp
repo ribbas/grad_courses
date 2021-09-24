@@ -11,9 +11,11 @@ public:
     virtual iterator find(Node* n) {
         iterator i;
 
-        for (i = begin(); i != end(); i++)
-            if (*i.operator->() == n)
+        for (i = begin(); i != end(); i++) {
+            if (*i.operator->() == n) {
                 break;
+            }
+        }
 
         return i;
     }

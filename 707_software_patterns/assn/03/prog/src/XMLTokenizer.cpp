@@ -18,7 +18,7 @@ const char* XMLTokenizer::SPACE_TO_EOL = "[[:space:]]*";
 XMLTokenizer::XMLToken::XMLToken(const std::string& t, TokenTypes tt)
     : token(t), token_type(tt) {}
 
-const char* XMLTokenizer::XMLToken::toString(void) {
+const char* XMLTokenizer::XMLToken::toString() {
     switch (token_type) {
         case NULL_TOKEN:
             return "NULL";
@@ -58,7 +58,7 @@ XMLTokenizer::XMLTokenizer(const std::string& filename)
       null_tag_end(NULL_TAG_END), tag_close_start(TAG_CLOSE_START),
       value(VALUE), tag_end(TAG_END), space_to_eol(SPACE_TO_EOL) {}
 
-XMLTokenizer::XMLToken* XMLTokenizer::getNextToken(void) {
+XMLTokenizer::XMLToken* XMLTokenizer::getNextToken() {
     if (line.size() == 0) {
         std::getline(file, line);
         index = 0;

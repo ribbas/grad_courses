@@ -5,7 +5,7 @@
 #include "Text.hpp"
 #include "XMLValidator.hpp"
 
-Document_Impl::Document_Impl(void) : Node_Impl("", dom::Node::DOCUMENT_NODE) {
+Document_Impl::Document_Impl() : Node_Impl("", dom::Node::DOCUMENT_NODE) {
     Node_Impl::document = this;
 }
 
