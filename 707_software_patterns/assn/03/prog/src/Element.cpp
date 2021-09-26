@@ -23,8 +23,9 @@ void Element_Impl::serialize(std::fstream* writer,
         attrCount++;
     }
 
-    if (attrCount > 0)
+    if (attrCount > 0) {
         *writer << " ";
+    }
 
     if (getChildNodes()->size() == 0) {
         *writer << "/>";
@@ -35,10 +36,12 @@ void Element_Impl::serialize(std::fstream* writer,
         whitespace->incrementIndentation();
 
         for (dom::NodeList::iterator i = getChildNodes()->begin();
-             i != getChildNodes()->end(); i++)
+             i != getChildNodes()->end(); i++) {
             if (dynamic_cast<dom::Element*>(*i) != 0 ||
-                dynamic_cast<dom::Text*>(*i) != 0)
+                dynamic_cast<dom::Text*>(*i) != 0) {
                 (*i)->serialize(writer, whitespace);
+            }
+        }
 
         whitespace->decrementIndentation();
         whitespace->prettyIndentation(writer);
@@ -52,8 +55,9 @@ const std::string& Element_Impl::getAttribute(const std::string& name) {
          i++) {
         dom::Attr* attr = dynamic_cast<dom::Attr*>(*i.operator->());
 
-        if (attr->getName().compare(name) == 0)
+        if (attr->getName().compare(name) == 0) {
             return attr->getValue();
+        }
     }
 
     static const std::string empty_string("");
@@ -65,8 +69,9 @@ dom::Attr* Element_Impl::getAttributeNode(const std::string& name) {
          i++) {
         dom::Attr* attr = dynamic_cast<dom::Attr*>(*i.operator->());
 
-        if (attr->getName().compare(name) == 0)
+        if (attr->getName().compare(name) == 0) {
             return attr;
+        }
     }
 
     return 0;
@@ -80,8 +85,9 @@ dom::NodeList* Element_Impl::getElementsByTagName(const std::string& tagName) {
         dom::Element* element;
 
         if ((element = dynamic_cast<dom::Element*>(*i.operator->())) &&
-            element->getTagName().compare(tagName) == 0)
+            element->getTagName().compare(tagName) == 0) {
             nodeList->push_back(*i.operator->());
+        }
     }
 
     return nodeList;
@@ -96,8 +102,9 @@ bool Element_Impl::hasAttribute(const std::string& name) {
          i++) {
         dom::Attr* attr = dynamic_cast<dom::Attr*>(*i.operator->());
 
-        if (attr->getName().compare(name) == 0)
+        if (attr->getName().compare(name) == 0) {
             return true;
+        }
     }
 
     return false;
@@ -148,24 +155,27 @@ void Element_Impl::setAttribute(const std::string& name,
 }
 
 dom::Attr* Element_Impl::setAttributeNode(dom::Attr* newAttr) {
-    if (newAttr->getOwnerDocument() != getOwnerDocument())
+    if (newAttr->getOwnerDocument() != getOwnerDocument()) {
         throw dom::DOMException(dom::DOMException::WRONG_DOCUMENT_ERR,
                                 "Attribute not created by this document.");
+    }
 
-    if (newAttr->getParentNode() != 0)
+    if (newAttr->getParentNode() != 0) {
         throw dom::DOMException(dom::DOMException::INUSE_ATTRIBUTE_ERR,
                                 "Attribute in use by other element.");
+    }
 
     dom::Attr* oldAttribute = 0;
 
     for (dom::NodeList::iterator i = attributes.begin(); i != attributes.end();
-         i++)
+         i++) {
         if (dynamic_cast<dom::Attr*>(*i)->getName().compare(
                 newAttr->getName()) == 0) {
             oldAttribute = (dom::Attr*)i.operator->();
             attributes.erase(i);
             break;
         }
+    }
 
     dynamic_cast<Node_Impl*>(dynamic_cast<Node*>(newAttr))->setParent(this);
     attributes.push_back(newAttr);

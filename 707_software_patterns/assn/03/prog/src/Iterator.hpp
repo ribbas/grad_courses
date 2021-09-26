@@ -2,37 +2,43 @@
 #define ITERATOR_H
 
 #include "Node.hpp"
-#include "NodeList.hpp"
-#include <stack>
+#include <vector>
 
 namespace dom {
 class Node;
 
 class Iterator {
+private:
+    virtual void containerize(Node*, bool) = 0;
+
 public:
     virtual ~Iterator() {}
 
-    virtual Node* elementAt(NodeList*, int) = 0;
-    virtual bool hasNext() = 0;
-    virtual Node* next() = 0;
+    virtual void next() = 0;
+    virtual void first() = 0;
+    virtual bool isDone() = 0;
+    virtual Node* currentItem() = 0;
 };
 } // namespace dom
 
 class Document_Impl;
-class DOMIterator : public virtual dom::Iterator {
+class XMLIterator : public virtual dom::Iterator {
+
 private:
-    dom::Node* firstNode;
-    std::stack<dom::NodeList*> listStack;
-    std::stack<int> indexStack;
+    friend class Document_Impl;
+
+    std::vector<dom::Node*> container;
+    std::vector<dom::Node*>::iterator it;
+    int index;
+
+    XMLIterator(dom::Document*);
+    virtual void containerize(dom::Node*, bool = true);
 
 public:
-    friend class Document_Impl;
-    DOMIterator(dom::Node*);
-    // virtual ~DOMIterator();
-
-    virtual dom::Node* elementAt(dom::NodeList* currentList, int currentIndex);
-    virtual bool hasNext();
-    virtual dom::Node* next();
+    virtual void next();
+    virtual void first();
+    virtual bool isDone();
+    virtual dom::Node* currentItem();
 };
 
 #endif
