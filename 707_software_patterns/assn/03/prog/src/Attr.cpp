@@ -32,3 +32,23 @@ void Attr_Impl::setValue(const std::string& value) {
 dom::Element* Attr_Impl::getOwnerElement() {
     return (dom::Element*)Node_Impl::getParentNode();
 }
+
+dom::Node* Attr_Impl::insertBefore(dom::Node*, dom::Node*) {
+    throw dom::DOMException(dom::DOMException::HIERARCHY_REQUEST_ERR,
+                            "Attr nodes do not support this method.");
+}
+
+dom::Node* Attr_Impl::replaceChild(dom::Node*, dom::Node*) {
+    throw dom::DOMException(dom::DOMException::HIERARCHY_REQUEST_ERR,
+                            "Attr nodes do not support this method.");
+}
+
+dom::Node* Attr_Impl::removeChild(dom::Node*) {
+    throw dom::DOMException(dom::DOMException::HIERARCHY_REQUEST_ERR,
+                            "Attr nodes do not support this method.");
+}
+
+dom::Node* Attr_Impl::appendChild(dom::Node*) {
+    throw dom::DOMException(dom::DOMException::HIERARCHY_REQUEST_ERR,
+                            "Attr nodes do not support this method.");
+}

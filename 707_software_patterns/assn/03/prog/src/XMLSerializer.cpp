@@ -16,3 +16,28 @@ void XMLSerializer::serializeMinimal(dom::Node* node) {
     node->serialize(file, ws);
     delete ws;
 }
+
+XMLSerializer::PrettyWhitespaceStrategy::PrettyWhitespaceStrategy()
+    : indentationLevel(0) {}
+
+void XMLSerializer::PrettyWhitespaceStrategy::prettyIndentation(
+    std::fstream* wwriter) {
+    for (int i = 0; i < indentationLevel; i++)
+        *wwriter << "\t";
+}
+
+void XMLSerializer::PrettyWhitespaceStrategy::incrementIndentation() {
+    indentationLevel++;
+}
+void XMLSerializer::PrettyWhitespaceStrategy::decrementIndentation() {
+    indentationLevel--;
+}
+void XMLSerializer::PrettyWhitespaceStrategy::newLine(std::fstream* wwriter) {
+    *wwriter << "\n";
+}
+
+void XMLSerializer::MinimalWhitespaceStrategy::prettyIndentation(
+    std::fstream*) {}
+void XMLSerializer::MinimalWhitespaceStrategy::incrementIndentation() {}
+void XMLSerializer::MinimalWhitespaceStrategy::decrementIndentation() {}
+void XMLSerializer::MinimalWhitespaceStrategy::newLine(std::fstream*) {}

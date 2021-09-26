@@ -2,16 +2,12 @@
 #include "Node.hpp"
 #include <iostream>
 
-XMLIterator::XMLIterator(dom::Document* document) : index(0) {
+DocumentIterator::DocumentIterator(dom::Document* document) {
 
     containerize((dom::Node*)document);
 }
 
-void XMLIterator::first() {
-    it = container.begin();
-}
-
-void XMLIterator::containerize(dom::Node* document, bool init) {
+void DocumentIterator::containerize(dom::Node* document, bool init) {
 
     if (init) {
         container.push_back(document);
@@ -28,15 +24,18 @@ void XMLIterator::containerize(dom::Node* document, bool init) {
     }
 }
 
-bool XMLIterator::isDone() {
+void DocumentIterator::first() {
+    it = container.begin();
+}
+
+bool DocumentIterator::isDone() {
     return it == container.end();
 }
 
-dom::Node* XMLIterator::currentItem() {
-    return container[index];
+dom::Node* DocumentIterator::currentItem() {
+    return container[it - container.begin()];
 }
 
-void XMLIterator::next() {
+void DocumentIterator::next() {
     it++;
-    index++;
 }

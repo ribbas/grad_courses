@@ -86,12 +86,33 @@ dom::Text* Text_Impl::splitText(int offset) {
 
         setValue(substringData(0, offset));
 
-        if (getParentNode() != 0)
+        if (getParentNode() != 0) {
             insertBefore(text, getNextSibling());
+        }
 
         return text;
     } catch (std::out_of_range&) {
         throw dom::DOMException(dom::DOMException::INDEX_SIZE_ERR,
                                 "Index larget than Text node's value.");
     }
+}
+
+dom::Node* Text_Impl::insertBefore(dom::Node*, dom::Node*) {
+    throw dom::DOMException(dom::DOMException::HIERARCHY_REQUEST_ERR,
+                            "Text nodes do not support this method.");
+}
+
+dom::Node* Text_Impl::replaceChild(dom::Node*, dom::Node*) {
+    throw dom::DOMException(dom::DOMException::HIERARCHY_REQUEST_ERR,
+                            "Text nodes do not support this method.");
+}
+
+dom::Node* Text_Impl::removeChild(dom::Node*) {
+    throw dom::DOMException(dom::DOMException::HIERARCHY_REQUEST_ERR,
+                            "Text nodes do not support this method.");
+}
+
+dom::Node* Text_Impl::appendChild(dom::Node*) {
+    throw dom::DOMException(dom::DOMException::HIERARCHY_REQUEST_ERR,
+                            "Text nodes do not support this method.");
 }

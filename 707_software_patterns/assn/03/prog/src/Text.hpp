@@ -37,32 +37,26 @@ public:
 
     virtual ~Text_Impl();
 
-    virtual void serialize(std::fstream*, WhitespaceStrategy*);
-    virtual const std::string& getName();
-    virtual const std::string& getData();
-    virtual const std::string& getValue();
-    virtual void setData(const std::string&);
-    virtual void setValue(const std::string&);
-    virtual int getLength();
-    virtual const std::string& substringData(int, int);
-    virtual void appendData(const std::string&);
-    virtual void insertData(int, const std::string&);
-    virtual void deleteData(int, int);
-    virtual void replaceData(int, int, const std::string&);
-    virtual dom::Text* splitText(int);
+    virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
+    virtual const std::string& getName() override;
+    virtual const std::string& getData() override;
+    virtual const std::string& getValue() override;
+    virtual void setData(const std::string&) override;
+    virtual void setValue(const std::string&) override;
+    virtual int getLength() override;
+    virtual const std::string& substringData(int, int) override;
+    virtual void appendData(const std::string&) override;
+    virtual void insertData(int, const std::string&) override;
+    virtual void deleteData(int, int) override;
+    virtual void replaceData(int, int, const std::string&) override;
+    virtual dom::Text* splitText(int) override;
 
-    virtual Node* insertBefore(Node*, Node*) {
-        return 0;
-    }
-    virtual Node* replaceChild(Node*, Node*) {
-        return 0;
-    }
-    virtual Node* removeChild(Node*) {
-        return 0;
-    }
-    virtual Node* appendChild(Node*) {
-        return 0;
-    }
+    // override parent methods to null-behavior to conform to leaf-classes in
+    // the composite pattern
+    virtual Node* insertBefore(Node*, Node*) override;
+    virtual Node* replaceChild(Node*, Node*) override;
+    virtual Node* removeChild(Node*) override;
+    virtual Node* appendChild(Node*) override;
 };
 
 #endif // TEXT_H

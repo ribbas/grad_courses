@@ -25,36 +25,26 @@ private:
         int indentationLevel;
 
     public:
-        PrettyWhitespaceStrategy() : indentationLevel(0) {}
+        PrettyWhitespaceStrategy();
 
-        virtual void prettyIndentation(std::fstream* wwriter) {
-            for (int i = 0; i < indentationLevel; i++)
-                *wwriter << "\t";
-        }
-
-        virtual void incrementIndentation() {
-            indentationLevel++;
-        }
-        virtual void decrementIndentation() {
-            indentationLevel--;
-        }
-        virtual void newLine(std::fstream* wwriter) {
-            *wwriter << "\n";
-        }
+        virtual void prettyIndentation(std::fstream*) override;
+        virtual void incrementIndentation() override;
+        virtual void decrementIndentation() override;
+        virtual void newLine(std::fstream*) override;
     };
 
     class MinimalWhitespaceStrategy : public WhitespaceStrategy {
     public:
-        virtual void prettyIndentation(std::fstream*) {}
-        virtual void incrementIndentation() {}
-        virtual void decrementIndentation() {}
-        virtual void newLine(std::fstream*) {}
+        virtual void prettyIndentation(std::fstream*) override;
+        virtual void incrementIndentation() override;
+        virtual void decrementIndentation() override;
+        virtual void newLine(std::fstream*) override;
     };
 
 public:
     //
     // Strategized serialization
     //
-    virtual void serializePretty(dom::Node* node);
-    virtual void serializeMinimal(dom::Node* node);
+    virtual void serializePretty(dom::Node*);
+    virtual void serializeMinimal(dom::Node*);
 };

@@ -32,24 +32,18 @@ public:
 
     virtual ~Attr_Impl();
 
-    virtual void serialize(std::fstream*, WhitespaceStrategy*);
-    virtual const std::string& getName();
-    virtual const std::string& getValue();
-    virtual void setValue(const std::string&);
-    virtual dom::Element* getOwnerElement();
+    virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
+    virtual const std::string& getName() override;
+    virtual const std::string& getValue() override;
+    virtual void setValue(const std::string&) override;
+    virtual dom::Element* getOwnerElement() override;
 
-    virtual Node* insertBefore(Node*, Node*) {
-        return 0;
-    }
-    virtual Node* replaceChild(Node*, Node*) {
-        return 0;
-    }
-    virtual Node* removeChild(Node*) {
-        return 0;
-    }
-    virtual Node* appendChild(Node*) {
-        return 0;
-    }
+    // override parent methods to null-behavior to conform to leaf-classes in
+    // the composite pattern
+    virtual Node* insertBefore(Node*, Node*) override;
+    virtual Node* replaceChild(Node*, Node*) override;
+    virtual Node* removeChild(Node*) override;
+    virtual Node* appendChild(Node*) override;
 };
 
 #endif // ATTR_H

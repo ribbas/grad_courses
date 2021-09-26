@@ -126,11 +126,25 @@ void testSerializer(int argc, char** argv) {
     child = document->createElement("element");
     root->appendChild(child);
 
-    dom::Iterator* domIterator = document->createIterator();
-    for (domIterator->first(); !domIterator->isDone(); domIterator->next()) {
-        std::cout << domIterator->currentItem() << std::endl;
+    //
+    // Create an iterator from the document object
+    //
+    dom::Iterator* it = document->createIterator();
+    dom::Node* currentNode;
+    for (it->first(); !it->isDone(); it->next()) {
+
+        currentNode = it->currentItem();
+
+        if (dynamic_cast<dom::Document*>(currentNode) != 0) {
+            std::cout << "Document " << currentNode << std::endl;
+        } else if (dynamic_cast<dom::Element*>(currentNode) != 0) {
+            std::cout << "Element " << currentNode << std::endl;
+        } else if (dynamic_cast<dom::Attr*>(currentNode) != 0) {
+            std::cout << "Attr " << currentNode << std::endl;
+        } else if (dynamic_cast<dom::Text*>(currentNode) != 0) {
+            std::cout << "Text " << currentNode << std::endl;
+        }
     }
-    delete domIterator;
 
     //
     // Serialize
@@ -143,7 +157,10 @@ void testSerializer(int argc, char** argv) {
     XMLSerializer xmlSerializer2(
         file = new std::fstream(argv[3], std::ios_base::out));
     xmlSerializer2.serializeMinimal(document);
+
     delete file;
+    delete currentNode;
+    delete it;
 
     // delete Document and tree.
 }

@@ -42,5 +42,5 @@ dom::Element* Document_Impl::getDocumentElement() {
 }
 
 dom::Iterator* Document_Impl::createIterator() {
-    return new XMLIterator(this);
+    return new DocumentIterator(this);
 }
