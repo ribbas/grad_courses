@@ -1,10 +1,7 @@
 #include "Node.hpp"
 
 Node_Impl::Node_Impl(const std::string& n, short type)
-    : name(n), nodeType(type), parent(0), document(0) {
-    // this->name = name;
-    nodeType = type;
-}
+    : name(n), nodeType(type), parent(0), document(0) {}
 
 Node_Impl::~Node_Impl() {}
 
@@ -53,12 +50,14 @@ dom::Document* Node_Impl::getOwnerDocument() {
 }
 
 dom::Node* Node_Impl::insertBefore(dom::Node* newChild, dom::Node* refChild) {
-    if (newChild->getOwnerDocument() != getOwnerDocument())
+    if (newChild->getOwnerDocument() != getOwnerDocument()) {
         throw dom::DOMException(dom::DOMException::WRONG_DOCUMENT_ERR,
                                 "New Child is not a part of this document.");
+    }
 
-    if (newChild->getParentNode() != 0)
+    if (newChild->getParentNode() != 0) {
         newChild->getParentNode()->removeChild(newChild);
+    }
 
     if (refChild == 0) {
         nodes.push_back(newChild);
@@ -68,9 +67,10 @@ dom::Node* Node_Impl::insertBefore(dom::Node* newChild, dom::Node* refChild) {
 
     dom::NodeList::iterator index = nodes.find(refChild);
 
-    if (index == nodes.end())
+    if (index == nodes.end()) {
         throw dom::DOMException(dom::DOMException::NOT_FOUND_ERR,
                                 "Reference Child is not a child of this node.");
+    }
 
     nodes.insert(++index, newChild);
     (dynamic_cast<Node_Impl*>(newChild))->setParent(this);
@@ -79,18 +79,21 @@ dom::Node* Node_Impl::insertBefore(dom::Node* newChild, dom::Node* refChild) {
 }
 
 dom::Node* Node_Impl::replaceChild(dom::Node* newChild, dom::Node* oldChild) {
-    if (newChild->getOwnerDocument() != getOwnerDocument())
+    if (newChild->getOwnerDocument() != getOwnerDocument()) {
         throw dom::DOMException(dom::DOMException::WRONG_DOCUMENT_ERR,
                                 "New Child is not a part of this document.");
+    }
 
-    if (newChild->getParentNode() != 0)
+    if (newChild->getParentNode() != 0) {
         newChild->getParentNode()->removeChild(newChild);
+    }
 
     dom::NodeList::iterator index = nodes.find(oldChild);
 
-    if (index == nodes.end())
+    if (index == nodes.end()) {
         throw dom::DOMException(dom::DOMException::NOT_FOUND_ERR,
                                 "Old Child is not a child of this node.");
+    }
 
     nodes.insert(index, newChild);
     (dynamic_cast<Node_Impl*>(newChild))->setParent(this);
@@ -103,9 +106,10 @@ dom::Node* Node_Impl::replaceChild(dom::Node* newChild, dom::Node* oldChild) {
 dom::Node* Node_Impl::removeChild(dom::Node* oldChild) {
     dom::NodeList::iterator index = nodes.find(oldChild);
 
-    if (index == nodes.end())
+    if (index == nodes.end()) {
         throw dom::DOMException(dom::DOMException::NOT_FOUND_ERR,
                                 "Old Child is not a child of this node.");
+    }
 
     (dynamic_cast<Node_Impl*>(*index))->setParent(0);
     nodes.erase(index);
@@ -114,12 +118,14 @@ dom::Node* Node_Impl::removeChild(dom::Node* oldChild) {
 }
 
 dom::Node* Node_Impl::appendChild(dom::Node* newChild) {
-    if (newChild->getOwnerDocument() != getOwnerDocument())
+    if (newChild->getOwnerDocument() != getOwnerDocument()) {
         throw dom::DOMException(dom::DOMException::WRONG_DOCUMENT_ERR,
                                 "New Child is not a part of this document.");
+    }
 
-    if (newChild->getParentNode() != 0)
+    if (newChild->getParentNode() != 0) {
         newChild->getParentNode()->removeChild(newChild);
+    }
 
     nodes.push_back(newChild);
     (dynamic_cast<Node_Impl*>(newChild))->setParent(this);
@@ -140,22 +146,25 @@ void Node_Impl::setParent(dom::Node* parent) {
 }
 
 dom::Node* Node_Impl::getSibling(int direction) {
-    if (parent == 0)
+    if (parent == 0) {
         return 0;
+    }
 
     dom::NodeList::iterator i = parent->getChildNodes()->find(this);
 
     if (direction < 0) {
-        if (i == parent->getChildNodes()->begin())
+        if (i == parent->getChildNodes()->begin()) {
             return 0;
-        else
+        } else {
             return *(--i);
+        }
     } else {
         i++;
 
-        if (i == parent->getChildNodes()->end())
+        if (i == parent->getChildNodes()->end()) {
             return 0;
-        else
+        } else {
             return *i;
+        }
     }
 }

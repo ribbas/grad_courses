@@ -1,36 +1,9 @@
+
+
 #include <fstream>
-#include <ios>
-#include <string>
-#include <vector>
 
 #include "Element.hpp"
-
-class ValidChildren {
-private:
-    std::string thisElement;
-    std::vector<std::string> validChildren;
-    std::vector<bool> childIsAttribute;
-    bool _canHaveText;
-
-public:
-    ValidChildren(std::string _thisElement)
-        : thisElement(_thisElement), _canHaveText(false) {}
-
-    virtual ~ValidChildren() {}
-
-    virtual std::string getThisElement() {
-        return thisElement;
-    }
-    virtual bool canHaveText() {
-        return _canHaveText;
-    }
-    virtual void setCanHaveText(bool __canHaveText) {
-        _canHaveText = __canHaveText;
-    }
-
-    virtual void addValidChild(const std::string&, bool);
-    virtual bool childIsValid(const std::string&, bool);
-};
+#include "ValidChildren.hpp"
 
 class XMLValidator {
 private:
@@ -38,10 +11,7 @@ private:
 
 public:
     XMLValidator() {}
-    ~XMLValidator() {
-        for (unsigned int i = 0; i < schema.size(); i++)
-            delete schema[i];
-    }
+    ~XMLValidator();
 
     virtual ValidChildren* addSchemaElement(std::string);
     virtual std::vector<ValidChildren*>::iterator

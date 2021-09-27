@@ -181,3 +181,11 @@ dom::Attr* Element_Impl::setAttributeNode(dom::Attr* newAttr) {
     attributes.push_back(newAttr);
     return oldAttribute;
 }
+
+dom::NamedNodeMap* Element_Impl::getAttributes() {
+    return &attributes;
+}
+
+bool Element_Impl::hasAttributes() {
+    return attributes.size() > 0;
+}

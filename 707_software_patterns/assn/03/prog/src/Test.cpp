@@ -136,13 +136,13 @@ void testSerializer(int argc, char** argv) {
         currentNode = it->currentItem();
 
         if (dynamic_cast<dom::Document*>(currentNode) != 0) {
-            std::cout << "Document " << currentNode << std::endl;
+            std::cout << "Document: " << currentNode << std::endl;
         } else if (dynamic_cast<dom::Element*>(currentNode) != 0) {
-            std::cout << "Element " << currentNode << std::endl;
+            std::cout << "Element: " << currentNode << std::endl;
         } else if (dynamic_cast<dom::Attr*>(currentNode) != 0) {
-            std::cout << "Attr " << currentNode << std::endl;
+            std::cout << "Attr: " << currentNode << std::endl;
         } else if (dynamic_cast<dom::Text*>(currentNode) != 0) {
-            std::cout << "Text " << currentNode << std::endl;
+            std::cout << "Text: " << currentNode << std::endl;
         }
     }
 

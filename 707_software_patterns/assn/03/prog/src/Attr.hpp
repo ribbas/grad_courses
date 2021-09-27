@@ -32,11 +32,11 @@ public:
 
     virtual ~Attr_Impl();
 
-    virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
     virtual const std::string& getName() override;
     virtual const std::string& getValue() override;
     virtual void setValue(const std::string&) override;
     virtual dom::Element* getOwnerElement() override;
+    virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
 
     // override parent methods to null-behavior to conform to leaf-classes in
     // the composite pattern

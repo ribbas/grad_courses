@@ -22,7 +22,7 @@ public:
 };
 }; // namespace dom
 
-class NamedNodeMap_Impl : public dom::NamedNodeMap {
+class NamedNodeMap_Impl : public virtual dom::NamedNodeMap {
 private:
     dom::Document* document;
 

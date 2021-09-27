@@ -9,13 +9,6 @@ Text_Impl::Text_Impl(const std::string value, dom::Document* document)
 
 Text_Impl::~Text_Impl() {}
 
-void Text_Impl::serialize(std::fstream* writer,
-                          WhitespaceStrategy* whitespace) {
-    whitespace->prettyIndentation(writer);
-    *writer << getData();
-    whitespace->newLine(writer);
-}
-
 const std::string& Text_Impl::getName() {
     return getNodeName();
 }
@@ -115,4 +108,11 @@ dom::Node* Text_Impl::removeChild(dom::Node*) {
 dom::Node* Text_Impl::appendChild(dom::Node*) {
     throw dom::DOMException(dom::DOMException::HIERARCHY_REQUEST_ERR,
                             "Text nodes do not support this method.");
+}
+
+void Text_Impl::serialize(std::fstream* writer,
+                          WhitespaceStrategy* whitespace) {
+    whitespace->prettyIndentation(writer);
+    *writer << getData();
+    whitespace->newLine(writer);
 }

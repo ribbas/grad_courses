@@ -1,5 +1,11 @@
 #include "XMLValidator.hpp"
 
+XMLValidator::~XMLValidator() {
+    for (unsigned int i = 0; i < schema.size(); i++) {
+        delete schema[i];
+    }
+}
+
 ValidChildren* XMLValidator::addSchemaElement(std::string element) {
     std::vector<ValidChildren*>::iterator schemaElementIterator =
         findSchemaElement(element);
@@ -56,21 +62,4 @@ bool XMLValidator::canAddAttribute(dom::Element* element,
     return schemaElement == schema.end()
                ? true
                : (*schemaElement)->childIsValid(newAttribute, true);
-}
-
-void ValidChildren::addValidChild(const std::string& child, bool isAttribute) {
-    if (childIsValid(child, isAttribute))
-        return;
-
-    validChildren.push_back(child);
-    childIsAttribute.push_back(isAttribute);
-}
-
-bool ValidChildren::childIsValid(const std::string& child, bool isAttribute) {
-    for (unsigned int i = 0; i < validChildren.size(); i++)
-        if (childIsAttribute[i] == isAttribute &&
-            validChildren[i].compare(child) == 0)
-            return true;
-
-    return false;
 }

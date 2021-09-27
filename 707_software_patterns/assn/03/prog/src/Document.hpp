@@ -30,12 +30,12 @@ public:
     Document_Impl();
     virtual ~Document_Impl();
 
-    virtual dom::Element* createElement(const std::string&);
-    virtual dom::Text* createTextNode(const std::string&);
-    virtual dom::Attr* createAttribute(const std::string&);
-    virtual dom::Element* getDocumentElement();
-    virtual void serialize(std::fstream*, WhitespaceStrategy*);
-    virtual dom::Iterator* createIterator();
+    virtual dom::Element* createElement(const std::string&) override;
+    virtual dom::Text* createTextNode(const std::string&) override;
+    virtual dom::Attr* createAttribute(const std::string&) override;
+    virtual dom::Element* getDocumentElement() override;
+    virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
+    virtual dom::Iterator* createIterator() override;
 };
 
 #endif // DOCUMENT_H

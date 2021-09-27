@@ -14,9 +14,6 @@ Attr_Impl::Attr_Impl(const std::string& tagName, const std::string& value,
 
 Attr_Impl::~Attr_Impl() {}
 
-void Attr_Impl::serialize(std::fstream* writer, WhitespaceStrategy*) {
-    *writer << " " << getName() << "=\"" << getValue() << "\"";
-}
 const std::string& Attr_Impl::getName() {
     return Node_Impl::getNodeName();
 }
@@ -51,4 +48,8 @@ dom::Node* Attr_Impl::removeChild(dom::Node*) {
 dom::Node* Attr_Impl::appendChild(dom::Node*) {
     throw dom::DOMException(dom::DOMException::HIERARCHY_REQUEST_ERR,
                             "Attr nodes do not support this method.");
+}
+
+void Attr_Impl::serialize(std::fstream* writer, WhitespaceStrategy*) {
+    *writer << " " << getName() << "=\"" << getValue() << "\"";
 }

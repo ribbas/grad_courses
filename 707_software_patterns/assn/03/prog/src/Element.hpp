@@ -51,24 +51,20 @@ public:
     //
     // Serialization Data Extraction Strategy
     //
-    virtual void serialize(std::fstream*, WhitespaceStrategy*);
+    virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
 
-    virtual const std::string& getAttribute(const std::string&);
-    virtual dom::Attr* getAttributeNode(const std::string&);
-    virtual dom::NodeList* getElementsByTagName(const std::string&);
-    virtual const std::string& getTagName();
-    virtual bool hasAttribute(const std::string&);
-    virtual void removeAttribute(const std::string&);
-    virtual dom::Attr* removeAttributeNode(dom::Attr*);
-    virtual void setAttribute(const std::string&, const std::string&);
-    virtual dom::Attr* setAttributeNode(dom::Attr*);
+    virtual const std::string& getAttribute(const std::string&) override;
+    virtual dom::Attr* getAttributeNode(const std::string&) override;
+    virtual dom::NodeList* getElementsByTagName(const std::string&) override;
+    virtual const std::string& getTagName() override;
+    virtual bool hasAttribute(const std::string&) override;
+    virtual void removeAttribute(const std::string&) override;
+    virtual dom::Attr* removeAttributeNode(dom::Attr*) override;
+    virtual void setAttribute(const std::string&, const std::string&) override;
+    virtual dom::Attr* setAttributeNode(dom::Attr*) override;
 
-    virtual dom::NamedNodeMap* getAttributes() {
-        return &attributes;
-    }
-    virtual bool hasAttributes() {
-        return attributes.size() > 0;
-    }
+    virtual dom::NamedNodeMap* getAttributes() override;
+    virtual bool hasAttributes() override;
 };
 
 #endif // ELEMENT_H

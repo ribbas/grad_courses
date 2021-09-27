@@ -37,7 +37,6 @@ public:
 
     virtual ~Text_Impl();
 
-    virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
     virtual const std::string& getName() override;
     virtual const std::string& getData() override;
     virtual const std::string& getValue() override;
@@ -50,6 +49,7 @@ public:
     virtual void deleteData(int, int) override;
     virtual void replaceData(int, int, const std::string&) override;
     virtual dom::Text* splitText(int) override;
+    virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
 
     // override parent methods to null-behavior to conform to leaf-classes in
     // the composite pattern

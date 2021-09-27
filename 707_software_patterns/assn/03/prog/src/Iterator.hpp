@@ -31,13 +31,13 @@ private:
     std::vector<dom::Node*>::iterator it;
 
     DocumentIterator(dom::Document*);
-    virtual void containerize(dom::Node*, bool = true);
+    virtual void containerize(dom::Node*, bool = true) override;
 
 public:
-    virtual void next();
-    virtual void first();
-    virtual bool isDone();
-    virtual dom::Node* currentItem();
+    virtual void next() override;
+    virtual void first() override;
+    virtual bool isDone() override;
+    virtual dom::Node* currentItem() override;
 };
 
 #endif

@@ -17,7 +17,6 @@ public:
 
     virtual ~Node() {}
 
-    virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
     virtual const std::string& getNodeName() = 0;
     virtual const std::string& getNodeValue() = 0;
     virtual void setNodeValue(const std::string&) = 0;
@@ -35,6 +34,8 @@ public:
     virtual Node* appendChild(Node*) = 0;
     virtual bool hasChildNodes() = 0;
     virtual const std::string& getLocalName() = 0;
+
+    virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
 };
 
 class DOMException {
@@ -82,24 +83,23 @@ protected:
 public:
     virtual ~Node_Impl();
 
-    virtual void serialize(std::fstream*, WhitespaceStrategy*){};
-    virtual const std::string& getNodeName();
-    virtual const std::string& getNodeValue();
-    virtual void setNodeValue(const std::string&);
-    virtual short getNodeType();
-    virtual dom::Node* getParentNode();
-    virtual dom::NodeList* getChildNodes();
-    virtual dom::Node* getFirstChild();
-    virtual dom::Node* getLastChild();
-    virtual dom::Node* getPreviousSibling();
-    virtual dom::Node* getNextSibling();
-    virtual dom::Document* getOwnerDocument();
-    virtual dom::Node* insertBefore(dom::Node*, dom::Node*);
-    virtual dom::Node* replaceChild(dom::Node*, dom::Node*);
-    virtual dom::Node* removeChild(dom::Node*);
-    virtual dom::Node* appendChild(dom::Node*);
-    virtual bool hasChildNodes();
-    virtual const std::string& getLocalName();
+    virtual const std::string& getNodeName() override;
+    virtual const std::string& getNodeValue() override;
+    virtual void setNodeValue(const std::string&) override;
+    virtual short getNodeType() override;
+    virtual dom::Node* getParentNode() override;
+    virtual dom::NodeList* getChildNodes() override;
+    virtual dom::Node* getFirstChild() override;
+    virtual dom::Node* getLastChild() override;
+    virtual dom::Node* getPreviousSibling() override;
+    virtual dom::Node* getNextSibling() override;
+    virtual dom::Document* getOwnerDocument() override;
+    virtual dom::Node* insertBefore(dom::Node*, dom::Node*) override;
+    virtual dom::Node* replaceChild(dom::Node*, dom::Node*) override;
+    virtual dom::Node* removeChild(dom::Node*) override;
+    virtual dom::Node* appendChild(dom::Node*) override;
+    virtual bool hasChildNodes() override;
+    virtual const std::string& getLocalName() override;
 
     virtual void setParent(dom::Node*);
 };
