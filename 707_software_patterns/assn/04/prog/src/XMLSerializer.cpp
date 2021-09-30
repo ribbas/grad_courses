@@ -39,8 +39,8 @@ void XMLSerializer::PrettyWhitespaceStrategy::decrementIndentation() {
     indentationLevel--;
 }
 
-void XMLSerializer::PrettyWhitespaceStrategy::newLine(std::fstream* wwriter) {
-    *wwriter << "\n";
+void XMLSerializer::PrettyWhitespaceStrategy::newLine(std::fstream* writer) {
+    *writer << "\n";
 }
 
 void XMLSerializer::MinimalWhitespaceStrategy::prettyIndentation(

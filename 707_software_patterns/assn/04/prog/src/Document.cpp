@@ -11,10 +11,16 @@ Document_Impl::Document_Impl() : Node_Impl("", dom::Node::DOCUMENT_NODE) {
 
 Document_Impl::~Document_Impl() {}
 
-void Document_Impl::serialize(std::fstream* writer,
-                              WhitespaceStrategy* whitespace) {
+void Document_Impl::prependNodeName(std::fstream* writer,
+                                    WhitespaceStrategy* whitespace) {
     *writer << "<? xml version=\"1.0\" encoding=\"UTF-8\"?>";
     whitespace->newLine(writer);
+}
+
+void Document_Impl::prependNodeValue(std::fstream*, WhitespaceStrategy*) {}
+
+void Document_Impl::appendValue(std::fstream* writer,
+                                WhitespaceStrategy* whitespace) {
     getDocumentElement()->serialize(writer, whitespace);
 }
 

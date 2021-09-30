@@ -168,3 +168,10 @@ dom::Node* Node_Impl::getSibling(int direction) {
         }
     }
 }
+
+void Node_Impl::serialize(std::fstream* file, WhitespaceStrategy* ws) {
+    prependNodeName(file, ws);
+    *file << getNodeName();
+    prependNodeValue(file, ws);
+    appendValue(file, ws);
+}

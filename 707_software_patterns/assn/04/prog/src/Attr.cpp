@@ -50,6 +50,14 @@ dom::Node* Attr_Impl::appendChild(dom::Node*) {
                             "Attr nodes do not support this method.");
 }
 
-void Attr_Impl::serialize(std::fstream* writer, WhitespaceStrategy*) {
-    *writer << " " << getName() << "=\"" << getValue() << "\"";
+void Attr_Impl::prependNodeName(std::fstream* writer, WhitespaceStrategy*) {
+    *writer << " ";
+}
+
+void Attr_Impl::prependNodeValue(std::fstream* writer, WhitespaceStrategy*) {
+    *writer << "=\"";
+}
+
+void Attr_Impl::appendValue(std::fstream* writer, WhitespaceStrategy*) {
+    *writer << getNodeValue() << "\"";
 }

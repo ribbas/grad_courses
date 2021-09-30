@@ -10,11 +10,16 @@ Element_Impl::Element_Impl(const std::string& tagName, dom::Document* document)
 
 Element_Impl::~Element_Impl() {}
 
-void Element_Impl::serialize(std::fstream* writer,
-                             WhitespaceStrategy* whitespace) {
+void Element_Impl::prependNodeName(std::fstream* writer,
+                                   WhitespaceStrategy* whitespace) {
     whitespace->prettyIndentation(writer);
-    *writer << "<" << getTagName();
+    *writer << "<";
+}
 
+void Element_Impl::prependNodeValue(std::fstream*, WhitespaceStrategy*) {}
+
+void Element_Impl::appendValue(std::fstream* writer,
+                               WhitespaceStrategy* whitespace) {
     int attrCount = 0;
 
     for (dom::NamedNodeMap::iterator i = getAttributes()->begin();
@@ -27,7 +32,7 @@ void Element_Impl::serialize(std::fstream* writer,
         *writer << " ";
     }
 
-    if (getChildNodes()->size() == 0) {
+    if (!getChildNodes()->size()) {
         *writer << "/>";
         whitespace->newLine(writer);
     } else {
@@ -45,7 +50,7 @@ void Element_Impl::serialize(std::fstream* writer,
 
         whitespace->decrementIndentation();
         whitespace->prettyIndentation(writer);
-        *writer << "</" << getTagName() + ">";
+        *writer << "</" << getNodeName() + ">";
         whitespace->newLine(writer);
     }
 }

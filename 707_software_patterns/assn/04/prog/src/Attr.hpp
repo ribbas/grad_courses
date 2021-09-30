@@ -11,7 +11,10 @@ class Element;
 
 class Attr : public virtual Node {
 public:
-    virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
+    virtual void appendValue(std::fstream*, WhitespaceStrategy*) = 0;
+    virtual void prependNodeName(std::fstream*, WhitespaceStrategy*) = 0;
+    virtual void prependNodeValue(std::fstream*, WhitespaceStrategy*) = 0;
+
     virtual const std::string& getName() = 0;
     virtual const std::string& getValue() = 0;
     virtual void setValue(const std::string&) = 0;
@@ -34,7 +37,9 @@ public:
     virtual const std::string& getValue() override;
     virtual void setValue(const std::string&) override;
     virtual dom::Element* getOwnerElement() override;
-    virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
+    virtual void appendValue(std::fstream*, WhitespaceStrategy*) override;
+    virtual void prependNodeName(std::fstream*, WhitespaceStrategy*) override;
+    virtual void prependNodeValue(std::fstream*, WhitespaceStrategy*) override;
 
     // override parent methods to null-behavior to conform to leaf-classes in
     // the composite pattern
