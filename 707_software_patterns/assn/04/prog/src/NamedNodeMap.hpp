@@ -11,13 +11,13 @@ class Document;
 class NamedNodeMap : public NodeList {
 public:
     virtual Node* getNamedItem(const std::string&) {
-        return 0;
+        return nullptr;
     }
     virtual Node* setNamedItem(Node*) {
-        return 0;
+        return nullptr;
     }
     virtual Node* removeNamedItem(const std::string&) {
-        return 0;
+        return nullptr;
     }
 };
 }; // namespace dom
@@ -31,9 +31,9 @@ public:
 
     virtual ~NamedNodeMap_Impl();
 
-    virtual dom::Node* getNamedItem(const std::string&);
-    virtual dom::Node* setNamedItem(dom::Node*);
-    virtual dom::Node* removeNamedItem(const std::string&);
+    virtual dom::Node* getNamedItem(const std::string&) override;
+    virtual dom::Node* setNamedItem(dom::Node*) override;
+    virtual dom::Node* removeNamedItem(const std::string&) override;
 };
 
 #endif // NAMEDNODEMAP_H

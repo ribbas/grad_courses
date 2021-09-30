@@ -5,6 +5,10 @@
 #include "Element.hpp"
 #include "Text.hpp"
 
+XMLSerializer::XMLSerializer(std::fstream* _file) : file(_file) {}
+
+XMLSerializer::~XMLSerializer() {}
+
 void XMLSerializer::serializePretty(dom::Node* node) {
     WhitespaceStrategy* ws = new PrettyWhitespaceStrategy;
     node->serialize(file, ws);

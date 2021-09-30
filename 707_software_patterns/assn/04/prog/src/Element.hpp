@@ -20,16 +20,15 @@ public:
     //
     virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
 
-    virtual const std::string& getAttribute(const std::string& name) = 0;
-    virtual Attr* getAttributeNode(const std::string& name) = 0;
-    virtual NodeList* getElementsByTagName(const std::string& tagName) = 0;
+    virtual const std::string& getAttribute(const std::string&) = 0;
+    virtual Attr* getAttributeNode(const std::string&) = 0;
+    virtual NodeList* getElementsByTagName(const std::string&) = 0;
     virtual const std::string& getTagName() = 0;
-    virtual bool hasAttribute(const std::string& name) = 0;
-    virtual void removeAttribute(const std::string& name) = 0;
-    virtual Attr* removeAttributeNode(Attr* oldAttr) = 0;
-    virtual void setAttribute(const std::string& name,
-                              const std::string& value) = 0;
-    virtual Attr* setAttributeNode(Attr* newAttr) = 0;
+    virtual bool hasAttribute(const std::string&) = 0;
+    virtual void removeAttribute(const std::string&) = 0;
+    virtual Attr* removeAttributeNode(Attr*) = 0;
+    virtual void setAttribute(const std::string&, const std::string&) = 0;
+    virtual Attr* setAttributeNode(Attr*) = 0;
 
     virtual dom::NamedNodeMap* getAttributes() = 0;
     virtual bool hasAttributes() = 0;

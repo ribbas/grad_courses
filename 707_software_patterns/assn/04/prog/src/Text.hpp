@@ -10,8 +10,6 @@ class Document;
 
 class Text : public virtual Node {
 public:
-    virtual ~Text() {}
-
     virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
     virtual const std::string& getName() = 0;
     virtual const std::string& getData() = 0;

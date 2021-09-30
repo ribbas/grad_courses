@@ -11,8 +11,6 @@ class Element;
 
 class Attr : public virtual Node {
 public:
-    virtual ~Attr() {}
-
     virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
     virtual const std::string& getName() = 0;
     virtual const std::string& getValue() = 0;

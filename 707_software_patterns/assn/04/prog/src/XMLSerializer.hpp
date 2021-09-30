@@ -19,8 +19,8 @@ private:
     std::fstream* file;
 
 public:
-    XMLSerializer(std::fstream* _file) : file(_file) {}
-    ~XMLSerializer() {}
+    XMLSerializer(std::fstream*);
+    ~XMLSerializer();
 
 private:
     class PrettyWhitespaceStrategy : public WhitespaceStrategy {
