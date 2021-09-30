@@ -1,4 +1,5 @@
-
+#ifndef XML_VALIDATOR_H
+#define XML_VALIDATOR_H
 
 #include <fstream>
 
@@ -21,3 +22,5 @@ public:
     virtual bool canAddText(dom::Element*);
     virtual bool canAddAttribute(dom::Element*, std::string);
 };
+
+#endif

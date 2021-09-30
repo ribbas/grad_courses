@@ -1,5 +1,5 @@
-#ifndef WHITESPACESTRATEGY_H
-#define WHITESPACESTRATEGY_H
+#ifndef WHITESPACE_STRATEGY_H
+#define WHITESPACE_STRATEGY_H
 
 #include <fstream>
 

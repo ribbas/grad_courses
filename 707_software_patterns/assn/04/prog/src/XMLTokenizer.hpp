@@ -1,3 +1,6 @@
+#ifndef XML_TOKENIZER_H
+#define XML_TOKENIZER_H
+
 #include <boost/regex.hpp>
 #include <fstream>
 #include <ios>
@@ -89,3 +92,5 @@ public:
     }
     virtual XMLToken* getNextToken();
 };
+
+#endif

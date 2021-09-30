@@ -1,5 +1,5 @@
-#ifndef NAMEDNODEMAP_H
-#define NAMEDNODEMAP_H
+#ifndef NAMED_NODE_MAP_H
+#define NAMED_NODE_MAP_H
 
 #include <string>
 

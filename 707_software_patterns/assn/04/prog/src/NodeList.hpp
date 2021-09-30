@@ -1,5 +1,5 @@
-#ifndef NODELIST_H
-#define NODELIST_H
+#ifndef NODE_LIST_H
+#define NODE_LIST_H
 
 #include <list>
 
