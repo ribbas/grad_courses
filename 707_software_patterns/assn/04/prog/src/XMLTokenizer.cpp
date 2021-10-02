@@ -64,8 +64,9 @@ XMLTokenizer::XMLToken* XMLTokenizer::getNextToken() {
         index = 0;
         line_number++;
 
-        if (line.size() == 0)
+        if (line.size() == 0) {
             return new XMLToken(std::string(""), XMLToken::NULL_TOKEN);
+        }
     }
 
     boost::smatch what;

@@ -12,6 +12,7 @@
 void testTokenizer(int argc, char** argv);
 void testSerializer(int argc, char** argv);
 void testValidator(int argc, char** argv);
+void testBuilder(int argc, char** argv);
 
 void printUsage() {
     printf("Usage:\n");
@@ -39,6 +40,17 @@ int main(int argc, char** argv) {
         case 'v':
             testValidator(argc, argv);
             break;
+        case 'B':
+        case 'b':
+            testBuilder(argc, argv);
+            break;
+    }
+}
+
+void testBuilder(int argc, char** argv) {
+    if (argc < 4) {
+        printUsage();
+        exit(0);
     }
 }
 
