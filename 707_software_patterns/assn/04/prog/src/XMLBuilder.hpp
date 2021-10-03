@@ -6,40 +6,40 @@
 #include "Element.hpp"
 #include "Node.hpp"
 #include "Text.hpp"
-#include <vector>
+#include "XMLTokenizer.hpp"
 
 // ConcreteBuilder that can be used to build a DOM tree
 class XMLBuilder {
 private:
-    dom::AbstractDOMFactory* domFactory;
     dom::Document* document;
-    std::vector<dom::Element*> elementVec;
+    dom::Element* currentElement;
+    std::string& ltrim(std::string&);
 
 public:
-    // Concrete DOM factory we'll use is Document_Impl
     XMLBuilder();
+    void setElement(dom::Element*);
+    dom::Element* getElementParent();
     dom::Document* getDocument() {
         return document;
     }
-    void beginDocument();
-    dom::Element* addElement(dom::Element*, std::string);
-    // dom::Element* addElement(dom::Document*, std::string);
-    dom::Attr* addAttribute(dom::Element*, std::string, std::string);
-    dom::Text* addText(dom::Element*, std::string);
+    dom::Element* addElement(std::string);
+    dom::Attr* addAttribute(std::string, std::string);
+    dom::Text* addText(std::string);
 };
 
-// Director for XML Parsing and DOM building. Uses builder passed to it
 class XMLDirector {
 private:
-    XMLBuilder* builder;
+    XMLBuilder* factory;
+    XMLTokenizer tokenizer;
 
 public:
-    XMLDirector(XMLBuilder* builder) : builder(builder) {}
-    // ~XMLParseDirector() {
-    //     if (builder != 0)
-    //         delete builder;
-    // }
+    XMLDirector(XMLBuilder* builder, std::string fileName)
+        : factory(builder), tokenizer(fileName) {}
 
-    dom::Document* parseFile(std::string fileName);
+    void construct();
+
+    dom::Document* getResult() {
+        return factory->getDocument();
+    }
 };
 #endif // XML_BUILDER_H

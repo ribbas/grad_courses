@@ -13,7 +13,7 @@ class Attr;
 class NodeList;
 class Iterator;
 
-class Document : public virtual Node, public virtual AbstractDOMFactory {
+class Document : public virtual Node {
 public:
     virtual Element* createElement(const std::string&) = 0;
     virtual Text* createTextNode(const std::string&) = 0;

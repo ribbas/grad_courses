@@ -56,17 +56,19 @@ void testBuilder(int argc, char** argv) {
     }
 
     XMLBuilder* builder = new XMLBuilder();
-    XMLDirector parser(builder);
-    dom::Document* domTree = parser.parseFile(argv[2]);
+    XMLDirector director(builder, argv[2]);
+    director.construct();
+    dom::Document* builtDocument = director.getResult();
 
     // Serialize it back out
     std::fstream* file = 0;
     XMLSerializer xmlSerializer(
         file = new std::fstream(argv[3], std::ios_base::out));
-    xmlSerializer.serializePretty(domTree);
-    delete file;
+    xmlSerializer.serializePretty(builtDocument);
 
-    // TODO delete dom
+    delete builder;
+    delete builtDocument;
+    delete file;
 }
 
 void testTokenizer(int argc, char** argv) {

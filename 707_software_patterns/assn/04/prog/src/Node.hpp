@@ -71,13 +71,6 @@ public:
     static const int HIERARCHY_REQUEST_ERR = 6;
 };
 
-class AbstractDOMFactory {
-public:
-    virtual Element* createElement(const std::string& tagName) = 0;
-    virtual Text* createTextNode(const std::string& data) = 0;
-    virtual Attr* createAttribute(const std::string& name) = 0;
-};
-
 }; // namespace dom
 
 class Node_Impl : public virtual dom::Node {
