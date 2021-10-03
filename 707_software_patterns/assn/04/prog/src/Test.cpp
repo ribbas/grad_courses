@@ -2,6 +2,7 @@
 #include "Document.hpp"
 #include "Element.hpp"
 #include "Text.hpp"
+#include "XMLBuilder.hpp"
 #include "XMLSerializer.hpp"
 #include "XMLTokenizer.hpp"
 #include "XMLValidator.hpp"
@@ -48,10 +49,24 @@ int main(int argc, char** argv) {
 }
 
 void testBuilder(int argc, char** argv) {
+
     if (argc < 4) {
         printUsage();
         exit(0);
     }
+
+    XMLBuilder* builder = new XMLBuilder();
+    XMLDirector parser(builder);
+    dom::Document* domTree = parser.parseFile(argv[2]);
+
+    // Serialize it back out
+    std::fstream* file = 0;
+    XMLSerializer xmlSerializer(
+        file = new std::fstream(argv[3], std::ios_base::out));
+    xmlSerializer.serializePretty(domTree);
+    delete file;
+
+    // TODO delete dom
 }
 
 void testTokenizer(int argc, char** argv) {
