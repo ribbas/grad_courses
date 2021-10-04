@@ -1,7 +1,13 @@
 #include "XMLBuilder.hpp"
-#include <iostream>
+#include <algorithm>
 
+XMLBuilder::XMLBuilder()
+    : document(new Document_Impl), currentElement(nullptr) {}
+
+// this method was extracted and modified from
+// https://www.techiedelight.com/trim-string-cpp-remove-leading-trailing-spaces/
 std::string& XMLBuilder::ltrim(std::string& s) {
+
     std::string::iterator it = std::find_if(s.begin(), s.end(), [](char c) {
         return !std::isspace<char>(c, std::locale::classic());
     });
@@ -9,8 +15,11 @@ std::string& XMLBuilder::ltrim(std::string& s) {
     return s;
 }
 
-XMLBuilder::XMLBuilder()
-    : document(new Document_Impl), currentElement(nullptr) {}
+void XMLBuilder::trimAttr(std::string& name, std::string& value) {
+    name = ltrim(name);
+    value = ltrim(value);
+    value = value.substr(1, value.size() - 2);
+}
 
 void XMLBuilder::setElement(dom::Element* element) {
 
@@ -21,6 +30,10 @@ void XMLBuilder::setElement(dom::Element* element) {
 
 dom::Element* XMLBuilder::getElementParent() {
     return dynamic_cast<dom::Element*>(currentElement->getParentNode());
+}
+
+dom::Document* XMLBuilder::getDocument() {
+    return document;
 }
 
 dom::Element* XMLBuilder::addElement(std::string tagName) {
@@ -37,10 +50,8 @@ dom::Element* XMLBuilder::addElement(std::string tagName) {
 }
 
 dom::Attr* XMLBuilder::addAttribute(std::string name, std::string value) {
-    name = ltrim(name);
-    value = ltrim(value);
-    value = value.substr(1, value.size() - 2);
 
+    trimAttr(name, value);
     dom::Attr* newAttribute = document->createAttribute(name);
     newAttribute->setValue(value);
     currentElement->setAttributeNode(newAttribute);
@@ -54,93 +65,4 @@ dom::Text* XMLBuilder::addText(std::string data) {
     dom::Text* newText = document->createTextNode(data);
     currentElement->appendChild(newText);
     return newText;
-}
-
-void XMLDirector::construct() {
-
-    XMLTokenizer::XMLToken* token = tokenizer.getNextToken();
-    dom::Element* element = nullptr;
-    bool tagCloseStart = false;
-    std::string attrName = "";
-
-    while (token->getTokenType() != XMLTokenizer::XMLToken::NULL_TOKEN) {
-
-        switch (token->getTokenType()) {
-
-            case XMLTokenizer::XMLToken::ATTRIBUTE: {
-                std::cout << "XMLTokenizer::XMLToken::ATTRIBUTE "
-                          << token->getToken() << std::endl;
-
-                attrName = token->getToken();
-                break;
-            }
-
-            case XMLTokenizer::XMLToken::ATTRIBUTE_VALUE: {
-                std::cout << "XMLTokenizer::XMLToken::ATTRIBUTE_VALUE "
-                          << token->getToken() << std::endl;
-                if (element) {
-                    factory->setElement(element);
-                    factory->addAttribute(attrName, token->getToken());
-                }
-                break;
-            }
-
-            case XMLTokenizer::XMLToken::ELEMENT: {
-                std::cout << "XMLTokenizer::XMLToken::ELEMENT "
-                          << token->getToken() << std::endl;
-
-                if (!tagCloseStart) {
-                    std::cout << "pushing elemennt " << element << '\n';
-                    factory->setElement(element);
-                    element = factory->addElement(token->getToken());
-                } else {
-                    element = factory->getElementParent();
-                }
-                break;
-            }
-
-            case XMLTokenizer::XMLToken::TAG_CLOSE_START: {
-                std::cout << "XMLTokenizer::XMLToken::TAG_CLOSE_START "
-                          << token->getToken() << std::endl;
-
-                tagCloseStart = true;
-                break;
-            }
-
-            case XMLTokenizer::XMLToken::NULL_TAG_END: {
-                std::cout << "XMLTokenizer::XMLToken::NULL_TAG_END "
-                          << token->getToken() << std::endl;
-
-                element = factory->getElementParent();
-                break;
-            }
-
-            case XMLTokenizer::XMLToken::VALUE: {
-                std::cout << "XMLTokenizer::XMLToken::VALUE "
-                          << token->getToken() << std::endl;
-
-                factory->setElement(element);
-                factory->addText(token->getToken());
-                break;
-            }
-
-            case XMLTokenizer::XMLToken::TAG_END: {
-                std::cout << "XMLTokenizer::XMLToken::TAG_END "
-                          << token->getToken() << std::endl;
-
-                tagCloseStart = false;
-                break;
-            }
-
-            default: {
-                break;
-            }
-        }
-
-        delete token;
-        token = tokenizer.getNextToken();
-    }
-
-    delete token;
-    delete element;
 }

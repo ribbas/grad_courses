@@ -3,6 +3,7 @@
 #include "Element.hpp"
 #include "Text.hpp"
 #include "XMLBuilder.hpp"
+#include "XMLDirector.hpp"
 #include "XMLSerializer.hpp"
 #include "XMLTokenizer.hpp"
 #include "XMLValidator.hpp"
@@ -14,21 +15,33 @@ void testTokenizer(int argc, char** argv);
 void testSerializer(int argc, char** argv);
 void testValidator(int argc, char** argv);
 void testBuilder(int argc, char** argv);
+void testIterator(int argc, char** argv);
 
 void printUsage() {
     printf("Usage:\n");
+    printf("\tTest b [file1] [file2]\n");
+    printf("\tTest i [file] ...\n");
     printf("\tTest t [file] ...\n");
     printf("\tTest s [file1] [file2]\n");
     printf("\tTest v [file]\n");
 }
 
 int main(int argc, char** argv) {
+
     if (argc < 2) {
         printUsage();
         exit(0);
     }
 
     switch (argv[1][0]) {
+        case 'B':
+        case 'b':
+            testBuilder(argc, argv);
+            break;
+        case 'I':
+        case 'i':
+            testIterator(argc, argv);
+            break;
         case 'T':
         case 't':
             testTokenizer(argc, argv);
@@ -41,11 +54,59 @@ int main(int argc, char** argv) {
         case 'v':
             testValidator(argc, argv);
             break;
-        case 'B':
-        case 'b':
-            testBuilder(argc, argv);
-            break;
     }
+}
+void testIterator(int argc, char**) {
+
+    if (argc < 3) {
+        printUsage();
+        exit(0);
+    }
+
+    dom::Document* document = new Document_Impl;
+    dom::Element* root = document->createElement("document");
+    document->appendChild(root);
+
+    dom::Element* child = document->createElement("element");
+    dom::Attr* attr = document->createAttribute("attribute");
+    attr->setValue("attribute value");
+    child->setAttributeNode(attr);
+    root->appendChild(child);
+
+    child = document->createElement("element");
+    root->appendChild(child);
+
+    child = document->createElement("element");
+    child->setAttribute("attribute", "attribute value");
+    child->setAttribute("attribute2", "attribute2 value");
+    dom::Text* text = document->createTextNode("Element Value");
+    child->appendChild(text);
+    root->appendChild(child);
+
+    child = document->createElement("element");
+    root->appendChild(child);
+
+    //
+    // Create an iterator from the document object
+    //
+    dom::Iterator* it = document->createIterator();
+    dom::Node* currentNode;
+    for (it->first(); !it->isDone(); it->next()) {
+
+        currentNode = it->currentItem();
+
+        if (dynamic_cast<dom::Document*>(currentNode) != 0) {
+            std::cout << "Document: " << currentNode << std::endl;
+        } else if (dynamic_cast<dom::Element*>(currentNode) != 0) {
+            std::cout << "Element: " << currentNode << std::endl;
+        } else if (dynamic_cast<dom::Attr*>(currentNode) != 0) {
+            std::cout << "Attr: " << currentNode << std::endl;
+        } else if (dynamic_cast<dom::Text*>(currentNode) != 0) {
+            std::cout << "Text: " << currentNode << std::endl;
+        }
+    }
+    delete currentNode;
+    delete it;
 }
 
 void testBuilder(int argc, char** argv) {
@@ -60,7 +121,9 @@ void testBuilder(int argc, char** argv) {
     director.construct();
     dom::Document* builtDocument = director.getResult();
 
-    // Serialize it back out
+    //
+    // Serialize
+    //
     std::fstream* file = 0;
     XMLSerializer xmlSerializer(
         file = new std::fstream(argv[3], std::ios_base::out));
@@ -156,26 +219,6 @@ void testSerializer(int argc, char** argv) {
     root->appendChild(child);
 
     //
-    // Create an iterator from the document object
-    //
-    dom::Iterator* it = document->createIterator();
-    dom::Node* currentNode;
-    for (it->first(); !it->isDone(); it->next()) {
-
-        currentNode = it->currentItem();
-
-        if (dynamic_cast<dom::Document*>(currentNode) != 0) {
-            std::cout << "Document: " << currentNode << std::endl;
-        } else if (dynamic_cast<dom::Element*>(currentNode) != 0) {
-            std::cout << "Element: " << currentNode << std::endl;
-        } else if (dynamic_cast<dom::Attr*>(currentNode) != 0) {
-            std::cout << "Attr: " << currentNode << std::endl;
-        } else if (dynamic_cast<dom::Text*>(currentNode) != 0) {
-            std::cout << "Text: " << currentNode << std::endl;
-        }
-    }
-
-    //
     // Serialize
     //
     std::fstream* file = 0;
@@ -188,8 +231,6 @@ void testSerializer(int argc, char** argv) {
     xmlSerializer2.serializeMinimal(document);
 
     delete file;
-    delete currentNode;
-    delete it;
 
     // delete Document and tree.
 }

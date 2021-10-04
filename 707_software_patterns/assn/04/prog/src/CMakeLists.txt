@@ -18,6 +18,7 @@ if(Boost_FOUND)
 		Text.cpp
 		ValidChildren.cpp
 		XMLBuilder.cpp
+		XMLDirector.cpp
 		XMLSerializer.cpp
 		XMLTokenizer.cpp
 		XMLValidator.cpp
