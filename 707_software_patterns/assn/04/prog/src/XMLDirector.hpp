@@ -10,14 +10,10 @@ private:
     XMLTokenizer tokenizer;
 
 public:
-    XMLDirector(XMLBuilder* builder, std::string fileName)
-        : factory(builder), tokenizer(fileName) {}
+    XMLDirector(XMLBuilder*, std::string);
 
     void construct();
-
-    dom::Document* getResult() {
-        return factory->getDocument();
-    }
+    dom::Document* getResult();
 };
 
 #endif

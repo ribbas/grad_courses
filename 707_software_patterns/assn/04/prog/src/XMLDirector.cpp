@@ -1,5 +1,12 @@
 #include "XMLDirector.hpp"
 
+XMLDirector::XMLDirector(XMLBuilder* builder, std::string fileName)
+    : factory(builder), tokenizer(fileName) {}
+
+dom::Document* XMLDirector::getResult() {
+    return factory->getDocument();
+}
+
 void XMLDirector::construct() {
 
     dom::Element* element = nullptr;

@@ -10,11 +10,13 @@ class XMLBuilder {
 private:
     dom::Document* document;
     dom::Element* currentElement;
+
     std::string& ltrim(std::string&);
     void trimAttr(std::string&, std::string&);
 
 public:
     XMLBuilder();
+
     void setElement(dom::Element*);
     dom::Element* getElementParent();
     dom::Document* getDocument();

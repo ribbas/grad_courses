@@ -69,27 +69,18 @@ public:
 
     public:
         XMLToken(const std::string&, TokenTypes);
-
         virtual ~XMLToken() {}
 
-        virtual const std::string& getToken() {
-            return token;
-        }
-        virtual TokenTypes getTokenType() {
-            return token_type;
-        }
+        virtual const std::string& getToken();
+        virtual TokenTypes getTokenType();
         virtual const char* toString();
     };
 
     XMLTokenizer(const std::string&);
     ~XMLTokenizer() {}
 
-    virtual int getLineNumber() {
-        return line_number;
-    }
-    virtual int getLineCharacter() {
-        return index;
-    }
+    virtual int getLineNumber();
+    virtual int getLineCharacter();
     virtual XMLToken* getNextToken();
 };
 

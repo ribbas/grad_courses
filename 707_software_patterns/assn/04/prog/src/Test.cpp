@@ -121,6 +121,8 @@ void testBuilder(int argc, char** argv) {
     director.construct();
     dom::Document* builtDocument = director.getResult();
 
+    std::cout << "DOM Tree successfully built\n";
+
     //
     // Serialize
     //
