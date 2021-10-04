@@ -13,7 +13,6 @@ private:
 
 public:
     ValidChildren(std::string);
-
     virtual ~ValidChildren();
 
     virtual std::string getThisElement();

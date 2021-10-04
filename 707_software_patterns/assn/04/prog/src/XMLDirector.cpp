@@ -11,7 +11,7 @@ void XMLDirector::construct() {
 
     dom::Element* element = nullptr;
     std::string name = "";
-    bool tagCloseStart = false;
+    bool tagCloseStart = false; // flag to determine if element inside tag
 
     XMLTokenizer::XMLToken* token = tokenizer.getNextToken();
     XMLTokenizer::XMLToken::TokenTypes tokenType = token->getTokenType();

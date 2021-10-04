@@ -32,4 +32,4 @@ For this pattern, there were no additional classes or methods. The Builder patte
 
 ### Builder
 
-For this pattern, the XMLBuilder and XMLDirector classes were added. The 2 classes are used to parse a valid input XML by tokenizing it and reserializing the file with the tokens. The Builder class provides all the methods necessary to build a DOM tree, and the Director class uses the tokenizer to determine the sequence of the Builder method calls to reconstruct the XML file.
+For this pattern, the XMLBuilder and XMLDirector classes were added. The 2 classes are used to parse a valid input XML by tokenizing it and reserializing the file with the tokens. The Builder class provides all the methods necessary to build a DOM tree, and the Director class uses the tokenizer to determine the sequence of the Builder method calls to reconstruct the XML file. The parsing was implemented by utilizing a greedy-approach of the XMLTokenizer by only checking for attributes, texts, elements, and start and end tags. The parser was only tested with the original `Test1.xml`.
