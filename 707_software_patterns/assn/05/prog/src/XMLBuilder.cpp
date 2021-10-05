@@ -1,8 +1,17 @@
 #include "XMLBuilder.hpp"
 #include <algorithm>
 
+XMLBuilder* XMLBuilder::singleton = nullptr;
+
 XMLBuilder::XMLBuilder()
     : document(new Document_Impl), currentElement(nullptr) {}
+
+XMLBuilder* XMLBuilder::getInstance() {
+    if (!singleton) {
+        singleton = new XMLBuilder();
+    }
+    return singleton;
+}
 
 // this method was extracted and modified from
 // https://www.techiedelight.com/trim-string-cpp-remove-leading-trailing-spaces/
