@@ -39,9 +39,6 @@ public:
     virtual const std::string& getLocalName() = 0;
 
     virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
-    virtual void appendValue(std::fstream*, WhitespaceStrategy*) = 0;
-    virtual void prependNodeName(std::fstream*, WhitespaceStrategy*) = 0;
-    virtual void prependNodeValue(std::fstream*, WhitespaceStrategy*) = 0;
 };
 
 class DOMException {
@@ -109,8 +106,6 @@ public:
     virtual const std::string& getLocalName() override;
 
     virtual void setParent(dom::Node*);
-
-    virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
 };
 
 #endif // NODE_H

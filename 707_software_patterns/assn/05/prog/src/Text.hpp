@@ -10,9 +10,7 @@ class Document;
 
 class Text : public virtual Node {
 public:
-    virtual void appendValue(std::fstream*, WhitespaceStrategy*) = 0;
-    virtual void prependNodeName(std::fstream*, WhitespaceStrategy*) = 0;
-    virtual void prependNodeValue(std::fstream*, WhitespaceStrategy*) = 0;
+    virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
 
     virtual const std::string& getName() = 0;
     virtual const std::string& getData() = 0;
@@ -51,9 +49,7 @@ public:
     virtual void replaceData(int, int, const std::string&) override;
     virtual dom::Text* splitText(int) override;
 
-    virtual void appendValue(std::fstream*, WhitespaceStrategy*) override;
-    virtual void prependNodeName(std::fstream*, WhitespaceStrategy*) override;
-    virtual void prependNodeValue(std::fstream*, WhitespaceStrategy*) override;
+    virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
 
     // override parent methods to null-behavior to conform to leaf-classes in
     // the composite pattern
