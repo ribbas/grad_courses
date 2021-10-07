@@ -1,6 +1,7 @@
 #include "Document.hpp"
 #include "Attr.hpp"
 #include "Element.hpp"
+#include "ElementProxy.hpp"
 #include "NodeList.hpp"
 #include "Text.hpp"
 #include "XMLValidator.hpp"
@@ -19,7 +20,7 @@ void Document_Impl::serialize(std::fstream* writer,
 }
 
 dom::Element* Document_Impl::createElement(const std::string& tagName) {
-    return new Element_Impl(tagName, this);
+    return new ElementProxy(tagName, this);
 }
 
 dom::Text* Document_Impl::createTextNode(const std::string& data) {

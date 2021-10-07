@@ -1,10 +1,13 @@
 #include "Element.hpp"
 #include "Attr.hpp"
 #include "Document.hpp"
+#include "ElementProxy.hpp"
 #include "Text.hpp"
+#include <iostream>
 
 Element_Impl::Element_Impl(const std::string& tagName, dom::Document* document)
     : Node_Impl(tagName, dom::Node::ELEMENT_NODE), attributes(document) {
+    std::cout << "init\n";
     Node_Impl::document = document;
 }
 

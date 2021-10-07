@@ -44,6 +44,7 @@ protected:
 
 public:
     friend class Document_Impl;
+    friend class ElementProxy;
 
     virtual ~Element_Impl();
 
@@ -61,7 +62,6 @@ public:
     virtual dom::Attr* removeAttributeNode(dom::Attr*) override;
     virtual void setAttribute(const std::string&, const std::string&) override;
     virtual dom::Attr* setAttributeNode(dom::Attr*) override;
-
     virtual dom::NamedNodeMap* getAttributes() override;
     virtual bool hasAttributes() override;
 };

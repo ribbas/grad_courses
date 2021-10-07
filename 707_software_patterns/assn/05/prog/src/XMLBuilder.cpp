@@ -1,5 +1,6 @@
 #include "XMLBuilder.hpp"
 #include <algorithm>
+#include <iostream>
 
 XMLBuilder* XMLBuilder::singleton = nullptr;
 
@@ -50,8 +51,10 @@ dom::Element* XMLBuilder::addElement(std::string tagName) {
     dom::Element* newElement = document->createElement(tagName);
 
     if (!currentElement) {
+        std::cout << "doc " << newElement << std::endl;
         document->appendChild(newElement);
     } else {
+        std::cout << "ele " << newElement << std::endl;
         currentElement->appendChild(newElement);
     }
 

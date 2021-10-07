@@ -82,6 +82,7 @@ private:
 protected:
     dom::Document* document;
 
+    Node_Impl() {}
     Node_Impl(const std::string&, short);
 
 public:

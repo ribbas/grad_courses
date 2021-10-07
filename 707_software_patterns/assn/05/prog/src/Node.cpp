@@ -1,4 +1,5 @@
 #include "Node.hpp"
+#include <iostream>
 
 Node_Impl::Node_Impl(const std::string& n, short type)
     : name(n), nodeType(type), parent(0), document(0) {}
@@ -129,6 +130,7 @@ dom::Node* Node_Impl::appendChild(dom::Node* newChild) {
 
     nodes.push_back(newChild);
     (dynamic_cast<Node_Impl*>(newChild))->setParent(this);
+    std::cout << "YOOOYOYOY " << newChild << std::endl;
 
     return newChild;
 }
