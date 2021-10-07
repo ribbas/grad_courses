@@ -8,7 +8,6 @@ private:
     dom::Element* realSubject;
     const std::string& tagName;
     dom::Document* document;
-
     bool realized;
 
     void realize();
