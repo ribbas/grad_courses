@@ -57,18 +57,26 @@ const char* XMLTokenizer::XMLToken::toString() {
     }
 }
 
-XMLTokenizer::XMLTokenizer(const std::string& filename)
-    : file(filename.c_str(), std::ios_base::in), line_number(0), index(0),
-      inside_tag(false), pending_attribute_value(false), tag_found(false),
-      prolog_start(PROLOG_START), prolog_identifier(PROLOG_IDENTIFIER),
-      attribute_value(ATTRIBUTE_VALUE), prolog_end(PROLOG_END),
-      tag_start(TAG_START), element(ELEMENT), attribute(ATTRIBUTE),
-      null_tag_end(NULL_TAG_END), tag_close_start(TAG_CLOSE_START),
-      value(VALUE), tag_end(TAG_END), space_to_eol(SPACE_TO_EOL) {}
+XMLTokenizer::XMLTokenizer(const std::string& filename, int offset)
+    : file(filename.c_str(), std::ios_base::in), offset(offset), line_number(0),
+      index(0), inside_tag(false), pending_attribute_value(false),
+      tag_found(false), prolog_start(PROLOG_START),
+      prolog_identifier(PROLOG_IDENTIFIER), attribute_value(ATTRIBUTE_VALUE),
+      prolog_end(PROLOG_END), tag_start(TAG_START), element(ELEMENT),
+      attribute(ATTRIBUTE), null_tag_end(NULL_TAG_END),
+      tag_close_start(TAG_CLOSE_START), value(VALUE), tag_end(TAG_END),
+      space_to_eol(SPACE_TO_EOL) {
+    file.seekg(offset);
+}
 
 int XMLTokenizer::getLineNumber() {
     return line_number;
 }
+
+int XMLTokenizer::getOffset() {
+    return file.tellg();
+}
+
 int XMLTokenizer::getLineCharacter() {
     return index;
 }

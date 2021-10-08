@@ -15,7 +15,6 @@ private:
     std::string& ltrim(std::string&);
     void trimAttr(std::string&, std::string&);
 
-    // protected:
     XMLBuilder();
 
 public:

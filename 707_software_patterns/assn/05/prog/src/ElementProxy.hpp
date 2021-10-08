@@ -2,6 +2,7 @@
 #define ELEMENT_PROXY_H
 
 #include "Element.hpp"
+#include "XMLBuilder.hpp"
 
 class ElementProxy : public virtual dom::Element, public virtual Node_Impl {
 private:
@@ -9,17 +10,14 @@ private:
     const std::string& tagName;
     dom::Document* document;
     bool realized;
+    int offset;
 
     void realize();
 
 public:
-    ElementProxy(const std::string& tagName, dom::Document* document)
-        : realSubject(nullptr), tagName(tagName), document(document),
-          realized(false) {}
+    ElementProxy(const std::string&, dom::Document*);
 
-    virtual ~ElementProxy() {
-        delete realSubject;
-    }
+    virtual ~ElementProxy();
 
     //
     // Serialization Data Extraction Strategy

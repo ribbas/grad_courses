@@ -12,6 +12,7 @@ private:
 public:
     XMLDirector(XMLBuilder*, std::string);
 
+    void loadRealElement();
     void construct();
     dom::Document* getResult();
 };

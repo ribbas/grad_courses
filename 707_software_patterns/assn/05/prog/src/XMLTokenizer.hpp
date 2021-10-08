@@ -9,6 +9,7 @@
 class XMLTokenizer {
 private:
     std::fstream file;
+    int offset;
     std::string line;
     int line_number;
     int index;
@@ -42,8 +43,7 @@ private:
     boost::regex tag_end;
     boost::regex space_to_eol;
 
-    virtual void update_matchers(const boost::ssub_match&,
-                                 const boost::ssub_match&);
+    void update_matchers(const boost::ssub_match&, const boost::ssub_match&);
 
 public:
     class XMLToken {
@@ -69,19 +69,20 @@ public:
 
     public:
         XMLToken(const std::string&, TokenTypes);
-        virtual ~XMLToken() {}
+        ~XMLToken() {}
 
-        virtual const std::string& getToken();
-        virtual TokenTypes getTokenType();
-        virtual const char* toString();
+        const std::string& getToken();
+        TokenTypes getTokenType();
+        const char* toString();
     };
 
-    XMLTokenizer(const std::string&);
+    XMLTokenizer(const std::string&, int = 0);
     ~XMLTokenizer() {}
 
-    virtual int getLineNumber();
-    virtual int getLineCharacter();
-    virtual XMLToken* getNextToken();
+    int getOffset();
+    int getLineNumber();
+    int getLineCharacter();
+    XMLToken* getNextToken();
 };
 
 #endif

@@ -1,6 +1,15 @@
 #include "ElementProxy.hpp"
 #include <iostream>
 
+ElementProxy::ElementProxy(const std::string& tagName, dom::Document* document)
+    : realSubject(nullptr), tagName(tagName), document(document),
+      realized(false), offset(0) {}
+
+ElementProxy::~ElementProxy() {
+    offset = 0;
+    delete realSubject;
+}
+
 void ElementProxy::serialize(std::fstream* writer,
                              WhitespaceStrategy* whitespace) {
     realSubject->serialize(writer, whitespace);
