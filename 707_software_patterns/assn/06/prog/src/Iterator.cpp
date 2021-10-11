@@ -14,7 +14,7 @@ void DocumentIterator::containerize(dom::Node* document, bool init) {
     }
 
     if (document->hasChildNodes()) {
-        for (auto i : *document->getChildNodes()) {
+        for (dom::Node* i : *document->getChildNodes()) {
 
             container.push_back(i);
             if (i->hasChildNodes()) {

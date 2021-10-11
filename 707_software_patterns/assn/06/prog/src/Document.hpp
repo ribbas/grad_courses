@@ -1,8 +1,6 @@
 #ifndef DOCUMENT_H
 #define DOCUMENT_H
 
-#include <string>
-
 #include "Iterator.hpp"
 #include "Node.hpp"
 
@@ -21,9 +19,7 @@ public:
     virtual Element* getDocumentElement() = 0;
     virtual Iterator* createIterator() = 0;
 
-    virtual void appendValue(std::fstream*, WhitespaceStrategy*) = 0;
-    virtual void prependNodeName(std::fstream*, WhitespaceStrategy*) = 0;
-    virtual void prependNodeValue(std::fstream*, WhitespaceStrategy*) = 0;
+    virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
 };
 }; // namespace dom
 
@@ -39,9 +35,7 @@ public:
     virtual dom::Element* getDocumentElement() override;
     virtual dom::Iterator* createIterator() override;
 
-    virtual void appendValue(std::fstream*, WhitespaceStrategy*) override;
-    virtual void prependNodeName(std::fstream*, WhitespaceStrategy*) override;
-    virtual void prependNodeValue(std::fstream*, WhitespaceStrategy*) override;
+    virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
 };
 
 #endif // DOCUMENT_H

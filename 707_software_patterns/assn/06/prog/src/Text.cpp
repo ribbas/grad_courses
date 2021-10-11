@@ -110,18 +110,9 @@ dom::Node* Text_Impl::appendChild(dom::Node*) {
                             "Text nodes do not support this method.");
 }
 
-void Text_Impl::prependNodeName(std::fstream* writer,
-                                WhitespaceStrategy* whitespace) {
-    *writer << "";
+void Text_Impl::serialize(std::fstream* writer,
+                          WhitespaceStrategy* whitespace) {
     whitespace->prettyIndentation(writer);
-}
-
-void Text_Impl::prependNodeValue(std::fstream* writer, WhitespaceStrategy*) {
-    *writer << "";
-}
-
-void Text_Impl::appendValue(std::fstream* writer,
-                            WhitespaceStrategy* whitespace) {
-    *writer << getNodeValue();
+    *writer << getData();
     whitespace->newLine(writer);
 }

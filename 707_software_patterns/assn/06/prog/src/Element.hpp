@@ -18,9 +18,7 @@ public:
     //
     // Serialization Data Extraction Strategy
     //
-    virtual void appendValue(std::fstream*, WhitespaceStrategy*) = 0;
-    virtual void prependNodeName(std::fstream*, WhitespaceStrategy*) = 0;
-    virtual void prependNodeValue(std::fstream*, WhitespaceStrategy*) = 0;
+    virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
 
     virtual const std::string& getAttribute(const std::string&) = 0;
     virtual Attr* getAttributeNode(const std::string&) = 0;
@@ -49,13 +47,6 @@ public:
 
     virtual ~Element_Impl();
 
-    //
-    // Serialization Data Extraction Strategy
-    //
-    virtual void appendValue(std::fstream*, WhitespaceStrategy*) override;
-    virtual void prependNodeName(std::fstream*, WhitespaceStrategy*) override;
-    virtual void prependNodeValue(std::fstream*, WhitespaceStrategy*) override;
-
     virtual const std::string& getAttribute(const std::string&) override;
     virtual dom::Attr* getAttributeNode(const std::string&) override;
     virtual dom::NodeList* getElementsByTagName(const std::string&) override;
@@ -65,9 +56,9 @@ public:
     virtual dom::Attr* removeAttributeNode(dom::Attr*) override;
     virtual void setAttribute(const std::string&, const std::string&) override;
     virtual dom::Attr* setAttributeNode(dom::Attr*) override;
-
     virtual dom::NamedNodeMap* getAttributes() override;
     virtual bool hasAttributes() override;
+    virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
 };
 
 #endif // ELEMENT_H
