@@ -80,6 +80,8 @@ public:
     ~XMLTokenizer() {}
 
     int getOffset();
+    void setOffset(int);
+
     int getLineNumber();
     int getLineCharacter();
     XMLToken* getNextToken();

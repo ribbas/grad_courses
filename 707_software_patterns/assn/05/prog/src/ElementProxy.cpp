@@ -1,5 +1,4 @@
 #include "ElementProxy.hpp"
-#include <iostream>
 
 ElementProxy::ElementProxy(const std::string& tagName, dom::Document* document)
     : realSubject(nullptr), tagName(tagName), document(document),
@@ -12,6 +11,14 @@ ElementProxy::~ElementProxy() {
 
 dom::Element* ElementProxy::getRealSubject() {
     return realSubject;
+}
+
+void ElementProxy::setOffset(int offset_) {
+    offset = offset_;
+}
+
+void ElementProxy::setDirector(XMLDirector* director_) {
+    director = director_;
 }
 
 void ElementProxy::serialize(std::fstream* writer,
@@ -128,34 +135,34 @@ dom::Document* ElementProxy::getOwnerDocument() {
 
 dom::Node* ElementProxy::appendChild(dom::Node* newChild) {
     realize();
-    // director->loadRealElement(this);
+    // director->resumeParse(this);
     return realSubject->appendChild(newChild);
 }
 
 dom::NodeList* ElementProxy::getChildNodes() {
 
     realize();
-    // director->loadRealElement(this);
+    // director->resumeParse(this);
     return realSubject->getChildNodes();
 }
 
 dom::Node* ElementProxy::getFirstChild() {
 
     realize();
-    // director->loadRealElement(this);
+    // director->resumeParse(this);
     return realSubject->getFirstChild();
 }
 
 dom::Node* ElementProxy::getLastChild() {
 
     realize();
-    // director->loadRealElement(this);
+    // director->resumeParse(this);
     return realSubject->getLastChild();
 }
 
 bool ElementProxy::hasChildNodes() {
 
     realize();
-    // director->loadRealElement(this);
+    // director->resumeParse(this);
     return realSubject->hasChildNodes();
 }

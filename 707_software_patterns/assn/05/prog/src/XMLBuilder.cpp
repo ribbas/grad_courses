@@ -5,7 +5,9 @@
 XMLBuilder* XMLBuilder::singleton = nullptr;
 
 XMLBuilder::XMLBuilder()
-    : document(new Document_Impl), currentElement(nullptr) {}
+    : document(new Document_Impl), currentElement(nullptr) {
+    std::cout << "intintinti\n";
+}
 
 XMLBuilder* XMLBuilder::getInstance() {
     if (!singleton) {
@@ -53,10 +55,8 @@ dom::Element* XMLBuilder::addElement(std::string tagName, int offset,
         document->createElement(tagName, offset, director);
 
     if (!currentElement) {
-        std::cout << "doc " << newElement << std::endl;
         document->appendChild(newElement);
     } else {
-        std::cout << "ele " << newElement << std::endl;
         currentElement->appendChild(newElement);
     }
 

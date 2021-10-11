@@ -18,17 +18,11 @@ private:
 public:
     ElementProxy(const std::string&, dom::Document*);
 
-    dom::Element* getRealSubject();
-
-    virtual void setOffset(int offset_) override {
-        offset = offset_;
-    }
-
-    virtual void setDirector(XMLDirector* director_) override {
-        director = director_;
-    }
-
     virtual ~ElementProxy();
+
+    dom::Element* getRealSubject();
+    void setOffset(int);
+    void setDirector(XMLDirector*);
 
     //
     // Serialization Data Extraction Strategy
@@ -62,12 +56,11 @@ public:
     virtual dom::Node* removeChild(Node*) override;
     virtual const std::string& getLocalName() override;
 
+    /* Methods that need the real object instantiated */
     virtual dom::NodeList* getChildNodes() override;
     virtual dom::Node* getFirstChild() override;
     virtual dom::Node* getLastChild() override;
     virtual bool hasChildNodes() override;
-
-    virtual void loadChildren() {}
 };
 
 #endif

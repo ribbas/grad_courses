@@ -130,7 +130,6 @@ dom::Node* Node_Impl::appendChild(dom::Node* newChild) {
 
     nodes.push_back(newChild);
     (dynamic_cast<Node_Impl*>(newChild))->setParent(this);
-    std::cout << "YOOOYOYOY " << newChild << std::endl;
 
     return newChild;
 }

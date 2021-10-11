@@ -67,11 +67,15 @@ XMLTokenizer::XMLTokenizer(const std::string& filename, int offset)
       attribute(ATTRIBUTE), null_tag_end(NULL_TAG_END),
       tag_close_start(TAG_CLOSE_START), value(VALUE), tag_end(TAG_END),
       space_to_eol(SPACE_TO_EOL) {
-    file.seekg(offset);
+    setOffset(offset);
 }
 
 int XMLTokenizer::getOffset() {
     return file.tellg();
+}
+
+void XMLTokenizer::setOffset(int offset) {
+    file.seekg(offset);
 }
 
 int XMLTokenizer::getLineNumber() {

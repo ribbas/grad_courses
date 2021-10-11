@@ -22,8 +22,8 @@ void Document_Impl::serialize(std::fstream* writer,
 dom::Element* Document_Impl::createElement(const std::string& tagName,
                                            int offset, XMLDirector* director) {
     dom::Element* element = new ElementProxy(tagName, this);
-    element->setOffset(offset);
-    element->setDirector(director);
+    (dynamic_cast<ElementProxy*>(element))->setOffset(offset);
+    (dynamic_cast<ElementProxy*>(element))->setDirector(director);
     return element;
 }
 
