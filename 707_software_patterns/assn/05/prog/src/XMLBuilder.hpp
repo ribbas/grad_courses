@@ -6,6 +6,8 @@
 #include "Element.hpp"
 #include "Text.hpp"
 
+class XMLDirector;
+
 class XMLBuilder {
 private:
     dom::Document* document;
@@ -23,7 +25,7 @@ public:
     void setElement(dom::Element*);
     dom::Element* getElementParent();
     dom::Document* getDocument();
-    dom::Element* addElement(std::string);
+    dom::Element* addElement(std::string, int = 0, XMLDirector* = nullptr);
     dom::Attr* addAttribute(std::string, std::string);
     dom::Text* addText(std::string);
 };

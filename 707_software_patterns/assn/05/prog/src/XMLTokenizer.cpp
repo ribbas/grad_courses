@@ -27,6 +27,7 @@ XMLTokenizer::XMLToken::TokenTypes XMLTokenizer::XMLToken::getTokenType() {
 }
 
 const char* XMLTokenizer::XMLToken::toString() {
+
     switch (token_type) {
         case NULL_TOKEN:
             return "NULL";
@@ -69,12 +70,12 @@ XMLTokenizer::XMLTokenizer(const std::string& filename, int offset)
     file.seekg(offset);
 }
 
-int XMLTokenizer::getLineNumber() {
-    return line_number;
-}
-
 int XMLTokenizer::getOffset() {
     return file.tellg();
+}
+
+int XMLTokenizer::getLineNumber() {
+    return line_number;
 }
 
 int XMLTokenizer::getLineCharacter() {

@@ -46,9 +46,11 @@ dom::Document* XMLBuilder::getDocument() {
     return document;
 }
 
-dom::Element* XMLBuilder::addElement(std::string tagName) {
+dom::Element* XMLBuilder::addElement(std::string tagName, int offset,
+                                     XMLDirector* director) {
 
-    dom::Element* newElement = document->createElement(tagName);
+    dom::Element* newElement =
+        document->createElement(tagName, offset, director);
 
     if (!currentElement) {
         std::cout << "doc " << newElement << std::endl;

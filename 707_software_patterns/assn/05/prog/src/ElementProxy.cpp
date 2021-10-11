@@ -10,6 +10,10 @@ ElementProxy::~ElementProxy() {
     delete realSubject;
 }
 
+dom::Element* ElementProxy::getRealSubject() {
+    return realSubject;
+}
+
 void ElementProxy::serialize(std::fstream* writer,
                              WhitespaceStrategy* whitespace) {
     realSubject->serialize(writer, whitespace);
@@ -124,29 +128,34 @@ dom::Document* ElementProxy::getOwnerDocument() {
 
 dom::Node* ElementProxy::appendChild(dom::Node* newChild) {
     realize();
+    // director->loadRealElement(this);
     return realSubject->appendChild(newChild);
 }
 
 dom::NodeList* ElementProxy::getChildNodes() {
 
     realize();
+    // director->loadRealElement(this);
     return realSubject->getChildNodes();
 }
 
 dom::Node* ElementProxy::getFirstChild() {
 
     realize();
+    // director->loadRealElement(this);
     return realSubject->getFirstChild();
 }
 
 dom::Node* ElementProxy::getLastChild() {
 
     realize();
+    // director->loadRealElement(this);
     return realSubject->getLastChild();
 }
 
 bool ElementProxy::hasChildNodes() {
 
     realize();
+    // director->loadRealElement(this);
     return realSubject->hasChildNodes();
 }

@@ -2,13 +2,14 @@
 #define ELEMENT_PROXY_H
 
 #include "Element.hpp"
-#include "XMLBuilder.hpp"
+#include "XMLDirector.hpp"
 
 class ElementProxy : public virtual dom::Element, public virtual Node_Impl {
 private:
     dom::Element* realSubject;
     const std::string& tagName;
     dom::Document* document;
+    XMLDirector* director;
     bool realized;
     int offset;
 
@@ -16,6 +17,16 @@ private:
 
 public:
     ElementProxy(const std::string&, dom::Document*);
+
+    dom::Element* getRealSubject();
+
+    virtual void setOffset(int offset_) override {
+        offset = offset_;
+    }
+
+    virtual void setDirector(XMLDirector* director_) override {
+        director = director_;
+    }
 
     virtual ~ElementProxy();
 
@@ -55,6 +66,8 @@ public:
     virtual dom::Node* getFirstChild() override;
     virtual dom::Node* getLastChild() override;
     virtual bool hasChildNodes() override;
+
+    virtual void loadChildren() {}
 };
 
 #endif

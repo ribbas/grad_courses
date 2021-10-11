@@ -19,8 +19,12 @@ void Document_Impl::serialize(std::fstream* writer,
     getDocumentElement()->serialize(writer, whitespace);
 }
 
-dom::Element* Document_Impl::createElement(const std::string& tagName) {
-    return new ElementProxy(tagName, this);
+dom::Element* Document_Impl::createElement(const std::string& tagName,
+                                           int offset, XMLDirector* director) {
+    dom::Element* element = new ElementProxy(tagName, this);
+    element->setOffset(offset);
+    element->setDirector(director);
+    return element;
 }
 
 dom::Text* Document_Impl::createTextNode(const std::string& data) {

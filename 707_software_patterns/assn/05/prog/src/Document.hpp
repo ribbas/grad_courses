@@ -6,6 +6,8 @@
 #include "Iterator.hpp"
 #include "Node.hpp"
 
+class XMLDirector;
+
 namespace dom {
 class Element;
 class Text;
@@ -15,7 +17,8 @@ class Iterator;
 
 class Document : public virtual Node {
 public:
-    virtual Element* createElement(const std::string&) = 0;
+    virtual Element* createElement(const std::string&, int = 0,
+                                   XMLDirector* = nullptr) = 0;
     virtual Text* createTextNode(const std::string&) = 0;
     virtual Attr* createAttribute(const std::string&) = 0;
     virtual Element* getDocumentElement() = 0;
@@ -31,7 +34,8 @@ public:
     Document_Impl();
     virtual ~Document_Impl();
 
-    virtual dom::Element* createElement(const std::string&) override;
+    virtual dom::Element* createElement(const std::string&, int = 0,
+                                        XMLDirector* = nullptr) override;
     virtual dom::Text* createTextNode(const std::string&) override;
     virtual dom::Attr* createAttribute(const std::string&) override;
     virtual dom::Element* getDocumentElement() override;

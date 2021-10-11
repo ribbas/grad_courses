@@ -6,6 +6,8 @@
 #include "NamedNodeMap.hpp"
 #include "Node.hpp"
 
+class XMLDirector;
+
 namespace dom {
 class Attr;
 class NodeList;
@@ -32,6 +34,9 @@ public:
 
     virtual dom::NamedNodeMap* getAttributes() = 0;
     virtual bool hasAttributes() = 0;
+
+    virtual void setOffset(int) = 0;
+    virtual void setDirector(XMLDirector*) = 0;
 };
 }; // namespace dom
 
@@ -64,6 +69,9 @@ public:
     virtual dom::Attr* setAttributeNode(dom::Attr*) override;
     virtual dom::NamedNodeMap* getAttributes() override;
     virtual bool hasAttributes() override;
+
+    virtual void setOffset(int) override {}
+    virtual void setDirector(XMLDirector*) override {}
 };
 
 #endif // ELEMENT_H
