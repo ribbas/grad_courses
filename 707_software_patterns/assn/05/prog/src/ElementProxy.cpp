@@ -13,7 +13,7 @@ dom::Element* ElementProxy::getRealSubject() {
     return realSubject;
 }
 
-void ElementProxy::setOffset(int streamPos_) {
+void ElementProxy::setStreamPos(int streamPos_) {
     streamPos = streamPos_;
 }
 
@@ -56,52 +56,6 @@ dom::NamedNodeMap* ElementProxy::getAttributes() {
 
 bool ElementProxy::hasAttributes() {
     return realSubject->hasAttributes();
-}
-
-const std::string& ElementProxy::getNodeName() {
-    return realSubject->getNodeName();
-}
-
-const std::string& ElementProxy::getNodeValue() {
-    return realSubject->getNodeValue();
-}
-
-void ElementProxy::setNodeValue(const std::string& nodeValue) {
-    realSubject->setNodeValue(nodeValue);
-}
-
-short ElementProxy::getNodeType() {
-    return realSubject->getNodeType();
-}
-
-dom::Node* ElementProxy::getParentNode() {
-    return realSubject->getParentNode();
-}
-
-dom::Node* ElementProxy::getPreviousSibling() {
-    return realSubject->getPreviousSibling();
-}
-
-dom::Node* ElementProxy::getNextSibling() {
-    return realSubject->getNextSibling();
-}
-
-dom::Node* ElementProxy::removeChild(Node* oldChild) {
-    return realSubject->removeChild(oldChild);
-}
-
-dom::Node* ElementProxy::insertBefore(dom::Node* newChild,
-                                      dom::Node* refChild) {
-    return realSubject->insertBefore(newChild, refChild);
-}
-
-dom::Node* ElementProxy::replaceChild(dom::Node* newChild,
-                                      dom::Node* refChild) {
-    return realSubject->replaceChild(newChild, refChild);
-}
-
-const std::string& ElementProxy::getLocalName() {
-    return realSubject->getLocalName();
 }
 
 void ElementProxy::realize() {

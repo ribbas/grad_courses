@@ -114,8 +114,8 @@ void XMLDirector::construct() {
             case XMLTokenizer::XMLToken::ELEMENT: {
 
                 if (!tagCloseStart) {
-                    element = factory->addElement(token->getToken(),
-                                                  tokenizer.getOffset(), this);
+                    element = factory->addElement(
+                        token->getToken(), tokenizer.getStreamPos(), this);
                 } else {
                     element = factory->getElementParent();
                 }

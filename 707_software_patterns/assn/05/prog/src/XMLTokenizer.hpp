@@ -79,8 +79,8 @@ public:
     XMLTokenizer(const std::string&, int = 0);
     ~XMLTokenizer() {}
 
-    int getOffset();
-    void setOffset(int);
+    int getStreamPos();
+    void setStreamPos(int);
 
     int getLineNumber();
     int getLineCharacter();

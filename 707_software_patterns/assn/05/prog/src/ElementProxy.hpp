@@ -17,17 +17,7 @@ private:
 
 public:
     ElementProxy(const std::string&, dom::Document*);
-
     virtual ~ElementProxy();
-
-    dom::Element* getRealSubject();
-    void setOffset(int);
-    void setDirector(XMLDirector*);
-
-    //
-    // Serialization Data Extraction Strategy
-    //
-    virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
 
     virtual const std::string& getAttribute(const std::string&) override;
     virtual dom::Attr* getAttributeNode(const std::string&) override;
@@ -40,23 +30,16 @@ public:
     virtual dom::Attr* setAttributeNode(dom::Attr*) override;
     virtual dom::NamedNodeMap* getAttributes() override;
     virtual bool hasAttributes() override;
+    virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
 
-    virtual dom::Node* insertBefore(dom::Node*, dom::Node*) override;
-    virtual dom::Node* replaceChild(dom::Node*, dom::Node*) override;
-    virtual dom::Node* appendChild(dom::Node*) override;
-
-    virtual const std::string& getNodeName() override;
-    virtual const std::string& getNodeValue() override;
-    virtual void setNodeValue(const std::string&) override;
-    virtual short getNodeType() override;
-    virtual dom::Node* getParentNode() override;
-    virtual dom::Node* getPreviousSibling() override;
-    virtual dom::Node* getNextSibling() override;
-    virtual dom::Document* getOwnerDocument() override;
-    virtual dom::Node* removeChild(Node*) override;
-    virtual const std::string& getLocalName() override;
+    /* Proxy helper methods */
+    dom::Element* getRealSubject();
+    void setStreamPos(int);
+    void setDirector(XMLDirector*);
 
     /* Methods that need the real object instantiated */
+    virtual dom::Node* appendChild(dom::Node*) override;
+    virtual dom::Document* getOwnerDocument() override;
     virtual dom::NodeList* getChildNodes() override;
     virtual dom::Node* getFirstChild() override;
     virtual dom::Node* getLastChild() override;

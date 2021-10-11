@@ -67,14 +67,14 @@ XMLTokenizer::XMLTokenizer(const std::string& filename, int streamPos)
       tag_start(TAG_START), element(ELEMENT), attribute(ATTRIBUTE),
       null_tag_end(NULL_TAG_END), tag_close_start(TAG_CLOSE_START),
       value(VALUE), tag_end(TAG_END), space_to_eol(SPACE_TO_EOL) {
-    setOffset(streamPos);
+    setStreamPos(streamPos);
 }
 
-int XMLTokenizer::getOffset() {
+int XMLTokenizer::getStreamPos() {
     return file.tellg();
 }
 
-void XMLTokenizer::setOffset(int streamPos) {
+void XMLTokenizer::setStreamPos(int streamPos) {
     file.seekg(streamPos);
 }
 
