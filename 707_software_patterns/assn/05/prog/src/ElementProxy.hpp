@@ -11,7 +11,7 @@ private:
     dom::Document* document;
     XMLDirector* director;
     bool realized;
-    int offset;
+    int streamPos;
 
     void realize();
 

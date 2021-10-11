@@ -9,7 +9,7 @@
 class XMLTokenizer {
 private:
     std::fstream file;
-    int offset;
+    int streamPos;
     std::string line;
     int line_number;
     int index;

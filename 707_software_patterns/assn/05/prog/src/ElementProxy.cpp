@@ -2,10 +2,10 @@
 
 ElementProxy::ElementProxy(const std::string& tagName, dom::Document* document)
     : realSubject(nullptr), tagName(tagName), document(document),
-      realized(false), offset(0) {}
+      realized(false), streamPos(0) {}
 
 ElementProxy::~ElementProxy() {
-    offset = 0;
+    streamPos = 0;
     delete realSubject;
 }
 
@@ -13,8 +13,8 @@ dom::Element* ElementProxy::getRealSubject() {
     return realSubject;
 }
 
-void ElementProxy::setOffset(int offset_) {
-    offset = offset_;
+void ElementProxy::setOffset(int streamPos_) {
+    streamPos = streamPos_;
 }
 
 void ElementProxy::setDirector(XMLDirector* director_) {

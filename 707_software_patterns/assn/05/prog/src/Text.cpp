@@ -33,13 +33,13 @@ int Text_Impl::getLength() {
     return getValue().size();
 }
 
-const std::string& Text_Impl::substringData(int offset, int count) {
+const std::string& Text_Impl::substringData(int streamPos, int count) {
     try {
         //
         // This is not thread-safe, of course.
         //
         static std::string value;
-        value = getValue().substr(offset, count);
+        value = getValue().substr(streamPos, count);
 
         return value;
     } catch (std::out_of_range&) {
@@ -54,30 +54,30 @@ void Text_Impl::appendData(const std::string& arg) {
     setValue(value.append(arg));
 }
 
-void Text_Impl::insertData(int offset, const std::string& arg) {
+void Text_Impl::insertData(int streamPos, const std::string& arg) {
     std::string value = getValue();
 
-    setValue(value.insert(offset, arg));
+    setValue(value.insert(streamPos, arg));
 }
 
-void Text_Impl::deleteData(int offset, int count) {
+void Text_Impl::deleteData(int streamPos, int count) {
     std::string value = getValue();
 
-    setValue(value.erase(offset, count));
+    setValue(value.erase(streamPos, count));
 }
 
-void Text_Impl::replaceData(int offset, int count, const std::string& arg) {
+void Text_Impl::replaceData(int streamPos, int count, const std::string& arg) {
     std::string value = getValue();
 
-    setValue(value.erase(offset, count).insert(offset, arg));
+    setValue(value.erase(streamPos, count).insert(streamPos, arg));
 }
 
-dom::Text* Text_Impl::splitText(int offset) {
+dom::Text* Text_Impl::splitText(int streamPos) {
     try {
         dom::Text* text = new Text_Impl(
-            substringData(offset, getLength() - offset), document);
+            substringData(streamPos, getLength() - streamPos), document);
 
-        setValue(substringData(0, offset));
+        setValue(substringData(0, streamPos));
 
         if (getParentNode() != 0) {
             insertBefore(text, getNextSibling());

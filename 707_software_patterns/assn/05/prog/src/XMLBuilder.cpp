@@ -1,13 +1,10 @@
 #include "XMLBuilder.hpp"
 #include <algorithm>
-#include <iostream>
 
 XMLBuilder* XMLBuilder::singleton = nullptr;
 
 XMLBuilder::XMLBuilder()
-    : document(new Document_Impl), currentElement(nullptr) {
-    std::cout << "intintinti\n";
-}
+    : document(new Document_Impl), currentElement(nullptr) {}
 
 XMLBuilder* XMLBuilder::getInstance() {
     if (!singleton) {
@@ -48,11 +45,11 @@ dom::Document* XMLBuilder::getDocument() {
     return document;
 }
 
-dom::Element* XMLBuilder::addElement(std::string tagName, int offset,
+dom::Element* XMLBuilder::addElement(std::string tagName, int streamPos,
                                      XMLDirector* director) {
 
     dom::Element* newElement =
-        document->createElement(tagName, offset, director);
+        document->createElement(tagName, streamPos, director);
 
     if (!currentElement) {
         document->appendChild(newElement);
