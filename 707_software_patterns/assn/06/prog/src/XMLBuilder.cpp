@@ -17,6 +17,7 @@ std::string& XMLBuilder::ltrim(std::string& s) {
 
 void XMLBuilder::trimAttr(std::string& name, std::string& value) {
     name = ltrim(name);
+    name = name.substr(0, name.size() - 1);
     value = ltrim(value);
     value = value.substr(1, value.size() - 2);
 }

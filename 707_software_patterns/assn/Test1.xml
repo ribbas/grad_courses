@@ -1,9 +1,9 @@
 <? xml version="1.0" encoding="UTF-8"?>
 <document>
-	<attribute value attribute="attribute value" />
+	<element attribute="attribute value" />
 	<element/>
-	<attribute value attribute="attribute value" attribute2="attribute2 value" >
+	<element attribute="attribute value" attribute2="attribute2 value" >
 		Element Value
-	</attribute value>
+	</element>
 	<element/>
 </document>
