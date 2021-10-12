@@ -7,19 +7,19 @@ OUT="out.xml"
 fname() {
     case "$1" in
         b)
-        echo "\nBuilder"
+        echo "Builder"
         ;;
         i)
-        echo "\nIterator"
+        echo "Iterator"
         ;;
         t)
-        echo "\nTokenizer"
+        echo "Tokenizer"
         ;;
         s)
-        echo "\nSerializer"
+        echo "Serializer"
         ;;
         v)
-        echo "\nValidator"
+        echo "Validator"
         ;;
         *)
         exit 1
@@ -28,11 +28,11 @@ fname() {
 }
 
 run() {    
-    ./Patterns $1 $2 &> /dev/null || echo $(fname $1) "Failed"
+    ./Patterns $1 $2 > /dev/null 2>&1 || echo "$(fname $1) Failed"
 }
 
 run2() {
-    ./Patterns $1 $2 ${OUT} &> /dev/null || echo $(fname $1) "Failed"
+    ./Patterns $1 $2 ${OUT} > /dev/null 2>&1 || echo "$(fname $1) Failed"
     if (( # == 2 )); then
         cmp --silent $2 ${OUT} || echo "Different output"
     elif (( # == 3 )); then
