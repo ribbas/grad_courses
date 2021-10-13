@@ -5,6 +5,7 @@
 #include "Node.hpp"
 
 namespace dom {
+
 class Element;
 class Text;
 class Attr;
@@ -18,7 +19,6 @@ public:
     virtual Attr* createAttribute(const std::string&) = 0;
     virtual Element* getDocumentElement() = 0;
     virtual Iterator* createIterator() = 0;
-
     virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
 };
 }; // namespace dom
@@ -34,7 +34,6 @@ public:
     virtual dom::Attr* createAttribute(const std::string&) override;
     virtual dom::Element* getDocumentElement() override;
     virtual dom::Iterator* createIterator() override;
-
     virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
 };
 

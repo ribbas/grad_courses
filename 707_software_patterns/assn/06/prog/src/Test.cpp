@@ -105,7 +105,12 @@ void testIterator(int argc, char**) {
             std::cout << "Text: " << currentNode << std::endl;
         }
     }
+
+    delete attr;
+    delete text;
+    delete document;
     delete currentNode;
+    delete root;
     delete it;
 }
 

@@ -29,7 +29,6 @@ public:
     friend class Element_Impl;
 
     virtual ~Attr_Impl();
-
     virtual const std::string& getName() override;
     virtual const std::string& getValue() override;
     virtual void setValue(const std::string&) override;

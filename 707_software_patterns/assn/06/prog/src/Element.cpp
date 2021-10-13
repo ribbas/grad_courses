@@ -4,50 +4,10 @@
 #include "Text.hpp"
 
 Element_Impl::Element_Impl(const std::string& tagName, dom::Document* document)
-    : Node_Impl(tagName, dom::Node::ELEMENT_NODE), attributes(document) {
-    Node_Impl::document = document;
-}
+    : Node_Impl(tagName, dom::Node::ELEMENT_NODE, document),
+      attributes(document) {}
 
 Element_Impl::~Element_Impl() {}
-void Element_Impl::serialize(std::fstream* writer,
-                             WhitespaceStrategy* whitespace) {
-    whitespace->prettyIndentation(writer);
-    *writer << "<" << getTagName();
-
-    int attrCount = 0;
-
-    for (dom::NamedNodeMap::iterator i = getAttributes()->begin();
-         i != getAttributes()->end(); i++) {
-        (*i)->serialize(writer, whitespace);
-        attrCount++;
-    }
-
-    if (attrCount > 0) {
-        *writer << " ";
-    }
-
-    if (getChildNodes()->size() == 0) {
-        *writer << "/>";
-        whitespace->newLine(writer);
-    } else {
-        *writer << ">";
-        whitespace->newLine(writer);
-        whitespace->incrementIndentation();
-
-        for (dom::NodeList::iterator i = getChildNodes()->begin();
-             i != getChildNodes()->end(); i++) {
-            if (dynamic_cast<dom::Element*>(*i) != 0 ||
-                dynamic_cast<dom::Text*>(*i) != 0) {
-                (*i)->serialize(writer, whitespace);
-            }
-        }
-
-        whitespace->decrementIndentation();
-        whitespace->prettyIndentation(writer);
-        *writer << "</" << getTagName() + ">";
-        whitespace->newLine(writer);
-    }
-}
 
 const std::string& Element_Impl::getAttribute(const std::string& name) {
     for (dom::NodeList::iterator i = attributes.begin(); i != attributes.end();
@@ -187,4 +147,44 @@ dom::NamedNodeMap* Element_Impl::getAttributes() {
 
 bool Element_Impl::hasAttributes() {
     return attributes.size() > 0;
+}
+
+void Element_Impl::serialize(std::fstream* writer,
+                             WhitespaceStrategy* whitespace) {
+    whitespace->prettyIndentation(writer);
+    *writer << "<" << getTagName();
+
+    int attrCount = 0;
+
+    for (dom::NamedNodeMap::iterator i = getAttributes()->begin();
+         i != getAttributes()->end(); i++) {
+        (*i)->serialize(writer, whitespace);
+        attrCount++;
+    }
+
+    if (attrCount > 0) {
+        *writer << " ";
+    }
+
+    if (getChildNodes()->size() == 0) {
+        *writer << "/>";
+        whitespace->newLine(writer);
+    } else {
+        *writer << ">";
+        whitespace->newLine(writer);
+        whitespace->incrementIndentation();
+
+        for (dom::NodeList::iterator i = getChildNodes()->begin();
+             i != getChildNodes()->end(); i++) {
+            if (dynamic_cast<dom::Element*>(*i) != 0 ||
+                dynamic_cast<dom::Text*>(*i) != 0) {
+                (*i)->serialize(writer, whitespace);
+            }
+        }
+
+        whitespace->decrementIndentation();
+        whitespace->prettyIndentation(writer);
+        *writer << "</" << getTagName() + ">";
+        whitespace->newLine(writer);
+    }
 }

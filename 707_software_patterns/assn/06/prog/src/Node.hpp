@@ -6,6 +6,7 @@
 #include <string>
 
 namespace dom {
+
 class Document;
 class Element;
 class Attr;
@@ -81,7 +82,7 @@ private:
 protected:
     dom::Document* document;
 
-    Node_Impl(const std::string&, short);
+    Node_Impl(const std::string&, short, dom::Document*);
 
 public:
     virtual ~Node_Impl();

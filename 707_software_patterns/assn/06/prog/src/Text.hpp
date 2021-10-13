@@ -34,7 +34,6 @@ public:
     friend class Document_Impl;
 
     virtual ~Text_Impl();
-
     virtual const std::string& getName() override;
     virtual const std::string& getData() override;
     virtual const std::string& getValue() override;

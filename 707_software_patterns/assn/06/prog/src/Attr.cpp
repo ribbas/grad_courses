@@ -1,14 +1,11 @@
 #include "Attr.hpp"
 
 Attr_Impl::Attr_Impl(const std::string& tagName, dom::Document* document)
-    : Node_Impl(tagName, dom::Node::ATTRIBUTE_NODE) {
-    Node_Impl::document = document;
-}
+    : Node_Impl(tagName, dom::Node::ATTRIBUTE_NODE, document) {}
 
 Attr_Impl::Attr_Impl(const std::string& tagName, const std::string& value,
                      dom::Document* document)
-    : Node_Impl(tagName, dom::Node::ATTRIBUTE_NODE) {
-    Node_Impl::document = document;
+    : Node_Impl(tagName, dom::Node::ATTRIBUTE_NODE, document) {
     setValue(value);
 }
 

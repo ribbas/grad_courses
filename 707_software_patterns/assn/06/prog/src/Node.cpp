@@ -1,7 +1,7 @@
 #include "Node.hpp"
 
-Node_Impl::Node_Impl(const std::string& n, short type)
-    : name(n), nodeType(type), parent(0), document(0) {}
+Node_Impl::Node_Impl(const std::string& n, short type, dom::Document* document)
+    : name(n), nodeType(type), parent(0), document(document) {}
 
 Node_Impl::~Node_Impl() {}
 

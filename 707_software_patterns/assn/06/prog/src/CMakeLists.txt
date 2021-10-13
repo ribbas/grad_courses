@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.19)
 project(Patterns CXX)
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
@@ -23,6 +23,6 @@ if(Boost_FOUND)
 		XMLTokenizer.cpp
 		XMLValidator.cpp
 	)
-	
+
 	target_link_libraries(${CMAKE_PROJECT_NAME} Boost::regex)
 endif()

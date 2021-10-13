@@ -2,9 +2,8 @@
 #include <stdexcept>
 
 Text_Impl::Text_Impl(const std::string value, dom::Document* document)
-    : Node_Impl("", dom::Node::TEXT_NODE) {
+    : Node_Impl("", dom::Node::TEXT_NODE, document) {
     setNodeValue(value);
-    Node_Impl::document = document;
 }
 
 Text_Impl::~Text_Impl() {}

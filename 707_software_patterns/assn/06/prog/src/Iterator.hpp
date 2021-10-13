@@ -31,6 +31,7 @@ private:
     std::vector<dom::Node*>::iterator it;
 
     DocumentIterator(dom::Document*);
+    // ~DocumentIterator() {}
     virtual void containerize(dom::Node*, bool = true) override;
 
 public:
