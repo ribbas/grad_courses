@@ -7,7 +7,11 @@ Element_Impl::Element_Impl(const std::string& tagName, dom::Document* document)
     : Node_Impl(tagName, dom::Node::ELEMENT_NODE, document),
       attributes(document) {}
 
-Element_Impl::~Element_Impl() {}
+Element_Impl::~Element_Impl() {
+    for (dom::Node* i : attributes) {
+        delete i;
+    }
+}
 
 const std::string& Element_Impl::getAttribute(const std::string& name) {
     for (dom::NodeList::iterator i = attributes.begin(); i != attributes.end();

@@ -11,11 +11,11 @@
 #include <iostream>
 #include <stdio.h>
 
-void testTokenizer(int argc, char** argv);
-void testSerializer(int argc, char** argv);
-void testValidator(int argc, char** argv);
-void testBuilder(int argc, char** argv);
-void testIterator(int argc, char** argv);
+void testTokenizer(int, char**);
+void testSerializer(int, char**);
+void testValidator(int, char**);
+void testBuilder(int, char**);
+void testIterator(int, char**);
 
 void printUsage() {
     printf("Usage:\n");
@@ -106,11 +106,6 @@ void testIterator(int argc, char**) {
         }
     }
 
-    delete attr;
-    delete text;
-    delete document;
-    delete currentNode;
-    delete root;
     delete it;
 }
 
@@ -142,6 +137,7 @@ void testBuilder(int argc, char** argv) {
 }
 
 void testTokenizer(int argc, char** argv) {
+
     dom::Document* document = new Document_Impl;
 
     dom::Element* element = document->createElement("NewElement");
@@ -158,7 +154,6 @@ void testTokenizer(int argc, char** argv) {
 
     delete element;
     delete text;
-    delete attr;
     delete document;
 
     for (int i = 2; i < argc; i++) {
@@ -233,9 +228,15 @@ void testSerializer(int argc, char** argv) {
         file = new std::fstream(argv[2], std::ios_base::out));
     xmlSerializer.serializePretty(document);
     delete file;
+
     XMLSerializer xmlSerializer2(
         file = new std::fstream(argv[3], std::ios_base::out));
     xmlSerializer2.serializeMinimal(document);
+
+    delete text;
+    delete document;
+    delete child;
+    delete root;
 
     delete file;
 
