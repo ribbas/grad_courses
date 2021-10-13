@@ -28,6 +28,7 @@ class Document_Impl : public virtual dom::Document, public virtual Node_Impl {
 public:
     Document_Impl();
     virtual ~Document_Impl();
+    void destroy(dom::Node*);
 
     virtual dom::Element* createElement(const std::string&) override;
     virtual dom::Text* createTextNode(const std::string&) override;

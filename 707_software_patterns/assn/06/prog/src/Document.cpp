@@ -8,7 +8,23 @@
 Document_Impl::Document_Impl()
     : Node_Impl("", dom::Node::DOCUMENT_NODE, this) {}
 
-Document_Impl::~Document_Impl() {}
+Document_Impl::~Document_Impl() {
+    destroy(this);
+}
+
+void Document_Impl::destroy(dom::Node* node) {
+
+    if (node->hasChildNodes()) {
+
+        for (dom::Node* i : *node->getChildNodes()) {
+
+            if (i->hasChildNodes()) {
+                destroy(i);
+            }
+            delete i;
+        }
+    }
+}
 
 dom::Element* Document_Impl::createElement(const std::string& tagName) {
     return new Element_Impl(tagName, this);

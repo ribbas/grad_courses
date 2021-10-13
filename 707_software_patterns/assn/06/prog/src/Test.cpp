@@ -106,6 +106,7 @@ void testIterator(int argc, char**) {
         }
     }
 
+    delete document;
     delete it;
 }
 
@@ -131,8 +132,8 @@ void testBuilder(int argc, char** argv) {
         file = new std::fstream(argv[3], std::ios_base::out));
     xmlSerializer.serializePretty(builtDocument);
 
-    delete builder;
     delete builtDocument;
+    delete builder;
     delete file;
 }
 
@@ -233,10 +234,7 @@ void testSerializer(int argc, char** argv) {
         file = new std::fstream(argv[3], std::ios_base::out));
     xmlSerializer2.serializeMinimal(document);
 
-    delete text;
     delete document;
-    delete child;
-    delete root;
 
     delete file;
 
@@ -363,6 +361,11 @@ void testValidator(int argc, char** argv) {
     XMLSerializer xmlSerializer(
         file = new std::fstream(argv[2], std::ios_base::out));
     xmlSerializer.serializePretty(document);
+
+    // delete child;
+    // delete root;
+    delete document;
+
     delete file;
     // delete Document and tree.
 }

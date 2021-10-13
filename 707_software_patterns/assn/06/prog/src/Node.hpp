@@ -13,12 +13,12 @@ class Attr;
 class Text;
 
 class Node {
+
 public:
     static const short ATTRIBUTE_NODE = 0;
     static const short DOCUMENT_NODE = 1;
     static const short ELEMENT_NODE = 2;
     static const short TEXT_NODE = 3;
-
     virtual ~Node() {}
 
     virtual const std::string& getNodeName() = 0;
@@ -86,7 +86,6 @@ protected:
 
 public:
     virtual ~Node_Impl();
-
     virtual const std::string& getNodeName() override;
     virtual const std::string& getNodeValue() override;
     virtual void setNodeValue(const std::string&) override;

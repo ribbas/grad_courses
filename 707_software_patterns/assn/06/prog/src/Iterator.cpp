@@ -1,6 +1,5 @@
 #include "Iterator.hpp"
 #include "Node.hpp"
-#include <iostream>
 
 DocumentIterator::DocumentIterator(dom::Document* document) {
 

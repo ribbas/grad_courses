@@ -2,7 +2,6 @@
 #define ITERATOR_H
 
 #include "Node.hpp"
-#include <iostream>
 #include <vector>
 
 namespace dom {
@@ -32,11 +31,7 @@ private:
     std::vector<dom::Node*>::iterator it;
 
     DocumentIterator(dom::Document*);
-    ~DocumentIterator() {
-        for (dom::Node* i : container) {
-            delete i;
-        }
-    }
+    ~DocumentIterator() {}
     virtual void containerize(dom::Node*, bool = true) override;
 
 public:
