@@ -29,11 +29,11 @@ public:
 class Text_Impl : public virtual dom::Text, Node_Impl {
 protected:
     Text_Impl(const std::string, dom::Document*);
+    virtual ~Text_Impl();
 
 public:
     friend class Document_Impl;
 
-    virtual ~Text_Impl();
     virtual const std::string& getName() override;
     virtual const std::string& getData() override;
     virtual const std::string& getValue() override;

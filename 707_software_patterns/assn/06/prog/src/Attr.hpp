@@ -23,12 +23,12 @@ class Attr_Impl : public virtual dom::Attr, Node_Impl {
 protected:
     Attr_Impl(const std::string&, dom::Document*);
     Attr_Impl(const std::string&, const std::string&, dom::Document*);
+    virtual ~Attr_Impl();
 
 public:
     friend class Document_Impl;
     friend class Element_Impl;
 
-    virtual ~Attr_Impl();
     virtual const std::string& getName() override;
     virtual const std::string& getValue() override;
     virtual void setValue(const std::string&) override;

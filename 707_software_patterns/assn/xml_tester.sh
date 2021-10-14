@@ -34,9 +34,9 @@ run() {
 run2() {
     ./Patterns $1 $2 ${OUT} > /dev/null 2>&1 || echo "$(fname $1) failed"
     if (( # == 2 )); then
-        cmp --silent $2 ${OUT} || echo "Different output"
+        cmp --silent $2 ${OUT} || echo "$(fname $1) different output"
     elif (( # == 3 )); then
-        cmp --silent $3 ${OUT} || echo "Different output"
+        cmp --silent $3 ${OUT} || echo "$(fname $1) different output"
     fi
 }
 

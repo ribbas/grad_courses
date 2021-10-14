@@ -9,17 +9,17 @@ Document_Impl::Document_Impl()
     : Node_Impl("", dom::Node::DOCUMENT_NODE, this) {}
 
 Document_Impl::~Document_Impl() {
-    destroy(this);
+    destroyChildren(this);
 }
 
-void Document_Impl::destroy(dom::Node* node) {
+void Document_Impl::destroyChildren(dom::Node* node) {
 
     if (node->hasChildNodes()) {
 
         for (dom::Node* i : *node->getChildNodes()) {
 
             if (i->hasChildNodes()) {
-                destroy(i);
+                destroyChildren(i);
             }
             delete i;
         }

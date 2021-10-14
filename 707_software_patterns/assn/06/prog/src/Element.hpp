@@ -35,11 +35,11 @@ private:
 
 protected:
     Element_Impl(const std::string&, dom::Document*);
+    virtual ~Element_Impl();
 
 public:
     friend class Document_Impl;
 
-    virtual ~Element_Impl();
     virtual const std::string& getAttribute(const std::string&) override;
     virtual dom::Attr* getAttributeNode(const std::string&) override;
     virtual dom::NodeList* getElementsByTagName(const std::string&) override;

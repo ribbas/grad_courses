@@ -56,6 +56,34 @@ int main(int argc, char** argv) {
             break;
     }
 }
+
+void testBuilder(int argc, char** argv) {
+
+    if (argc < 4) {
+        printUsage();
+        exit(0);
+    }
+
+    XMLBuilder* builder = new XMLBuilder();
+    XMLDirector director(builder, argv[2]);
+    director.construct();
+    dom::Document* builtDocument = director.getResult();
+
+    std::cout << "DOM Tree successfully built\n";
+
+    //
+    // Serialize
+    //
+    std::fstream* file = 0;
+    XMLSerializer xmlSerializer(
+        file = new std::fstream(argv[3], std::ios_base::out));
+    xmlSerializer.serializePretty(builtDocument);
+
+    delete builtDocument;
+    delete builder;
+    delete file;
+}
+
 void testIterator(int argc, char**) {
 
     if (argc < 3) {
@@ -108,33 +136,6 @@ void testIterator(int argc, char**) {
 
     delete document;
     delete it;
-}
-
-void testBuilder(int argc, char** argv) {
-
-    if (argc < 4) {
-        printUsage();
-        exit(0);
-    }
-
-    XMLBuilder* builder = new XMLBuilder();
-    XMLDirector director(builder, argv[2]);
-    director.construct();
-    dom::Document* builtDocument = director.getResult();
-
-    std::cout << "DOM Tree successfully built\n";
-
-    //
-    // Serialize
-    //
-    std::fstream* file = 0;
-    XMLSerializer xmlSerializer(
-        file = new std::fstream(argv[3], std::ios_base::out));
-    xmlSerializer.serializePretty(builtDocument);
-
-    delete builtDocument;
-    delete builder;
-    delete file;
 }
 
 void testTokenizer(int argc, char** argv) {

@@ -19,8 +19,8 @@ public:
     static const short DOCUMENT_NODE = 1;
     static const short ELEMENT_NODE = 2;
     static const short TEXT_NODE = 3;
-    virtual ~Node() {}
 
+    virtual ~Node() {}
     virtual const std::string& getNodeName() = 0;
     virtual const std::string& getNodeValue() = 0;
     virtual void setNodeValue(const std::string&) = 0;
