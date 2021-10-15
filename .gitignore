@@ -18,4 +18,5 @@ build/
 
 # IDE
 .vscode/
+.cache/
 .clang-format
