@@ -17,15 +17,14 @@
 
 /*
  * $Id: DOMDocument.hpp 932887 2010-04-11 13:04:59Z borisk $
-*/
+ */
 
 #if !defined(XERCESC_INCLUDE_GUARD_DOMDOCUMENT_HPP)
 #define XERCESC_INCLUDE_GUARD_DOMDOCUMENT_HPP
 
-#include <xercesc/dom/DOMNode.hpp>
+#include "DOMNode.hpp"
 
-namespace XERCES
-{
+namespace XERCES {
 
 typedef int XMLFileLoc;
 
@@ -46,7 +45,6 @@ class DOMNotation;
 class DOMText;
 class DOMNode;
 
-
 /**
  * The <code>DOMDocument</code> interface represents the entire XML
  * document. Conceptually, it is the root of the document tree, and provides
@@ -57,12 +55,12 @@ class DOMNode;
  * to create these objects. The <code>DOMNode</code> objects created have a
  * <code>ownerDocument</code> attribute which associates them with the
  * <code>DOMDocument</code> within whose context they were created.
- * <p>See also the <a href='http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113'>Document Object Model (DOM) Level 2 Core Specification</a>.
+ * <p>See also the <a
+ * href='http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113'>Document
+ * Object Model (DOM) Level 2 Core Specification</a>.
  */
 
-class DOMDocument: public DOMNode
-{
-
+class DOMDocument : public DOMNode {
 
 protected:
     // -----------------------------------------------------------------------
@@ -70,7 +68,7 @@ protected:
     // -----------------------------------------------------------------------
     /** @name Hidden constructors */
     //@{
-    DOMDocument() {};
+    DOMDocument(){};
     //@}
 
 private:
@@ -79,8 +77,8 @@ private:
     // -----------------------------------------------------------------------
     /** @name Unimplemented constructors and operators */
     //@{
-    DOMDocument(const DOMDocument &);
-    DOMDocument & operator = (const DOMDocument &);
+    DOMDocument(const DOMDocument&);
+    DOMDocument& operator=(const DOMDocument&);
     //@}
 
 public:
@@ -93,7 +91,7 @@ public:
      * Destructor
      *
      */
-    virtual ~DOMDocument() {};
+    virtual ~DOMDocument(){};
     //@}
 
     // -----------------------------------------------------------------------
@@ -121,14 +119,14 @@ public:
      *   illegal character.
      * @since DOM Level 1
      */
-    virtual DOMElement     *createElement(const XMLCh *tagName) = 0;
+    virtual DOMElement* createElement(const XMLCh* tagName) = 0;
 
     /**
      * Creates an empty <code>DOMDocumentFragment</code> object.
      * @return A new <code>DOMDocumentFragment</code>.
      * @since DOM Level 1
      */
-    virtual DOMDocumentFragment   *createDocumentFragment() = 0;
+    virtual DOMDocumentFragment* createDocumentFragment() = 0;
 
     /**
      * Creates a <code>DOMText</code> node given the specified string.
@@ -136,7 +134,7 @@ public:
      * @return The new <code>DOMText</code> object.
      * @since DOM Level 1
      */
-    virtual DOMText         *createTextNode(const XMLCh *data) = 0;
+    virtual DOMText* createTextNode(const XMLCh* data) = 0;
 
     /**
      * Creates a <code>DOMComment</code> node given the specified string.
@@ -144,7 +142,7 @@ public:
      * @return The new <code>DOMComment</code> object.
      * @since DOM Level 1
      */
-    virtual DOMComment      *createComment(const XMLCh *data) = 0;
+    virtual DOMComment* createComment(const XMLCh* data) = 0;
 
     /**
      * Creates a <code>DOMCDATASection</code> node whose value is the specified
@@ -153,7 +151,7 @@ public:
      * @return The new <code>DOMCDATASection</code> object.
      * @since DOM Level 1
      */
-    virtual DOMCDATASection   *createCDATASection(const XMLCh *data) = 0;
+    virtual DOMCDATASection* createCDATASection(const XMLCh* data) = 0;
 
     /**
      * Creates a <code>DOMProcessingInstruction</code> node given the specified
@@ -166,14 +164,13 @@ public:
      *   illegal character.
      * @since DOM Level 1
      */
-    virtual DOMProcessingInstruction *createProcessingInstruction(const XMLCh *target,
-        const XMLCh *data) = 0;
-
+    virtual DOMProcessingInstruction*
+    createProcessingInstruction(const XMLCh* target, const XMLCh* data) = 0;
 
     /**
      * Creates an <code>DOMAttr</code> of the given name. Note that the
-     * <code>DOMAttr</code> instance can then be set on an <code>DOMElement</code>
-     * using the <code>setAttributeNode</code> method.
+     * <code>DOMAttr</code> instance can then be set on an
+     * <code>DOMElement</code> using the <code>setAttributeNode</code> method.
      * <br>To create an attribute with a qualified name and namespace URI, use
      * the <code>createAttributeNS</code> method.
      * @param name The name of the attribute.
@@ -186,8 +183,7 @@ public:
      *   illegal character.
      * @since DOM Level 1
      */
-    virtual DOMAttr     *createAttribute(const XMLCh *name) = 0;
-
+    virtual DOMAttr* createAttribute(const XMLCh* name) = 0;
 
     /**
      * Creates an <code>DOMEntityReference</code> object. In addition, if the
@@ -206,7 +202,7 @@ public:
      *   illegal character.
      * @since DOM Level 1
      */
-    virtual DOMEntityReference    *createEntityReference(const XMLCh *name) = 0;
+    virtual DOMEntityReference* createEntityReference(const XMLCh* name) = 0;
 
     /**
      * The Document Type Declaration (see <code>DOMDocumentType</code>)
@@ -219,25 +215,25 @@ public:
      * <code>removeNode</code>.
      * @since DOM Level 1
      */
-    virtual DOMDocumentType       *getDoctype() const = 0;
+    virtual DOMDocumentType* getDoctype() const = 0;
 
     /**
      * The <code>DOMImplementation</code> object that handles this document. A
      * DOM application may use objects from multiple implementations.
      * @since DOM Level 1
      */
-    virtual DOMImplementation  *getImplementation() const = 0;
+    virtual DOMImplementation* getImplementation() const = 0;
 
     /**
      * This is a convenience attribute that allows direct access to the child
      * node that is the root element of the document.
      * @since DOM Level 1
      */
-    virtual DOMElement     *getDocumentElement() const = 0;
+    virtual DOMElement* getDocumentElement() const = 0;
 
     /**
-     * Returns a <code>DOMNodeList</code> of all the <code>DOMElement(s)</code> with a
-     * given tag name in the order in which they are encountered in a
+     * Returns a <code>DOMNodeList</code> of all the <code>DOMElement(s)</code>
+     * with a given tag name in the order in which they are encountered in a
      * preorder traversal of the <code>DOMDocument</code> tree.
      *
      * The returned node list is "live", in that changes
@@ -249,7 +245,7 @@ public:
      *   <code>DOMElement(s)</code>.
      * @since DOM Level 1
      */
-    virtual DOMNodeList      *getElementsByTagName(const XMLCh *tagname) const = 0;
+    virtual DOMNodeList* getElementsByTagName(const XMLCh* tagname) const = 0;
 
     //@}
 
@@ -354,7 +350,7 @@ public:
      *   supported.
      * @since DOM Level 2
      */
-    virtual DOMNode        *importNode(const DOMNode *importedNode, bool deep) = 0;
+    virtual DOMNode* importNode(const DOMNode* importedNode, bool deep) = 0;
 
     /**
      * Creates an element of the given qualified name and namespace URI.
@@ -370,14 +366,14 @@ public:
      *   <code>Value</code></td>
      * </tr>
      * <tr>
-     * <td valign='top' rowspan='1' colspan='1'><code>DOMNode.nodeName</code></td>
-     * <td valign='top' rowspan='1' colspan='1'>
-     *   <code>qualifiedName</code></td>
+     * <td valign='top' rowspan='1'
+     * colspan='1'><code>DOMNode.nodeName</code></td> <td valign='top'
+     * rowspan='1' colspan='1'> <code>qualifiedName</code></td>
      * </tr>
      * <tr>
-     * <td valign='top' rowspan='1' colspan='1'><code>DOMNode.namespaceURI</code></td>
-     * <td valign='top' rowspan='1' colspan='1'>
-     *   <code>namespaceURI</code></td>
+     * <td valign='top' rowspan='1'
+     * colspan='1'><code>DOMNode.namespaceURI</code></td> <td valign='top'
+     * rowspan='1' colspan='1'> <code>namespaceURI</code></td>
      * </tr>
      * <tr>
      * <td valign='top' rowspan='1' colspan='1'><code>DOMNode.prefix</code></td>
@@ -386,14 +382,15 @@ public:
      *   no prefix</td>
      * </tr>
      * <tr>
-     * <td valign='top' rowspan='1' colspan='1'><code>DOMNode.localName</code></td>
-     * <td valign='top' rowspan='1' colspan='1'>local name, extracted from
+     * <td valign='top' rowspan='1'
+     * colspan='1'><code>DOMNode.localName</code></td> <td valign='top'
+     * rowspan='1' colspan='1'>local name, extracted from
      *   <code>qualifiedName</code></td>
      * </tr>
      * <tr>
-     * <td valign='top' rowspan='1' colspan='1'><code>DOMElement.tagName</code></td>
-     * <td valign='top' rowspan='1' colspan='1'>
-     *   <code>qualifiedName</code></td>
+     * <td valign='top' rowspan='1'
+     * colspan='1'><code>DOMElement.tagName</code></td> <td valign='top'
+     * rowspan='1' colspan='1'> <code>qualifiedName</code></td>
      * </tr>
      * </table>
      * @exception DOMException
@@ -411,8 +408,8 @@ public:
      *   defined by XML.
      * @since DOM Level 2
      */
-    virtual DOMElement         *createElementNS(const XMLCh *namespaceURI,
-	                                              const XMLCh *qualifiedName) = 0;
+    virtual DOMElement* createElementNS(const XMLCh* namespaceURI,
+                                        const XMLCh* qualifiedName) = 0;
 
     /**
      * Creates an attribute of the given qualified name and namespace URI.
@@ -427,8 +424,9 @@ public:
      *   <code>Value</code></td>
      * </tr>
      * <tr>
-     * <td valign='top' rowspan='1' colspan='1'><code>DOMNode.nodeName</code></td>
-     * <td valign='top' rowspan='1' colspan='1'>qualifiedName</td>
+     * <td valign='top' rowspan='1'
+     * colspan='1'><code>DOMNode.nodeName</code></td> <td valign='top'
+     * rowspan='1' colspan='1'>qualifiedName</td>
      * </tr>
      * <tr>
      * <td valign='top' rowspan='1' colspan='1'>
@@ -443,8 +441,9 @@ public:
      *   prefix</td>
      * </tr>
      * <tr>
-     * <td valign='top' rowspan='1' colspan='1'><code>DOMNode.localName</code></td>
-     * <td valign='top' rowspan='1' colspan='1'>local name, extracted from
+     * <td valign='top' rowspan='1'
+     * colspan='1'><code>DOMNode.localName</code></td> <td valign='top'
+     * rowspan='1' colspan='1'>local name, extracted from
      *   <code>qualifiedName</code></td>
      * </tr>
      * <tr>
@@ -453,9 +452,9 @@ public:
      *   <code>qualifiedName</code></td>
      * </tr>
      * <tr>
-     * <td valign='top' rowspan='1' colspan='1'><code>DOMNode.nodeValue</code></td>
-     * <td valign='top' rowspan='1' colspan='1'>the empty
-     *   string</td>
+     * <td valign='top' rowspan='1'
+     * colspan='1'><code>DOMNode.nodeValue</code></td> <td valign='top'
+     * rowspan='1' colspan='1'>the empty string</td>
      * </tr>
      * </table>
      * @exception DOMException
@@ -476,12 +475,12 @@ public:
      *   defined by XML.
      * @since DOM Level 2
      */
-    virtual DOMAttr        *createAttributeNS(const XMLCh *namespaceURI,
-	                                            const XMLCh *qualifiedName) = 0;
+    virtual DOMAttr* createAttributeNS(const XMLCh* namespaceURI,
+                                       const XMLCh* qualifiedName) = 0;
 
     /**
-     * Returns a <code>DOMNodeList</code> of all the <code>DOMElement(s)</code> with a
-     * given local name and namespace URI in the order in which they are
+     * Returns a <code>DOMNodeList</code> of all the <code>DOMElement(s)</code>
+     * with a given local name and namespace URI in the order in which they are
      * encountered in a preorder traversal of the <code>DOMDocument</code> tree.
      * @param namespaceURI The namespace URI of the elements to match on. The
      *   special value "*" matches all namespaces.
@@ -491,8 +490,9 @@ public:
      *   <code>DOMElement(s)</code>.
      * @since DOM Level 2
      */
-    virtual DOMNodeList        *getElementsByTagNameNS(const XMLCh *namespaceURI,
-	                                                     const XMLCh *localName) const = 0;
+    virtual DOMNodeList*
+    getElementsByTagNameNS(const XMLCh* namespaceURI,
+                           const XMLCh* localName) const = 0;
 
     /**
      * Returns the <code>DOMElement</code> whose <code>ID</code> is given by
@@ -507,36 +507,37 @@ public:
      * @return The matching element.
      * @since DOM Level 2
      */
-    virtual  DOMElement        * getElementById(const XMLCh *elementId) const = 0;
+    virtual DOMElement* getElementById(const XMLCh* elementId) const = 0;
     //@}
 
     /** @name Functions introduced in DOM Level 3. */
     //@{
 
     /**
-     * An attribute specifying the encoding used for this document at the time of the parsing.
-     * This is <code>null</code> when it is not known, such as when the DOMDocument was created in memory.
+     * An attribute specifying the encoding used for this document at the time
+     * of the parsing. This is <code>null</code> when it is not known, such as
+     * when the DOMDocument was created in memory.
      *
      * @since DOM Level 3
      */
-    virtual const XMLCh*           getInputEncoding() const = 0;
+    virtual const XMLCh* getInputEncoding() const = 0;
 
     /**
-     * An attribute specifying, as part of the XML declaration, the encoding of this document.
-     * This is <code>null</code> when unspecified or when it is not known, such as when the
-     * DOMDocument was created in memory.
+     * An attribute specifying, as part of the XML declaration, the encoding of
+     * this document. This is <code>null</code> when unspecified or when it is
+     * not known, such as when the DOMDocument was created in memory.
      *
      * @since DOM Level 3
      */
-    virtual const XMLCh*           getXmlEncoding() const = 0;
+    virtual const XMLCh* getXmlEncoding() const = 0;
 
     /**
-     * An attribute specifying, as part of the XML declaration, whether this document is standalone.
-     * This is <code>false</code> when unspecified.
+     * An attribute specifying, as part of the XML declaration, whether this
+     * document is standalone. This is <code>false</code> when unspecified.
      *
      * @since DOM Level 3
      */
-    virtual bool                   getXmlStandalone() const = 0;
+    virtual bool getXmlStandalone() const = 0;
 
     /**
      * An attribute specifying, as part of the XML declaration, whether this
@@ -545,7 +546,7 @@ public:
      *
      * @since DOM Level 3
      */
-    virtual void                   setXmlStandalone(bool standalone) = 0;
+    virtual void setXmlStandalone(bool standalone) = 0;
 
     /**
      * An attribute specifying, as part of the XML declaration, the version
@@ -554,7 +555,7 @@ public:
      *
      * @since DOM Level 3
      */
-    virtual const XMLCh*           getXmlVersion() const = 0;
+    virtual const XMLCh* getXmlVersion() const = 0;
 
     /**
      * An attribute specifying, as part of the XML declaration, the version
@@ -563,7 +564,7 @@ public:
      *
      * @since DOM Level 3
      */
-    virtual void                   setXmlVersion(const XMLCh* version) = 0;
+    virtual void setXmlVersion(const XMLCh* version) = 0;
 
     /**
      * The location of the document or <code>null</code> if undefined.
@@ -573,7 +574,7 @@ public:
      *
      * @since DOM Level 3
      */
-    virtual const XMLCh*           getDocumentURI() const = 0;
+    virtual const XMLCh* getDocumentURI() const = 0;
     /**
      * The location of the document or <code>null</code> if undefined.
      * <br>Beware that when the <code>DOMDocument</code> supports the feature
@@ -582,7 +583,7 @@ public:
      *
      * @since DOM Level 3
      */
-    virtual void                   setDocumentURI(const XMLCh* documentURI) = 0;
+    virtual void setDocumentURI(const XMLCh* documentURI) = 0;
 
     /**
      * An attribute specifying whether errors checking is enforced or not.
@@ -594,7 +595,7 @@ public:
      *
      * @since DOM Level 3
      */
-    virtual bool                   getStrictErrorChecking() const = 0;
+    virtual bool getStrictErrorChecking() const = 0;
     /**
      * An attribute specifying whether errors checking is enforced or not.
      * When set to <code>false</code>, the implementation is free to not
@@ -605,7 +606,7 @@ public:
      *
      * @since DOM Level 3
      */
-    virtual void                   setStrictErrorChecking(bool strictErrorChecking) = 0;
+    virtual void setStrictErrorChecking(bool strictErrorChecking) = 0;
 
     /**
      * Rename an existing node. When possible this simply changes the name of
@@ -651,8 +652,8 @@ public:
      *   different from "http://www.w3.org/2000/xmlns/".
      * @since DOM Level 3
      */
-    virtual DOMNode* renameNode(DOMNode* n, const XMLCh* namespaceURI, const XMLCh* qualifiedName) = 0;
-
+    virtual DOMNode* renameNode(DOMNode* n, const XMLCh* namespaceURI,
+                                const XMLCh* qualifiedName) = 0;
 
     /**
      * Changes the <code>ownerDocument</code> of a node, its children, as well
@@ -713,7 +714,7 @@ public:
      *   readonly.
      * @since DOM Level 3
      */
-    virtual DOMNode*               adoptNode(DOMNode* source) = 0;
+    virtual DOMNode* adoptNode(DOMNode* source) = 0;
 
     /**
      * This method acts as if the document was going through a save and load
@@ -729,23 +730,24 @@ public:
      * normalizes attribute values, etc.
      * <br>Mutation events, when supported, are generated to reflect the
      * changes occurring on the document.
-     * Note that this is a partial implementation. Not all the required features are implemented.
-     * Currently <code>DOMAttr</code> and <code>DOMText</code> nodes are normalized.
-     * Features to remove <code>DOMComment</code> and <code>DOMCDATASection</code> work.
+     * Note that this is a partial implementation. Not all the required features
+     * are implemented. Currently <code>DOMAttr</code> and <code>DOMText</code>
+     * nodes are normalized. Features to remove <code>DOMComment</code> and
+     * <code>DOMCDATASection</code> work.
      * @since DOM Level 3
      *
      */
-    virtual void                   normalizeDocument() = 0;
-
+    virtual void normalizeDocument() = 0;
 
     /**
      * The configuration used when DOMDocument::normalizeDocument is invoked.
      *
-     * @return The <code>DOMConfiguration</code> from this <code>DOMDocument</code>
+     * @return The <code>DOMConfiguration</code> from this
+     * <code>DOMDocument</code>
      *
      * @since DOM Level 3
      */
-    virtual DOMConfiguration*      getDOMConfig() const = 0;
+    virtual DOMConfiguration* getDOMConfig() const = 0;
 
     //@}
 
@@ -761,7 +763,7 @@ public:
      * @param name The name of the entity to instantiate
      *
      */
-    virtual DOMEntity     *createEntity(const XMLCh *name) = 0;
+    virtual DOMEntity* createEntity(const XMLCh* name) = 0;
 
     /**
      * Non-standard extension
@@ -771,16 +773,15 @@ public:
      *  created DOMDocumentType node.
      *
      */
-    virtual DOMDocumentType *createDocumentType(const XMLCh *name) = 0;
+    virtual DOMDocumentType* createDocumentType(const XMLCh* name) = 0;
 
     /***
      * Provide default implementation to maintain source code compatibility
      ***/
-    virtual DOMDocumentType* createDocumentType(const XMLCh *qName,
-                                                const XMLCh*,  //publicId,
-                                                const XMLCh*   //systemId
-                                               )
-    {
+    virtual DOMDocumentType* createDocumentType(const XMLCh* qName,
+                                                const XMLCh*, // publicId,
+                                                const XMLCh*  // systemId
+    ) {
         return createDocumentType(qName);
     }
 
@@ -792,7 +793,7 @@ public:
      * @return A <code>DOMNotation</code> that references the newly
      *  created DOMNotation node.
      */
-    virtual DOMNotation *createNotation(const XMLCh *name) = 0;
+    virtual DOMNotation* createNotation(const XMLCh* name) = 0;
 
     /**
      * Non-standard extension.
@@ -801,14 +802,14 @@ public:
      * namespace URI, and also stores line/column number info.
      * Used by internally XSDXercesDOMParser during schema traversal.
      *
-     * @see createElementNS(const XMLCh *namespaceURI, const XMLCh *qualifiedName)
+     * @see createElementNS(const XMLCh *namespaceURI, const XMLCh
+     * *qualifiedName)
      */
-    virtual DOMElement *createElementNS(const XMLCh *namespaceURI,
-                                        const XMLCh *qualifiedName,
+    virtual DOMElement* createElementNS(const XMLCh* namespaceURI,
+                                        const XMLCh* qualifiedName,
                                         const XMLFileLoc lineNum,
                                         const XMLFileLoc columnNum) = 0;
     //@}
-
 };
 
 }; // namespace XERCES

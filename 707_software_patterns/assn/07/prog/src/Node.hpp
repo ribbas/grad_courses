@@ -82,9 +82,8 @@ private:
 protected:
     dom::Document* document;
 
-    Node_Impl(const std::string&, short, dom::Document*);
-
 public:
+    Node_Impl(const std::string&, short, dom::Document*);
     virtual ~Node_Impl();
     virtual const std::string& getNodeName() override;
     virtual const std::string& getNodeValue() override;
@@ -104,6 +103,7 @@ public:
     virtual bool hasChildNodes() override;
     virtual const std::string& getLocalName() override;
     virtual void setParent(dom::Node*);
+    virtual void serialize(std::fstream*, WhitespaceStrategy*) override {}
 };
 
 #endif // NODE_H

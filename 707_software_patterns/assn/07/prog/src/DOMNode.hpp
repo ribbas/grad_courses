@@ -22,8 +22,7 @@
 #if !defined(XERCESC_INCLUDE_GUARD_DOMNODE_HPP)
 #define XERCESC_INCLUDE_GUARD_DOMNODE_HPP
 
-namespace XERCES
-{
+namespace XERCES {
 
 typedef char XMLCh;
 
@@ -45,7 +44,8 @@ class DOMUserDataHandler;
  * information without casting down to the specific derived interface. In
  * cases where there is no obvious mapping of these attributes for a
  * specific <code>nodeType</code> (e.g., <code>nodeValue</code> for an
- * <code>DOMElement</code> or <code>attributes</code> for a <code>DOMComment</code>
+ * <code>DOMElement</code> or <code>attributes</code> for a
+ * <code>DOMComment</code>
  * ), this returns <code>null</code>. Note that the specialized interfaces
  * may contain additional and more convenient mechanisms to get and set the
  * relevant information.
@@ -122,8 +122,8 @@ class DOMUserDataHandler;
  * <tr>
  * <td valign='top' rowspan='1' colspan='1'>DOMProcessingInstruction</td>
  * <td valign='top' rowspan='1' colspan='1'>target</td>
- * <td valign='top' rowspan='1' colspan='1'>entire content excluding the target</td>
- * <td valign='top' rowspan='1' colspan='1'>null</td>
+ * <td valign='top' rowspan='1' colspan='1'>entire content excluding the
+ * target</td> <td valign='top' rowspan='1' colspan='1'>null</td>
  * </tr>
  * <tr>
  * <td valign='top' rowspan='1' colspan='1'>DOMText</td>
@@ -132,11 +132,13 @@ class DOMUserDataHandler;
  * <td valign='top' rowspan='1' colspan='1'>null</td>
  * </tr>
  * </table>
- * <p>See also the <a href='http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113'>Document Object Model (DOM) Level 2 Core Specification</a>.
+ * <p>See also the <a
+ * href='http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113'>Document
+ * Object Model (DOM) Level 2 Core Specification</a>.
  *
  * @since DOM Level 1
  */
-class  DOMNode {
+class DOMNode {
 protected:
     // -----------------------------------------------------------------------
     //  Hidden constructors
@@ -144,7 +146,7 @@ protected:
     /** @name Hidden constructors */
     //@{
     DOMNode() {}
-    DOMNode(const DOMNode &) {}
+    DOMNode(const DOMNode&) {}
     //@}
 
 private:
@@ -153,7 +155,7 @@ private:
     // -----------------------------------------------------------------------
     /** @name Unimplemented operators */
     //@{
-    DOMNode & operator = (const DOMNode &);
+    DOMNode& operator=(const DOMNode&);
     //@}
 
 public:
@@ -166,7 +168,7 @@ public:
      * Destructor
      *
      */
-    virtual ~DOMNode() {};
+    virtual ~DOMNode(){};
     //@}
 
     // -----------------------------------------------------------------------
@@ -180,44 +182,44 @@ public:
      * @since DOM Level 1
      */
     enum NodeType {
-        ELEMENT_NODE                = 1,
-        ATTRIBUTE_NODE              = 2,
-        TEXT_NODE                   = 3,
-        CDATA_SECTION_NODE          = 4,
-        ENTITY_REFERENCE_NODE       = 5,
-        ENTITY_NODE                 = 6,
+        ELEMENT_NODE = 1,
+        ATTRIBUTE_NODE = 2,
+        TEXT_NODE = 3,
+        CDATA_SECTION_NODE = 4,
+        ENTITY_REFERENCE_NODE = 5,
+        ENTITY_NODE = 6,
         PROCESSING_INSTRUCTION_NODE = 7,
-        COMMENT_NODE                = 8,
-        DOCUMENT_NODE               = 9,
-        DOCUMENT_TYPE_NODE          = 10,
-        DOCUMENT_FRAGMENT_NODE      = 11,
-        NOTATION_NODE               = 12
+        COMMENT_NODE = 8,
+        DOCUMENT_NODE = 9,
+        DOCUMENT_TYPE_NODE = 10,
+        DOCUMENT_FRAGMENT_NODE = 11,
+        NOTATION_NODE = 12
     };
 
     /**
      * DocumentPosition:
      *
      * <p><code>DOCUMENT_POSITION_CONTAINED_BY:</code>
-     * The node is contained by the reference node. A node which is contained is always following, too.</p>
-     * <p><code>DOCUMENT_POSITION_CONTAINS:</code>
-     * The node contains the reference node. A node which contains is always preceding, too.</p>
-     * <p><code>DOCUMENT_POSITION_DISCONNECTED:</code>
-     * The two nodes are disconnected. Order between disconnected nodes is always implementation-specific.</p>
-     * <p><code>DOCUMENT_POSITION_FOLLOWING:</code>
+     * The node is contained by the reference node. A node which is contained is
+     * always following, too.</p> <p><code>DOCUMENT_POSITION_CONTAINS:</code>
+     * The node contains the reference node. A node which contains is always
+     * preceding, too.</p> <p><code>DOCUMENT_POSITION_DISCONNECTED:</code> The
+     * two nodes are disconnected. Order between disconnected nodes is always
+     * implementation-specific.</p> <p><code>DOCUMENT_POSITION_FOLLOWING:</code>
      * The node follows the reference node.</p>
      * <p><code>DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC:</code>
-     * The determination of preceding versus following is implementation-specific.</p>
-     * <p><code>DOCUMENT_POSITION_PRECEDING:</code>
+     * The determination of preceding versus following is
+     * implementation-specific.</p> <p><code>DOCUMENT_POSITION_PRECEDING:</code>
      * The second node precedes the reference node.</p>
      *
      * @since DOM Level 3
      */
     enum DocumentPosition {
-        DOCUMENT_POSITION_DISCONNECTED            = 0x01,
-        DOCUMENT_POSITION_PRECEDING               = 0x02,
-        DOCUMENT_POSITION_FOLLOWING               = 0x04,
-        DOCUMENT_POSITION_CONTAINS                = 0x08,
-        DOCUMENT_POSITION_CONTAINED_BY            = 0x10,
+        DOCUMENT_POSITION_DISCONNECTED = 0x01,
+        DOCUMENT_POSITION_PRECEDING = 0x02,
+        DOCUMENT_POSITION_FOLLOWING = 0x04,
+        DOCUMENT_POSITION_CONTAINS = 0x08,
+        DOCUMENT_POSITION_CONTAINED_BY = 0x10,
         DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC = 0x20
     };
     //@}
@@ -234,7 +236,7 @@ public:
      * The name of this node, depending on its type; see the table above.
      * @since DOM Level 1
      */
-    virtual const XMLCh *   getNodeName() const = 0;
+    virtual const XMLCh* getNodeName() const = 0;
 
     /**
      * Gets the value of this node, depending on its type.
@@ -243,48 +245,48 @@ public:
      *   NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly.
      * @since DOM Level 1
      */
-    virtual const XMLCh *       getNodeValue() const = 0;
+    virtual const XMLCh* getNodeValue() const = 0;
 
     /**
      * An enum value representing the type of the underlying object.
      * @since DOM Level 1
      */
-    virtual NodeType            getNodeType() const = 0;
+    virtual NodeType getNodeType() const = 0;
 
     /**
      * Gets the parent of this node.
      *
      * All nodes, except <code>DOMDocument</code>,
-     * <code>DOMDocumentFragment</code>, and <code>DOMAttr</code> may have a parent.
-     * However, if a node has just been created and not yet added to the tree,
-     * or if it has been removed from the tree, a <code>null</code> DOMNode
-     * is returned.
+     * <code>DOMDocumentFragment</code>, and <code>DOMAttr</code> may have a
+     * parent. However, if a node has just been created and not yet added to the
+     * tree, or if it has been removed from the tree, a <code>null</code>
+     * DOMNode is returned.
      * @since DOM Level 1
      */
-    virtual DOMNode        *getParentNode() const = 0;
+    virtual DOMNode* getParentNode() const = 0;
 
     /**
      * Gets a <code>DOMNodeList</code> that contains all children of this node.
      *
      * If there
      * are no children, this is a <code>DOMNodeList</code> containing no nodes.
-     * The content of the returned <code>DOMNodeList</code> is "live" in the sense
-     * that, for instance, changes to the children of the node object that
+     * The content of the returned <code>DOMNodeList</code> is "live" in the
+     * sense that, for instance, changes to the children of the node object that
      * it was created from are immediately reflected in the nodes returned by
-     * the <code>DOMNodeList</code> accessors; it is not a static snapshot of the
-     * content of the node. This is true for every <code>DOMNodeList</code>,
+     * the <code>DOMNodeList</code> accessors; it is not a static snapshot of
+     * the content of the node. This is true for every <code>DOMNodeList</code>,
      * including the ones returned by the <code>getElementsByTagName</code>
      * method.
      * @since DOM Level 1
      */
-    virtual DOMNodeList    *getChildNodes() const = 0;
+    virtual DOMNodeList* getChildNodes() const = 0;
     /**
      * Gets the first child of this node.
      *
      * If there is no such node, this returns <code>null</code>.
      * @since DOM Level 1
      */
-    virtual DOMNode        *getFirstChild() const = 0;
+    virtual DOMNode* getFirstChild() const = 0;
 
     /**
      * Gets the last child of this node.
@@ -292,7 +294,7 @@ public:
      * If there is no such node, this returns <code>null</code>.
      * @since DOM Level 1
      */
-    virtual DOMNode        *getLastChild() const = 0;
+    virtual DOMNode* getLastChild() const = 0;
 
     /**
      * Gets the node immediately preceding this node.
@@ -300,7 +302,7 @@ public:
      * If there is no such node, this returns <code>null</code>.
      * @since DOM Level 1
      */
-    virtual DOMNode        *getPreviousSibling() const = 0;
+    virtual DOMNode* getPreviousSibling() const = 0;
 
     /**
      * Gets the node immediately following this node.
@@ -308,14 +310,15 @@ public:
      * If there is no such node, this returns <code>null</code>.
      * @since DOM Level 1
      */
-    virtual DOMNode        *getNextSibling() const = 0;
+    virtual DOMNode* getNextSibling() const = 0;
 
     /**
-     * Gets a <code>DOMNamedNodeMap</code> containing the attributes of this node (if it
-     * is an <code>DOMElement</code>) or <code>null</code> otherwise.
+     * Gets a <code>DOMNamedNodeMap</code> containing the attributes of this
+     * node (if it is an <code>DOMElement</code>) or <code>null</code>
+     * otherwise.
      * @since DOM Level 1
      */
-    virtual DOMNamedNodeMap  *getAttributes() const = 0;
+    virtual DOMNamedNodeMap* getAttributes() const = 0;
 
     /**
      * Gets the <code>DOMDocument</code> object associated with this node.
@@ -328,7 +331,7 @@ public:
      *
      * @since DOM Level 1
      */
-    virtual DOMDocument      *getOwnerDocument() const = 0;
+    virtual DOMDocument* getOwnerDocument() const = 0;
 
     // -----------------------------------------------------------------------
     //  Node methods
@@ -344,15 +347,15 @@ public:
      * values, including those generated by the  XML processor to represent
      * defaulted attributes, but this method does not copy any text it contains
      * unless it is a deep clone, since the text is contained in a child
-     * <code>DOMText</code> node. Cloning any other type of node simply returns a
-     * copy of this node.
+     * <code>DOMText</code> node. Cloning any other type of node simply returns
+     * a copy of this node.
      * @param deep If <code>true</code>, recursively clone the subtree under the
      *   specified node; if <code>false</code>, clone only the node itself (and
      *   its attributes, if it is an <code>DOMElement</code>).
      * @return The duplicate node.
      * @since DOM Level 1
      */
-    virtual DOMNode        * cloneNode(bool deep) const = 0;
+    virtual DOMNode* cloneNode(bool deep) const = 0;
 
     /**
      * Inserts the node <code>newChild</code> before the existing child node
@@ -360,8 +363,8 @@ public:
      *
      * If <code>refChild</code> is <code>null</code>,
      * insert <code>newChild</code> at the end of the list of children.
-     * <br>If <code>newChild</code> is a <code>DOMDocumentFragment</code> object,
-     * all of its children are inserted, in the same order, before
+     * <br>If <code>newChild</code> is a <code>DOMDocumentFragment</code>
+     * object, all of its children are inserted, in the same order, before
      * <code>refChild</code>. If the <code>newChild</code> is already in the
      * tree, it is first removed.  Note that a <code>DOMNode</code> that
      * has never been assigned to refer to an actual node is == null.
@@ -381,17 +384,16 @@ public:
      *   this node.
      * @since DOM Level 1
      */
-    virtual DOMNode       *insertBefore(DOMNode *newChild,
-                                          DOMNode *refChild) = 0;
-
+    virtual DOMNode* insertBefore(DOMNode* newChild, DOMNode* refChild) = 0;
 
     /**
      * Replaces the child node <code>oldChild</code> with <code>newChild</code>
      * in the list of children, and returns the <code>oldChild</code> node.
      *
      * If <CODE>newChild</CODE> is a <CODE>DOMDocumentFragment</CODE> object,
-     * <CODE>oldChild</CODE> is replaced by all of the <CODE>DOMDocumentFragment</CODE>
-     * children, which are inserted in the same order.
+     * <CODE>oldChild</CODE> is replaced by all of the
+     * <CODE>DOMDocumentFragment</CODE> children, which are inserted in the same
+     * order.
      *
      * If the <code>newChild</code> is already in the tree, it is first removed.
      * @param newChild The new node to put in the child list.
@@ -403,13 +405,12 @@ public:
      *   the node to put in is one of this node's ancestors.
      *   <br>WRONG_DOCUMENT_ERR: Raised if <code>newChild</code> was created
      *   from a different document than the one that created this node.
-     *   <br>NO_MODIFICATION_ALLOWED_ERR: Raised if this node or the new node is readonly.
-     *   <br>NOT_FOUND_ERR: Raised if <code>oldChild</code> is not a child of
-     *   this node.
+     *   <br>NO_MODIFICATION_ALLOWED_ERR: Raised if this node or the new node is
+     * readonly. <br>NOT_FOUND_ERR: Raised if <code>oldChild</code> is not a
+     * child of this node.
      * @since DOM Level 1
      */
-    virtual DOMNode  *replaceChild(DOMNode *newChild,
-                                     DOMNode *oldChild) = 0;
+    virtual DOMNode* replaceChild(DOMNode* newChild, DOMNode* oldChild) = 0;
     /**
      * Removes the child node indicated by <code>oldChild</code> from the list
      * of children, and returns it.
@@ -422,7 +423,7 @@ public:
      *   this node.
      * @since DOM Level 1
      */
-    virtual DOMNode        *removeChild(DOMNode *oldChild) = 0;
+    virtual DOMNode* removeChild(DOMNode* oldChild) = 0;
 
     /**
      * Adds the node <code>newChild</code> to the end of the list of children of
@@ -430,9 +431,9 @@ public:
      *
      * If the <code>newChild</code> is already in the tree, it is
      * first removed.
-     * @param newChild The node to add.If it is a  <code>DOMDocumentFragment</code>
-     *   object, the entire contents of the document fragment are moved into
-     *   the child list of this node
+     * @param newChild The node to add.If it is a
+     * <code>DOMDocumentFragment</code> object, the entire contents of the
+     * document fragment are moved into the child list of this node
      * @return The node added.
      * @exception DOMException
      *   HIERARCHY_REQUEST_ERR: Raised if this node is of a type that does not
@@ -444,7 +445,7 @@ public:
      *   appended is readonly.
      * @since DOM Level 1
      */
-    virtual DOMNode        *appendChild(DOMNode *newChild) = 0;
+    virtual DOMNode* appendChild(DOMNode* newChild) = 0;
 
     // -----------------------------------------------------------------------
     //  Query methods
@@ -457,7 +458,7 @@ public:
      *   <code>false</code> if the node has no children.
      * @since DOM Level 1
      */
-    virtual bool             hasChildNodes() const = 0;
+    virtual bool hasChildNodes() const = 0;
 
     // -----------------------------------------------------------------------
     //  Setter methods
@@ -477,32 +478,30 @@ public:
      * @see #getNodeValue
      * @since DOM Level 1
      */
-    virtual void              setNodeValue(const XMLCh  *nodeValue) = 0;
+    virtual void setNodeValue(const XMLCh* nodeValue) = 0;
     //@}
 
     /** @name Functions introduced in DOM Level 2. */
     //@{
     /**
      * Puts all <CODE>DOMText</CODE>
-     * nodes in the full depth of the sub-tree underneath this <CODE>DOMNode</CODE>,
-     * including attribute nodes, into a "normal" form where only markup (e.g.,
-     * tags, comments, processing instructions, CDATA sections, and entity
-     * references) separates <CODE>DOMText</CODE>
-     * nodes, i.e., there are neither adjacent <CODE>DOMText</CODE>
-     * nodes nor empty <CODE>DOMText</CODE>
-     * nodes. This can be used to ensure that the DOM view of a document is the
-     * same as if it were saved and re-loaded, and is useful when operations
-     * (such as XPointer lookups) that depend on a particular document tree
-     * structure are to be used.
-     * <P><B>Note:</B> In cases where the document contains <CODE>DOMCDATASections</CODE>,
-     * the normalize operation alone may not be sufficient, since XPointers do
-     * not differentiate between <CODE>DOMText</CODE>
-     * nodes and <CODE>DOMCDATASection</CODE>
-     * nodes.</P>
+     * nodes in the full depth of the sub-tree underneath this
+     * <CODE>DOMNode</CODE>, including attribute nodes, into a "normal" form
+     * where only markup (e.g., tags, comments, processing instructions, CDATA
+     * sections, and entity references) separates <CODE>DOMText</CODE> nodes,
+     * i.e., there are neither adjacent <CODE>DOMText</CODE> nodes nor empty
+     * <CODE>DOMText</CODE> nodes. This can be used to ensure that the DOM view
+     * of a document is the same as if it were saved and re-loaded, and is
+     * useful when operations (such as XPointer lookups) that depend on a
+     * particular document tree structure are to be used. <P><B>Note:</B> In
+     * cases where the document contains <CODE>DOMCDATASections</CODE>, the
+     * normalize operation alone may not be sufficient, since XPointers do not
+     * differentiate between <CODE>DOMText</CODE> nodes and
+     * <CODE>DOMCDATASection</CODE> nodes.</P>
      *
      * @since DOM Level 2
      */
-    virtual void              normalize() = 0;
+    virtual void normalize() = 0;
 
     /**
      * Tests whether the DOM implementation implements a specific
@@ -519,8 +518,8 @@ public:
      * on this node, <code>false</code> otherwise.
      * @since DOM Level 2
      */
-    virtual bool              isSupported(const XMLCh *feature,
-	                                       const XMLCh *version) const = 0;
+    virtual bool isSupported(const XMLCh* feature,
+                             const XMLCh* version) const = 0;
 
     /**
      * Get the <em>namespace URI</em> of
@@ -537,7 +536,7 @@ public:
      *
      * @since DOM Level 2
      */
-    virtual const XMLCh *         getNamespaceURI() const = 0;
+    virtual const XMLCh* getNamespaceURI() const = 0;
 
     /**
      * Get the <em>namespace prefix</em>
@@ -545,7 +544,7 @@ public:
      *
      * @since DOM Level 2
      */
-    virtual const XMLCh *          getPrefix() const = 0;
+    virtual const XMLCh* getPrefix() const = 0;
 
     /**
      * Returns the local part of the <em>qualified name</em> of this node.
@@ -556,7 +555,7 @@ public:
      *
      * @since DOM Level 2
      */
-    virtual const XMLCh *          getLocalName() const = 0;
+    virtual const XMLCh* getLocalName() const = 0;
 
     /**
      * Set the <em>namespace prefix</em> of this node.
@@ -569,8 +568,8 @@ public:
      * <p>
      * Note also that changing the prefix of an
      * attribute, that is known to have a default value, does not make a new
-     * attribute with the default value and the original prefix appear, since the
-     * <CODE>namespaceURI</CODE> and <CODE>localName</CODE> do not change.
+     * attribute with the default value and the original prefix appear, since
+     * the <CODE>namespaceURI</CODE> and <CODE>localName</CODE> do not change.
      *
      *
      * @param prefix The prefix of this node.
@@ -591,7 +590,7 @@ public:
      *      the <CODE>qualifiedName</CODE> of this node is "xmlns".
      * @since DOM Level 2
      */
-    virtual void              setPrefix(const XMLCh * prefix) = 0;
+    virtual void setPrefix(const XMLCh* prefix) = 0;
 
     /**
      *  Returns whether this node (if it is an element) has any attributes.
@@ -599,7 +598,7 @@ public:
      *   <code>false</code> otherwise.
      * @since DOM Level 2
      */
-    virtual bool              hasAttributes() const = 0;
+    virtual bool hasAttributes() const = 0;
     //@}
 
     /** @name Functions introduced in DOM Level 3. */
@@ -619,7 +618,7 @@ public:
      *   <code>false</code> otherwise.
      * @since DOM Level 3
      */
-    virtual bool              isSameNode(const DOMNode* other) const = 0;
+    virtual bool isSameNode(const DOMNode* other) const = 0;
 
     /**
      * Tests whether two nodes are equal.
@@ -661,8 +660,7 @@ public:
      *   <code>true</code> otherwise <code>false</code>.
      * @since DOM Level 3
      */
-    virtual bool              isEqualNode(const DOMNode* arg) const = 0;
-
+    virtual bool isEqualNode(const DOMNode* arg) const = 0;
 
     /**
      * Associate an object to a key on this node. The object can later be
@@ -689,9 +687,8 @@ public:
      *
      * @since DOM Level 3
      */
-    virtual void*             setUserData(const XMLCh* key,
-                                          void* data,
-                                          DOMUserDataHandler* handler) = 0;
+    virtual void* setUserData(const XMLCh* key, void* data,
+                              DOMUserDataHandler* handler) = 0;
 
     /**
      * Retrieves the object associated to a key on a this node. The object
@@ -704,8 +701,7 @@ public:
      * @see #setUserData
      * @since DOM Level 3
      */
-    virtual void*             getUserData(const XMLCh* key) const = 0;
-
+    virtual void* getUserData(const XMLCh* key) const = 0;
 
     /**
      * The absolute base URI of this node or <code>null</code> if undefined.
@@ -715,27 +711,27 @@ public:
      * element if any, and the value of the <code>documentURI</code>
      * attribute from the <code>DOMDocument</code> interface otherwise.
      *
-     * <br> When the node is an <code>DOMElement</code>, a <code>DOMDocument</code>
-     * or a a <code>DOMProcessingInstruction</code>, this attribute represents
-     * the properties [base URI] defined in . When the node is a
-     * <code>DOMNotation</code>, an <code>DOMEntity</code>, or an
+     * <br> When the node is an <code>DOMElement</code>, a
+     * <code>DOMDocument</code> or a a <code>DOMProcessingInstruction</code>,
+     * this attribute represents the properties [base URI] defined in . When the
+     * node is a <code>DOMNotation</code>, an <code>DOMEntity</code>, or an
      * <code>DOMEntityReference</code>, this attribute represents the
      * properties [declaration base URI].
      * @since DOM Level 3
      */
-    virtual const XMLCh*      getBaseURI() const = 0;
+    virtual const XMLCh* getBaseURI() const = 0;
 
     /**
-     * Compares the reference node, i.e. the node on which this method is being called,
-     * with a node, i.e. the one passed as a parameter, with regard to their position
-     * in the document and according to the document order.
+     * Compares the reference node, i.e. the node on which this method is being
+     * called, with a node, i.e. the one passed as a parameter, with regard to
+     * their position in the document and according to the document order.
      *
      * @param other The node to compare against this node.
      * @return Returns how the given node is positioned relatively to this
      *   node.
      * @since DOM Level 3
      */
-    virtual short             compareDocumentPosition(const DOMNode* other) const = 0;
+    virtual short compareDocumentPosition(const DOMNode* other) const = 0;
 
     /**
      * This attribute returns the text content of this node and its
@@ -755,9 +751,9 @@ public:
      * <td valign='top' rowspan='1' colspan='1'>
      * ELEMENT_NODE, ENTITY_NODE, ENTITY_REFERENCE_NODE,
      * DOCUMENT_FRAGMENT_NODE</td>
-     * <td valign='top' rowspan='1' colspan='1'>concatenation of the <code>textContent</code>
-     * attribute value of every child node, excluding COMMENT_NODE and
-     * PROCESSING_INSTRUCTION_NODE nodes</td>
+     * <td valign='top' rowspan='1' colspan='1'>concatenation of the
+     * <code>textContent</code> attribute value of every child node, excluding
+     * COMMENT_NODE and PROCESSING_INSTRUCTION_NODE nodes</td>
      * </tr>
      * <tr>
      * <td valign='top' rowspan='1' colspan='1'>ATTRIBUTE_NODE, TEXT_NODE,
@@ -766,9 +762,9 @@ public:
      * <code>nodeValue</code></td>
      * </tr>
      * <tr>
-     * <td valign='top' rowspan='1' colspan='1'>DOCUMENT_NODE, DOCUMENT_TYPE_NODE, NOTATION_NODE</td>
-     * <td valign='top' rowspan='1' colspan='1'>
-     * null</td>
+     * <td valign='top' rowspan='1' colspan='1'>DOCUMENT_NODE,
+     * DOCUMENT_TYPE_NODE, NOTATION_NODE</td> <td valign='top' rowspan='1'
+     * colspan='1'> null</td>
      * </tr>
      * </table>
      * @exception DOMException
@@ -778,24 +774,25 @@ public:
      * @see #setTextContent
      * @since DOM Level 3
      */
-    virtual const XMLCh*      getTextContent() const = 0;
+    virtual const XMLCh* getTextContent() const = 0;
 
     /**
-     * This attribute removes any possible children this node may have and, if the
-     * new string is not empty or null, replaced by a single <code>DOMText</code>
-     * node containing the string this attribute is set to. No parsing is
-     * performed, the input string is taken as pure textual content.
+     * This attribute removes any possible children this node may have and, if
+     * the new string is not empty or null, replaced by a single
+     * <code>DOMText</code> node containing the string this attribute is set to.
+     * No parsing is performed, the input string is taken as pure textual
+     * content.
      *
      * @exception DOMException
      *   NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly.
      * @see #getTextContent
      * @since DOM Level 3
      */
-    virtual void              setTextContent(const XMLCh* textContent) = 0;
+    virtual void setTextContent(const XMLCh* textContent) = 0;
 
     /**
-     * Look up the prefix associated to the given namespace URI, starting from this node.
-     * The default namespace declarations are ignored by this method.
+     * Look up the prefix associated to the given namespace URI, starting from
+     * this node. The default namespace declarations are ignored by this method.
      *
      * @param namespaceURI The namespace URI to look for.
      * @return Returns an associated namespace prefix if found,
@@ -804,7 +801,7 @@ public:
      *   returned namespace prefix is implementation dependent.
      * @since DOM Level 3
      */
-    virtual const XMLCh*      lookupPrefix(const XMLCh* namespaceURI) const = 0;
+    virtual const XMLCh* lookupPrefix(const XMLCh* namespaceURI) const = 0;
 
     /**
      * This method checks if the specified <code>namespaceURI</code> is the
@@ -815,7 +812,7 @@ public:
      *   is the default namespace, <code>false</code> otherwise.
      * @since DOM Level 3
      */
-    virtual bool              isDefaultNamespace(const XMLCh* namespaceURI) const = 0;
+    virtual bool isDefaultNamespace(const XMLCh* namespaceURI) const = 0;
 
     /**
      * Look up the namespace URI associated to the given prefix, starting from
@@ -828,10 +825,11 @@ public:
      *   none is found.
      * @since DOM Level 3
      */
-    virtual const XMLCh*      lookupNamespaceURI(const XMLCh* prefix) const  = 0;
+    virtual const XMLCh* lookupNamespaceURI(const XMLCh* prefix) const = 0;
 
     /**
-     * This method makes available a <code>DOMNode</code>'s specialized interface
+     * This method makes available a <code>DOMNode</code>'s specialized
+     * interface
      *
      * @param feature The name of the feature requested (case-insensitive).
      * @param version The version of the feature requested.
@@ -845,7 +843,8 @@ public:
      *   <code>attributes</code>, <code>childNodes</code>, etc.
      * @since DOM Level 3
      */
-    virtual void*             getFeature(const XMLCh* feature, const XMLCh* version) const = 0;
+    virtual void* getFeature(const XMLCh* feature,
+                             const XMLCh* version) const = 0;
     //@}
 
     // -----------------------------------------------------------------------
@@ -854,19 +853,20 @@ public:
     /** @name Non-standard Extension */
     //@{
     /**
-     * Called to indicate that this Node (and its associated children) is no longer in use
-     * and that the implementation may relinquish any resources associated with it and
-     * its associated children.
+     * Called to indicate that this Node (and its associated children) is no
+     * longer in use and that the implementation may relinquish any resources
+     * associated with it and its associated children.
      *
-     * If this is a document, any nodes it owns (created by DOMDocument::createXXXX())
-     * are also released.
+     * If this is a document, any nodes it owns (created by
+     * DOMDocument::createXXXX()) are also released.
      *
      * Access to a released object will lead to unexpected result.
      *
      * @exception DOMException
-     *   INVALID_ACCESS_ERR: Raised if this Node has a parent and thus should not be released yet.
+     *   INVALID_ACCESS_ERR: Raised if this Node has a parent and thus should
+     * not be released yet.
      */
-    virtual void              release() = 0;
+    virtual void release() = 0;
     //@}
 #if defined(XML_DOMREFCOUNT_EXPERIMENTAL)
     // -----------------------------------------------------------------------
@@ -875,11 +875,11 @@ public:
     /** @name Non-standard Extension */
     //@{
     /**
-	 * This is custom function which can be implemented by classes deriving
-	 * from DOMNode for implementing reference counting on DOMNodes. Any
-	 * implementation which has memory management model which involves
-	 * disposing of nodes immediately after being used can override this
-	 * function to do that job.
+     * This is custom function which can be implemented by classes deriving
+     * from DOMNode for implementing reference counting on DOMNodes. Any
+     * implementation which has memory management model which involves
+     * disposing of nodes immediately after being used can override this
+     * function to do that job.
      */
     virtual void decRefCount() {}
     //@}
@@ -890,8 +890,8 @@ public:
     /** @name Non-standard Extension */
     //@{
     /**
-	 * This is custom function which can be implemented by classes deriving
-	 * from DOMNode for implementing reference counting on DOMNodes.
+     * This is custom function which can be implemented by classes deriving
+     * from DOMNode for implementing reference counting on DOMNodes.
      */
     virtual void incRefCount() {}
     //@}
@@ -900,21 +900,22 @@ public:
 
 /***
  * Utilities macros for getting memory manager within DOM
-***/
-#define GET_OWNER_DOCUMENT(ptr)      \
-        ((DOMDocumentImpl*)(ptr->getOwnerDocument()))
+ ***/
+#define GET_OWNER_DOCUMENT(ptr) ((DOMDocumentImpl*)(ptr->getOwnerDocument()))
 
-#define GET_DIRECT_MM(ptr)           \
-        (ptr ? ((DOMDocumentImpl*)ptr)->getMemoryManager() : XMLPlatformUtils::fgMemoryManager)
+#define GET_DIRECT_MM(ptr)                                                     \
+    (ptr ? ((DOMDocumentImpl*)ptr)->getMemoryManager()                         \
+         : XMLPlatformUtils::fgMemoryManager)
 
-#define GET_INDIRECT_MM(ptr)                                                    \
-        (!ptr ? XMLPlatformUtils::fgMemoryManager :                              \
-        GET_OWNER_DOCUMENT(ptr) ? GET_OWNER_DOCUMENT(ptr)->getMemoryManager() : \
-        XMLPlatformUtils::fgMemoryManager)
+#define GET_INDIRECT_MM(ptr)                                                   \
+    (!ptr ? XMLPlatformUtils::fgMemoryManager                                  \
+          : GET_OWNER_DOCUMENT(ptr)                                            \
+                ? GET_OWNER_DOCUMENT(ptr)->getMemoryManager()                  \
+                : XMLPlatformUtils::fgMemoryManager)
 
 /***
  * For DOMNode and its derivatives
-***/
+ ***/
 #define GetDOMNodeMemoryManager GET_INDIRECT_MM(this)
 
 }; // namespace XERCES
