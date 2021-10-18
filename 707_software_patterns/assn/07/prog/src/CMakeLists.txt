@@ -10,10 +10,12 @@ if(Boost_FOUND)
 	target_sources(${CMAKE_PROJECT_NAME} PUBLIC
 		Attr.cpp
 		Document.cpp
+		DocumentAdapter.cpp
 		Element.cpp
 		Iterator.cpp
 		NamedNodeMap.cpp
 		Node.cpp
+		NodeAdapter.cpp
 		Test.cpp
 		Text.cpp
 		ValidChildren.cpp
