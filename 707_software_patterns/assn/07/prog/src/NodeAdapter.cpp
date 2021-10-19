@@ -7,10 +7,6 @@ NodeAdapter::NodeAdapter(const std::string& name, short type,
 
 NodeAdapter::NodeAdapter(dom::Node* _adaptee) : adaptee(_adaptee) {}
 
-dom::Node* NodeAdapter::getAdaptee() {
-    return adaptee;
-}
-
 const XERCES::XMLCh* NodeAdapter::getNodeName() const {
     return (XERCES::XMLCh*)adaptee->getNodeName().c_str();
 }
@@ -69,26 +65,26 @@ XERCES::DOMDocument* NodeAdapter::getOwnerDocument() const {
 
 XERCES::DOMNode* NodeAdapter::insertBefore(XERCES::DOMNode* newChild,
                                            XERCES::DOMNode* refChild) {
-    return dynamic_cast<XERCES::DOMNode*>(new NodeAdapter(adaptee->insertBefore(
-        dynamic_cast<NodeAdapter*>(newChild)->getAdaptee(),
-        dynamic_cast<NodeAdapter*>(refChild)->getAdaptee())));
+    return new NodeAdapter(
+        adaptee->insertBefore(dynamic_cast<NodeAdapter*>(newChild)->adaptee,
+                              dynamic_cast<NodeAdapter*>(refChild)->adaptee));
 }
 
 XERCES::DOMNode* NodeAdapter::replaceChild(XERCES::DOMNode* newChild,
                                            XERCES::DOMNode* oldChild) {
-    return dynamic_cast<XERCES::DOMNode*>(new NodeAdapter(adaptee->replaceChild(
-        dynamic_cast<NodeAdapter*>(newChild)->getAdaptee(),
-        dynamic_cast<NodeAdapter*>(oldChild)->getAdaptee())));
+    return new NodeAdapter(
+        adaptee->replaceChild(dynamic_cast<NodeAdapter*>(newChild)->adaptee,
+                              dynamic_cast<NodeAdapter*>(oldChild)->adaptee));
 }
 
 XERCES::DOMNode* NodeAdapter::removeChild(XERCES::DOMNode* oldChild) {
-    return dynamic_cast<XERCES::DOMNode*>(new NodeAdapter(adaptee->removeChild(
-        dynamic_cast<NodeAdapter*>(oldChild)->getAdaptee())));
+    return new NodeAdapter(
+        adaptee->removeChild(dynamic_cast<NodeAdapter*>(oldChild)->adaptee));
 }
 
 XERCES::DOMNode* NodeAdapter::appendChild(XERCES::DOMNode* newChild) {
-    return dynamic_cast<XERCES::DOMNode*>(new NodeAdapter(adaptee->appendChild(
-        dynamic_cast<NodeAdapter*>(newChild)->getAdaptee())));
+    return new NodeAdapter(
+        adaptee->appendChild(dynamic_cast<NodeAdapter*>(newChild)->adaptee));
 }
 
 bool NodeAdapter::hasChildNodes() const {

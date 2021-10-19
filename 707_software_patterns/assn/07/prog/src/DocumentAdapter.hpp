@@ -3,8 +3,10 @@
 
 #include "NodeAdapter.hpp"
 
-class DocumentAdapter : public virtual XERCES::DOMDocument,
-                        public virtual NodeAdapter {
+class DocumentAdapter : public virtual XERCES::DOMDocument {
+private:
+    dom::Document* adaptee;
+
 public:
     DocumentAdapter();
     DocumentAdapter(dom::Document*);
@@ -13,10 +15,7 @@ public:
     virtual XERCES::DOMText* createTextNode(const XERCES::XMLCh*);
     virtual XERCES::DOMAttr* createAttribute(const XERCES::XMLCh*);
     virtual XERCES::DOMElement* getDocumentElement() const;
-    //
-    // These Node members must be reimplemented to correctly wrap the return
-    // result.
-    //
+
     virtual XERCES::DOMNode* getParentNode() const;
     virtual XERCES::DOMNode* getFirstChild() const;
     virtual XERCES::DOMNode* getLastChild() const;
@@ -57,9 +56,6 @@ public:
     virtual const XERCES::XMLCh* lookupNamespaceURI(const XERCES::XMLCh*) const;
     virtual void* getFeature(const XERCES::XMLCh*, const XERCES::XMLCh*) const;
     virtual void release();
-    //
-    // No implementation for these.
-    //
     virtual XERCES::DOMDocumentFragment* createDocumentFragment();
     virtual XERCES::DOMComment* createComment(const XERCES::XMLCh*);
     virtual XERCES::DOMCDATASection* createCDATASection(const XERCES::XMLCh*);

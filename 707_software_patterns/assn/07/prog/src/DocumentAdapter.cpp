@@ -1,23 +1,21 @@
 #include "DocumentAdapter.hpp"
 
-DocumentAdapter::DocumentAdapter() : NodeAdapter(new Document_Impl()) {}
-DocumentAdapter::DocumentAdapter(dom::Document* adaptee)
-    : NodeAdapter(adaptee) {}
+DocumentAdapter::DocumentAdapter() : adaptee(new Document_Impl()) {}
+DocumentAdapter::DocumentAdapter(dom::Document* adaptee) : adaptee(adaptee) {}
 
-XERCES::DOMElement*
-DocumentAdapter::createElement(const XERCES::XMLCh* tagName) {
+XERCES::DOMElement* DocumentAdapter::createElement(const XERCES::XMLCh*) {
     // return new Element(
     //     dynamic_cast<dom::Document*>(getAdaptee())->createElement(tagName));
     return nullptr;
 }
 
-XERCES::DOMText* DocumentAdapter::createTextNode(const XERCES::XMLCh* data) {
+XERCES::DOMText* DocumentAdapter::createTextNode(const XERCES::XMLCh*) {
     // return new Text(
     //     dynamic_cast<dom::Document*>(getAdaptee())->createTextNode(data));
     return nullptr;
 }
 
-XERCES::DOMAttr* DocumentAdapter::createAttribute(const XERCES::XMLCh* name) {
+XERCES::DOMAttr* DocumentAdapter::createAttribute(const XERCES::XMLCh*) {
     // return new Attr(
     //     dynamic_cast<dom::Document*>(getAdaptee())->createAttribute(name));
     return nullptr;
@@ -30,37 +28,33 @@ XERCES::DOMElement* DocumentAdapter::getDocumentElement() const {
 }
 
 XERCES::DOMNode* DocumentAdapter::getParentNode() const {
-    return dynamic_cast<XERCES::DOMDocument*>(new DocumentAdapter(
-        dynamic_cast<dom::Document*>(const_cast<DocumentAdapter*>(this)
-                                         ->getAdaptee()
-                                         ->getParentNode())));
+    return dynamic_cast<XERCES::DOMDocument*>(
+        new DocumentAdapter(dynamic_cast<dom::Document*>(
+            const_cast<DocumentAdapter*>(this)->adaptee->getParentNode())));
 }
 
 XERCES::DOMNode* DocumentAdapter::getFirstChild() const {
-    return dynamic_cast<XERCES::DOMDocument*>(new DocumentAdapter(
-        dynamic_cast<dom::Document*>(const_cast<DocumentAdapter*>(this)
-                                         ->getAdaptee()
-                                         ->getFirstChild())));
+    return dynamic_cast<XERCES::DOMDocument*>(
+        new DocumentAdapter(dynamic_cast<dom::Document*>(
+            const_cast<DocumentAdapter*>(this)->adaptee->getFirstChild())));
 }
 
 XERCES::DOMNode* DocumentAdapter::getLastChild() const {
     return dynamic_cast<XERCES::DOMDocument*>(
         new DocumentAdapter(dynamic_cast<dom::Document*>(
-            const_cast<DocumentAdapter*>(this)->getAdaptee()->getLastChild())));
+            const_cast<DocumentAdapter*>(this)->adaptee->getLastChild())));
 }
 
 XERCES::DOMNode* DocumentAdapter::getPreviousSibling() const {
     return dynamic_cast<XERCES::DOMDocument*>(new DocumentAdapter(
         dynamic_cast<dom::Document*>(const_cast<DocumentAdapter*>(this)
-                                         ->getAdaptee()
-                                         ->getPreviousSibling())));
+                                         ->adaptee->getPreviousSibling())));
 }
 
 XERCES::DOMNode* DocumentAdapter::getNextSibling() const {
-    return dynamic_cast<XERCES::DOMDocument*>(new DocumentAdapter(
-        dynamic_cast<dom::Document*>(const_cast<DocumentAdapter*>(this)
-                                         ->getAdaptee()
-                                         ->getNextSibling())));
+    return dynamic_cast<XERCES::DOMDocument*>(
+        new DocumentAdapter(dynamic_cast<dom::Document*>(
+            const_cast<DocumentAdapter*>(this)->adaptee->getNextSibling())));
 }
 
 XERCES::DOMNode* DocumentAdapter::insertBefore(XERCES::DOMNode*,
@@ -82,25 +76,38 @@ XERCES::DOMNode* DocumentAdapter::appendChild(XERCES::DOMNode*) {
 }
 
 const XERCES::XMLCh* DocumentAdapter::getNodeName() const {
-    return NodeAdapter::getNodeName();
+    return adaptee->getNodeName().c_str();
 }
 const XERCES::XMLCh* DocumentAdapter::getNodeValue() const {
-    return NodeAdapter::getNodeValue();
+    return adaptee->getNodeValue().c_str();
 }
 XERCES::DOMNode::NodeType DocumentAdapter::getNodeType() const {
-    return NodeAdapter::getNodeType();
+    switch (adaptee->getNodeType()) {
+        case dom::Node::ATTRIBUTE_NODE:
+            return XERCES::DOMNode::ATTRIBUTE_NODE;
+        case dom::Node::DOCUMENT_NODE:
+            return XERCES::DOMNode::DOCUMENT_NODE;
+        case dom::Node::ELEMENT_NODE:
+            return XERCES::DOMNode::ELEMENT_NODE;
+        case dom::Node::TEXT_NODE:
+            return XERCES::DOMNode::TEXT_NODE;
+    }
 }
+
 XERCES::DOMNodeList* DocumentAdapter::getChildNodes() const {
-    return NodeAdapter::getChildNodes();
+    // return adaptee->getChildNodes();
+    return nullptr;
 }
+
 XERCES::DOMDocument* DocumentAdapter::getOwnerDocument() const {
-    return NodeAdapter::getOwnerDocument();
+    // return adaptee->getOwnerDocument();
+    return nullptr;
 }
 bool DocumentAdapter::hasChildNodes() const {
-    return NodeAdapter::hasChildNodes();
+    return adaptee->hasChildNodes();
 }
 void DocumentAdapter::setNodeValue(const XERCES::XMLCh* nodeValue) {
-    NodeAdapter::setNodeValue(nodeValue);
+    adaptee->setNodeValue(nodeValue);
 }
 
 XERCES::DOMNamedNodeMap* DocumentAdapter::getAttributes() const {

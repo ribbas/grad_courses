@@ -1,6 +1,10 @@
 #include "Attr.hpp"
+#include "DOMDocument.hpp"
+#include "DOMNode.hpp"
 #include "Document.hpp"
+#include "DocumentAdapter.hpp"
 #include "Element.hpp"
+#include "NodeAdapter.hpp"
 #include "Text.hpp"
 #include "XMLBuilder.hpp"
 #include "XMLDirector.hpp"
@@ -16,14 +20,15 @@ void testSerializer(int, char**);
 void testValidator(int, char**);
 void testBuilder(int, char**);
 void testIterator(int, char**);
+void testAdapter(int, char**);
 
 void printUsage() {
-    printf("Usage:\n");
-    printf("\tTest b [file1] [file2]\n");
-    printf("\tTest i [file] ...\n");
-    printf("\tTest t [file] ...\n");
-    printf("\tTest s [file1] [file2]\n");
-    printf("\tTest v [file]\n");
+    std::cout << "Usage:\n"
+              << "\tTest b [file1] [file2]\n"
+              << "\tTest i [file] ...\n"
+              << "\tTest t [file] ...\n"
+              << "\tTest s [file1] [file2]\n"
+              << "\tTest v [file]\n";
 }
 
 int main(int argc, char** argv) {
@@ -34,6 +39,10 @@ int main(int argc, char** argv) {
     }
 
     switch (argv[1][0]) {
+        case 'A':
+        case 'a':
+            testAdapter(argc, argv);
+            break;
         case 'B':
         case 'b':
             testBuilder(argc, argv);
@@ -55,6 +64,13 @@ int main(int argc, char** argv) {
             testValidator(argc, argv);
             break;
     }
+}
+
+void testAdapter(int, char**) {
+    // XERCES::DOMDocument* xercesDoc = new DocumentAdapter;
+    // XERCES::DOMElement* xercesElt = xercesDoc->createElement("root");
+    // xercesDoc->appendChild(xercesElt);
+    // xercesDoc->getChildNodes();
 }
 
 void testBuilder(int argc, char** argv) {
@@ -124,13 +140,13 @@ void testIterator(int argc, char**) {
         currentNode = it->currentItem();
 
         if (dynamic_cast<dom::Document*>(currentNode) != 0) {
-            std::cout << "Document: " << currentNode << std::endl;
+            std::cout << "Document: " << currentNode << '\n';
         } else if (dynamic_cast<dom::Element*>(currentNode) != 0) {
-            std::cout << "Element: " << currentNode << std::endl;
+            std::cout << "Element: " << currentNode << '\n';
         } else if (dynamic_cast<dom::Attr*>(currentNode) != 0) {
-            std::cout << "Attr: " << currentNode << std::endl;
+            std::cout << "Attr: " << currentNode << '\n';
         } else if (dynamic_cast<dom::Text*>(currentNode) != 0) {
-            std::cout << "Text: " << currentNode << std::endl;
+            std::cout << "Text: " << currentNode << '\n';
         }
     }
 
@@ -146,13 +162,13 @@ void testTokenizer(int argc, char** argv) {
     dom::Text* text = document->createTextNode("Text Data");
     dom::Attr* attr = document->createAttribute("NewAttribute");
 
-    printf("Element Tag = '%s'\n", element->getTagName().c_str());
-    printf("Text Data = '%s'\n", text->getValue().c_str());
-    printf("Attr Name = '%s'\n", attr->getName().c_str());
+    std::cout << "Element Tag = '" << element->getTagName() << "'\n";
+    std::cout << "Text Data = '" << text->getValue() << "'\n";
+    std::cout << "Attr Name = '" << attr->getName() << "'\n";
 
     element->setAttributeNode(attr);
-    printf("Element attribute '%s'='%s'\n", element->getTagName().c_str(),
-           element->getAttribute("NewAttribute").c_str());
+    std::cout << "Element attribute '" << element->getTagName() << "'='"
+              << element->getAttribute("NewAttribute") << "'\n";
 
     delete element;
     delete text;
@@ -163,16 +179,17 @@ void testTokenizer(int argc, char** argv) {
 
         XMLTokenizer::XMLToken* token = 0;
 
-        printf("File:  '%s'\n", argv[i]);
+        std::cout << "File:  '" << argv[i] << "'\n";
 
         do {
             delete token;
             token = tokenizer.getNextToken();
 
-            printf("\tLine %d:  %s = '%s'\n", tokenizer.getLineNumber(),
-                   token->toString(),
-                   token->getToken().size() == 0 ? ""
-                                                 : token->getToken().c_str());
+            std::cout << "\tLine " << tokenizer.getLineNumber() << ":  "
+                      << token->toString() << " = '"
+                      << (token->getToken().size() == 0 ? ""
+                                                        : token->getToken())
+                      << "'\n";
 
         } while (token->getTokenType() != XMLTokenizer::XMLToken::NULL_TOKEN);
 
@@ -286,7 +303,7 @@ void testValidator(int argc, char** argv) {
         root = document->createElement("document");
         document->appendChild(root);
     } else {
-        printf("Attempted invalid schema operation.");
+        std::cout << "Attempted invalid schema operation.\n";
         exit(0);
     }
 
@@ -298,13 +315,13 @@ void testValidator(int argc, char** argv) {
             attr->setValue("attribute value");
             child->setAttributeNode(attr);
         } else {
-            printf("Attempted invalid schema operation.");
+            std::cout << "Attempted invalid schema operation.\n";
             exit(0);
         }
 
         root->appendChild(child);
     } else {
-        printf("Attempted invalid schema operation.");
+        std::cout << "Attempted invalid schema operation.\n";
         exit(0);
     }
 
@@ -312,7 +329,7 @@ void testValidator(int argc, char** argv) {
         child = document->createElement("element");
         root->appendChild(child);
     } else {
-        printf("Attempted invalid schema operation.");
+        std::cout << "Attempted invalid schema operation.\n";
         exit(0);
     }
 
@@ -322,14 +339,14 @@ void testValidator(int argc, char** argv) {
         if (xmlValidator.canAddAttribute(child, "attribute"))
             child->setAttribute("attribute", "attribute value");
         else {
-            printf("Attempted invalid schema operation.");
+            std::cout << "Attempted invalid schema operation.\n";
             exit(0);
         }
 
         if (xmlValidator.canAddAttribute(child, "attribute2"))
             child->setAttribute("attribute2", "attribute2 value");
         else {
-            printf("Attempted invalid schema operation.");
+            std::cout << "Attempted invalid schema operation.\n";
             exit(0);
         }
 
@@ -337,13 +354,13 @@ void testValidator(int argc, char** argv) {
             dom::Text* text = document->createTextNode("Element Value");
             child->appendChild(text);
         } else {
-            printf("Attempted invalid schema operation.");
+            std::cout << "Attempted invalid schema operation.\n";
             exit(0);
         }
 
         root->appendChild(child);
     } else {
-        printf("Attempted invalid schema operation.");
+        std::cout << "Attempted invalid schema operation.\n";
         exit(0);
     }
 
@@ -351,7 +368,7 @@ void testValidator(int argc, char** argv) {
         child = document->createElement("element");
         root->appendChild(child);
     } else {
-        printf("Attempted invalid schema operation.");
+        std::cout << "Attempted invalid schema operation.\n";
         exit(0);
     }
 

@@ -10,13 +10,9 @@ class NodeAdapter : public virtual XERCES::DOMNode {
 private:
     dom::Node* adaptee;
 
-    // protected:
-
 public:
     NodeAdapter(const std::string&, short, dom::Document*);
     NodeAdapter(dom::Node*);
-    // class DocumentAdapter;
-    virtual dom::Node* getAdaptee();
 
     virtual const XERCES::XMLCh* getNodeName() const;
     virtual const XERCES::XMLCh* getNodeValue() const;
@@ -35,9 +31,6 @@ public:
     virtual bool hasChildNodes() const;
     virtual void setNodeValue(const XERCES::XMLCh*);
 
-    //
-    // No implementation for these.
-    //
     virtual XERCES::DOMNamedNodeMap* getAttributes() const;
     virtual XERCES::DOMNode* cloneNode(bool) const;
     virtual void normalize();
