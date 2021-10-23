@@ -34,7 +34,7 @@ The factory method pattern is observed in the
 The singleton pattern is present in the \texttt{Factory} class. On the repository, the class can be located at \texttt{src/sst/core/factory.h}. The class is used to instantiate other concrete simulation classes. SST requires simulation objects to be synchronized throughout the kernel, especially since they can be running on a distributed system where locks can become major issues. The software forces these simulation objects to be singletons.
 
 \subsection{Template method pattern}
-This pattern is implemented throughout the project through C++ function templates.
+This pattern is implemented throughout the project through C++ function templates. The synchronization subclasses, which can be found at \texttt{src/sst/core/factory.h}, are implemented as template subclasses with variadic arguments. This approach allowed for various 
 
 \subsection{Builder pattern}
 
