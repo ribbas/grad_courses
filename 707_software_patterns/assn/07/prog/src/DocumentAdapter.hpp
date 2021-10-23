@@ -10,12 +10,12 @@ private:
 public:
     DocumentAdapter();
     DocumentAdapter(dom::Document*);
+    virtual ~DocumentAdapter();
 
     virtual XERCES::DOMElement* createElement(const XERCES::XMLCh*);
     virtual XERCES::DOMText* createTextNode(const XERCES::XMLCh*);
     virtual XERCES::DOMAttr* createAttribute(const XERCES::XMLCh*);
     virtual XERCES::DOMElement* getDocumentElement() const;
-
     virtual XERCES::DOMNode* getParentNode() const;
     virtual XERCES::DOMNode* getFirstChild() const;
     virtual XERCES::DOMNode* getLastChild() const;
@@ -25,7 +25,6 @@ public:
     virtual XERCES::DOMNode* replaceChild(XERCES::DOMNode*, XERCES::DOMNode*);
     virtual XERCES::DOMNode* removeChild(XERCES::DOMNode*);
     virtual XERCES::DOMNode* appendChild(XERCES::DOMNode*);
-
     virtual const XERCES::XMLCh* getNodeName() const;
     virtual const XERCES::XMLCh* getNodeValue() const;
     virtual XERCES::DOMNode::NodeType getNodeType() const;
@@ -34,6 +33,8 @@ public:
     virtual bool hasChildNodes() const;
     virtual void setNodeValue(const XERCES::XMLCh*);
     virtual XERCES::DOMNamedNodeMap* getAttributes() const;
+
+    // empty methods since they have yet to be implemented
     virtual XERCES::DOMNode* cloneNode(bool) const;
     virtual void normalize();
     virtual bool isSupported(const XERCES::XMLCh*, const XERCES::XMLCh*) const;

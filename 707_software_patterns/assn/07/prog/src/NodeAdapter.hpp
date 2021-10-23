@@ -13,6 +13,7 @@ private:
 public:
     NodeAdapter(const std::string&, short, dom::Document*);
     NodeAdapter(dom::Node*);
+    virtual ~NodeAdapter();
 
     virtual const XERCES::XMLCh* getNodeName() const;
     virtual const XERCES::XMLCh* getNodeValue() const;
@@ -30,8 +31,9 @@ public:
     virtual XERCES::DOMNode* appendChild(XERCES::DOMNode*);
     virtual bool hasChildNodes() const;
     virtual void setNodeValue(const XERCES::XMLCh*);
-
     virtual XERCES::DOMNamedNodeMap* getAttributes() const;
+
+    // empty methods since they have yet to be implemented
     virtual XERCES::DOMNode* cloneNode(bool) const;
     virtual void normalize();
     virtual bool isSupported(const XERCES::XMLCh*, const XERCES::XMLCh*) const;
