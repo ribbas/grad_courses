@@ -1,6 +1,9 @@
 #include "DocumentAdapter.hpp"
 
+using namespace XERCES;
+
 DocumentAdapter::DocumentAdapter() : adaptee(new Document_Impl()) {}
+
 DocumentAdapter::DocumentAdapter(dom::Document* adaptee) : adaptee(adaptee) {}
 
 DocumentAdapter::~DocumentAdapter() {
@@ -9,8 +12,7 @@ DocumentAdapter::~DocumentAdapter() {
     }
 }
 
-XERCES::DOMElement*
-DocumentAdapter::createElement(const XERCES::XMLCh* /* tagName */) {
+DOMElement* DocumentAdapter::createElement(const XMLCh* /* tagName */) {
     // once the DOMElement class is implemented, the following can
     // instead be returned:
     // new
@@ -18,95 +20,91 @@ DocumentAdapter::createElement(const XERCES::XMLCh* /* tagName */) {
     return nullptr;
 }
 
-XERCES::DOMText*
-DocumentAdapter::createTextNode(const XERCES::XMLCh* /* data */) {
+DOMText* DocumentAdapter::createTextNode(const XMLCh* /* data */) {
     // once the DOMText class is implemented, the following can
     // instead be returned:
     // new Text(dynamic_cast<dom::Document*>(adaptee)->createTextNode(data));
     return nullptr;
 }
 
-XERCES::DOMAttr*
-DocumentAdapter::createAttribute(const XERCES::XMLCh* /* name */) {
+DOMAttr* DocumentAdapter::createAttribute(const XMLCh* /* name */) {
     // once the DOMAttr class is implemented, the following can
     // instead be returned:
     // new Attr(dynamic_cast<dom::Document*>(adaptee)->createAttribute(name));
     return nullptr;
 }
 
-XERCES::DOMElement* DocumentAdapter::getDocumentElement() const {
+DOMElement* DocumentAdapter::getDocumentElement() const {
     // once the DOMElement class is implemented, the following can
     // instead be returned:
     // new Element(dynamic_cast<dom::Document*>(adaptee)->getDocumentElement());
     return nullptr;
 }
 
-XERCES::DOMNode* DocumentAdapter::getParentNode() const {
-    return dynamic_cast<XERCES::DOMNode*>(adaptee->getParentNode());
+DOMNode* DocumentAdapter::getParentNode() const {
+    return dynamic_cast<DOMNode*>(adaptee->getParentNode());
 }
 
-XERCES::DOMNode* DocumentAdapter::getFirstChild() const {
-    return dynamic_cast<XERCES::DOMNode*>(adaptee->getFirstChild());
+DOMNode* DocumentAdapter::getFirstChild() const {
+    return dynamic_cast<DOMNode*>(adaptee->getFirstChild());
 }
 
-XERCES::DOMNode* DocumentAdapter::getLastChild() const {
-    return dynamic_cast<XERCES::DOMNode*>(adaptee->getLastChild());
+DOMNode* DocumentAdapter::getLastChild() const {
+    return dynamic_cast<DOMNode*>(adaptee->getLastChild());
 }
 
-XERCES::DOMNode* DocumentAdapter::getPreviousSibling() const {
-    return dynamic_cast<XERCES::DOMNode*>(adaptee->getPreviousSibling());
+DOMNode* DocumentAdapter::getPreviousSibling() const {
+    return dynamic_cast<DOMNode*>(adaptee->getPreviousSibling());
 }
 
-XERCES::DOMNode* DocumentAdapter::getNextSibling() const {
-    return dynamic_cast<XERCES::DOMNode*>(adaptee->getNextSibling());
+DOMNode* DocumentAdapter::getNextSibling() const {
+    return dynamic_cast<DOMNode*>(adaptee->getNextSibling());
 }
 
-XERCES::DOMNode* DocumentAdapter::insertBefore(XERCES::DOMNode*,
-                                               XERCES::DOMNode*) {
+DOMNode* DocumentAdapter::insertBefore(DOMNode*, DOMNode*) {
     return nullptr;
 }
 
-XERCES::DOMNode* DocumentAdapter::replaceChild(XERCES::DOMNode*,
-                                               XERCES::DOMNode*) {
+DOMNode* DocumentAdapter::replaceChild(DOMNode*, DOMNode*) {
     return nullptr;
 }
 
-XERCES::DOMNode* DocumentAdapter::removeChild(XERCES::DOMNode*) {
+DOMNode* DocumentAdapter::removeChild(DOMNode*) {
     return nullptr;
 }
 
-XERCES::DOMNode* DocumentAdapter::appendChild(XERCES::DOMNode*) {
+DOMNode* DocumentAdapter::appendChild(DOMNode*) {
     return nullptr;
 }
 
-const XERCES::XMLCh* DocumentAdapter::getNodeName() const {
+const XMLCh* DocumentAdapter::getNodeName() const {
     return adaptee->getNodeName().c_str();
 }
 
-const XERCES::XMLCh* DocumentAdapter::getNodeValue() const {
+const XMLCh* DocumentAdapter::getNodeValue() const {
     return adaptee->getNodeValue().c_str();
 }
 
-XERCES::DOMNode::NodeType DocumentAdapter::getNodeType() const {
+DOMNode::NodeType DocumentAdapter::getNodeType() const {
     switch (adaptee->getNodeType()) {
         case dom::Node::ATTRIBUTE_NODE:
-            return XERCES::DOMNode::ATTRIBUTE_NODE;
+            return DOMNode::ATTRIBUTE_NODE;
         case dom::Node::DOCUMENT_NODE:
-            return XERCES::DOMNode::DOCUMENT_NODE;
+            return DOMNode::DOCUMENT_NODE;
         case dom::Node::ELEMENT_NODE:
-            return XERCES::DOMNode::ELEMENT_NODE;
+            return DOMNode::ELEMENT_NODE;
         case dom::Node::TEXT_NODE:
-            return XERCES::DOMNode::TEXT_NODE;
+            return DOMNode::TEXT_NODE;
         default:
-            return (XERCES::DOMNode::NodeType)(0);
+            return (DOMNode::NodeType)(0);
     }
 }
 
-XERCES::DOMNodeList* DocumentAdapter::getChildNodes() const {
+DOMNodeList* DocumentAdapter::getChildNodes() const {
     return nullptr;
 }
 
-XERCES::DOMDocument* DocumentAdapter::getOwnerDocument() const {
+DOMDocument* DocumentAdapter::getOwnerDocument() const {
     return nullptr;
 }
 
@@ -114,161 +112,149 @@ bool DocumentAdapter::hasChildNodes() const {
     return adaptee->hasChildNodes();
 }
 
-void DocumentAdapter::setNodeValue(const XERCES::XMLCh* nodeValue) {
+void DocumentAdapter::setNodeValue(const XMLCh* nodeValue) {
     adaptee->setNodeValue(nodeValue);
 }
 
-XERCES::DOMNamedNodeMap* DocumentAdapter::getAttributes() const {
+DOMNamedNodeMap* DocumentAdapter::getAttributes() const {
     return nullptr;
 }
 
-XERCES::DOMNode* DocumentAdapter::cloneNode(bool) const {
+DOMNode* DocumentAdapter::cloneNode(bool) const {
     return nullptr;
 }
 
 void DocumentAdapter::normalize() {}
 
-bool DocumentAdapter::isSupported(const XERCES::XMLCh*,
-                                  const XERCES::XMLCh*) const {
+bool DocumentAdapter::isSupported(const XMLCh*, const XMLCh*) const {
     return false;
 }
 
-const XERCES::XMLCh* DocumentAdapter::getNamespaceURI() const {
+const XMLCh* DocumentAdapter::getNamespaceURI() const {
     return nullptr;
 }
 
-const XERCES::XMLCh* DocumentAdapter::getPrefix() const {
+const XMLCh* DocumentAdapter::getPrefix() const {
     return nullptr;
 }
 
-const XERCES::XMLCh* DocumentAdapter::getLocalName() const {
+const XMLCh* DocumentAdapter::getLocalName() const {
     return nullptr;
 }
 
-void DocumentAdapter::setPrefix(const XERCES::XMLCh*) {}
+void DocumentAdapter::setPrefix(const XMLCh*) {}
 
 bool DocumentAdapter::hasAttributes() const {
     return false;
 }
 
-bool DocumentAdapter::isSameNode(const XERCES::DOMNode*) const {
+bool DocumentAdapter::isSameNode(const DOMNode*) const {
     return false;
 }
 
-bool DocumentAdapter::isEqualNode(const XERCES::DOMNode*) const {
+bool DocumentAdapter::isEqualNode(const DOMNode*) const {
     return false;
 }
 
-void* DocumentAdapter::setUserData(const XERCES::XMLCh*, void*,
-                                   XERCES::DOMUserDataHandler*) {
+void* DocumentAdapter::setUserData(const XMLCh*, void*, DOMUserDataHandler*) {
     return nullptr;
 }
 
-void* DocumentAdapter::getUserData(const XERCES::XMLCh*) const {
+void* DocumentAdapter::getUserData(const XMLCh*) const {
     return nullptr;
 }
 
-const XERCES::XMLCh* DocumentAdapter::getBaseURI() const {
+const XMLCh* DocumentAdapter::getBaseURI() const {
     return nullptr;
 }
 
-short DocumentAdapter::compareDocumentPosition(const XERCES::DOMNode*) const {
+short DocumentAdapter::compareDocumentPosition(const DOMNode*) const {
     return 0;
 }
 
-const XERCES::XMLCh* DocumentAdapter::getTextContent() const {
+const XMLCh* DocumentAdapter::getTextContent() const {
     return nullptr;
 }
 
-void DocumentAdapter::setTextContent(const XERCES::XMLCh*) {}
+void DocumentAdapter::setTextContent(const XMLCh*) {}
 
-const XERCES::XMLCh* DocumentAdapter::lookupPrefix(const XERCES::XMLCh*) const {
+const XMLCh* DocumentAdapter::lookupPrefix(const XMLCh*) const {
     return nullptr;
 }
 
-bool DocumentAdapter::isDefaultNamespace(const XERCES::XMLCh*) const {
+bool DocumentAdapter::isDefaultNamespace(const XMLCh*) const {
     return false;
 }
 
-const XERCES::XMLCh*
-DocumentAdapter::lookupNamespaceURI(const XERCES::XMLCh*) const {
+const XMLCh* DocumentAdapter::lookupNamespaceURI(const XMLCh*) const {
     return nullptr;
 }
 
-void* DocumentAdapter::getFeature(const XERCES::XMLCh*,
-                                  const XERCES::XMLCh*) const {
+void* DocumentAdapter::getFeature(const XMLCh*, const XMLCh*) const {
     return nullptr;
 }
 
 void DocumentAdapter::release() {}
 
-XERCES::DOMDocumentFragment* DocumentAdapter::createDocumentFragment() {
+DOMDocumentFragment* DocumentAdapter::createDocumentFragment() {
     return nullptr;
 }
 
-XERCES::DOMComment* DocumentAdapter::createComment(const XERCES::XMLCh*) {
+DOMComment* DocumentAdapter::createComment(const XMLCh*) {
     return nullptr;
 }
 
-XERCES::DOMCDATASection*
-DocumentAdapter::createCDATASection(const XERCES::XMLCh*) {
+DOMCDATASection* DocumentAdapter::createCDATASection(const XMLCh*) {
     return nullptr;
 }
 
-XERCES::DOMProcessingInstruction*
-DocumentAdapter::createProcessingInstruction(const XERCES::XMLCh*,
-                                             const XERCES::XMLCh*) {
+DOMProcessingInstruction*
+DocumentAdapter::createProcessingInstruction(const XMLCh*, const XMLCh*) {
     return nullptr;
 }
 
-XERCES::DOMEntityReference*
-DocumentAdapter::createEntityReference(const XERCES::XMLCh*) {
+DOMEntityReference* DocumentAdapter::createEntityReference(const XMLCh*) {
     return nullptr;
 }
 
-XERCES::DOMDocumentType* DocumentAdapter::getDoctype() const {
+DOMDocumentType* DocumentAdapter::getDoctype() const {
     return nullptr;
 }
 
-XERCES::DOMImplementation* DocumentAdapter::getImplementation() const {
+DOMImplementation* DocumentAdapter::getImplementation() const {
     return nullptr;
 }
 
-XERCES::DOMNodeList*
-DocumentAdapter::getElementsByTagName(const XERCES::XMLCh*) const {
+DOMNodeList* DocumentAdapter::getElementsByTagName(const XMLCh*) const {
     return nullptr;
 }
 
-XERCES::DOMNode* DocumentAdapter::importNode(const XERCES::DOMNode*, bool) {
+DOMNode* DocumentAdapter::importNode(const DOMNode*, bool) {
     return nullptr;
 }
 
-XERCES::DOMElement* DocumentAdapter::createElementNS(const XERCES::XMLCh*,
-                                                     const XERCES::XMLCh*) {
+DOMElement* DocumentAdapter::createElementNS(const XMLCh*, const XMLCh*) {
     return nullptr;
 }
 
-XERCES::DOMAttr* DocumentAdapter::createAttributeNS(const XERCES::XMLCh*,
-                                                    const XERCES::XMLCh*) {
+DOMAttr* DocumentAdapter::createAttributeNS(const XMLCh*, const XMLCh*) {
     return nullptr;
 }
 
-XERCES::DOMNodeList*
-DocumentAdapter::getElementsByTagNameNS(const XERCES::XMLCh*,
-                                        const XERCES::XMLCh*) const {
+DOMNodeList* DocumentAdapter::getElementsByTagNameNS(const XMLCh*,
+                                                     const XMLCh*) const {
     return nullptr;
 }
 
-XERCES::DOMElement*
-DocumentAdapter::getElementById(const XERCES::XMLCh*) const {
+DOMElement* DocumentAdapter::getElementById(const XMLCh*) const {
     return nullptr;
 }
 
-const XERCES::XMLCh* DocumentAdapter::getInputEncoding() const {
+const XMLCh* DocumentAdapter::getInputEncoding() const {
     return nullptr;
 }
 
-const XERCES::XMLCh* DocumentAdapter::getXmlEncoding() const {
+const XMLCh* DocumentAdapter::getXmlEncoding() const {
     return nullptr;
 }
 
@@ -278,17 +264,17 @@ bool DocumentAdapter::getXmlStandalone() const {
 
 void DocumentAdapter::setXmlStandalone(bool) {}
 
-const XERCES::XMLCh* DocumentAdapter::getXmlVersion() const {
+const XMLCh* DocumentAdapter::getXmlVersion() const {
     return nullptr;
 }
 
-void DocumentAdapter::setXmlVersion(const XERCES::XMLCh*) {}
+void DocumentAdapter::setXmlVersion(const XMLCh*) {}
 
-const XERCES::XMLCh* DocumentAdapter::getDocumentURI() const {
+const XMLCh* DocumentAdapter::getDocumentURI() const {
     return nullptr;
 }
 
-void DocumentAdapter::setDocumentURI(const XERCES::XMLCh*) {}
+void DocumentAdapter::setDocumentURI(const XMLCh*) {}
 
 bool DocumentAdapter::getStrictErrorChecking() const {
     return false;
@@ -296,38 +282,34 @@ bool DocumentAdapter::getStrictErrorChecking() const {
 
 void DocumentAdapter::setStrictErrorChecking(bool) {}
 
-XERCES::DOMNode* DocumentAdapter::renameNode(XERCES::DOMNode*,
-                                             const XERCES::XMLCh*,
-                                             const XERCES::XMLCh*) {
+DOMNode* DocumentAdapter::renameNode(DOMNode*, const XMLCh*, const XMLCh*) {
     return nullptr;
 }
 
-XERCES::DOMNode* DocumentAdapter::adoptNode(XERCES::DOMNode*) {
+DOMNode* DocumentAdapter::adoptNode(DOMNode*) {
     return nullptr;
 }
 
 void DocumentAdapter::normalizeDocument() {}
 
-XERCES::DOMConfiguration* DocumentAdapter::getDOMConfig() const {
+DOMConfiguration* DocumentAdapter::getDOMConfig() const {
     return nullptr;
 }
 
-XERCES::DOMEntity* DocumentAdapter::createEntity(const XERCES::XMLCh*) {
+DOMEntity* DocumentAdapter::createEntity(const XMLCh*) {
     return nullptr;
 }
 
-XERCES::DOMDocumentType*
-DocumentAdapter::createDocumentType(const XERCES::XMLCh*) {
+DOMDocumentType* DocumentAdapter::createDocumentType(const XMLCh*) {
     return nullptr;
 }
 
-XERCES::DOMNotation* DocumentAdapter::createNotation(const XERCES::XMLCh*) {
+DOMNotation* DocumentAdapter::createNotation(const XMLCh*) {
     return nullptr;
 }
 
-XERCES::DOMElement* DocumentAdapter::createElementNS(const XERCES::XMLCh*,
-                                                     const XERCES::XMLCh*,
-                                                     const XERCES::XMLFileLoc,
-                                                     const XERCES::XMLFileLoc) {
+DOMElement* DocumentAdapter::createElementNS(const XMLCh*, const XMLCh*,
+                                             const XMLFileLoc,
+                                             const XMLFileLoc) {
     return nullptr;
 }

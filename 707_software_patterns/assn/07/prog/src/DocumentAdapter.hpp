@@ -3,7 +3,9 @@
 
 #include "NodeAdapter.hpp"
 
-class DocumentAdapter : public virtual XERCES::DOMDocument {
+namespace XERCES {
+
+class DocumentAdapter : public virtual DOMDocument {
 private:
     dom::Document* adaptee;
 
@@ -12,92 +14,85 @@ public:
     DocumentAdapter(dom::Document*);
     virtual ~DocumentAdapter();
 
-    virtual XERCES::DOMElement* createElement(const XERCES::XMLCh*);
-    virtual XERCES::DOMText* createTextNode(const XERCES::XMLCh*);
-    virtual XERCES::DOMAttr* createAttribute(const XERCES::XMLCh*);
-    virtual XERCES::DOMElement* getDocumentElement() const;
-    virtual XERCES::DOMNode* getParentNode() const;
-    virtual XERCES::DOMNode* getFirstChild() const;
-    virtual XERCES::DOMNode* getLastChild() const;
-    virtual XERCES::DOMNode* getPreviousSibling() const;
-    virtual XERCES::DOMNode* getNextSibling() const;
-    virtual XERCES::DOMNode* insertBefore(XERCES::DOMNode*, XERCES::DOMNode*);
-    virtual XERCES::DOMNode* replaceChild(XERCES::DOMNode*, XERCES::DOMNode*);
-    virtual XERCES::DOMNode* removeChild(XERCES::DOMNode*);
-    virtual XERCES::DOMNode* appendChild(XERCES::DOMNode*);
-    virtual const XERCES::XMLCh* getNodeName() const;
-    virtual const XERCES::XMLCh* getNodeValue() const;
-    virtual XERCES::DOMNode::NodeType getNodeType() const;
-    virtual XERCES::DOMNodeList* getChildNodes() const;
-    virtual XERCES::DOMDocument* getOwnerDocument() const;
+    virtual DOMElement* createElement(const XMLCh*);
+    virtual DOMText* createTextNode(const XMLCh*);
+    virtual DOMAttr* createAttribute(const XMLCh*);
+    virtual DOMElement* getDocumentElement() const;
+    virtual DOMNode* getParentNode() const;
+    virtual DOMNode* getFirstChild() const;
+    virtual DOMNode* getLastChild() const;
+    virtual DOMNode* getPreviousSibling() const;
+    virtual DOMNode* getNextSibling() const;
+    virtual DOMNode* insertBefore(DOMNode*, DOMNode*);
+    virtual DOMNode* replaceChild(DOMNode*, DOMNode*);
+    virtual DOMNode* removeChild(DOMNode*);
+    virtual DOMNode* appendChild(DOMNode*);
+    virtual const XMLCh* getNodeName() const;
+    virtual const XMLCh* getNodeValue() const;
+    virtual DOMNode::NodeType getNodeType() const;
+    virtual DOMNodeList* getChildNodes() const;
+    virtual DOMDocument* getOwnerDocument() const;
     virtual bool hasChildNodes() const;
-    virtual void setNodeValue(const XERCES::XMLCh*);
-    virtual XERCES::DOMNamedNodeMap* getAttributes() const;
+    virtual void setNodeValue(const XMLCh*);
+    virtual DOMNamedNodeMap* getAttributes() const;
 
     // empty methods since they have yet to be implemented
-    virtual XERCES::DOMNode* cloneNode(bool) const;
+    virtual DOMNode* cloneNode(bool) const;
     virtual void normalize();
-    virtual bool isSupported(const XERCES::XMLCh*, const XERCES::XMLCh*) const;
-    virtual const XERCES::XMLCh* getNamespaceURI() const;
-    virtual const XERCES::XMLCh* getPrefix() const;
-    virtual const XERCES::XMLCh* getLocalName() const;
-    virtual void setPrefix(const XERCES::XMLCh*);
+    virtual bool isSupported(const XMLCh*, const XMLCh*) const;
+    virtual const XMLCh* getNamespaceURI() const;
+    virtual const XMLCh* getPrefix() const;
+    virtual const XMLCh* getLocalName() const;
+    virtual void setPrefix(const XMLCh*);
     virtual bool hasAttributes() const;
-    virtual bool isSameNode(const XERCES::DOMNode*) const;
-    virtual bool isEqualNode(const XERCES::DOMNode*) const;
-    virtual void* setUserData(const XERCES::XMLCh*, void*,
-                              XERCES::DOMUserDataHandler*);
-    virtual void* getUserData(const XERCES::XMLCh*) const;
-    virtual const XERCES::XMLCh* getBaseURI() const;
-    virtual short compareDocumentPosition(const XERCES::DOMNode*) const;
-    virtual const XERCES::XMLCh* getTextContent() const;
-    virtual void setTextContent(const XERCES::XMLCh*);
-    virtual const XERCES::XMLCh* lookupPrefix(const XERCES::XMLCh*) const;
-    virtual bool isDefaultNamespace(const XERCES::XMLCh*) const;
-    virtual const XERCES::XMLCh* lookupNamespaceURI(const XERCES::XMLCh*) const;
-    virtual void* getFeature(const XERCES::XMLCh*, const XERCES::XMLCh*) const;
+    virtual bool isSameNode(const DOMNode*) const;
+    virtual bool isEqualNode(const DOMNode*) const;
+    virtual void* setUserData(const XMLCh*, void*, DOMUserDataHandler*);
+    virtual void* getUserData(const XMLCh*) const;
+    virtual const XMLCh* getBaseURI() const;
+    virtual short compareDocumentPosition(const DOMNode*) const;
+    virtual const XMLCh* getTextContent() const;
+    virtual void setTextContent(const XMLCh*);
+    virtual const XMLCh* lookupPrefix(const XMLCh*) const;
+    virtual bool isDefaultNamespace(const XMLCh*) const;
+    virtual const XMLCh* lookupNamespaceURI(const XMLCh*) const;
+    virtual void* getFeature(const XMLCh*, const XMLCh*) const;
     virtual void release();
-    virtual XERCES::DOMDocumentFragment* createDocumentFragment();
-    virtual XERCES::DOMComment* createComment(const XERCES::XMLCh*);
-    virtual XERCES::DOMCDATASection* createCDATASection(const XERCES::XMLCh*);
-    virtual XERCES::DOMProcessingInstruction*
-    createProcessingInstruction(const XERCES::XMLCh*, const XERCES::XMLCh*);
-    virtual XERCES::DOMEntityReference*
-    createEntityReference(const XERCES::XMLCh*);
-    virtual XERCES::DOMDocumentType* getDoctype() const;
-    virtual XERCES::DOMImplementation* getImplementation() const;
-    virtual XERCES::DOMNodeList*
-    getElementsByTagName(const XERCES::XMLCh*) const;
-    virtual XERCES::DOMNode* importNode(const XERCES::DOMNode*, bool);
-    virtual XERCES::DOMElement* createElementNS(const XERCES::XMLCh*,
-                                                const XERCES::XMLCh*);
-    virtual XERCES::DOMAttr* createAttributeNS(const XERCES::XMLCh*,
-                                               const XERCES::XMLCh*);
-    virtual XERCES::DOMNodeList*
-    getElementsByTagNameNS(const XERCES::XMLCh*, const XERCES::XMLCh*) const;
-    virtual XERCES::DOMElement* getElementById(const XERCES::XMLCh*) const;
-    virtual const XERCES::XMLCh* getInputEncoding() const;
-    virtual const XERCES::XMLCh* getXmlEncoding() const;
+    virtual DOMDocumentFragment* createDocumentFragment();
+    virtual DOMComment* createComment(const XMLCh*);
+    virtual DOMCDATASection* createCDATASection(const XMLCh*);
+    virtual DOMProcessingInstruction* createProcessingInstruction(const XMLCh*,
+                                                                  const XMLCh*);
+    virtual DOMEntityReference* createEntityReference(const XMLCh*);
+    virtual DOMDocumentType* getDoctype() const;
+    virtual DOMImplementation* getImplementation() const;
+    virtual DOMNodeList* getElementsByTagName(const XMLCh*) const;
+    virtual DOMNode* importNode(const DOMNode*, bool);
+    virtual DOMElement* createElementNS(const XMLCh*, const XMLCh*);
+    virtual DOMAttr* createAttributeNS(const XMLCh*, const XMLCh*);
+    virtual DOMNodeList* getElementsByTagNameNS(const XMLCh*,
+                                                const XMLCh*) const;
+    virtual DOMElement* getElementById(const XMLCh*) const;
+    virtual const XMLCh* getInputEncoding() const;
+    virtual const XMLCh* getXmlEncoding() const;
     virtual bool getXmlStandalone() const;
     virtual void setXmlStandalone(bool);
-    virtual const XERCES::XMLCh* getXmlVersion() const;
-    virtual void setXmlVersion(const XERCES::XMLCh*);
-    virtual const XERCES::XMLCh* getDocumentURI() const;
-    virtual void setDocumentURI(const XERCES::XMLCh*);
+    virtual const XMLCh* getXmlVersion() const;
+    virtual void setXmlVersion(const XMLCh*);
+    virtual const XMLCh* getDocumentURI() const;
+    virtual void setDocumentURI(const XMLCh*);
     virtual bool getStrictErrorChecking() const;
     virtual void setStrictErrorChecking(bool);
-    virtual XERCES::DOMNode* renameNode(XERCES::DOMNode*, const XERCES::XMLCh*,
-                                        const XERCES::XMLCh*);
-    virtual XERCES::DOMNode* adoptNode(XERCES::DOMNode*);
+    virtual DOMNode* renameNode(DOMNode*, const XMLCh*, const XMLCh*);
+    virtual DOMNode* adoptNode(DOMNode*);
     virtual void normalizeDocument();
-    virtual XERCES::DOMConfiguration* getDOMConfig() const;
-    virtual XERCES::DOMEntity* createEntity(const XERCES::XMLCh*);
-    virtual XERCES::DOMDocumentType* createDocumentType(const XERCES::XMLCh*);
-    virtual XERCES::DOMNotation* createNotation(const XERCES::XMLCh*);
-    virtual XERCES::DOMElement* createElementNS(const XERCES::XMLCh*,
-                                                const XERCES::XMLCh*,
-                                                const XERCES::XMLFileLoc,
-                                                const XERCES::XMLFileLoc);
+    virtual DOMConfiguration* getDOMConfig() const;
+    virtual DOMEntity* createEntity(const XMLCh*);
+    virtual DOMDocumentType* createDocumentType(const XMLCh*);
+    virtual DOMNotation* createNotation(const XMLCh*);
+    virtual DOMElement* createElementNS(const XMLCh*, const XMLCh*,
+                                        const XMLFileLoc, const XMLFileLoc);
 };
+}; // namespace XERCES
 
 #endif

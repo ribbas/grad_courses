@@ -67,10 +67,12 @@ int main(int argc, char** argv) {
 }
 
 void testAdapter(int, char**) {
-    // XERCES::DOMDocument* xercesDoc = new DocumentAdapter;
-    // XERCES::DOMElement* xercesElt = xercesDoc->createElement("root");
-    // xercesDoc->appendChild(xercesElt);
-    // xercesDoc->getChildNodes();
+    XERCES::DOMDocument* xercesDocument = new XERCES::DocumentAdapter;
+    // XERCES::DOMElement* xercesRoot = xercesDocument->createElement("root");
+    // xercesDocument->appendChild(xercesRoot);
+
+    delete xercesDocument;
+    // delete xercesRoot;
 }
 
 void testBuilder(int argc, char** argv) {

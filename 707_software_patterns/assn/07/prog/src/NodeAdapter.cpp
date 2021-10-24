@@ -1,6 +1,8 @@
 #include "NodeAdapter.hpp"
 #include "DocumentAdapter.hpp"
 
+using namespace XERCES;
+
 NodeAdapter::NodeAdapter(const std::string& name, short type,
                          dom::Document* document)
     : adaptee(new Node_Impl(name, type, document)) {}
@@ -13,87 +15,87 @@ NodeAdapter::~NodeAdapter() {
     }
 }
 
-const XERCES::XMLCh* NodeAdapter::getNodeName() const {
+const XMLCh* NodeAdapter::getNodeName() const {
     return adaptee->getNodeName().c_str();
 }
 
-const XERCES::XMLCh* NodeAdapter::getNodeValue() const {
+const XMLCh* NodeAdapter::getNodeValue() const {
     return adaptee->getNodeValue().c_str();
 }
 
-XERCES::DOMNode::NodeType NodeAdapter::getNodeType() const {
+DOMNode::NodeType NodeAdapter::getNodeType() const {
     switch (adaptee->getNodeType()) {
         case dom::Node::ATTRIBUTE_NODE:
-            return XERCES::DOMNode::ATTRIBUTE_NODE;
+            return DOMNode::ATTRIBUTE_NODE;
         case dom::Node::DOCUMENT_NODE:
-            return XERCES::DOMNode::DOCUMENT_NODE;
+            return DOMNode::DOCUMENT_NODE;
         case dom::Node::ELEMENT_NODE:
-            return XERCES::DOMNode::ELEMENT_NODE;
+            return DOMNode::ELEMENT_NODE;
         case dom::Node::TEXT_NODE:
-            return XERCES::DOMNode::TEXT_NODE;
+            return DOMNode::TEXT_NODE;
         default:
-            return (XERCES::DOMNode::NodeType)(0);
+            return (DOMNode::NodeType)(0);
     }
 }
 
-XERCES::DOMNode* NodeAdapter::getParentNode() const {
-    return dynamic_cast<XERCES::DOMNode*>(
+DOMNode* NodeAdapter::getParentNode() const {
+    return dynamic_cast<DOMNode*>(
         new NodeAdapter(adaptee->getParentNode()));
 }
 
-XERCES::DOMNodeList* NodeAdapter::getChildNodes() const {
+DOMNodeList* NodeAdapter::getChildNodes() const {
     // once the DOMNodeList class is implemented, the following can instead be
     // returned:
-    // dynamic_cast<XERCES::DOMNodeList*>(new
+    // dynamic_cast<DOMNodeList*>(new
     // NodeList(adaptee->getChildNodes()));
     return nullptr;
 }
 
-XERCES::DOMNode* NodeAdapter::getFirstChild() const {
-    return dynamic_cast<XERCES::DOMNode*>(
+DOMNode* NodeAdapter::getFirstChild() const {
+    return dynamic_cast<DOMNode*>(
         new NodeAdapter(adaptee->getFirstChild()));
 }
 
-XERCES::DOMNode* NodeAdapter::getLastChild() const {
-    return dynamic_cast<XERCES::DOMNode*>(
+DOMNode* NodeAdapter::getLastChild() const {
+    return dynamic_cast<DOMNode*>(
         new NodeAdapter(adaptee->getLastChild()));
 }
 
-XERCES::DOMNode* NodeAdapter::getPreviousSibling() const {
-    return dynamic_cast<XERCES::DOMNode*>(
+DOMNode* NodeAdapter::getPreviousSibling() const {
+    return dynamic_cast<DOMNode*>(
         new NodeAdapter(adaptee->getPreviousSibling()));
 }
 
-XERCES::DOMNode* NodeAdapter::getNextSibling() const {
-    return dynamic_cast<XERCES::DOMNode*>(
+DOMNode* NodeAdapter::getNextSibling() const {
+    return dynamic_cast<DOMNode*>(
         new NodeAdapter(adaptee->getNextSibling()));
 }
 
-XERCES::DOMDocument* NodeAdapter::getOwnerDocument() const {
-    return dynamic_cast<XERCES::DOMDocument*>(
+DOMDocument* NodeAdapter::getOwnerDocument() const {
+    return dynamic_cast<DOMDocument*>(
         new DocumentAdapter(adaptee->getOwnerDocument()));
 }
 
-XERCES::DOMNode* NodeAdapter::insertBefore(XERCES::DOMNode* newChild,
-                                           XERCES::DOMNode* refChild) {
+DOMNode* NodeAdapter::insertBefore(DOMNode* newChild,
+                                           DOMNode* refChild) {
     return new NodeAdapter(
         adaptee->insertBefore(dynamic_cast<NodeAdapter*>(newChild)->adaptee,
                               dynamic_cast<NodeAdapter*>(refChild)->adaptee));
 }
 
-XERCES::DOMNode* NodeAdapter::replaceChild(XERCES::DOMNode* newChild,
-                                           XERCES::DOMNode* oldChild) {
+DOMNode* NodeAdapter::replaceChild(DOMNode* newChild,
+                                           DOMNode* oldChild) {
     return new NodeAdapter(
         adaptee->replaceChild(dynamic_cast<NodeAdapter*>(newChild)->adaptee,
                               dynamic_cast<NodeAdapter*>(oldChild)->adaptee));
 }
 
-XERCES::DOMNode* NodeAdapter::removeChild(XERCES::DOMNode* oldChild) {
+DOMNode* NodeAdapter::removeChild(DOMNode* oldChild) {
     return new NodeAdapter(
         adaptee->removeChild(dynamic_cast<NodeAdapter*>(oldChild)->adaptee));
 }
 
-XERCES::DOMNode* NodeAdapter::appendChild(XERCES::DOMNode* newChild) {
+DOMNode* NodeAdapter::appendChild(DOMNode* newChild) {
     return new NodeAdapter(
         adaptee->appendChild(dynamic_cast<NodeAdapter*>(newChild)->adaptee));
 }
@@ -102,88 +104,88 @@ bool NodeAdapter::hasChildNodes() const {
     return adaptee->hasChildNodes();
 }
 
-void NodeAdapter::setNodeValue(const XERCES::XMLCh* nodeValue) {
+void NodeAdapter::setNodeValue(const XMLCh* nodeValue) {
     adaptee->setNodeValue((char*)nodeValue);
 }
 
-XERCES::DOMNamedNodeMap* NodeAdapter::getAttributes() const {
+DOMNamedNodeMap* NodeAdapter::getAttributes() const {
     return nullptr;
 }
 
-XERCES::DOMNode* NodeAdapter::cloneNode(bool) const {
+DOMNode* NodeAdapter::cloneNode(bool) const {
     return nullptr;
 }
 
 void NodeAdapter::normalize() {}
 
-bool NodeAdapter::isSupported(const XERCES::XMLCh*,
-                              const XERCES::XMLCh*) const {
+bool NodeAdapter::isSupported(const XMLCh*,
+                              const XMLCh*) const {
     return false;
 }
 
-const XERCES::XMLCh* NodeAdapter::getNamespaceURI() const {
+const XMLCh* NodeAdapter::getNamespaceURI() const {
     return nullptr;
 }
 
-const XERCES::XMLCh* NodeAdapter::getPrefix() const {
+const XMLCh* NodeAdapter::getPrefix() const {
     return nullptr;
 }
 
-const XERCES::XMLCh* NodeAdapter::getLocalName() const {
+const XMLCh* NodeAdapter::getLocalName() const {
     return nullptr;
 }
 
-void NodeAdapter::setPrefix(const XERCES::XMLCh*) {}
+void NodeAdapter::setPrefix(const XMLCh*) {}
 
 bool NodeAdapter::hasAttributes() const {
     return false;
 }
 
-bool NodeAdapter::isSameNode(const XERCES::DOMNode*) const {
+bool NodeAdapter::isSameNode(const DOMNode*) const {
     return false;
 }
 
-bool NodeAdapter::isEqualNode(const XERCES::DOMNode*) const {
+bool NodeAdapter::isEqualNode(const DOMNode*) const {
     return false;
 }
-void* NodeAdapter::setUserData(const XERCES::XMLCh*, void*,
-                               XERCES::DOMUserDataHandler*) {
+void* NodeAdapter::setUserData(const XMLCh*, void*,
+                               DOMUserDataHandler*) {
     return nullptr;
 }
 
-void* NodeAdapter::getUserData(const XERCES::XMLCh*) const {
+void* NodeAdapter::getUserData(const XMLCh*) const {
     return nullptr;
 }
 
-const XERCES::XMLCh* NodeAdapter::getBaseURI() const {
+const XMLCh* NodeAdapter::getBaseURI() const {
     return nullptr;
 }
 
-short NodeAdapter::compareDocumentPosition(const XERCES::DOMNode*) const {
+short NodeAdapter::compareDocumentPosition(const DOMNode*) const {
     return 0;
 }
 
-const XERCES::XMLCh* NodeAdapter::getTextContent() const {
+const XMLCh* NodeAdapter::getTextContent() const {
     return nullptr;
 }
 
-void NodeAdapter::setTextContent(const XERCES::XMLCh*) {}
+void NodeAdapter::setTextContent(const XMLCh*) {}
 
-const XERCES::XMLCh* NodeAdapter::lookupPrefix(const XERCES::XMLCh*) const {
+const XMLCh* NodeAdapter::lookupPrefix(const XMLCh*) const {
     return nullptr;
 }
 
-bool NodeAdapter::isDefaultNamespace(const XERCES::XMLCh*) const {
+bool NodeAdapter::isDefaultNamespace(const XMLCh*) const {
     return false;
 }
 
-const XERCES::XMLCh*
-NodeAdapter::lookupNamespaceURI(const XERCES::XMLCh*) const {
+const XMLCh*
+NodeAdapter::lookupNamespaceURI(const XMLCh*) const {
     return nullptr;
 }
 
-void* NodeAdapter::getFeature(const XERCES::XMLCh*,
-                              const XERCES::XMLCh*) const {
+void* NodeAdapter::getFeature(const XMLCh*,
+                              const XMLCh*) const {
     return nullptr;
 }
 

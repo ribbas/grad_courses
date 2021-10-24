@@ -6,7 +6,9 @@
 #include "Document.hpp"
 #include "Node.hpp"
 
-class NodeAdapter : public virtual XERCES::DOMNode {
+namespace XERCES {
+
+class NodeAdapter : public virtual DOMNode {
 private:
     dom::Node* adaptee;
 
@@ -15,47 +17,47 @@ public:
     NodeAdapter(dom::Node*);
     virtual ~NodeAdapter();
 
-    virtual const XERCES::XMLCh* getNodeName() const;
-    virtual const XERCES::XMLCh* getNodeValue() const;
-    virtual XERCES::DOMNode::NodeType getNodeType() const;
-    virtual XERCES::DOMNode* getParentNode() const;
-    virtual XERCES::DOMNodeList* getChildNodes() const;
-    virtual XERCES::DOMNode* getFirstChild() const;
-    virtual XERCES::DOMNode* getLastChild() const;
-    virtual XERCES::DOMNode* getPreviousSibling() const;
-    virtual XERCES::DOMNode* getNextSibling() const;
-    virtual XERCES::DOMDocument* getOwnerDocument() const;
-    virtual XERCES::DOMNode* insertBefore(XERCES::DOMNode*, XERCES::DOMNode*);
-    virtual XERCES::DOMNode* replaceChild(XERCES::DOMNode*, XERCES::DOMNode*);
-    virtual XERCES::DOMNode* removeChild(XERCES::DOMNode*);
-    virtual XERCES::DOMNode* appendChild(XERCES::DOMNode*);
+    virtual const XMLCh* getNodeName() const;
+    virtual const XMLCh* getNodeValue() const;
+    virtual DOMNode::NodeType getNodeType() const;
+    virtual DOMNode* getParentNode() const;
+    virtual DOMNodeList* getChildNodes() const;
+    virtual DOMNode* getFirstChild() const;
+    virtual DOMNode* getLastChild() const;
+    virtual DOMNode* getPreviousSibling() const;
+    virtual DOMNode* getNextSibling() const;
+    virtual DOMDocument* getOwnerDocument() const;
+    virtual DOMNode* insertBefore(DOMNode*, DOMNode*);
+    virtual DOMNode* replaceChild(DOMNode*, DOMNode*);
+    virtual DOMNode* removeChild(DOMNode*);
+    virtual DOMNode* appendChild(DOMNode*);
     virtual bool hasChildNodes() const;
-    virtual void setNodeValue(const XERCES::XMLCh*);
-    virtual XERCES::DOMNamedNodeMap* getAttributes() const;
+    virtual void setNodeValue(const XMLCh*);
+    virtual DOMNamedNodeMap* getAttributes() const;
 
     // empty methods since they have yet to be implemented
-    virtual XERCES::DOMNode* cloneNode(bool) const;
+    virtual DOMNode* cloneNode(bool) const;
     virtual void normalize();
-    virtual bool isSupported(const XERCES::XMLCh*, const XERCES::XMLCh*) const;
-    virtual const XERCES::XMLCh* getNamespaceURI() const;
-    virtual const XERCES::XMLCh* getPrefix() const;
-    virtual const XERCES::XMLCh* getLocalName() const;
-    virtual void setPrefix(const XERCES::XMLCh*);
+    virtual bool isSupported(const XMLCh*, const XMLCh*) const;
+    virtual const XMLCh* getNamespaceURI() const;
+    virtual const XMLCh* getPrefix() const;
+    virtual const XMLCh* getLocalName() const;
+    virtual void setPrefix(const XMLCh*);
     virtual bool hasAttributes() const;
-    virtual bool isSameNode(const XERCES::DOMNode*) const;
-    virtual bool isEqualNode(const XERCES::DOMNode*) const;
-    virtual void* setUserData(const XERCES::XMLCh*, void*,
-                              XERCES::DOMUserDataHandler*);
-    virtual void* getUserData(const XERCES::XMLCh*) const;
-    virtual const XERCES::XMLCh* getBaseURI() const;
-    virtual short compareDocumentPosition(const XERCES::DOMNode*) const;
-    virtual const XERCES::XMLCh* getTextContent() const;
-    virtual void setTextContent(const XERCES::XMLCh*);
-    virtual const XERCES::XMLCh* lookupPrefix(const XERCES::XMLCh*) const;
-    virtual bool isDefaultNamespace(const XERCES::XMLCh*) const;
-    virtual const XERCES::XMLCh* lookupNamespaceURI(const XERCES::XMLCh*) const;
-    virtual void* getFeature(const XERCES::XMLCh*, const XERCES::XMLCh*) const;
+    virtual bool isSameNode(const DOMNode*) const;
+    virtual bool isEqualNode(const DOMNode*) const;
+    virtual void* setUserData(const XMLCh*, void*, DOMUserDataHandler*);
+    virtual void* getUserData(const XMLCh*) const;
+    virtual const XMLCh* getBaseURI() const;
+    virtual short compareDocumentPosition(const DOMNode*) const;
+    virtual const XMLCh* getTextContent() const;
+    virtual void setTextContent(const XMLCh*);
+    virtual const XMLCh* lookupPrefix(const XMLCh*) const;
+    virtual bool isDefaultNamespace(const XMLCh*) const;
+    virtual const XMLCh* lookupNamespaceURI(const XMLCh*) const;
+    virtual void* getFeature(const XMLCh*, const XMLCh*) const;
     virtual void release();
 };
+}; // namespace XERCES
 
 #endif
