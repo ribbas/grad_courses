@@ -1,9 +1,10 @@
-#ifndef XML_VALIDATOR_H
-#define XML_VALIDATOR_H
+#ifndef XML_VALIDATOR_HPP
+#define XML_VALIDATOR_HPP
 
 #include <fstream>
 
 #include "Element.hpp"
+#include "Observer.hpp"
 #include "ValidChildren.hpp"
 
 class XMLValidator {

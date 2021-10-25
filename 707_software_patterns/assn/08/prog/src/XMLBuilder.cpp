@@ -40,6 +40,13 @@ dom::Document* XMLBuilder::getDocument() {
 
 dom::Element* XMLBuilder::addElement(std::string tagName) {
 
+    if (!notify(!currentElement ? 0 : currentElement, dom::Node::ELEMENT_NODE,
+                tagName)) {
+        throw dom::DOMException(dom::DOMException::WRONG_DOCUMENT_ERR,
+                                "Invalid ELEMENT node '" + tagName +
+                                    "' for element " + ".");
+    }
+
     dom::Element* newElement = document->createElement(tagName);
 
     if (!currentElement) {
@@ -54,7 +61,23 @@ dom::Element* XMLBuilder::addElement(std::string tagName) {
 dom::Attr* XMLBuilder::addAttribute(std::string name, std::string value) {
 
     trimAttr(name, value);
+
+    if (currentElement != 0) // Remove this check and let Observer handle null
+                             // if we handle prolog attributes.
+        if (!notify(currentElement, dom::Node::ATTRIBUTE_NODE, name))
+            throw dom::DOMException(dom::DOMException::WRONG_DOCUMENT_ERR,
+                                    "Invalid ATTRIBUTE node '" + name +
+                                        "' for element " +
+                                        currentElement->getTagName() + ".");
+
     dom::Attr* newAttribute = document->createAttribute(name);
+
+    if (!notify(newAttribute, dom::Node::ATTRIBUTE_NODE, value))
+        throw dom::DOMException(dom::DOMException::WRONG_DOCUMENT_ERR,
+                                "Invalid ATTRIBUTE VALUE '" + value +
+                                    "' for attribute " +
+                                    newAttribute->getName() + ".");
+
     newAttribute->setValue(value);
     currentElement->setAttributeNode(newAttribute);
     return newAttribute;

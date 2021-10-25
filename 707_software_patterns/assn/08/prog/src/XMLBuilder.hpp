@@ -4,9 +4,10 @@
 #include "Attr.hpp"
 #include "Document.hpp"
 #include "Element.hpp"
+#include "Subject.hpp"
 #include "Text.hpp"
 
-class XMLBuilder {
+class XMLBuilder : public Subject {
 private:
     dom::Document* document;
     dom::Element* currentElement;

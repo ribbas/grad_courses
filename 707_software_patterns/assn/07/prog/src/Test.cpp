@@ -24,6 +24,7 @@ void testAdapter(int, char**);
 
 void printUsage() {
     std::cout << "Usage:\n"
+              << "\tTest a\n"
               << "\tTest b [file1] [file2]\n"
               << "\tTest i [file] ...\n"
               << "\tTest t [file] ...\n"
@@ -67,12 +68,18 @@ int main(int argc, char** argv) {
 }
 
 void testAdapter(int, char**) {
+
+    // create a DOMDocument
     XERCES::DOMDocument* xercesDocument = new XERCES::DocumentAdapter;
+
+    // the following lines of code would be executable once the DOMElement
+    // class is fully implemented
     // XERCES::DOMElement* xercesRoot = xercesDocument->createElement("root");
     // xercesDocument->appendChild(xercesRoot);
 
     delete xercesDocument;
     // delete xercesRoot;
+
 }
 
 void testBuilder(int argc, char** argv) {

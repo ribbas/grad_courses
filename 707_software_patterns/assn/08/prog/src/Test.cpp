@@ -1,10 +1,6 @@
 #include "Attr.hpp"
-#include "DOMDocument.hpp"
-#include "DOMNode.hpp"
 #include "Document.hpp"
-#include "DocumentAdapter.hpp"
 #include "Element.hpp"
-#include "NodeAdapter.hpp"
 #include "Text.hpp"
 #include "XMLBuilder.hpp"
 #include "XMLDirector.hpp"
@@ -20,7 +16,6 @@ void testSerializer(int, char**);
 void testValidator(int, char**);
 void testBuilder(int, char**);
 void testIterator(int, char**);
-void testAdapter(int, char**);
 
 void printUsage() {
     std::cout << "Usage:\n"
@@ -39,10 +34,6 @@ int main(int argc, char** argv) {
     }
 
     switch (argv[1][0]) {
-        case 'A':
-        case 'a':
-            testAdapter(argc, argv);
-            break;
         case 'B':
         case 'b':
             testBuilder(argc, argv);
@@ -65,8 +56,6 @@ int main(int argc, char** argv) {
             break;
     }
 }
-
-void testAdapter(int, char**) {}
 
 void testBuilder(int argc, char** argv) {
 
