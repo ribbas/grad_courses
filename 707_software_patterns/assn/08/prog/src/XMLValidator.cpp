@@ -12,11 +12,16 @@ ValidChildren* XMLValidator::addSchemaElement(std::string element) {
 
     if (schemaElementIterator != schema.end()) {
         schema.erase(schemaElementIterator);
+        if (subject != 0) {
+            subject->detach(*schemaElementIterator);
+        }
         delete *schemaElementIterator;
     }
 
     ValidChildren* schemaElement = 0;
-    schema.push_back(schemaElement = new ValidChildren(element));
+    schema.push_back(schemaElement = new ValidChildren(element, this));
+    if (subject != 0)
+        subject->attach(schemaElement);
     return schemaElement;
 }
 
@@ -64,4 +69,18 @@ bool XMLValidator::canAddAttribute(dom::Element* element,
     return schemaElement == schema.end()
                ? true
                : (*schemaElement)->childIsValid(newAttribute, true);
+}
+
+void XMLValidator::shareValidationInfo(std::string& thisElement,
+                                       const std::string& child,
+                                       bool isAttribute) {
+    //
+    // Some arbitrary decision algorithm.  In this case, halt validation when we
+    // encounter attribute2.
+    //
+    if (isAttribute && thisElement == "element" && child == "attribute")
+        for (std::vector<ValidChildren*>::iterator i = schema.begin();
+             i != schema.end(); i++) {
+            (*i)->deactivate();
+        }
 }

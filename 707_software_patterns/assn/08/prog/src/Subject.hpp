@@ -5,10 +5,6 @@
 #include <string>
 #include <vector>
 
-// namespace dom {
-// class Node;
-// };
-
 class Observer;
 
 class Subject {

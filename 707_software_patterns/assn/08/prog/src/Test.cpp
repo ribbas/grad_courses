@@ -65,6 +65,18 @@ void testBuilder(int argc, char** argv) {
     }
 
     XMLBuilder* builder = new XMLBuilder();
+
+    // XMLValidator xmlValidator(builder);
+    // ValidChildren* schemaElement = xmlValidator.addSchemaElement("");
+    // schemaElement->addValidChild("document", false);
+    // schemaElement = xmlValidator.addSchemaElement("document");
+    // schemaElement->addValidChild("element", false);
+    // schemaElement = xmlValidator.addSchemaElement("element");
+    // schemaElement->addValidChild("element", false);
+    // schemaElement->addValidChild("attribute", true);
+    // schemaElement->addValidChild("attribute2", true);
+    // schemaElement->setCanHaveText(true);
+
     XMLDirector director(builder, argv[2]);
     director.construct();
     dom::Document* builtDocument = director.getResult();
