@@ -71,16 +71,15 @@ bool XMLValidator::canAddAttribute(dom::Element* element,
                : (*schemaElement)->childIsValid(newAttribute, true);
 }
 
-void XMLValidator::shareValidationInfo(std::string& thisElement,
-                                       const std::string& child,
-                                       bool isAttribute) {
-    //
-    // Some arbitrary decision algorithm.  In this case, halt validation when we
-    // encounter attribute2.
-    //
-    if (isAttribute && thisElement == "element" && child == "attribute")
-        for (std::vector<ValidChildren*>::iterator i = schema.begin();
-             i != schema.end(); i++) {
-            (*i)->deactivate();
-        }
+void XMLValidator::shareValidationInfo(const std::string& child, bool isValid) {
+
+    for (ValidChildren* schemaElement : schema) {
+        schemaElement->shareValidationInfo(child, isValid);
+    }
+
+    // if (isAttribute && thisElement == "element" && child == "attribute")
+    //     for (std::vector<ValidChildren*>::iterator i = schema.begin();
+    //          i != schema.end(); i++) {
+    //         (*i)->deactivate();
+    //     }
 }

@@ -7,12 +7,8 @@
 #include <vector>
 
 #include "Element.hpp"
-// #include "Observer.hpp"
 #include "Subject.hpp"
 #include "ValidChildren.hpp"
-
-class ValidChildren;
-class Subject;
 
 class XMLValidator {
 private:
@@ -20,7 +16,7 @@ private:
     Subject* subject;
 
 public:
-    XMLValidator() : subject(0) {}
+    XMLValidator() : subject(nullptr) {}
     XMLValidator(Subject* _subject) : subject(_subject) {}
     ~XMLValidator();
 
@@ -32,7 +28,7 @@ public:
     virtual bool canAddText(dom::Element*);
     virtual bool canAddAttribute(dom::Element*, std::string);
 
-    virtual void shareValidationInfo(std::string&, const std::string&, bool);
+    void shareValidationInfo(const std::string& child, bool isValid);
 };
 
 #endif

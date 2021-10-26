@@ -4,7 +4,7 @@
 // ValidChildren::ValidChildren(std::string _thisElement)
 //     : thisElement(_thisElement), _canHaveText(false) {}
 
-// ValidChildren::~ValidChildren() {}
+ValidChildren::~ValidChildren() {}
 
 std::string ValidChildren::getThisElement() {
     return thisElement;
@@ -29,20 +29,13 @@ void ValidChildren::addValidChild(const std::string& child, bool isAttribute) {
 }
 
 bool ValidChildren::childIsValid(const std::string& child, bool isAttribute) {
-
-    for (unsigned int i = 0; i < validChildren.size(); i++) {
-
+    bool isValid = false;
+    for (unsigned int i = 0; i < validChildren.size(); i++)
         if (childIsAttribute[i] == isAttribute &&
-            validChildren[i].compare(child) == 0) {
+            validChildren[i].compare(child) == 0)
+            isValid = true;
 
-            if (mediator != 0) {
-                mediator->shareValidationInfo(thisElement, child, isAttribute);
-            }
-
-            return true;
-        }
-    }
-
+    mediator->shareValidationInfo(child, isValid);
     return false;
 }
 
