@@ -8,7 +8,7 @@
 
 class XMLValidator;
 
-class ValidChildren : public Observer {
+class ValidChildren {
 private:
     std::string thisElement;
     std::vector<std::string> validChildren;
@@ -37,8 +37,8 @@ public:
     virtual void deactivate() {
         active = false;
     }
-    virtual bool update(dom::Node* container, short targetType,
-                        std::string& target);
+    // virtual bool update(dom::Node* container, short targetType,
+    //                     std::string& target);
 
     void shareValidationInfo(const std::string&, bool) {}
 };

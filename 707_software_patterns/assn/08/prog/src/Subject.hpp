@@ -11,12 +11,15 @@ class Subject {
 private:
     std::vector<Observer*> observers;
 
+protected:
+    Subject() {}
+
 public:
-    void attach(Observer*);
-    void detach(Observer*);
+    virtual void attach(Observer*);
+    virtual void detach(Observer*);
 
 protected:
-    bool notify(dom::Node*, short, std::string&);
+    void notify();
 };
 
 #endif // SUBJECT_HPP

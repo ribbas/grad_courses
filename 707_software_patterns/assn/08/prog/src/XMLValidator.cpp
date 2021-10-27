@@ -1,4 +1,5 @@
 #include "XMLValidator.hpp"
+#include "XMLBuilder.hpp"
 
 XMLValidator::~XMLValidator() {
     for (unsigned int i = 0; i < schema.size(); i++) {
@@ -12,16 +13,11 @@ ValidChildren* XMLValidator::addSchemaElement(std::string element) {
 
     if (schemaElementIterator != schema.end()) {
         schema.erase(schemaElementIterator);
-        if (subject != 0) {
-            subject->detach(*schemaElementIterator);
-        }
         delete *schemaElementIterator;
     }
 
     ValidChildren* schemaElement = 0;
     schema.push_back(schemaElement = new ValidChildren(element, this));
-    if (subject != 0)
-        subject->attach(schemaElement);
     return schemaElement;
 }
 
@@ -71,7 +67,26 @@ bool XMLValidator::canAddAttribute(dom::Element* element,
                : (*schemaElement)->childIsValid(newAttribute, true);
 }
 
-void XMLValidator::shareValidationInfo(const std::string& child, bool isValid) {
+// Observer functions
+void XMLValidator::update(Subject* changedSubject) {
+    // Make sure Subject is of type Builder... it should be
+    XMLBuilder* builderSubject = dynamic_cast<XMLBuilder*>(changedSubject);
+    if (builderSubject != nullptr) {
+        dom::Node* newNode = builderSubject->getRecentNode();
+        ValidChildren* schemaElement =
+            *findSchemaElement(newNode->getParentNode()->getNodeName());
+        if (schemaElement != nullptr) {
+            bool isAttr = (dynamic_cast<dom::Attr*>(newNode) != nullptr);
+            if (!schemaElement->childIsValid(newNode->getNodeName(), isAttr)) {
+                throw dom::DOMException(dom::DOMException::VALIDATION_ERR,
+                                        "Invalid child node " +
+                                            newNode->getNodeName() + ".");
+            }
+        }
+    }
+}
+
+void XMLValidator::getValidationStatus(const std::string& child, bool isValid) {
 
     for (ValidChildren* schemaElement : schema) {
         schemaElement->shareValidationInfo(child, isValid);

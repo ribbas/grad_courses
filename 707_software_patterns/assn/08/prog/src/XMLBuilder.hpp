@@ -18,12 +18,15 @@ private:
 public:
     XMLBuilder();
 
+    virtual ~XMLBuilder() {}
+
     void setElement(dom::Element*);
     dom::Element* getElementParent();
     dom::Document* getDocument();
     dom::Element* addElement(std::string);
     dom::Attr* addAttribute(std::string, std::string);
     dom::Text* addText(std::string);
+    dom::Node* getRecentNode();
 };
 
 #endif // XML_BUILDER_H

@@ -10,7 +10,7 @@
 #include "Subject.hpp"
 #include "ValidChildren.hpp"
 
-class XMLValidator {
+class XMLValidator : public virtual Observer {
 private:
     std::vector<ValidChildren*> schema;
     Subject* subject;
@@ -18,7 +18,7 @@ private:
 public:
     XMLValidator() : subject(nullptr) {}
     XMLValidator(Subject* _subject) : subject(_subject) {}
-    ~XMLValidator();
+    virtual ~XMLValidator();
 
     virtual ValidChildren* addSchemaElement(std::string);
     virtual std::vector<ValidChildren*>::iterator
@@ -28,7 +28,10 @@ public:
     virtual bool canAddText(dom::Element*);
     virtual bool canAddAttribute(dom::Element*, std::string);
 
-    void shareValidationInfo(const std::string& child, bool isValid);
+    // Observer functions
+    virtual void update(Subject*);
+
+    virtual void getValidationStatus(const std::string&, bool);
 };
 
 #endif

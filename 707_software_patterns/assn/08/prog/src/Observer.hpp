@@ -2,11 +2,17 @@
 #define OBSERVER_HPP
 
 #include "Node.hpp"
+
 #include <string>
 
+class Subject;
+
 class Observer {
+protected:
+    Observer() {}
+
 public:
-    virtual bool update(dom::Node*, short, std::string&) = 0;
+    virtual void update(Subject*) = 0;
 };
 
 #endif // OBSERVER_HPP

@@ -11,14 +11,18 @@ void Subject::detach(Observer* observer) {
                     observers.end());
 }
 
-bool Subject::notify(dom::Node* container, short targetType,
-                     std::string& target) {
-    bool result = true;
+void Subject::notify() {
 
-    for (std::vector<Observer*>::iterator i = observers.begin();
-         i != observers.end(); i++) {
-        result &= (*i)->update(container, targetType, target);
+    for (Observer* observer : observers) {
+        observer->update(this);
     }
 
-    return result;
+    // bool result = true;
+
+    // for (std::vector<Observer*>::iterator i = observers.begin();
+    //      i != observers.end(); i++) {
+    //     result &= (*i)->update(container, targetType, target);
+    // }
+
+    // return result;
 }
