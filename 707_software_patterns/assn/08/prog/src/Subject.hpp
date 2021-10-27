@@ -12,7 +12,7 @@ private:
     std::vector<Observer*> observers;
 
 protected:
-    Subject() {}
+    Subject();
 
 public:
     virtual void attach(Observer*);

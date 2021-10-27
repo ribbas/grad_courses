@@ -15,13 +15,9 @@ private:
     std::vector<bool> childIsAttribute;
     bool _canHaveText;
     XMLValidator* mediator;
-    bool active;
 
 public:
-    ValidChildren(std::string _thisElement, XMLValidator* _mediator)
-        : thisElement(_thisElement), _canHaveText(false), mediator(_mediator),
-          active(true) {}
-
+    ValidChildren(std::string, XMLValidator*);
     virtual ~ValidChildren();
 
     virtual std::string getThisElement();
@@ -30,15 +26,6 @@ public:
 
     virtual void addValidChild(const std::string&, bool);
     virtual bool childIsValid(const std::string&, bool);
-
-    virtual void activate() {
-        active = true;
-    }
-    virtual void deactivate() {
-        active = false;
-    }
-    // virtual bool update(dom::Node* container, short targetType,
-    //                     std::string& target);
 
     void shareValidationInfo(const std::string&, bool) {}
 };
