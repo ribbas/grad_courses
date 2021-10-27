@@ -75,6 +75,6 @@ dom::Text* XMLBuilder::addText(std::string data) {
     return newText;
 }
 
-dom::Node* XMLBuilder::getRecentNode() {
+dom::Element* XMLBuilder::getCurrentElement() {
     return currentElement;
 }

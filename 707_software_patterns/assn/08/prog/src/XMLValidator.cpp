@@ -67,23 +67,26 @@ bool XMLValidator::canAddAttribute(dom::Element* element,
                : (*schemaElement)->childIsValid(newAttribute, true);
 }
 
-// Observer functions
 void XMLValidator::update(Subject* changedSubject) {
-    // Make sure Subject is of type Builder... it should be
+
     XMLBuilder* builderSubject = dynamic_cast<XMLBuilder*>(changedSubject);
-    if (builderSubject != nullptr) {
-        dom::Node* newNode = builderSubject->getRecentNode();
+    if (builderSubject) {
+        dom::Element* newElement = builderSubject->getCurrentElement();
         ValidChildren* schemaElement =
-            *findSchemaElement(newNode->getParentNode()->getNodeName());
-        if (schemaElement != nullptr) {
-            bool isAttr = (dynamic_cast<dom::Attr*>(newNode) != nullptr);
-            if (!schemaElement->childIsValid(newNode->getNodeName(), isAttr)) {
+            *findSchemaElement(newElement->getParentNode()->getNodeName());
+        if (schemaElement) {
+            if (!schemaElement->childIsValid(
+                    newElement->getNodeName(),
+                    dynamic_cast<dom::Attr*>(newElement))) {
                 throw dom::DOMException(dom::DOMException::VALIDATION_ERR,
                                         "Invalid child node " +
-                                            newNode->getNodeName() + ".");
+                                            newElement->getNodeName() + ".");
             }
         }
+        delete newElement;
+        delete schemaElement;
     }
+    delete builderSubject;
 }
 
 void XMLValidator::getValidationStatus(const std::string& child, bool isValid) {
@@ -91,10 +94,4 @@ void XMLValidator::getValidationStatus(const std::string& child, bool isValid) {
     for (ValidChildren* schemaElement : schema) {
         schemaElement->shareValidationInfo(child, isValid);
     }
-
-    // if (isAttribute && thisElement == "element" && child == "attribute")
-    //     for (std::vector<ValidChildren*>::iterator i = schema.begin();
-    //          i != schema.end(); i++) {
-    //         (*i)->deactivate();
-    //     }
 }

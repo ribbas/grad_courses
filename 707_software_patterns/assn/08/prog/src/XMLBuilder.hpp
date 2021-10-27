@@ -26,7 +26,7 @@ public:
     dom::Element* addElement(std::string);
     dom::Attr* addAttribute(std::string, std::string);
     dom::Text* addText(std::string);
-    dom::Node* getRecentNode();
+    dom::Element* getCurrentElement();
 };
 
 #endif // XML_BUILDER_H
