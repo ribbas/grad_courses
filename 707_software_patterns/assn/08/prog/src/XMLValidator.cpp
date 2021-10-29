@@ -67,31 +67,25 @@ bool XMLValidator::canAddAttribute(dom::Element* element,
                : (*schemaElement)->childIsValid(newAttribute, true);
 }
 
-void XMLValidator::update(Subject* changedSubject) {
+void XMLValidator::update(Subject* builder) {
 
-    XMLBuilder* builderSubject = dynamic_cast<XMLBuilder*>(changedSubject);
-    if (builderSubject) {
-        dom::Element* newElement = builderSubject->getCurrentElement();
-        ValidChildren* schemaElement =
-            *findSchemaElement(newElement->getParentNode()->getNodeName());
-        if (schemaElement) {
-            if (!schemaElement->childIsValid(
-                    newElement->getNodeName(),
-                    dynamic_cast<dom::Attr*>(newElement))) {
-                throw dom::DOMException(dom::DOMException::VALIDATION_ERR,
-                                        "Invalid child node " +
-                                            newElement->getNodeName() + ".");
-            }
-        }
-        delete newElement;
-        delete schemaElement;
+    dom::Element* lastElement =
+        dynamic_cast<XMLBuilder*>(builder)->getElementParent();
+    std::string lastElementName = lastElement->getNodeName();
+    std::vector<ValidChildren*>::iterator schemaElement =
+        findSchemaElement(lastElementName);
+    if (!(*schemaElement)
+             ->childIsValid(lastElementName,
+                            dynamic_cast<dom::Attr*>(lastElement))) {
+        throw dom::DOMException(dom::DOMException::VALIDATION_ERR,
+                                lastElementName);
     }
-    delete builderSubject;
+    delete lastElement;
 }
 
 void XMLValidator::getValidationStatus(const std::string& child, bool isValid) {
 
     for (ValidChildren* schemaElement : schema) {
-        schemaElement->shareValidationInfo(child, isValid);
+        schemaElement->getValidationStatus(child, isValid);
     }
 }

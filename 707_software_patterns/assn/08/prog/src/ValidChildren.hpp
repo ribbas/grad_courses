@@ -23,11 +23,11 @@ public:
     virtual std::string getThisElement();
     virtual bool canHaveText();
     virtual void setCanHaveText(bool);
-
     virtual void addValidChild(const std::string&, bool);
     virtual bool childIsValid(const std::string&, bool);
 
-    void shareValidationInfo(const std::string&, bool) {}
+    // Mediator method
+    void getValidationStatus(const std::string&, bool);
 };
 
 #endif // VALIDCHILDREN_H

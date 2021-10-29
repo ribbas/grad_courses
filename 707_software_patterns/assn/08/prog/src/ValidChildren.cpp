@@ -1,6 +1,8 @@
 #include "ValidChildren.hpp"
 #include "XMLValidator.hpp"
 
+#include <iostream>
+
 ValidChildren::ValidChildren(std::string _thisElement, XMLValidator* _mediator)
     : thisElement(_thisElement), _canHaveText(false), mediator(_mediator) {}
 
@@ -39,4 +41,10 @@ bool ValidChildren::childIsValid(const std::string& child, bool isAttribute) {
 
     mediator->getValidationStatus(child, isValid);
     return false;
+}
+
+void ValidChildren::getValidationStatus(const std::string& child,
+                                        bool isValid) {
+    std::cout << "Node: " << child << " is " << (isValid ? "" : "not")
+              << "valid\n";
 }

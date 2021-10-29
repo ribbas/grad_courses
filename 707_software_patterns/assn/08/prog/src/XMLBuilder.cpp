@@ -47,9 +47,7 @@ dom::Element* XMLBuilder::addElement(std::string tagName) {
     } else {
         currentElement->appendChild(newElement);
     }
-
     notify();
-
     return newElement;
 }
 
@@ -73,8 +71,4 @@ dom::Text* XMLBuilder::addText(std::string data) {
     currentElement->appendChild(newText);
     notify();
     return newText;
-}
-
-dom::Element* XMLBuilder::getCurrentElement() {
-    return currentElement;
 }

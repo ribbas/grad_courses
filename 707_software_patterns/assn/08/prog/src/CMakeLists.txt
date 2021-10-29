@@ -14,6 +14,7 @@ if(Boost_FOUND)
 		Iterator.cpp
 		NamedNodeMap.cpp
 		Node.cpp
+		Observer.cpp
 		Subject.cpp
 		Test.cpp
 		Text.cpp

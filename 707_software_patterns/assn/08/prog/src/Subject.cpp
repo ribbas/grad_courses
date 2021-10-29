@@ -4,6 +4,13 @@
 
 Subject::Subject() {}
 
+Subject::~Subject() {
+    for (unsigned int i = 0; i < observers.size(); i++) {
+        delete observers[i];
+        observers[i] = nullptr;
+    }
+}
+
 void Subject::attach(Observer* observer) {
     observers.push_back(observer);
 }

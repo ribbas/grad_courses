@@ -3,15 +3,14 @@
 
 #include "Node.hpp"
 
-#include <string>
-
 class Subject;
 
 class Observer {
 protected:
-    Observer() {}
+    Observer();
 
 public:
+    virtual ~Observer();
     virtual void update(Subject*) = 0;
 };
 

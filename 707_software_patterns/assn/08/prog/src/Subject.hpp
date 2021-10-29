@@ -1,8 +1,6 @@
 #ifndef SUBJECT_HPP
 #define SUBJECT_HPP
 
-#include "Node.hpp"
-#include <string>
 #include <vector>
 
 class Observer;
@@ -15,6 +13,7 @@ protected:
     Subject();
 
 public:
+    virtual ~Subject();
     virtual void attach(Observer*);
     virtual void detach(Observer*);
 

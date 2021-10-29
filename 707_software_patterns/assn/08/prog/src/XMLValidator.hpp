@@ -28,9 +28,10 @@ public:
     virtual bool canAddText(dom::Element*);
     virtual bool canAddAttribute(dom::Element*, std::string);
 
-    // Observer functions
+    // Observer method
     virtual void update(Subject*);
 
+    // Mediator method
     virtual void getValidationStatus(const std::string&, bool);
 };
 
