@@ -1,5 +1,5 @@
-#ifndef VALIDCHILDREN_HPP
-#define VALIDCHILDREN_HPP
+#ifndef VALID_CHILDREN_HPP
+#define VALID_CHILDREN_HPP
 
 #include "Observer.hpp"
 #include <string>
@@ -29,4 +29,4 @@ public:
     void getValidationStatus(const std::string&, bool);
 };
 
-#endif // VALIDCHILDREN_H
+#endif // VALID_CHILDREN_HPP

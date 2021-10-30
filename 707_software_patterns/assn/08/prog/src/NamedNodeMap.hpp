@@ -1,5 +1,5 @@
-#ifndef NAMED_NODE_MAP_H
-#define NAMED_NODE_MAP_H
+#ifndef NAMED_NODE_MAP_HPP
+#define NAMED_NODE_MAP_HPP
 
 #include "NodeList.hpp"
 #include <string>
@@ -35,4 +35,4 @@ public:
     virtual dom::Node* removeNamedItem(const std::string&) override;
 };
 
-#endif // NAMEDNODEMAP_H
+#endif // NAMED_NODE_MAP_HPP

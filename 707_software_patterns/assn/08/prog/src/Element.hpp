@@ -1,5 +1,5 @@
-#ifndef ELEMENT_H
-#define ELEMENT_H
+#ifndef ELEMENT_HPP
+#define ELEMENT_HPP
 
 #include "NamedNodeMap.hpp"
 #include "Node.hpp"
@@ -53,4 +53,4 @@ public:
     virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
 };
 
-#endif // ELEMENT_H
+#endif // ELEMENT_HPP

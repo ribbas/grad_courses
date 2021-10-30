@@ -1,6 +1,8 @@
 #include "XMLValidator.hpp"
 #include "XMLBuilder.hpp"
 
+XMLValidator::XMLValidator() : subject(nullptr) {}
+
 XMLValidator::~XMLValidator() {
     for (unsigned int i = 0; i < schema.size(); i++) {
         delete schema[i];

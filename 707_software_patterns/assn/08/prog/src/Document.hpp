@@ -1,5 +1,5 @@
-#ifndef DOCUMENT_H
-#define DOCUMENT_H
+#ifndef DOCUMENT_HPP
+#define DOCUMENT_HPP
 
 #include "Iterator.hpp"
 #include "Node.hpp"
@@ -39,4 +39,4 @@ public:
     virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
 };
 
-#endif // DOCUMENT_H
+#endif // DOCUMENT_HPP

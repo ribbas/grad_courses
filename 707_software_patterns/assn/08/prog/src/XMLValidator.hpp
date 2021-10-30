@@ -11,8 +11,7 @@ private:
     Subject* subject;
 
 public:
-    XMLValidator() : subject(nullptr) {}
-    XMLValidator(Subject* _subject) : subject(_subject) {}
+    XMLValidator();
     virtual ~XMLValidator();
 
     virtual ValidChildren* addSchemaElement(std::string);
@@ -30,4 +29,4 @@ public:
     virtual void getValidationStatus(const std::string&, bool);
 };
 
-#endif
+#endif // XML_VALIDATOR_HPP

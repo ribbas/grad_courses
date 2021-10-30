@@ -1,5 +1,5 @@
-#ifndef XML_DIRECTOR_H
-#define XML_DIRECTOR_H
+#ifndef XML_DIRECTOR_HPP
+#define XML_DIRECTOR_HPP
 
 #include "XMLBuilder.hpp"
 #include "XMLTokenizer.hpp"
@@ -16,4 +16,4 @@ public:
     dom::Document* getResult();
 };
 
-#endif
+#endif // XML_DIRECTOR_HPP

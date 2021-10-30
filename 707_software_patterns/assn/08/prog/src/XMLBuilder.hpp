@@ -1,5 +1,5 @@
-#ifndef XML_BUILDER_H
-#define XML_BUILDER_H
+#ifndef XML_BUILDER_HPP
+#define XML_BUILDER_HPP
 
 #include "Attr.hpp"
 #include "Document.hpp"
@@ -7,7 +7,7 @@
 #include "Subject.hpp"
 #include "Text.hpp"
 
-class XMLBuilder : public Subject {
+class XMLBuilder : public virtual Subject {
 private:
     dom::Document* document;
     dom::Element* currentElement;
@@ -28,4 +28,4 @@ public:
     dom::Text* addText(std::string);
 };
 
-#endif // XML_BUILDER_H
+#endif // XML_BUILDER_HPP
