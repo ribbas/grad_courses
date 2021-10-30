@@ -1,6 +1,5 @@
 #include "ValidChildren.hpp"
 #include "XMLValidator.hpp"
-
 #include <iostream>
 
 ValidChildren::ValidChildren(std::string _thisElement, XMLValidator* _mediator)
@@ -40,7 +39,7 @@ bool ValidChildren::childIsValid(const std::string& child, bool isAttribute) {
     }
 
     mediator->getValidationStatus(child, isValid);
-    return false;
+    return isValid;
 }
 
 void ValidChildren::getValidationStatus(const std::string& child,

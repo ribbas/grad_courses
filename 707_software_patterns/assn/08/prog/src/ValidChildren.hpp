@@ -1,10 +1,9 @@
 #ifndef VALIDCHILDREN_HPP
 #define VALIDCHILDREN_HPP
 
+#include "Observer.hpp"
 #include <string>
 #include <vector>
-
-#include "Observer.hpp"
 
 class XMLValidator;
 

@@ -78,7 +78,7 @@ void XMLValidator::update(Subject* builder) {
              ->childIsValid(lastElementName,
                             dynamic_cast<dom::Attr*>(lastElement))) {
         throw dom::DOMException(dom::DOMException::VALIDATION_ERR,
-                                lastElementName);
+                                lastElementName + " is an invalid node.\n");
     }
     delete lastElement;
 }

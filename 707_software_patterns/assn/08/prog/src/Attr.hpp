@@ -1,9 +1,8 @@
 #ifndef ATTR_H
 #define ATTR_H
 
-#include <string>
-
 #include "Node.hpp"
+#include <string>
 
 namespace dom {
 class Document;

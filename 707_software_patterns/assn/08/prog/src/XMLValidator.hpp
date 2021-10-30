@@ -1,11 +1,6 @@
 #ifndef XML_VALIDATOR_HPP
 #define XML_VALIDATOR_HPP
 
-#include <fstream>
-#include <ios>
-#include <string>
-#include <vector>
-
 #include "Element.hpp"
 #include "Subject.hpp"
 #include "ValidChildren.hpp"
