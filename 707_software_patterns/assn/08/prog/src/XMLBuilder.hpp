@@ -17,7 +17,6 @@ private:
 
 public:
     XMLBuilder();
-
     virtual ~XMLBuilder() {}
 
     void setElement(dom::Element*);
