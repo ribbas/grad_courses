@@ -12,13 +12,13 @@ private:
 protected:
     Subject();
 
+protected:
+    void notify();
+
 public:
     virtual ~Subject();
     virtual void attach(Observer*);
     virtual void detach(Observer*);
-
-protected:
-    void notify();
 };
 
 #endif // SUBJECT_HPP
