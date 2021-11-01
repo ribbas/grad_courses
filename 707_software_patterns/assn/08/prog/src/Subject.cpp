@@ -22,7 +22,8 @@ void Subject::detach(Observer* observer) {
 
 void Subject::notify() {
 
-    for (Observer* observer : observers) {
-        observer->update(this);
+    for (std::vector<Observer*>::iterator observerIter = observers.begin();
+         observerIter != observers.end(); observerIter++) {
+        (*observerIter)->update(this);
     }
 }

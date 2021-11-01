@@ -87,7 +87,8 @@ void XMLValidator::update(Subject* builder) {
 
 void XMLValidator::getValidationStatus(const std::string& child, bool isValid) {
 
-    for (ValidChildren* schemaElement : schema) {
-        schemaElement->getValidationStatus(child, isValid);
+    for (std::vector<ValidChildren*>::iterator schemaIter = schema.begin();
+         schemaIter != schema.end(); schemaIter++) {
+        (*schemaIter)->getValidationStatus(child, isValid);
     }
 }
