@@ -1,0 +1,3 @@
+proj/draft/draft.*
+!proj/draft/*.tex
+!proj/draft/*.pdf
