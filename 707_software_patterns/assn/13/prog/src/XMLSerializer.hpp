@@ -1,11 +1,10 @@
 #ifndef XML_SERIALIZER_H
 #define XML_SERIALIZER_H
 
+#include "Node.hpp"
 #include <fstream>
 #include <ios>
 #include <string>
-
-#include "Node.hpp"
 
 //
 // XMLSerializer is Serialization Strategy Context

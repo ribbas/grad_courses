@@ -7,7 +7,6 @@
 #include "XMLSerializer.hpp"
 #include "XMLTokenizer.hpp"
 #include "XMLValidator.hpp"
-
 #include <iostream>
 #include <stdio.h>
 

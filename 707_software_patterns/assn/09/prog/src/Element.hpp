@@ -1,10 +1,9 @@
 #ifndef ELEMENT_H
 #define ELEMENT_H
 
-#include <string>
-
 #include "NamedNodeMap.hpp"
 #include "Node.hpp"
+#include <string>
 
 namespace dom {
 class Attr;

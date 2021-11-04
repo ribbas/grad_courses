@@ -1,5 +1,4 @@
 #include "XMLSerializer.hpp"
-
 #include "Attr.hpp"
 #include "Document.hpp"
 #include "Element.hpp"

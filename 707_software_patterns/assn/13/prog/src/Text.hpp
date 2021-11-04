@@ -1,9 +1,8 @@
 #ifndef TEXT_H
 #define TEXT_H
 
-#include <string>
-
 #include "Node.hpp"
+#include <string>
 
 namespace dom {
 class Document;

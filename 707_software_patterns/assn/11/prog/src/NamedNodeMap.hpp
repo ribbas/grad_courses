@@ -1,9 +1,8 @@
 #ifndef NAMED_NODE_MAP_H
 #define NAMED_NODE_MAP_H
 
-#include <string>
-
 #include "NodeList.hpp"
+#include <string>
 
 namespace dom {
 class Document;
