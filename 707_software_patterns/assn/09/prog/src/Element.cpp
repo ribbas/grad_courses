@@ -2,6 +2,7 @@
 #include "Attr.hpp"
 #include "Document.hpp"
 #include "Text.hpp"
+#include <iostream>
 
 Element_Impl::Element_Impl(const std::string& tagName, dom::Document* document)
     : Node_Impl(tagName, dom::Node::ELEMENT_NODE, document),
@@ -190,5 +191,15 @@ void Element_Impl::serialize(std::fstream* writer,
         whitespace->prettyIndentation(writer);
         *writer << "</" << getTagName() + ">";
         whitespace->newLine(writer);
+    }
+}
+
+void Element_Impl::handleEvent(dom::Event* event) {
+    if (getAttribute("message") == event->message) {
+        std::cout << "Handling event with message: " << event->message << '\n';
+    } else if (dynamic_cast<dom::Element*>(getParentNode()) != nullptr) {
+        dynamic_cast<dom::Element*>(getParentNode())->handleEvent(event);
+    } else {
+        std::cout << "Event was not handled\n";
     }
 }

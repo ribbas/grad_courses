@@ -1,6 +1,7 @@
-#ifndef ELEMENT_H
-#define ELEMENT_H
+#ifndef ELEMENT_HPP
+#define ELEMENT_HPP
 
+#include "Event.hpp"
 #include "NamedNodeMap.hpp"
 #include "Node.hpp"
 #include <string>
@@ -11,6 +12,7 @@ class NodeList;
 class Document;
 
 class Element : public virtual Node {
+
 public:
     virtual ~Element() {}
     virtual const std::string& getAttribute(const std::string&) = 0;
@@ -25,10 +27,12 @@ public:
     virtual dom::NamedNodeMap* getAttributes() = 0;
     virtual bool hasAttributes() = 0;
     virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
+    virtual void handleEvent(Event*) = 0;
 };
 }; // namespace dom
 
 class Element_Impl : public virtual dom::Element, public virtual Node_Impl {
+
 private:
     NamedNodeMap_Impl attributes;
 
@@ -38,6 +42,7 @@ protected:
 
 public:
     friend class Document_Impl;
+    friend class Event_Impl;
 
     virtual const std::string& getAttribute(const std::string&) override;
     virtual dom::Attr* getAttributeNode(const std::string&) override;
@@ -51,6 +56,8 @@ public:
     virtual dom::NamedNodeMap* getAttributes() override;
     virtual bool hasAttributes() override;
     virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
+
+    virtual void handleEvent(dom::Event*) override;
 };
 
 #endif // ELEMENT_H

@@ -1,15 +1,16 @@
+#ifndef EVENT_HPP
+#define EVENT_HPP
+
 #include <string>
-#include <vector>
 
-class Event {
-public:
-    enum Type { TYPE1, TYPE2, TYPE3, NONE };
+namespace dom {
 
-    static const std::vector<std::string> names;
-    Event(Type type_, const std::string& message_)
-        : type(type_), message(message_) {}
-
-    Type type;
-    // Other Event stuff...
+struct Event {
     std::string message;
+
+    Event(const std::string& message_) : message(message_) {}
 };
+
+} // namespace dom
+
+#endif
