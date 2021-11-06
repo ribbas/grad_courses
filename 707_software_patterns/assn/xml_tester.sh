@@ -2,6 +2,7 @@
 
 TEST1="../../../../Test1.xml"
 TEST2="../../../../Test2.xml"
+TEST3="../../../../Test3.xml"
 OUT="out.xml"
 
 fname() {
@@ -47,7 +48,7 @@ run2() {
 run2 b ${TEST1}
 
 # chain of responsibility
-run c ${TEST1}
+run c ${TEST3}
 
 # iterator
 run i ${TEST1}

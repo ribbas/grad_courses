@@ -1,22 +1,30 @@
-#ifndef XML_VALIDATOR_H
-#define XML_VALIDATOR_H
+#ifndef XML_VALIDATOR_HPP
+#define XML_VALIDATOR_HPP
 
 #include "Element.hpp"
 #include "ValidChildren.hpp"
 #include <fstream>
-
-// class Memento {
-// protected:
-//     Memento() {}
-//     virtual ~Memento() {}
-// };
+#include <stack>
 
 class XMLValidator {
 private:
+    class Memento {
+    private:
+        friend class XMLValidator;
+        std::vector<ValidChildren*> schema;
+
+        Memento();
+    };
+
+    std::stack<XMLValidator::Memento*> history;
     std::vector<ValidChildren*> schema;
 
+    virtual Memento* createMemento();
+    std::vector<ValidChildren*> cloneSchema(const std::vector<ValidChildren*>&);
+    virtual void setMemento(Memento*);
+
 public:
-    XMLValidator() {}
+    XMLValidator();
     ~XMLValidator();
 
     virtual ValidChildren* addSchemaElement(std::string);
@@ -27,20 +35,8 @@ public:
     virtual bool canAddText(dom::Element*);
     virtual bool canAddAttribute(dom::Element*, std::string);
 
-    class Memento {
-        friend class XMLValidator;
-
-    private:
-        std::vector<ValidChildren*> schema;
-
-        Memento(std::vector<ValidChildren*>& _schema);
-        void getSchema(std::vector<ValidChildren*>& s);
-        void cloneSchema(std::vector<ValidChildren*>& ins,
-                         std::vector<ValidChildren*>& outs);
-    };
-
-    virtual Memento* createMemento();
-    virtual bool setMemento(Memento*);
+    virtual void save();
+    virtual void revertToLastSave();
 };
 
-#endif
+#endif // XML_VALIDATOR_HPP

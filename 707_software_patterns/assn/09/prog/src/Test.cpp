@@ -63,10 +63,6 @@ int main(int argc, char** argv) {
 
 void testChainOfResponsibility(int argc, char** argv) {
 
-    if (argc < 2) {
-        printUsage();
-        exit(0);
-    }
     //
     // <xml version="1.0" encoding="UTF-8"?>
     // <handlers>
@@ -76,6 +72,10 @@ void testChainOfResponsibility(int argc, char** argv) {
     // </handler>
     // </handlers>
     //
+    if (argc < 2) {
+        printUsage();
+        exit(0);
+    }
 
     XMLBuilder* builder = new XMLBuilder();
     XMLDirector director(builder, argv[2]);
@@ -336,6 +336,11 @@ void testValidator(int argc, char** argv) {
     schemaElement->addValidChild("attribute2", true);
     schemaElement->setCanHaveText(true);
 
+    std::cout << "Saving validator\n";
+    xmlValidator.save();
+
+    schemaElement->addValidChild("attribute3", true);
+
     dom::Document* document = new Document_Impl;
     dom::Element* root = nullptr;
     dom::Element* child = nullptr;
@@ -392,6 +397,13 @@ void testValidator(int argc, char** argv) {
             exit(0);
         }
 
+        if (xmlValidator.canAddAttribute(child, "attribute3"))
+            child->setAttribute("attribute3", "attribute3 value");
+        else {
+            printf("Attempted invalid schema operation.");
+            exit(0);
+        }
+
         if (xmlValidator.canAddText(child)) {
             dom::Text* text = document->createTextNode("Element Value");
             child->appendChild(text);
@@ -413,6 +425,13 @@ void testValidator(int argc, char** argv) {
         printf("Attempted invalid schema operation.");
         exit(0);
     }
+    xmlValidator.revertToLastSave();
+    std::cout << "Reverted validator\n";
+    if (xmlValidator.canAddAttribute(child, "attribute3"))
+        child->setAttribute("attribute3", "attribute3 value");
+    else {
+        printf("Attempted invalid schema operation.");
+    }
 
     //
     // Serialize
@@ -422,8 +441,6 @@ void testValidator(int argc, char** argv) {
         file = new std::fstream(argv[2], std::ios_base::out));
     xmlSerializer.serializePretty(document);
 
-    // delete child;
-    // delete root;
     delete document;
 
     delete file;
