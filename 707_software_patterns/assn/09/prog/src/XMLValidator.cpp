@@ -65,3 +65,45 @@ bool XMLValidator::canAddAttribute(dom::Element* element,
                ? true
                : (*schemaElement)->childIsValid(newAttribute, true);
 }
+
+XMLValidator::Memento* XMLValidator::createMemento() {
+    return new Memento(schema);
+}
+
+bool XMLValidator::setMemento(XMLValidator::Memento* memento) {
+
+    if (dynamic_cast<Memento*>(memento) != 0) {
+
+        Memento* m = (Memento*)memento;
+
+        m->getSchema(schema);
+
+        return true;
+    } else {
+        return false;
+    }
+}
+
+XMLValidator::Memento::Memento(std::vector<ValidChildren*>& _schema) {
+    cloneSchema(_schema, schema);
+}
+
+void XMLValidator::Memento::getSchema(std::vector<ValidChildren*>& s) {
+    cloneSchema(schema, s);
+}
+
+void XMLValidator::Memento::cloneSchema(std::vector<ValidChildren*>& ins,
+                                        std::vector<ValidChildren*>& outs) {
+
+    for (std::vector<ValidChildren*>::iterator iterator = outs.begin();
+         iterator != outs.end(); iterator++) {
+        delete *iterator;
+    }
+
+    outs.clear();
+
+    for (std::vector<ValidChildren*>::iterator iterator = ins.begin();
+         iterator != ins.end(); iterator++) {
+        outs.push_back(new ValidChildren(**iterator));
+    }
+}

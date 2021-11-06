@@ -27,7 +27,7 @@ public:
     virtual dom::NamedNodeMap* getAttributes() = 0;
     virtual bool hasAttributes() = 0;
     virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
-    virtual void handleEvent(Event*) = 0;
+    virtual bool handleEvent(Event*) = 0;
 };
 }; // namespace dom
 
@@ -57,7 +57,7 @@ public:
     virtual bool hasAttributes() override;
     virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
 
-    virtual void handleEvent(dom::Event*) override;
+    virtual bool handleEvent(dom::Event*) override;
 };
 
 #endif // ELEMENT_H

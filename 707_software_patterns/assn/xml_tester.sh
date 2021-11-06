@@ -9,6 +9,9 @@ fname() {
         b)
         echo "Builder"
         ;;
+        c)
+        echo "Chain of Responsibility"
+        ;;
         i)
         echo "Iterator"
         ;;
@@ -42,6 +45,9 @@ run2() {
 
 # builder
 run2 b ${TEST1}
+
+# chain of responsibility
+run c ${TEST1}
 
 # iterator
 run i ${TEST1}

@@ -15,6 +15,7 @@ void testSerializer(int, char**);
 void testValidator(int, char**);
 void testBuilder(int, char**);
 void testIterator(int, char**);
+void testChainOfResponsibility(int, char**);
 
 void printUsage() {
     printf("Usage:\n");
@@ -37,6 +38,10 @@ int main(int argc, char** argv) {
         case 'b':
             testBuilder(argc, argv);
             break;
+        case 'C':
+        case 'c':
+            testChainOfResponsibility(argc, argv);
+            break;
         case 'I':
         case 'i':
             testIterator(argc, argv);
@@ -56,6 +61,61 @@ int main(int argc, char** argv) {
     }
 }
 
+void testChainOfResponsibility(int argc, char** argv) {
+
+    if (argc < 2) {
+        printUsage();
+        exit(0);
+    }
+    //
+    // <xml version="1.0" encoding="UTF-8"?>
+    // <handlers>
+    // <handler message="type1">
+    //     <handler message="type2"/>
+    //     <handler message="type2"/>
+    // </handler>
+    // </handlers>
+    //
+
+    XMLBuilder* builder = new XMLBuilder();
+    XMLDirector director(builder, argv[2]);
+    director.construct();
+    dom::Document* builtDocument = director.getResult();
+
+    //
+    // Create an iterator from the document object
+    //
+    dom::Iterator* it = builtDocument->createIterator();
+    dom::Node* currentNode;
+    dom::Event* events[3] = {new dom::Event("type1"), new dom::Event("type2"),
+                             new dom::Event("type3")};
+
+    for (int i = 0; i < 3; i++) {
+
+        std::cout << "Sending request: " << events[i]->message << '\n';
+
+        for (it->first(); !it->isDone(); it->next()) {
+
+            currentNode = it->currentItem();
+
+            if (dynamic_cast<dom::Element*>(currentNode)) {
+                if (dynamic_cast<dom::Element*>(currentNode)
+                        ->handleEvent(events[i])) {
+                    break;
+                }
+            }
+        }
+    }
+
+    // delete Document and tree.
+    for (int i = 0; i < 3; i++) {
+        delete events[i];
+    }
+    delete builtDocument;
+    delete builder;
+    delete it;
+}
+
 void testBuilder(int argc, char** argv) {
 
     if (argc < 4) {
@@ -73,7 +133,7 @@ void testBuilder(int argc, char** argv) {
     //
     // Serialize
     //
-    std::fstream* file = 0;
+    std::fstream* file = nullptr;
     XMLSerializer xmlSerializer(
         file = new std::fstream(argv[3], std::ios_base::out));
     xmlSerializer.serializePretty(builtDocument);
@@ -160,7 +220,7 @@ void testTokenizer(int argc, char** argv) {
     for (int i = 2; i < argc; i++) {
         XMLTokenizer tokenizer(argv[i]);
 
-        XMLTokenizer::XMLToken* token = 0;
+        XMLTokenizer::XMLToken* token = nullptr;
 
         printf("File:  '%s'\n", argv[i]);
 
@@ -224,7 +284,7 @@ void testSerializer(int argc, char** argv) {
     //
     // Serialize
     //
-    std::fstream* file = 0;
+    std::fstream* file = nullptr;
     XMLSerializer xmlSerializer(
         file = new std::fstream(argv[2], std::ios_base::out));
     xmlSerializer.serializePretty(document);
@@ -277,9 +337,9 @@ void testValidator(int argc, char** argv) {
     schemaElement->setCanHaveText(true);
 
     dom::Document* document = new Document_Impl;
-    dom::Element* root = 0;
-    dom::Element* child = 0;
-    dom::Attr* attr = 0;
+    dom::Element* root = nullptr;
+    dom::Element* child = nullptr;
+    dom::Attr* attr = nullptr;
 
     if (xmlValidator.canRootElement("document")) {
         root = document->createElement("document");
@@ -357,7 +417,7 @@ void testValidator(int argc, char** argv) {
     //
     // Serialize
     //
-    std::fstream* file = 0;
+    std::fstream* file = nullptr;
     XMLSerializer xmlSerializer(
         file = new std::fstream(argv[2], std::ios_base::out));
     xmlSerializer.serializePretty(document);

@@ -194,12 +194,15 @@ void Element_Impl::serialize(std::fstream* writer,
     }
 }
 
-void Element_Impl::handleEvent(dom::Event* event) {
+bool Element_Impl::handleEvent(dom::Event* event) {
     if (getAttribute("message") == event->message) {
-        std::cout << "Handling event with message: " << event->message << '\n';
+        std::cout << "Event: " << event->message << " handled by " << this
+                  << '\n';
+        return true;
     } else if (dynamic_cast<dom::Element*>(getParentNode()) != nullptr) {
         dynamic_cast<dom::Element*>(getParentNode())->handleEvent(event);
     } else {
         std::cout << "Event was not handled\n";
     }
+    return false;
 }
