@@ -34,4 +34,6 @@ int main(int argc, char** argv) {
             testValidator(argc, argv);
             break;
     }
+
+    return 0;
 }

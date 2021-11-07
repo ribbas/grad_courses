@@ -124,12 +124,13 @@ void testValidator(int argc, char** argv) {
         printf("Attempted invalid schema operation.");
         exit(0);
     }
-    xmlValidator.revertToLastSave();
+    xmlValidator.undo();
     std::cout << "Reverted validator\n";
     if (xmlValidator.canAddAttribute(child, "attribute3"))
         child->setAttribute("attribute3", "attribute3 value");
     else {
         printf("Attempted invalid schema operation.");
+        exit(0);
     }
 
     //

@@ -129,7 +129,7 @@ dom::Attr* Element_Impl::setAttributeNode(dom::Attr* newAttr) {
                                 "Attribute in use by other element.");
     }
 
-    dom::Attr* oldAttribute = 0;
+    dom::Attr* oldAttribute = nullptr;
 
     for (dom::NodeList::iterator i = attributes.begin(); i != attributes.end();
          i++) {

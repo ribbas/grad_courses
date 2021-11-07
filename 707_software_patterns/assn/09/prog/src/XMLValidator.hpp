@@ -14,6 +14,7 @@ private:
         std::vector<ValidChildren*> schema;
 
         Memento();
+        ~Memento();
     };
 
     std::stack<XMLValidator::Memento*> history;
@@ -36,7 +37,7 @@ public:
     virtual bool canAddAttribute(dom::Element*, std::string);
 
     virtual void save();
-    virtual void revertToLastSave();
+    virtual void undo();
 };
 
 #endif // XML_VALIDATOR_HPP

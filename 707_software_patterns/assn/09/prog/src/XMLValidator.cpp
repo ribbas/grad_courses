@@ -6,6 +6,9 @@ XMLValidator::~XMLValidator() {
     for (unsigned int i = 0; i < schema.size(); i++) {
         delete schema[i];
     }
+    while (!history.empty()) {
+        history.pop();
+    }
 }
 
 ValidChildren* XMLValidator::addSchemaElement(std::string element) {
@@ -70,6 +73,8 @@ bool XMLValidator::canAddAttribute(dom::Element* element,
 
 XMLValidator::Memento::Memento() {}
 
+XMLValidator::Memento::~Memento() {}
+
 XMLValidator::Memento* XMLValidator::createMemento() {
     XMLValidator::Memento* memento = new XMLValidator::Memento();
     memento->schema = cloneSchema(this->schema);
@@ -77,26 +82,22 @@ XMLValidator::Memento* XMLValidator::createMemento() {
 }
 
 std::vector<ValidChildren*>
-XMLValidator::cloneSchema(const std::vector<ValidChildren*>& schemaToCopy) {
+XMLValidator::cloneSchema(const std::vector<ValidChildren*>& oldSchema) {
 
-    std::vector<ValidChildren*> newSchema;
-    // Do deep copy of schema
-    for (unsigned int i = 0; i < schemaToCopy.size(); i++) {
-        ValidChildren* clonedValidChildren =
-            new ValidChildren(*schemaToCopy[i]);
-        newSchema.push_back(clonedValidChildren);
+    std::vector<ValidChildren*> clonedSchema;
+    for (unsigned int i = 0; i < oldSchema.size(); i++) {
+        ValidChildren* clonedValidChildren = new ValidChildren(*oldSchema[i]);
+        clonedSchema.push_back(clonedValidChildren);
     }
-    return newSchema;
+    return clonedSchema;
 }
 
 void XMLValidator::setMemento(XMLValidator::Memento* memento) {
 
-    // First delete the old schema
     for (unsigned int i = 0; i < schema.size(); i++) {
         delete schema[i];
     }
 
-    // Now clone the memento's schema and set it
     schema = XMLValidator::cloneSchema(memento->schema);
 }
 
@@ -104,7 +105,7 @@ void XMLValidator::save() {
     history.push(createMemento());
 }
 
-void XMLValidator::revertToLastSave() {
+void XMLValidator::undo() {
     XMLValidator::Memento* lastSave = history.top();
     setMemento(lastSave);
     history.pop();
