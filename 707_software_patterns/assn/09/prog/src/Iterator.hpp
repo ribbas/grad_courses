@@ -1,5 +1,5 @@
-#ifndef ITERATOR_H
-#define ITERATOR_H
+#ifndef ITERATOR_HPP
+#define ITERATOR_HPP
 
 #include "Node.hpp"
 #include <vector>
@@ -41,4 +41,4 @@ public:
     virtual dom::Node* currentItem() override;
 };
 
-#endif
+#endif // ITERATOR_HPP

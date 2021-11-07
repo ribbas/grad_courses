@@ -60,4 +60,4 @@ public:
     virtual bool handleEvent(dom::Event*) override;
 };
 
-#endif // ELEMENT_H
+#endif // ELEMENT_HPP

@@ -1,7 +1,6 @@
 #include "Test.hpp"
 
 void testChainOfResponsibility(int argc, char** argv) {
-
     //
     // <xml version="1.0" encoding="UTF-8"?>
     // <handlers>

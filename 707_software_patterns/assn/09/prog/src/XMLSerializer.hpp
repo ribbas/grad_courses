@@ -1,5 +1,5 @@
-#ifndef XML_SERIALIZER_H
-#define XML_SERIALIZER_H
+#ifndef XML_SERIALIZER_HPP
+#define XML_SERIALIZER_HPP
 
 #include "Node.hpp"
 #include <fstream>
@@ -51,4 +51,4 @@ public:
     virtual void serializeMinimal(dom::Node*);
 };
 
-#endif
+#endif // XML_SERIALIZER_HPP

@@ -1,5 +1,5 @@
-#ifndef VALID_CHILDREN_H
-#define VALID_CHILDREN_H
+#ifndef VALID_CHILDREN_HPP
+#define VALID_CHILDREN_HPP
 
 #include <string>
 #include <vector>
@@ -23,4 +23,4 @@ public:
     virtual bool childIsValid(const std::string&, bool);
 };
 
-#endif
+#endif // VALID_CHILDREN_HPP

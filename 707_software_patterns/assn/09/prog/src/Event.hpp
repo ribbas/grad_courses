@@ -13,4 +13,4 @@ struct Event {
 
 } // namespace dom
 
-#endif
+#endif // EVENT_HPP
