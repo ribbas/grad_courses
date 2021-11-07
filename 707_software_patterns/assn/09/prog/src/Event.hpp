@@ -6,7 +6,7 @@
 namespace dom {
 
 struct Event {
-    std::string message;
+    const std::string message;
 
     Event(const std::string& message_) : message(message_) {}
 };

@@ -42,7 +42,6 @@ protected:
 
 public:
     friend class Document_Impl;
-    friend class Event_Impl;
 
     virtual const std::string& getAttribute(const std::string&) override;
     virtual dom::Attr* getAttributeNode(const std::string&) override;
@@ -56,7 +55,6 @@ public:
     virtual dom::NamedNodeMap* getAttributes() override;
     virtual bool hasAttributes() override;
     virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
-
     virtual bool handleEvent(dom::Event*) override;
 };
 

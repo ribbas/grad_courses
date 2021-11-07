@@ -29,4 +29,4 @@ void testBuilder(int, char**);
 void testIterator(int, char**);
 void testChainOfResponsibility(int, char**);
 
-#endif
+#endif // TEST_HPP

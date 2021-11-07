@@ -3,7 +3,7 @@
 void testValidator(int argc, char** argv) {
     if (argc < 3) {
         printUsage();
-        exit(0);
+        return;
     }
 
     //
@@ -50,7 +50,7 @@ void testValidator(int argc, char** argv) {
         document->appendChild(root);
     } else {
         printf("Attempted invalid schema operation.");
-        exit(0);
+        return;
     }
 
     if (xmlValidator.canAddElement(root, "element")) {
@@ -62,13 +62,13 @@ void testValidator(int argc, char** argv) {
             child->setAttributeNode(attr);
         } else {
             printf("Attempted invalid schema operation.");
-            exit(0);
+            return;
         }
 
         root->appendChild(child);
     } else {
         printf("Attempted invalid schema operation.");
-        exit(0);
+        return;
     }
 
     if (xmlValidator.canAddElement(root, "element")) {
@@ -76,7 +76,7 @@ void testValidator(int argc, char** argv) {
         root->appendChild(child);
     } else {
         printf("Attempted invalid schema operation.");
-        exit(0);
+        return;
     }
 
     if (xmlValidator.canAddElement(root, "element")) {
@@ -86,21 +86,21 @@ void testValidator(int argc, char** argv) {
             child->setAttribute("attribute", "attribute value");
         else {
             printf("Attempted invalid schema operation.");
-            exit(0);
+            return;
         }
 
         if (xmlValidator.canAddAttribute(child, "attribute2"))
             child->setAttribute("attribute2", "attribute2 value");
         else {
             printf("Attempted invalid schema operation.");
-            exit(0);
+            return;
         }
 
         if (xmlValidator.canAddAttribute(child, "attribute3"))
             child->setAttribute("attribute3", "attribute3 value");
         else {
             printf("Attempted invalid schema operation.");
-            exit(0);
+            return;
         }
 
         if (xmlValidator.canAddText(child)) {
@@ -108,13 +108,13 @@ void testValidator(int argc, char** argv) {
             child->appendChild(text);
         } else {
             printf("Attempted invalid schema operation.");
-            exit(0);
+            return;
         }
 
         root->appendChild(child);
     } else {
         printf("Attempted invalid schema operation.");
-        exit(0);
+        return;
     }
 
     if (xmlValidator.canAddElement(root, "element")) {
@@ -122,15 +122,16 @@ void testValidator(int argc, char** argv) {
         root->appendChild(child);
     } else {
         printf("Attempted invalid schema operation.");
-        exit(0);
+        return;
     }
+
     xmlValidator.undo();
     std::cout << "Reverted validator\n";
     if (xmlValidator.canAddAttribute(child, "attribute3"))
         child->setAttribute("attribute3", "attribute3 value");
     else {
         printf("Attempted invalid schema operation.");
-        exit(0);
+        return;
     }
 
     //
@@ -142,7 +143,5 @@ void testValidator(int argc, char** argv) {
     xmlSerializer.serializePretty(document);
 
     delete document;
-
     delete file;
-    // delete Document and tree.
 }

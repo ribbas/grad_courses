@@ -18,7 +18,6 @@ public:
     virtual std::string getThisElement();
     virtual bool canHaveText();
     virtual void setCanHaveText(bool);
-
     virtual void addValidChild(const std::string&, bool);
     virtual bool childIsValid(const std::string&, bool);
 };

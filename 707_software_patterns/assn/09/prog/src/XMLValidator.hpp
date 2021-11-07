@@ -20,8 +20,10 @@ private:
     std::stack<XMLValidator::Memento*> history;
     std::vector<ValidChildren*> schema;
 
+    // private methods to interface Memento
     virtual Memento* createMemento();
-    std::vector<ValidChildren*> cloneSchema(const std::vector<ValidChildren*>&);
+    virtual std::vector<ValidChildren*>
+    cloneSchema(const std::vector<ValidChildren*>&);
     virtual void setMemento(Memento*);
 
 public:
@@ -36,6 +38,7 @@ public:
     virtual bool canAddText(dom::Element*);
     virtual bool canAddAttribute(dom::Element*, std::string);
 
+    // public methods to interface Memento
     virtual void save();
     virtual void undo();
 };

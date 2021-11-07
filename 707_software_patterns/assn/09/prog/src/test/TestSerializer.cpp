@@ -55,9 +55,7 @@ void testSerializer(int argc, char** argv) {
         file = new std::fstream(argv[3], std::ios_base::out));
     xmlSerializer2.serializeMinimal(document);
 
-    delete document;
-
-    delete file;
-
     // delete Document and tree.
+    delete document;
+    delete file;
 }
