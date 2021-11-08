@@ -1,5 +1,5 @@
-#ifndef ATTR_H
-#define ATTR_H
+#ifndef ATTR_HPP
+#define ATTR_HPP
 
 #include "Node.hpp"
 #include <string>
@@ -42,4 +42,4 @@ public:
     virtual Node* appendChild(Node*) override;
 };
 
-#endif // ATTR_H
+#endif // ATTR_HPP

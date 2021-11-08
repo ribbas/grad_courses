@@ -6,7 +6,7 @@ FIND_PACKAGE(Boost COMPONENTS regex)
 
 if(Boost_FOUND)
 
-	add_executable(${CMAKE_PROJECT_NAME} Test.cpp)
+	add_executable(${CMAKE_PROJECT_NAME} test/Test.cpp)
 	target_sources(${CMAKE_PROJECT_NAME} PUBLIC
 		Attr.cpp
 		Document.cpp
@@ -14,7 +14,6 @@ if(Boost_FOUND)
 		Iterator.cpp
 		NamedNodeMap.cpp
 		Node.cpp
-		Test.cpp
 		Text.cpp
 		ValidChildren.cpp
 		XMLBuilder.cpp
@@ -22,6 +21,13 @@ if(Boost_FOUND)
 		XMLSerializer.cpp
 		XMLTokenizer.cpp
 		XMLValidator.cpp
+		test/Test.cpp
+		test/TestBuilder.cpp
+		test/TestChainOfResponsibility.cpp
+		test/TestIterator.cpp
+		test/TestSerializer.cpp
+		test/TestTokenizer.cpp
+		test/TestValidator.cpp
 	)
 
 	target_link_libraries(${CMAKE_PROJECT_NAME} Boost::regex)

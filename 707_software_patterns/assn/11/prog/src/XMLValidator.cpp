@@ -1,8 +1,13 @@
 #include "XMLValidator.hpp"
 
+XMLValidator::XMLValidator() {}
+
 XMLValidator::~XMLValidator() {
     for (unsigned int i = 0; i < schema.size(); i++) {
         delete schema[i];
+    }
+    while (!history.empty()) {
+        history.pop();
     }
 }
 
@@ -64,4 +69,44 @@ bool XMLValidator::canAddAttribute(dom::Element* element,
     return schemaElement == schema.end()
                ? true
                : (*schemaElement)->childIsValid(newAttribute, true);
+}
+
+XMLValidator::Memento::Memento() {}
+
+XMLValidator::Memento::~Memento() {}
+
+XMLValidator::Memento* XMLValidator::createMemento() {
+    XMLValidator::Memento* memento = new XMLValidator::Memento();
+    memento->schema = cloneSchema(this->schema);
+    return memento;
+}
+
+std::vector<ValidChildren*>
+XMLValidator::cloneSchema(const std::vector<ValidChildren*>& oldSchema) {
+
+    std::vector<ValidChildren*> clonedSchema;
+    for (unsigned int i = 0; i < oldSchema.size(); i++) {
+        ValidChildren* clonedValidChildren = new ValidChildren(*oldSchema[i]);
+        clonedSchema.push_back(clonedValidChildren);
+    }
+    return clonedSchema;
+}
+
+void XMLValidator::setMemento(XMLValidator::Memento* memento) {
+
+    for (unsigned int i = 0; i < schema.size(); i++) {
+        delete schema[i];
+    }
+
+    schema = XMLValidator::cloneSchema(memento->schema);
+}
+
+void XMLValidator::save() {
+    history.push(createMemento());
+}
+
+void XMLValidator::undo() {
+    XMLValidator::Memento* lastSave = history.top();
+    setMemento(lastSave);
+    history.pop();
 }

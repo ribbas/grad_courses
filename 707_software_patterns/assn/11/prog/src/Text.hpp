@@ -1,5 +1,5 @@
-#ifndef TEXT_H
-#define TEXT_H
+#ifndef TEXT_HPP
+#define TEXT_HPP
 
 #include "Node.hpp"
 #include <string>
@@ -55,4 +55,4 @@ public:
     virtual Node* appendChild(Node*) override;
 };
 
-#endif // TEXT_H
+#endif // TEXT_HPP

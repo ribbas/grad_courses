@@ -2,6 +2,7 @@
 #include "Attr.hpp"
 #include "Document.hpp"
 #include "Text.hpp"
+#include <iostream>
 
 Element_Impl::Element_Impl(const std::string& tagName, dom::Document* document)
     : Node_Impl(tagName, dom::Node::ELEMENT_NODE, document),
@@ -128,7 +129,7 @@ dom::Attr* Element_Impl::setAttributeNode(dom::Attr* newAttr) {
                                 "Attribute in use by other element.");
     }
 
-    dom::Attr* oldAttribute = 0;
+    dom::Attr* oldAttribute = nullptr;
 
     for (dom::NodeList::iterator i = attributes.begin(); i != attributes.end();
          i++) {
@@ -191,4 +192,17 @@ void Element_Impl::serialize(std::fstream* writer,
         *writer << "</" << getTagName() + ">";
         whitespace->newLine(writer);
     }
+}
+
+bool Element_Impl::handleEvent(dom::Event* event) {
+    if (getAttribute("message") == event->message) {
+        std::cout << "Event: " << event->message << " handled by " << this
+                  << '\n';
+        return true;
+    } else if (dynamic_cast<dom::Element*>(getParentNode()) != nullptr) {
+        dynamic_cast<dom::Element*>(getParentNode())->handleEvent(event);
+    } else {
+        std::cout << "Event was not handled\n";
+    }
+    return false;
 }

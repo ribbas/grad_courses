@@ -1,5 +1,5 @@
-#ifndef NODE_LIST_H
-#define NODE_LIST_H
+#ifndef NODE_LIST_HPP
+#define NODE_LIST_HPP
 
 #include <list>
 
@@ -22,4 +22,4 @@ public:
 };
 }; // namespace dom
 
-#endif // NODELIST_H
+#endif // NODELIST_HPP

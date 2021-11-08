@@ -1,5 +1,5 @@
-#ifndef XML_BUILDER_H
-#define XML_BUILDER_H
+#ifndef XML_BUILDER_HPP
+#define XML_BUILDER_HPP
 
 #include "Attr.hpp"
 #include "Document.hpp"
@@ -25,4 +25,4 @@ public:
     dom::Text* addText(std::string);
 };
 
-#endif // XML_BUILDER_H
+#endif // XML_BUILDER_HPP

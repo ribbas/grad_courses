@@ -1,5 +1,5 @@
-#ifndef WHITESPACE_STRATEGY_H
-#define WHITESPACE_STRATEGY_H
+#ifndef WHITESPACE_STRATEGY_HPP
+#define WHITESPACE_STRATEGY_HPP
 
 #include <fstream>
 
@@ -16,4 +16,4 @@ public:
     virtual void newLine(std::fstream*) = 0;
 };
 
-#endif // WHITESPACESTRATEGY_H
+#endif // WHITESPACESTRATEGY_HPP
