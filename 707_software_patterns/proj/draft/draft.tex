@@ -1,6 +1,5 @@
 \documentclass[titlepage]{article}
-\usepackage[margin=1.0in]{geometry}
-\usepackage{hyperref}
+\input{header.sty}
 
 \title{Final Project Draft}
 \author{Sabbir Ahmed}
@@ -11,7 +10,7 @@
 \maketitle
 
 \section{Introduction}
-In software engineering, design patterns are general, reusable solutions to commonly occuring problems \cite{source-making}. It is generally considered good practice to integrate design patterns into software products, especially large projects, since it allows the developers to focus their time and attention towards specific implementations. The purpose of this draft is to introduce an open-source project and present analysis on the software patterns within the implementation.
+In software engineering, design patterns are general, reusable solutions to commonly occurring problems \cite{source-making}. It is generally considered good practice to integrate design patterns into software products, especially large projects, since it allows the developers to focus their time and attention towards specific implementations. The purpose of this draft is to introduce an open-source project and present analysis on the software patterns within the implementation.
 
 \section{Structural Simulation Toolkit (SST)}
 The software that is being focused on in the final project is Structural Simulation Toolkit (SST). It is a simulation framework that prioritizes high performance computing (HPC) models \cite{sst}. Since SST is a large scale project with many stable extensions implemented for its kernel, the scope of the project will be limited to specific sections of the core repository. The repository is hosted on GitHub \cite{sst-repo}.
@@ -19,24 +18,36 @@ The software that is being focused on in the final project is Structural Simulat
 \section{Software Patterns Present in SST}
 The following patterns can be observed to have been already implemented in the project:
 \begin{enumerate}
+    \item Abstract factory pattern
     \item Factory method pattern
     \item Singleton pattern
     \item Template method pattern
-    \item Builder pattern
 \end{enumerate}
 
 Other patterns are present in the project, such as C++ idioms, such as Include Guard Macro,
 
-\subsection{Factory method pattern}
-The factory method pattern is observed in the
+\subsection{Abstract Factory/Factory Method}
+The abstract factory and factory method patterns are present in the \texttt{SST::Factory} class. In the repository, it is used to create several concrete classes, including \texttt{Component} and \texttt{Module} objects. The class also provides templated variadic methods to create concrete classes of generic classes, such as
+\begin{lstlisting}[language=c++]
+/*
+ * General function to create a given base class.
+ *
+ * @param type
+ * @param params
+ * @param args Constructor arguments
+ */
+template<class Base, class ... CtorArgs>
+Base* Create(const std::string& type, CtorArgs&& ... args)
+\end{lstlisting}
 
-\subsection{Singleton pattern}
-The singleton pattern is present in the \texttt{Factory} class. On the repository, the class can be located at \texttt{src/sst/core/factory.h}. The class is used to instantiate other concrete simulation classes. SST requires simulation objects to be synchronized throughout the kernel, especially since they can be running on a distributed system where locks can become major issues. The software forces these simulation objects to be singletons.
+\subsection{Singleton}
+The singleton pattern is present in the \texttt{Factory} class. In the repository, the class can be located at \texttt{src/sst/core/factory.cc}. The class is used to instantiate other concrete simulation classes. SST requires simulation objects to be synchronized throughout the kernel, especially since they can be running on a distributed system where race conditions can become major issues. The software forces these simulation objects to be singletons.
 
-\subsection{Template method pattern}
+\subsection{Template Method}
 This pattern is implemented throughout the project through C++ function templates. The synchronization subclasses, which can be found at \texttt{src/sst/core/factory.h}, are implemented as template subclasses with variadic arguments. This approach allowed for various
 
-\subsection{Builder pattern}
+% \subsection{Builder pattern}
+% This pattern is present in the \texttt{BuilderLibrary} class. In the repository, the class can be located at \texttt{src/sst/core/eli/elementbuilder.h}. The class provides methods to add
 
 \section{Suggested Software Patterns in SST}
 
