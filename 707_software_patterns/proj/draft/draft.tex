@@ -21,13 +21,13 @@ The following patterns can be observed to have been already implemented in the p
     \item Abstract factory pattern
     \item Factory method pattern
     \item Singleton pattern
-    \item Template method pattern
+    \item Strategy pattern
 \end{enumerate}
 
-Other patterns are present in the project, such as C++ idioms, such as Include Guard Macro,
+Other patterns are present in the project, such as C++ idioms (Include Guard Macro).
 
 \subsection{Abstract Factory/Factory Method}
-The abstract factory and factory method patterns are present in the \texttt{SST::Factory} class. In the repository, it is used to create several concrete classes, including \texttt{Component} and \texttt{Module} objects. The class also provides templated variadic methods to create concrete classes of generic classes, such as
+The abstract factory and factory method patterns are present in the \texttt{SST::Factory} class. In the repository, the class can be located at \texttt{factory.h}. In the repository, it is used to create several concrete classes, including \texttt{Component} and \texttt{Module} objects. The class also provides templated variadic methods to create concrete classes of generic classes, such as
 \begin{lstlisting}[language=c++]
 /*
  * General function to create a given base class.
@@ -41,19 +41,11 @@ Base* Create(const std::string& type, CtorArgs&& ... args)
 \end{lstlisting}
 
 \subsection{Singleton}
-The singleton pattern is present in the \texttt{Factory} class. In the repository, the class can be located at \texttt{src/sst/core/factory.cc}. The class is used to instantiate other concrete simulation classes. SST requires simulation objects to be synchronized throughout the kernel, especially since they can be running on a distributed system where race conditions can become major issues. The software forces these simulation objects to be singletons.
-
-\subsection{Template Method}
-This pattern is implemented throughout the project through C++ function templates. The synchronization subclasses, which can be found at \texttt{src/sst/core/factory.h}, are implemented as template subclasses with variadic arguments. This approach allowed for various
-
-% \subsection{Builder pattern}
-% This pattern is present in the \texttt{BuilderLibrary} class. In the repository, the class can be located at \texttt{src/sst/core/eli/elementbuilder.h}. The class provides methods to add
-
-\section{Suggested Software Patterns in SST}
+The singleton pattern is present in the \texttt{SST::Factory} class. In the repository, the class can be located at \texttt{factory.h}. The class is used to instantiate other concrete simulation classes. SST requires simulation objects to be synchronized throughout the kernel, especially since they can be running on a distributed system where race conditions can become major issues. The software forces these simulation objects to be singletons.
 
 \subsection{Strategy pattern}
 
-\subsection{Decorator pattern}
+The strategy pattern is present in the \texttt{SST::Core::Serialization::serializer} class. The class is implemented throughout multiple files in \texttt{serialization}, where it is overloaded in the files with various parameter types, with all the various versions of the class simply overloading the function call operator (\texttt{operator()}).
 
 \bibliographystyle{plain}
 \bibliography{ref}
