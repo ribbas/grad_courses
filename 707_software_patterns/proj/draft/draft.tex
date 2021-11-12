@@ -23,12 +23,12 @@ The following patterns can be observed to have been already implemented in the p
     \item Singleton pattern
     \item Strategy pattern
 \end{enumerate}
-
-Other patterns are present in the project, such as C++ idioms (Include Guard Macro).
+Other patterns are present in the project, such as C++ idioms (Include Guard Macro, enable\_if, etc.)
 
 \subsection{Abstract Factory/Factory Method}
 The abstract factory and factory method patterns are present in the \texttt{SST::Factory} class. In the repository, the class can be located at \texttt{factory.h}. In the repository, it is used to create several concrete classes, including \texttt{Component} and \texttt{Module} objects. The class also provides templated variadic methods to create concrete classes of generic classes, such as
 \begin{lstlisting}[language=c++]
+// src/sst/core/factory.h
 /*
  * General function to create a given base class.
  *
