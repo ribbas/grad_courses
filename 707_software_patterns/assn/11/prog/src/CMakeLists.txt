@@ -9,8 +9,10 @@ if(Boost_FOUND)
 	add_executable(${CMAKE_PROJECT_NAME} test/Test.cpp)
 	target_sources(${CMAKE_PROJECT_NAME} PUBLIC
 		Attr.cpp
+		Command.cpp
 		Document.cpp
 		Element.cpp
+		Invoker.cpp
 		Iterator.cpp
 		NamedNodeMap.cpp
 		Node.cpp
@@ -23,7 +25,8 @@ if(Boost_FOUND)
 		XMLValidator.cpp
 		test/Test.cpp
 		test/TestBuilder.cpp
-		test/TestChainOfResponsibility.cpp
+		test/TestCommand.cpp
+		test/TestEvent.cpp
 		test/TestIterator.cpp
 		test/TestSerializer.cpp
 		test/TestTokenizer.cpp

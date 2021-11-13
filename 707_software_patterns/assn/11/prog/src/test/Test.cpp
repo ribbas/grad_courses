@@ -15,6 +15,10 @@ int main(int argc, char** argv) {
             break;
         case 'C':
         case 'c':
+            testCommand(argc, argv);
+            break;
+        case 'E':
+        case 'e':
             testChainOfResponsibility(argc, argv);
             break;
         case 'I':
