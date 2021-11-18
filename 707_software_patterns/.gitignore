@@ -1,3 +1,8 @@
-proj/draft/draft.*
-!proj/draft/*.tex
-!proj/draft/*.pdf
+proj/*
+!proj/*/
+proj/*/*
+!proj/*/Makefile
+!proj/*/*.sty
+!proj/*/*.tex
+!proj/*/*.pdf
+!proj/*.pdf
