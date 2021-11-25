@@ -2,6 +2,7 @@
 #define COMMAND_HPP
 
 #include "Node.hpp"
+#include "XMLBuilder.hpp"
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -15,51 +16,50 @@ protected:
 
 public:
     virtual ~Command() {}
-    virtual void execute() = 0;
+    virtual void execute(const std::string) = 0;
 };
 
 class ParseFileCommand : public Command {
 private:
-    std::string fileName;
-    dom::Node* rootNode;
     Invoker* state;
+    XMLBuilder* builder;
 
 public:
-    virtual void execute() override;
-    ParseFileCommand(const std::string fileName_) : fileName(fileName_) {}
+    ParseFileCommand(Invoker* invoker)
+        : state(invoker), builder(new XMLBuilder()) {}
+    virtual void execute(const std::string) override;
+
+    ~ParseFileCommand() {
+        if (builder) {
+            delete builder;
+        }
+    }
 };
 
 class SerializeCommand : public Command {
 private:
-    dom::Node* node;
-    std::fstream* file;
     Invoker* state;
+    std::fstream* file;
 
 public:
-    SerializeCommand(const std::string& fileName)
-        : file(new std::fstream(fileName.c_str(), std::ios_base::out)) {}
+    SerializeCommand(Invoker* invoker) : state(invoker) {}
 
     ~SerializeCommand() {
         if (file) {
             delete file;
         }
     }
-    virtual void execute() override;
+    virtual void execute(const std::string) override;
 };
 
 class AddAttributeCommand : public Command {
 private:
-    dom::Element* node;
-    std::string attrName;
-    std::string attrValue;
     Invoker* state;
 
 public:
-    AddAttributeCommand(dom::Element* node_, const std::string& attrName_,
-                        const std::string& attrValue_)
-        : node(node_), attrName(attrName_), attrValue(attrValue_) {}
+    AddAttributeCommand(Invoker* invoker) : state(invoker) {}
 
-    virtual void execute() override;
+    virtual void execute(const std::string) override;
 };
 
 #endif // COMMAND_HPP

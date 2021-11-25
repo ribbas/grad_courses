@@ -6,29 +6,17 @@
 class Invoker {
 private:
     std::vector<Command*> commands;
-    bool running;
+    std::vector<std::string> args;
     dom::Document* document;
 
-    virtual void split(const std::string& input,
-                       std::vector<std::string>& output);
-
 public:
-    Invoker() : running(true), document(nullptr) {}
-    virtual ~Invoker() {}
+    Invoker();
+    virtual ~Invoker();
 
-    virtual void addCommand(Command* command) {
-        commands.push_back(command);
-    }
-
+    virtual void addCommand(Command*, const std::string&);
+    virtual void setDocument(dom::Document*);
+    virtual dom::Document* getDocument();
     virtual void run();
-    virtual void setDocument(dom::Document* d) {
-        document = d;
-    }
-    virtual dom::Document* getDocument() {
-        return document;
-    }
-    virtual void prompt();
-    virtual void invoke(const std::string& input);
 };
 
 #endif // INVOKER_HPP

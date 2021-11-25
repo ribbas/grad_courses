@@ -9,9 +9,10 @@ void testCommand(int argc, char** argv) {
 
     Invoker invoker;
 
-    invoker.addCommand(new ParseFileCommand(argv[2]));
-    // invoker.addCommand(new SerializeCommand());
-    // invoker.addCommand(new AddAttributeCommand());
+    invoker.addCommand(new ParseFileCommand(&invoker), argv[2]);
+    invoker.addCommand(new SerializeCommand(&invoker), argv[2]);
+    // invoker.addCommand(new AddAttributeCommand(&invoker),
+    //                    "attribute;attribute value");
 
     invoker.run();
 }

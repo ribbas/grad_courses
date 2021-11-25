@@ -65,6 +65,7 @@ public:
     static const int NO_MODIFICATION_ALLOWED_ERR = 4;
     static const int INVALID_CHARACTER_ERR = 5;
     static const int HIERARCHY_REQUEST_ERR = 6;
+    static const int VALIDATION_ERR = 7;
 };
 
 }; // namespace dom

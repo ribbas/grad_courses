@@ -10,7 +10,7 @@ fname() {
         b)
         echo "Builder"
         ;;
-        c)
+        e)
         echo "Chain of Responsibility"
         ;;
         i)
@@ -48,7 +48,7 @@ run2() {
 run2 b ${TEST1}
 
 # chain of responsibility
-run c ${TEST3}
+run e ${TEST3}
 
 # iterator
 run i ${TEST1}

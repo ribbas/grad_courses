@@ -3,90 +3,30 @@
 #include <iostream>
 #include <sstream>
 
+Invoker::Invoker() : document(nullptr) {}
+
+Invoker::~Invoker() {}
+
+void Invoker::setDocument(dom::Document* doc) {
+    document = doc;
+}
+
+dom::Document* Invoker::getDocument() {
+    return document;
+}
+
+void Invoker::addCommand(Command* command, const std::string& arg) {
+    commands.push_back(command);
+    args.push_back(arg);
+}
+
 void Invoker::run() {
-    std::string line;
 
-    do {
-        prompt();
-        std::getline(std::cin, line);
-        invoke(line);
-    } while (running);
+    if (commands.size() == args.size()) {
+
+        for (unsigned int i = 0; i < commands.size(); i++) {
+            std::cout << commands.at(i) << ' ' << args.at(i) << '\n';
+            commands.at(i)->execute(args.at(i));
+        }
+    }
 }
-
-void Invoker::prompt() {
-    std::cout << "\nCommands:" << std::endl;
-    std::cout << "\tread [file]" << std::endl;
-    std::cout << "\twrite [file]" << std::endl;
-    std::cout << "\tprint" << std::endl;
-    std::cout << "-->  ";
-}
-
-void Invoker::invoke(const std::string& input) {
-    std::vector<std::string> parsedInput;
-
-    split(input, parsedInput);
-
-    // if (!parsedInput.empty()) {
-    //     if (commands.find(parsedInput[0]) != commands.end())
-    //         commands[parsedInput[0]]->Execute(
-    //             parsedInput.size() > 1 ? parsedInput[1] : "");
-    //     else
-    //         running = false;
-    // } else
-    //     running = false;
-}
-
-void Invoker::split(const std::string& input,
-                    std::vector<std::string>& output) {
-    std::stringstream ss(input);
-    std::string item;
-
-    while (std::getline(ss, item, ' '))
-        output.push_back(item);
-}
-
-// void ParseCommand::Execute(const std::string& arg) {
-//     if (arg.size() == 0) {
-//         std::cout << "No filename provided." << std::endl;
-//         return;
-//     }
-
-//     dom::Document* document = new Document_Impl;
-//     Builder builder(document);
-//     //
-//     // Schema for this document:
-//     // document contains:  element
-//     // element contains:  element
-//     // element contains attributes:  attribute, attribute2
-//     //
-//     XMLValidator xmlValidator(&builder);
-//     ValidChildren* schemaElement = xmlValidator.addSchemaElement("");
-//     schemaElement->addValidChild("document", false);
-//     schemaElement = xmlValidator.addSchemaElement("document");
-//     schemaElement->addValidChild("element", false);
-//     schemaElement = xmlValidator.addSchemaElement("element");
-//     schemaElement->addValidChild("element", false);
-//     schemaElement->addValidChild("attribute", true);
-//     schemaElement->addValidChild("attribute2", true);
-//     schemaElement->setCanHaveText(true);
-
-//     Director director(arg, &builder);
-//     state->setDocument(builder.getDocument());
-// }
-
-// void WriteCommand::Execute(const std::string& arg) {
-//     if (arg.size() == 0) {
-//         std::cout << "No filename provided." << std::endl;
-//         return;
-//     }
-
-//     std::fstream file(arg.c_str(), std::ios_base::out);
-//     XMLSerializer xmlSerializer(&file);
-//     xmlSerializer.serializePretty(state->getDocument());
-// }
-
-// void PrintCommand::Execute(const std::string& arg) {
-//     XMLSerializer xmlSerializer(&std::cout);
-//     xmlSerializer.serializePretty(state->getDocument());
-//     std::cout.flush();
-// }
