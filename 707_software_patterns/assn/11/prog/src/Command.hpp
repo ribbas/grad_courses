@@ -16,7 +16,7 @@ protected:
 
 public:
     virtual ~Command() {}
-    virtual void execute(const std::string) = 0;
+    virtual void execute(const std::string&) = 0;
 };
 
 class ParseFileCommand : public Command {
@@ -27,7 +27,7 @@ private:
 public:
     ParseFileCommand(Invoker* invoker)
         : state(invoker), builder(new XMLBuilder()) {}
-    virtual void execute(const std::string) override;
+    virtual void execute(const std::string&) override;
 
     ~ParseFileCommand() {
         if (builder) {
@@ -49,7 +49,7 @@ public:
             delete file;
         }
     }
-    virtual void execute(const std::string) override;
+    virtual void execute(const std::string&) override;
 };
 
 class AddAttributeCommand : public Command {
@@ -59,7 +59,7 @@ private:
 public:
     AddAttributeCommand(Invoker* invoker) : state(invoker) {}
 
-    virtual void execute(const std::string) override;
+    virtual void execute(const std::string&) override;
 };
 
 #endif // COMMAND_HPP

@@ -9,8 +9,11 @@ void testCommand(int argc, char** argv) {
 
     Invoker invoker;
 
-    invoker.addCommand(new ParseFileCommand(&invoker), argv[2]);
-    invoker.addCommand(new SerializeCommand(&invoker), argv[2]);
+    std::string arg1 = argv[2];
+    std::string arg2 = argv[3];
+
+    invoker.addCommand(new ParseFileCommand(&invoker), arg1);
+    invoker.addCommand(new SerializeCommand(&invoker), arg2);
     // invoker.addCommand(new AddAttributeCommand(&invoker),
     //                    "attribute;attribute value");
 
