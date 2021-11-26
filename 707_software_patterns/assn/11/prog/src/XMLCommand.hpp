@@ -2,11 +2,6 @@
 #define XML_COMMAND_HPP
 
 #include "Node.hpp"
-#include "XMLBuilder.hpp"
-#include <fstream>
-#include <iostream>
-#include <string>
-#include <vector>
 
 class XMLInvoker;
 
@@ -15,45 +10,45 @@ protected:
     XMLCommand() {}
 
 public:
-    virtual ~XMLCommand() {}
     virtual void execute(const std::string&) = 0;
 };
 
 class ParseFileCommand : public XMLCommand {
 private:
-    XMLInvoker* state;
+    XMLInvoker* invoker;
 
 public:
-    ParseFileCommand(XMLInvoker* invoker) : state(invoker) {}
+    ParseFileCommand(XMLInvoker*);
     virtual void execute(const std::string&) override;
 };
 
 class SerializeCommand : public XMLCommand {
 private:
-    XMLInvoker* state;
+    XMLInvoker* invoker;
 
 public:
-    SerializeCommand(XMLInvoker* invoker) : state(invoker) {}
+    SerializeCommand(XMLInvoker*);
 
     virtual void execute(const std::string&) override;
 };
 
 class AddAttributeCommand : public XMLCommand {
 private:
-    XMLInvoker* state;
+    XMLInvoker* invoker;
 
 public:
-    AddAttributeCommand(XMLInvoker* invoker) : state(invoker) {}
+    AddAttributeCommand(XMLInvoker*);
 
     virtual void execute(const std::string&) override;
 };
 
 class IterateToStdoutCommand : public XMLCommand {
 private:
-    XMLInvoker* state;
+    XMLInvoker* invoker;
+    void printToStdout(dom::Node*);
 
 public:
-    IterateToStdoutCommand(XMLInvoker* invoker) : state(invoker) {}
+    IterateToStdoutCommand(XMLInvoker*);
 
     virtual void execute(const std::string&) override;
 };

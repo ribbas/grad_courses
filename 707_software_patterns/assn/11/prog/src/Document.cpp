@@ -61,7 +61,5 @@ void Document_Impl::serialize(std::fstream* writer,
 }
 
 dom::Node* Document_Impl::cloneNode() {
-    return nullptr; // This implementation doesn't have the ability to reparent
-                    // a cloned tree into a new document. Therefore it can't
-                    // usefully support cloning of Document.
+    return nullptr;
 }

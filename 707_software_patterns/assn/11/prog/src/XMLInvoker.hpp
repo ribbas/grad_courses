@@ -2,11 +2,12 @@
 #define XML_INVOKER_HPP
 
 #include "XMLCommand.hpp"
+#include <queue>
 
 class XMLInvoker {
 private:
-    std::vector<XMLCommand*> cmds;
-    std::vector<std::string> args;
+    std::queue<XMLCommand*> cmds;
+    std::queue<std::string> args;
     dom::Document* document;
 
 public:
