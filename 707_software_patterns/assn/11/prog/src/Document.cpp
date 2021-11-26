@@ -60,6 +60,6 @@ void Document_Impl::serialize(std::fstream* writer,
     getDocumentElement()->serialize(writer, whitespace);
 }
 
-dom::Node* Document_Impl::cloneNode() {
+dom::Node* Document_Impl::clone() {
     return nullptr;
 }

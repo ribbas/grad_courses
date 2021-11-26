@@ -170,6 +170,6 @@ dom::Node* Node_Impl::getSibling(int direction) {
     }
 }
 
-dom::Node* Node_Impl::cloneNode() {
+dom::Node* Node_Impl::clone() {
     return nullptr;
 }

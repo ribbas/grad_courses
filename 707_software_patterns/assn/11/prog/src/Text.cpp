@@ -116,6 +116,6 @@ void Text_Impl::serialize(std::fstream* writer,
     whitespace->newLine(writer);
 }
 
-dom::Node* Text_Impl::cloneNode() {
+dom::Node* Text_Impl::clone() {
     return new Text_Impl(getValue(), getOwnerDocument());
 }

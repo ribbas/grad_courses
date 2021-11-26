@@ -39,7 +39,7 @@ public:
     virtual bool hasChildNodes() = 0;
     virtual const std::string& getLocalName() = 0;
     virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
-    virtual Node* cloneNode() = 0;
+    virtual Node* clone() = 0;
 };
 
 class DOMException {
@@ -105,7 +105,7 @@ public:
     virtual dom::Node* appendChild(dom::Node*) override;
     virtual bool hasChildNodes() override;
     virtual const std::string& getLocalName() override;
-    virtual dom::Node* cloneNode() override;
+    virtual dom::Node* clone() override;
     virtual void setParent(dom::Node*);
 };
 

@@ -20,7 +20,7 @@ public:
     virtual Element* getDocumentElement() = 0;
     virtual Iterator* createIterator() = 0;
     virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
-    virtual Node* cloneNode() = 0;
+    virtual Node* clone() = 0;
 };
 }; // namespace dom
 
@@ -38,7 +38,7 @@ public:
     virtual dom::Element* getDocumentElement() override;
     virtual dom::Iterator* createIterator() override;
     virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
-    virtual dom::Node* cloneNode() override;
+    virtual dom::Node* clone() override;
 };
 
 #endif // DOCUMENT_HPP

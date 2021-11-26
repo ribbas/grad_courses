@@ -28,7 +28,7 @@ public:
     virtual bool hasAttributes() = 0;
     virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
     virtual bool handleEvent(Event*) = 0;
-    virtual Node* cloneNode() = 0;
+    virtual Node* clone() = 0;
 };
 }; // namespace dom
 
@@ -57,7 +57,7 @@ public:
     virtual bool hasAttributes() override;
     virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
     virtual bool handleEvent(dom::Event*) override;
-    virtual dom::Node* cloneNode() override;
+    virtual dom::Node* clone() override;
 };
 
 #endif // ELEMENT_HPP
