@@ -206,3 +206,20 @@ bool Element_Impl::handleEvent(dom::Event* event) {
     }
     return false;
 }
+
+dom::Node* Element_Impl::cloneNode() {
+
+    dom::Element* element = new Element_Impl(getTagName(), getOwnerDocument());
+
+    for (dom::NodeList::iterator i = getChildNodes()->begin();
+         i != getChildNodes()->end(); i++) {
+        element->appendChild((*i)->cloneNode());
+    }
+
+    for (dom::NamedNodeMap::iterator i = attributes.begin();
+         i != attributes.end(); i++) {
+        element->setAttributeNode(dynamic_cast<dom::Attr*>((*i)->cloneNode()));
+    }
+
+    return element;
+}

@@ -15,6 +15,7 @@ public:
     virtual void setValue(const std::string&) = 0;
     virtual Element* getOwnerElement() = 0;
     virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
+    virtual Node* cloneNode() = 0;
 };
 }; // namespace dom
 
@@ -40,6 +41,8 @@ public:
     virtual Node* replaceChild(Node*, Node*) override;
     virtual Node* removeChild(Node*) override;
     virtual Node* appendChild(Node*) override;
+
+    virtual dom::Node* cloneNode() override;
 };
 
 #endif // ATTR_HPP

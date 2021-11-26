@@ -50,3 +50,7 @@ dom::Node* Attr_Impl::appendChild(dom::Node*) {
 void Attr_Impl::serialize(std::fstream* writer, WhitespaceStrategy*) {
     *writer << " " << getName() << "=\"" << getValue() << "\"";
 }
+
+dom::Node* Attr_Impl::cloneNode() {
+    return new Attr_Impl(getName(), getValue(), getOwnerDocument());
+}

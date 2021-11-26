@@ -7,7 +7,7 @@ void testCommand(int argc, char** argv) {
         exit(0);
     }
 
-    Invoker invoker;
+    XMLInvoker invoker;
 
     std::string arg1 = argv[2];
     std::string arg2 = argv[3];
@@ -16,7 +16,7 @@ void testCommand(int argc, char** argv) {
     invoker.addCommand(new AddAttributeCommand(&invoker),
                        "attribute;new value");
     invoker.addCommand(new SerializeCommand(&invoker), arg2);
-    invoker.addCommand(new IterateToStdoutCommand(&invoker), "");
+    invoker.addCommand(new IterateToStdoutCommand(&invoker));
 
     invoker.run();
 }

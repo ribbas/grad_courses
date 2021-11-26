@@ -9,17 +9,17 @@ if(Boost_FOUND)
 	add_executable(${CMAKE_PROJECT_NAME} test/Test.cpp)
 	target_sources(${CMAKE_PROJECT_NAME} PUBLIC
 		Attr.cpp
-		Command.cpp
 		Document.cpp
 		Element.cpp
-		Invoker.cpp
 		Iterator.cpp
 		NamedNodeMap.cpp
 		Node.cpp
 		Text.cpp
 		ValidChildren.cpp
 		XMLBuilder.cpp
+		XMLCommand.cpp
 		XMLDirector.cpp
+		XMLInvoker.cpp
 		XMLSerializer.cpp
 		XMLTokenizer.cpp
 		XMLValidator.cpp

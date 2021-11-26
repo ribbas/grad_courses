@@ -22,6 +22,7 @@ public:
     virtual void replaceData(int, int, const std::string&) = 0;
     virtual Text* splitText(int) = 0;
     virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
+    virtual Node* cloneNode() = 0;
 };
 }; // namespace dom
 
@@ -53,6 +54,8 @@ public:
     virtual Node* replaceChild(Node*, Node*) override;
     virtual Node* removeChild(Node*) override;
     virtual Node* appendChild(Node*) override;
+
+    virtual dom::Node* cloneNode() override;
 };
 
 #endif // TEXT_HPP

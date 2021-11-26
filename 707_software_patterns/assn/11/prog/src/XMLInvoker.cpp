@@ -1,26 +1,26 @@
-#include "Invoker.hpp"
+#include "XMLInvoker.hpp"
 #include <fstream>
 #include <iostream>
 #include <sstream>
 
-Invoker::Invoker() : document(nullptr) {}
+XMLInvoker::XMLInvoker() : document(nullptr) {}
 
-Invoker::~Invoker() {}
+XMLInvoker::~XMLInvoker() {}
 
-void Invoker::setDocument(dom::Document* doc) {
+void XMLInvoker::setDocument(dom::Document* doc) {
     document = doc;
 }
 
-dom::Document* Invoker::getDocument() {
+dom::Document* XMLInvoker::getDocument() {
     return document;
 }
 
-void Invoker::addCommand(Command* command, const std::string& arg) {
+void XMLInvoker::addCommand(XMLCommand* command, const std::string& arg) {
     cmds.push_back(command);
     args.push_back(arg);
 }
 
-void Invoker::run() {
+void XMLInvoker::run() {
 
     if (cmds.size() == args.size()) {
 

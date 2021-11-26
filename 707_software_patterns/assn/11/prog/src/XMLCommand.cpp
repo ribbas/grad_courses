@@ -1,7 +1,7 @@
-#include "Command.hpp"
-#include "Invoker.hpp"
+#include "XMLCommand.hpp"
 #include "Node.hpp"
 #include "XMLDirector.hpp"
+#include "XMLInvoker.hpp"
 #include "XMLSerializer.hpp"
 #include <iostream>
 
@@ -12,10 +12,12 @@ void ParseFileCommand::execute(const std::string& args) {
         return;
     }
 
+    XMLBuilder* builder = new XMLBuilder();
     XMLDirector director(builder, args);
     director.construct();
 
     state->setDocument(director.getResult());
+    delete builder;
 }
 
 void SerializeCommand::execute(const std::string& args) {
