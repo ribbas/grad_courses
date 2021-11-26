@@ -30,7 +30,7 @@ void SerializeCommand::execute(const std::string& args) {
     std::fstream* file = nullptr;
     XMLSerializer xmlSerializer(file =
                                     new std::fstream(args, std::ios_base::out));
-    xmlSerializer.serializePretty(state->getDocument());
+    xmlSerializer.serializeMinimal(state->getDocument());
     delete file;
 }
 
@@ -41,15 +41,13 @@ void AddAttributeCommand::execute(const std::string& args) {
         return;
     }
 
-    size_t pos = args.find(";");
-    std::cout << "1:" << args.substr(0, pos) << ":2:" << args.substr(pos + 1)
-              << '\n';
-
     dom::Element* child = state->getDocument()->createElement("newelement");
 
+    size_t pos = args.find(";");
     dom::Attr* newAttribute =
         state->getDocument()->createAttribute(args.substr(0, pos));
     newAttribute->setValue(args.substr(pos + 1));
+
     child->setAttributeNode(newAttribute);
     state->getDocument()->appendChild(child);
 }
