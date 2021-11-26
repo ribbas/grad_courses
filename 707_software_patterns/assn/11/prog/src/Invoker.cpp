@@ -16,17 +16,17 @@ dom::Document* Invoker::getDocument() {
 }
 
 void Invoker::addCommand(Command* command, const std::string& arg) {
-    commands.push_back(command);
+    cmds.push_back(command);
     args.push_back(arg);
 }
 
 void Invoker::run() {
 
-    if (commands.size() == args.size()) {
+    if (cmds.size() == args.size()) {
 
-        for (unsigned int i = 0; i < commands.size(); i++) {
-            std::cout << commands.at(i) << ' ' << args.at(i) << '\n';
-            commands.at(i)->execute(args.at(i));
+        for (unsigned int i = 0; i < cmds.size(); i++) {
+            std::cout << cmds.at(i) << ' ' << args.at(i) << '\n';
+            cmds.at(i)->execute(args.at(i));
         }
     }
 }

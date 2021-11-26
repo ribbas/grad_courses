@@ -5,7 +5,7 @@
 
 class Invoker {
 private:
-    std::vector<Command*> commands;
+    std::vector<Command*> cmds;
     std::vector<std::string> args;
     dom::Document* document;
 

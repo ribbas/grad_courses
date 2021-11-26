@@ -39,16 +39,10 @@ public:
 class SerializeCommand : public Command {
 private:
     Invoker* state;
-    std::fstream* file;
 
 public:
     SerializeCommand(Invoker* invoker) : state(invoker) {}
 
-    ~SerializeCommand() {
-        if (file) {
-            delete file;
-        }
-    }
     virtual void execute(const std::string&) override;
 };
 
@@ -58,6 +52,16 @@ private:
 
 public:
     AddAttributeCommand(Invoker* invoker) : state(invoker) {}
+
+    virtual void execute(const std::string&) override;
+};
+
+class IterateToStdoutCommand : public Command {
+private:
+    Invoker* state;
+
+public:
+    IterateToStdoutCommand(Invoker* invoker) : state(invoker) {}
 
     virtual void execute(const std::string&) override;
 };
