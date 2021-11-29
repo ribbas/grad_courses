@@ -1,12 +1,11 @@
 #include "XMLSerializer.hpp"
-
 #include "Attr.hpp"
 #include "Document.hpp"
 #include "Element.hpp"
 #include "Text.hpp"
 
 XMLSerializer::XMLSerializer(std::fstream* _file)
-    : file(_file), whitespace(new PrettyWhitespaceStrategy) {}
+    : file(_file), whitespace(nullptr) {}
 
 XMLSerializer::~XMLSerializer() {}
 

@@ -50,8 +50,8 @@ run2() {
 # builder
 run2 b ${TEST1}
 
-# command
-run2 c ${TEST1} ${TEST2}
+# # command
+# run2 c ${TEST1} ${TEST2}
 
 # chain of responsibility
 run e ${TEST3}

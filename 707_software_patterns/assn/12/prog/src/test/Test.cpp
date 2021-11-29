@@ -13,8 +13,8 @@ int main(int argc, char** argv) {
         case 'b':
             testBuilder(argc, argv);
             break;
-        case 'C':
-        case 'c':
+        case 'E':
+        case 'e':
             testChainOfResponsibility(argc, argv);
             break;
         case 'I':

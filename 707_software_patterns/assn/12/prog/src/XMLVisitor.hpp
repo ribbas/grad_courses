@@ -10,10 +10,10 @@ class Text;
 
 class XMLVisitor {
 public:
-    virtual void visitDocument(dom::Document* document) = 0;
-    virtual void visitElement(dom::Element* element) = 0;
-    virtual void visitAttr(dom::Attr* attr) = 0;
-    virtual void visitText(dom::Text* text) = 0;
+    virtual void visitDocument(dom::Document*) = 0;
+    virtual void visitElement(dom::Element*) = 0;
+    virtual void visitAttr(dom::Attr*) = 0;
+    virtual void visitText(dom::Text*) = 0;
 };
 
 #endif // XML_VISITOR_HPP

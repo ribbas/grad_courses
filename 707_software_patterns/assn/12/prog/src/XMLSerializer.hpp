@@ -3,9 +3,6 @@
 
 #include "Node.hpp"
 #include "XMLVisitor.hpp"
-#include <fstream>
-#include <ios>
-#include <string>
 
 class XMLSerializer : public XMLVisitor {
 private:
@@ -25,7 +22,6 @@ private:
 
     public:
         PrettyWhitespaceStrategy();
-
         virtual void prettyIndentation(std::fstream*) override;
         virtual void incrementIndentation() override;
         virtual void decrementIndentation() override;
@@ -39,10 +35,11 @@ private:
         virtual void decrementIndentation() override;
         virtual void newLine(std::fstream*) override;
     };
-    virtual void visitDocument(dom::Document* document);
-    virtual void visitElement(dom::Element* element);
-    virtual void visitAttr(dom::Attr* attr);
-    virtual void visitText(dom::Text* text);
+
+    virtual void visitDocument(dom::Document*) override;
+    virtual void visitElement(dom::Element*) override;
+    virtual void visitAttr(dom::Attr*) override;
+    virtual void visitText(dom::Text*) override;
 };
 
 #endif // XML_SERIALIZER_HPP

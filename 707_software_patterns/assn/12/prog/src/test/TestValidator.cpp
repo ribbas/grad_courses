@@ -140,8 +140,8 @@ void testValidator(int argc, char** argv) {
     std::fstream* file = nullptr;
     XMLSerializer xmlSerializer(
         file = new std::fstream(argv[2], std::ios_base::out));
-    document->accept(&xmlSerializer);
     xmlSerializer.serializePretty();
+    document->accept(&xmlSerializer);
 
     delete document;
     delete file;

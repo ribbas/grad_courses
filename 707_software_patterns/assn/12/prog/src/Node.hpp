@@ -39,7 +39,6 @@ public:
     virtual Node* appendChild(Node*) = 0;
     virtual bool hasChildNodes() = 0;
     virtual const std::string& getLocalName() = 0;
-    // virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
     virtual void accept(XMLVisitor*) = 0;
 };
 

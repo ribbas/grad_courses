@@ -3,9 +3,6 @@
 
 #include <fstream>
 
-//
-// Whitespace Strategy
-//
 class WhitespaceStrategy {
 public:
     virtual ~WhitespaceStrategy() {}
