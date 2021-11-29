@@ -1,7 +1,7 @@
 #include "XMLDirector.hpp"
 
 XMLDirector::XMLDirector(XMLBuilder* builder, std::string fileName)
-    : factory(builder), tokenizer(fileName) {}
+    : factory(builder), tokenizer(fileName), currentState(nullptr) {}
 
 dom::Document* XMLDirector::getResult() {
     return factory->getDocument();
