@@ -47,6 +47,6 @@ dom::Node* Attr_Impl::appendChild(dom::Node*) {
                             "Attr nodes do not support this method.");
 }
 
-void Attr_Impl::serialize(std::fstream* writer, WhitespaceStrategy*) {
-    *writer << " " << getName() << "=\"" << getValue() << "\"";
+void Attr_Impl::accept(XMLVisitor* visitor) {
+    visitor->visitAttr(this);
 }

@@ -26,7 +26,7 @@ public:
     virtual Attr* setAttributeNode(Attr*) = 0;
     virtual dom::NamedNodeMap* getAttributes() = 0;
     virtual bool hasAttributes() = 0;
-    virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
+    // virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
     virtual bool handleEvent(Event*) = 0;
 };
 }; // namespace dom
@@ -54,8 +54,9 @@ public:
     virtual dom::Attr* setAttributeNode(dom::Attr*) override;
     virtual dom::NamedNodeMap* getAttributes() override;
     virtual bool hasAttributes() override;
-    virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
+    // virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
     virtual bool handleEvent(dom::Event*) override;
+    virtual void accept(XMLVisitor*) override;
 };
 
 #endif // ELEMENT_HPP

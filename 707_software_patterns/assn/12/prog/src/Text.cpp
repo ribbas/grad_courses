@@ -109,9 +109,6 @@ dom::Node* Text_Impl::appendChild(dom::Node*) {
                             "Text nodes do not support this method.");
 }
 
-void Text_Impl::serialize(std::fstream* writer,
-                          WhitespaceStrategy* whitespace) {
-    whitespace->prettyIndentation(writer);
-    *writer << getData();
-    whitespace->newLine(writer);
+void Text_Impl::accept(XMLVisitor* visitor) {
+    visitor->visitText(this);
 }

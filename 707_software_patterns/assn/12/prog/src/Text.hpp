@@ -21,7 +21,7 @@ public:
     virtual void deleteData(int, int) = 0;
     virtual void replaceData(int, int, const std::string&) = 0;
     virtual Text* splitText(int) = 0;
-    virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
+    // virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
 };
 }; // namespace dom
 
@@ -45,14 +45,13 @@ public:
     virtual void deleteData(int, int) override;
     virtual void replaceData(int, int, const std::string&) override;
     virtual dom::Text* splitText(int) override;
-    virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
-
-    // override parent methods to null-behavior to conform to leaf-classes in
-    // the composite pattern
+    // virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
     virtual Node* insertBefore(Node*, Node*) override;
     virtual Node* replaceChild(Node*, Node*) override;
     virtual Node* removeChild(Node*) override;
     virtual Node* appendChild(Node*) override;
+
+    virtual void accept(XMLVisitor*) override;
 };
 
 #endif // TEXT_HPP

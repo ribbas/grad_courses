@@ -169,3 +169,5 @@ dom::Node* Node_Impl::getSibling(int direction) {
         }
     }
 }
+
+void Node_Impl::accept(XMLVisitor*) {}

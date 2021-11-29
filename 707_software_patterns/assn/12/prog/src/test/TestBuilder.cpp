@@ -20,7 +20,8 @@ void testBuilder(int argc, char** argv) {
     std::fstream* file = nullptr;
     XMLSerializer xmlSerializer(
         file = new std::fstream(argv[3], std::ios_base::out));
-    xmlSerializer.serializePretty(builtDocument);
+    builtDocument->accept(&xmlSerializer);
+    xmlSerializer.serializePretty();
 
     delete builtDocument;
     delete builder;

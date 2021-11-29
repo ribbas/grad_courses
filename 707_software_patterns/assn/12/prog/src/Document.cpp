@@ -53,9 +53,6 @@ dom::Iterator* Document_Impl::createIterator() {
     return new DocumentIterator(this);
 }
 
-void Document_Impl::serialize(std::fstream* writer,
-                              WhitespaceStrategy* whitespace) {
-    *writer << "<? xml version=\"1.0\" encoding=\"UTF-8\"?>";
-    whitespace->newLine(writer);
-    getDocumentElement()->serialize(writer, whitespace);
+void Document_Impl::accept(XMLVisitor* visitor) {
+    visitor->visitDocument(this);
 }

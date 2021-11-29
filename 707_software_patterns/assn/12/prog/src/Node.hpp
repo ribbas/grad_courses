@@ -3,6 +3,7 @@
 
 #include "NodeList.hpp"
 #include "WhitespaceStrategy.hpp"
+#include "XMLVisitor.hpp"
 #include <string>
 
 namespace dom {
@@ -38,7 +39,8 @@ public:
     virtual Node* appendChild(Node*) = 0;
     virtual bool hasChildNodes() = 0;
     virtual const std::string& getLocalName() = 0;
-    virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
+    // virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
+    virtual void accept(XMLVisitor*) = 0;
 };
 
 class DOMException {
@@ -104,6 +106,7 @@ public:
     virtual bool hasChildNodes() override;
     virtual const std::string& getLocalName() override;
     virtual void setParent(dom::Node*);
+    virtual void accept(XMLVisitor*) override;
 };
 
 #endif // NODE_HPP

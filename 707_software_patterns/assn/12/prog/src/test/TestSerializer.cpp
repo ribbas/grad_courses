@@ -48,12 +48,14 @@ void testSerializer(int argc, char** argv) {
     std::fstream* file = nullptr;
     XMLSerializer xmlSerializer(
         file = new std::fstream(argv[2], std::ios_base::out));
-    xmlSerializer.serializePretty(document);
+    document->accept(&xmlSerializer);
+    xmlSerializer.serializePretty();
     delete file;
 
     XMLSerializer xmlSerializer2(
         file = new std::fstream(argv[3], std::ios_base::out));
-    xmlSerializer2.serializeMinimal(document);
+    document->accept(&xmlSerializer2);
+    xmlSerializer2.serializePretty();
 
     // delete Document and tree.
     delete document;

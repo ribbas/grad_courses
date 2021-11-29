@@ -2,24 +2,21 @@
 #define XML_SERIALIZER_HPP
 
 #include "Node.hpp"
+#include "XMLVisitor.hpp"
 #include <fstream>
 #include <ios>
 #include <string>
 
-//
-// XMLSerializer is Serialization Strategy Context
-// Node is Serialization Strategy and output stream Strategy Context
-// Document, Element, Attr, Text are Serialization Concrete Strategies
-// java.io.Writer is output stream Strategy
-// java.io.BufferedWriter is output stream Concrete Strategy
-//
-class XMLSerializer {
+class XMLSerializer : public XMLVisitor {
 private:
     std::fstream* file;
+    WhitespaceStrategy* whitespace;
 
 public:
     XMLSerializer(std::fstream*);
     ~XMLSerializer();
+    virtual void serializePretty();
+    virtual void serializeMinimal();
 
 private:
     class PrettyWhitespaceStrategy : public WhitespaceStrategy {
@@ -42,13 +39,10 @@ private:
         virtual void decrementIndentation() override;
         virtual void newLine(std::fstream*) override;
     };
-
-public:
-    //
-    // Strategized serialization
-    //
-    virtual void serializePretty(dom::Node*);
-    virtual void serializeMinimal(dom::Node*);
+    virtual void visitDocument(dom::Document* document);
+    virtual void visitElement(dom::Element* element);
+    virtual void visitAttr(dom::Attr* attr);
+    virtual void visitText(dom::Text* text);
 };
 
 #endif // XML_SERIALIZER_HPP

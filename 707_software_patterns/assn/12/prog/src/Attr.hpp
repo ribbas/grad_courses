@@ -14,7 +14,7 @@ public:
     virtual const std::string& getValue() = 0;
     virtual void setValue(const std::string&) = 0;
     virtual Element* getOwnerElement() = 0;
-    virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
+    // virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
 };
 }; // namespace dom
 
@@ -32,10 +32,9 @@ public:
     virtual const std::string& getValue() override;
     virtual void setValue(const std::string&) override;
     virtual dom::Element* getOwnerElement() override;
-    virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
+    // virtual void serialize(std::fstream*, WhitespaceStrategy*) override;
+    virtual void accept(XMLVisitor*) override;
 
-    // override parent methods to null-behavior to conform to leaf-classes in
-    // the composite pattern
     virtual Node* insertBefore(Node*, Node*) override;
     virtual Node* replaceChild(Node*, Node*) override;
     virtual Node* removeChild(Node*) override;
