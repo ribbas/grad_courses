@@ -2,7 +2,7 @@
 #include <algorithm>
 
 XMLBuilder::XMLBuilder()
-    : document(new Document_Impl), currentElement(nullptr) {}
+    : document(new Document_Impl), currentElement(nullptr), attrName("") {}
 
 // this method was extracted and modified from
 // https://www.techiedelight.com/trim-string-cpp-remove-leading-trailing-spaces/
@@ -34,6 +34,10 @@ dom::Element* XMLBuilder::getElementParent() {
     return dynamic_cast<dom::Element*>(currentElement->getParentNode());
 }
 
+dom::Element* XMLBuilder::getElement() {
+    return currentElement;
+}
+
 dom::Document* XMLBuilder::getDocument() {
     return document;
 }
@@ -51,14 +55,28 @@ dom::Element* XMLBuilder::addElement(std::string tagName) {
     return newElement;
 }
 
-dom::Attr* XMLBuilder::addAttribute(std::string name, std::string value) {
+void XMLBuilder::addAttrName(std::string name) {
 
-    trimAttr(name, value);
-    dom::Attr* newAttribute = document->createAttribute(name);
+    attrName = name;
+}
+
+dom::Attr* XMLBuilder::addAttrValue(std::string value) {
+
+    trimAttr(attrName, value);
+    dom::Attr* newAttribute = document->createAttribute(attrName);
     newAttribute->setValue(value);
     currentElement->setAttributeNode(newAttribute);
     return newAttribute;
 }
+
+// dom::Attr* XMLBuilder::addAttribute(std::string name, std::string value) {
+
+//     trimAttr(name, value);
+//     dom::Attr* newAttribute = document->createAttribute(name);
+//     newAttribute->setValue(value);
+//     currentElement->setAttributeNode(newAttribute);
+//     return newAttribute;
+// }
 
 dom::Text* XMLBuilder::addText(std::string data) {
 
