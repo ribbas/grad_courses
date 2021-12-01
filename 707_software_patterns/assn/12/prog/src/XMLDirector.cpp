@@ -1,7 +1,10 @@
 #include "XMLDirector.hpp"
 
+XMLDirector::State* XMLDirector::currentState = new XMLDirector::NoOp;
+XMLDirector::State* XMLDirector::lastTagState = new XMLDirector::NoOp;
+
 XMLDirector::XMLDirector(XMLBuilder* builder, std::string fileName)
-    : factory(builder), tokenizer(fileName), currentState(nullptr) {}
+    : factory(builder), tokenizer(fileName) {}
 
 dom::Document* XMLDirector::getResult() {
     return factory->getDocument();
@@ -10,8 +13,6 @@ dom::Document* XMLDirector::getResult() {
 void XMLDirector::construct() {
 
     XMLTokenizer::XMLToken* token = tokenizer.getNextToken();
-    State* state = new XMLDirector::NoOp;
-    State* lastTagState = new XMLDirector::NoOp;
 
     while (token->getTokenType() != XMLTokenizer::XMLToken::NULL_TOKEN) {
 
@@ -20,22 +21,22 @@ void XMLDirector::construct() {
             case XMLTokenizer::XMLToken::ATTRIBUTE:
             case XMLTokenizer::XMLToken::ATTRIBUTE_VALUE: {
 
-                delete state;
-                state = new XMLDirector::InsideAttr;
+                delete currentState;
+                currentState = new XMLDirector::InsideAttr;
                 break;
             }
 
             case XMLTokenizer::XMLToken::ELEMENT: {
 
-                delete state;
-                state = new XMLDirector::InsideElement;
+                delete currentState;
+                currentState = new XMLDirector::InsideElement;
                 break;
             }
 
             case XMLTokenizer::XMLToken::VALUE: {
 
-                delete state;
-                state = new XMLDirector::AddText;
+                delete currentState;
+                currentState = new XMLDirector::AddText;
                 break;
             }
 
@@ -55,8 +56,8 @@ void XMLDirector::construct() {
 
             case XMLTokenizer::XMLToken::NULL_TAG_END: {
 
-                delete state;
-                state = new XMLDirector::InNullTagEnd;
+                delete currentState;
+                currentState = new XMLDirector::InNullTagEnd;
                 break;
             }
 
@@ -66,7 +67,7 @@ void XMLDirector::construct() {
             }
         }
 
-        state = state->process(lastTagState, token, factory);
+        currentState->process(token, factory);
         delete token;
         token = tokenizer.getNextToken();
     }
@@ -74,11 +75,10 @@ void XMLDirector::construct() {
     delete token;
 }
 
-XMLDirector::State*
-XMLDirector::InsideAttr::process(State*, XMLTokenizer::XMLToken* token,
-                                 XMLBuilder* factory) {
+void XMLDirector::InsideAttr::process(XMLTokenizer::XMLToken* token,
+                                      XMLBuilder* factory) {
 
-    XMLDirector::State* state = this;
+    currentState = this;
 
     switch (token->getTokenType()) {
 
@@ -95,18 +95,16 @@ XMLDirector::InsideAttr::process(State*, XMLTokenizer::XMLToken* token,
             break;
         }
         default: {
-            delete state;
-            state = new XMLDirector::NoOp;
+            delete currentState;
+            currentState = new XMLDirector::NoOp;
         }
     }
-
-    return state;
 }
 
-XMLDirector::State* XMLDirector::InsideElement::process(
-    State* lastTagState, XMLTokenizer::XMLToken* token, XMLBuilder* factory) {
+void XMLDirector::InsideElement::process(XMLTokenizer::XMLToken* token,
+                                         XMLBuilder* factory) {
 
-    XMLDirector::State* state = this;
+    currentState = this;
 
     switch (token->getTokenType()) {
 
@@ -121,36 +119,28 @@ XMLDirector::State* XMLDirector::InsideElement::process(
         }
 
         default: {
-            delete state;
-            state = new XMLDirector::NoOp;
+            delete currentState;
+            currentState = new XMLDirector::NoOp;
         }
     }
-
-    return state;
 }
 
-XMLDirector::State* XMLDirector::NoOp::process(State*, XMLTokenizer::XMLToken*,
-                                               XMLBuilder*) {
-    return this;
+void XMLDirector::NoOp::process(XMLTokenizer::XMLToken*, XMLBuilder*) {
+    currentState = this;
 }
 
-XMLDirector::State* XMLDirector::TagCloseStart::process(State*,
-                                                        XMLTokenizer::XMLToken*,
-                                                        XMLBuilder*) {
-    return this;
+void XMLDirector::TagCloseStart::process(XMLTokenizer::XMLToken*, XMLBuilder*) {
+    currentState = this;
 }
 
-XMLDirector::State* XMLDirector::TagCloseEnd::process(State*,
-                                                      XMLTokenizer::XMLToken*,
-                                                      XMLBuilder*) {
-    return this;
+void XMLDirector::TagCloseEnd::process(XMLTokenizer::XMLToken*, XMLBuilder*) {
+    currentState = this;
 }
 
-XMLDirector::State* XMLDirector::AddText::process(State*,
-                                                  XMLTokenizer::XMLToken* token,
-                                                  XMLBuilder* factory) {
+void XMLDirector::AddText::process(XMLTokenizer::XMLToken* token,
+                                   XMLBuilder* factory) {
 
-    XMLDirector::State* state = this;
+    currentState = this;
 
     switch (token->getTokenType()) {
 
@@ -161,18 +151,16 @@ XMLDirector::State* XMLDirector::AddText::process(State*,
         }
 
         default: {
-            delete state;
-            state = new XMLDirector::NoOp;
+            delete currentState;
+            currentState = new XMLDirector::NoOp;
         }
     }
-
-    return state;
 }
-XMLDirector::State*
-XMLDirector::InNullTagEnd::process(State*, XMLTokenizer::XMLToken* token,
-                                   XMLBuilder* factory) {
 
-    XMLDirector::State* state = this;
+void XMLDirector::InNullTagEnd::process(XMLTokenizer::XMLToken* token,
+                                        XMLBuilder* factory) {
+
+    currentState = this;
 
     switch (token->getTokenType()) {
 
@@ -183,10 +171,8 @@ XMLDirector::InNullTagEnd::process(State*, XMLTokenizer::XMLToken* token,
         }
 
         default: {
-            delete state;
-            state = new XMLDirector::NoOp;
+            delete currentState;
+            currentState = new XMLDirector::NoOp;
         }
     }
-
-    return state;
 }
