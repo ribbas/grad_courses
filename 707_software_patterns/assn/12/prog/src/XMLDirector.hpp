@@ -26,11 +26,7 @@ private:
         virtual void process(XMLTokenizer::XMLToken*, XMLBuilder*);
     };
 
-    struct TagCloseStart : public State {
-        virtual void process(XMLTokenizer::XMLToken*, XMLBuilder*);
-    };
-
-    struct TagCloseEnd : public State {
+    struct ParseTag : public State {
         virtual void process(XMLTokenizer::XMLToken*, XMLBuilder*);
     };
 
@@ -42,7 +38,7 @@ private:
         virtual void process(XMLTokenizer::XMLToken*, XMLBuilder*);
     };
 
-    static State* lastTagState;
+    static bool lastTagState;
     static State* currentState;
 
 public:
