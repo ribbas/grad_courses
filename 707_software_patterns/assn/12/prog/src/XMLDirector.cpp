@@ -10,82 +10,69 @@ dom::Document* XMLDirector::getResult() {
 
 void XMLDirector::construct() {
 
-    std::string name = "";
-    bool tagCloseStart = false; // flag to determine if element inside tag
-
     XMLTokenizer::XMLToken* token = tokenizer.getNextToken();
-    State* state = new XMLDirector::InsideAttrName;
+    State* state = new XMLDirector::NoOp;
+    State* lastState = new XMLDirector::NoOp;
 
     while (token->getTokenType() != XMLTokenizer::XMLToken::NULL_TOKEN) {
 
-        // switch (token->getTokenType()) {
+        switch (token->getTokenType()) {
 
-        //     case XMLTokenizer::XMLToken::ATTRIBUTE: {
+            case XMLTokenizer::XMLToken::ATTRIBUTE:
+            case XMLTokenizer::XMLToken::ATTRIBUTE_VALUE: {
 
-        //         std::cout << "ATTRIBUTE\n";
-        //         factory->addAttrName(token->getToken());
-        //         break;
-        //     }
+                delete state;
+                state = new XMLDirector::InsideAttr;
+                break;
+            }
 
-        //     case XMLTokenizer::XMLToken::ATTRIBUTE_VALUE: {
-        //         std::cout << "ATTRIBUTE_VALUE\n";
-        //         if (factory->getElement()) {
-        //             std::cout << "ATTRIBUTE_VALUE success\n";
-        //             factory->addAttrValue(token->getToken());
-        //         }
-        //         break;
-        //     }
+            case XMLTokenizer::XMLToken::ELEMENT: {
 
-        //     case XMLTokenizer::XMLToken::ELEMENT: {
+                delete state;
+                state = new XMLDirector::InsideElement;
+                break;
+            }
 
-        //         std::cout << "ELEMENT\n";
-        //         if (!tagCloseStart) {
-        //             std::cout << "ELEMENT tag end\n";
-        //             factory->setElement(factory->addElement(token->getToken()));
-        //         } else {
-        //             std::cout << "ELEMENT tag close start\n";
-        //             factory->setElement(factory->getElementParent());
-        //         }
-        //         break;
-        //     }
+            case XMLTokenizer::XMLToken::VALUE: {
 
-        //     case XMLTokenizer::XMLToken::VALUE: {
+                std::cout << "VALUE\n";
+                delete state;
+                state = new XMLDirector::AddText;
 
-        //         std::cout << "VALUE\n";
-        //         factory->addText(token->getToken());
-        //         break;
-        //     }
+                break;
+            }
 
-        //     case XMLTokenizer::XMLToken::TAG_CLOSE_START: {
+            case XMLTokenizer::XMLToken::TAG_CLOSE_START: {
 
-        //         std::cout << "TAG_CLOSE_START\n";
-        //         tagCloseStart = true;
-        //         break;
-        //     }
+                std::cout << "TAG_CLOSE_START\n";
+                delete lastState;
+                lastState = new XMLDirector::TagCloseStart;
+                break;
+            }
 
-        //     case XMLTokenizer::XMLToken::TAG_END: {
+            case XMLTokenizer::XMLToken::TAG_END: {
 
-        //         std::cout << "TAG_END\n";
-        //         tagCloseStart = false;
-        //         break;
-        //     }
+                std::cout << "TAG_END\n";
+                delete lastState;
+                lastState = new XMLDirector::TagCloseEnd;
+                break;
+            }
 
-        //     case XMLTokenizer::XMLToken::NULL_TAG_END: {
+            case XMLTokenizer::XMLToken::NULL_TAG_END: {
 
-        //         std::cout << "NULL_TAG_END\n";
-        //         factory->setElement(factory->getElementParent());
-        //         break;
-        //     }
+                std::cout << "NULL_TAG_END\n";
+                delete state;
+                state = new XMLDirector::InNullTagEnd;
+                break;
+            }
 
-        //     default: {
-        //         // do nothing
-        //         break;
-        //     }
-        // }
+            default: {
+                // do nothing
+                break;
+            }
+        }
 
-        // std::cout << factory->getElement() << '\n';
-
-        state = state->process(token, factory, tagCloseStart);
+        state = state->process(lastState, token, factory);
         delete token;
         token = tokenizer.getNextToken();
     }
@@ -93,61 +80,10 @@ void XMLDirector::construct() {
     delete token;
 }
 
-XMLDirector::State*
-XMLDirector::TagCloseStart::process(XMLTokenizer::XMLToken* token,
-                                    XMLBuilder* factory, bool&) {
+XMLDirector::State* XMLDirector::InsideAttr::process(
+    State* lastState, XMLTokenizer::XMLToken* token, XMLBuilder* factory) {
 
     XMLDirector::State* state = this;
-
-    std::cout << "TagCloseStart ";
-    switch (token->getTokenType()) {
-
-        case XMLTokenizer::XMLToken::ELEMENT: {
-            std::cout << "ELEMENT\n";
-            factory->setElement(factory->getElementParent());
-            delete state;
-            state = new XMLDirector::InsideAttrName;
-            break;
-        }
-
-        default: {
-            break;
-        }
-    }
-    return state;
-}
-
-XMLDirector::State*
-XMLDirector::TagCloseEnd::process(XMLTokenizer::XMLToken* token,
-                                  XMLBuilder* factory, bool&) {
-
-    XMLDirector::State* state = this;
-
-    std::cout << "TagCloseEnd ";
-    switch (token->getTokenType()) {
-
-        case XMLTokenizer::XMLToken::ELEMENT: {
-            std::cout << "ELEMENT\n";
-            factory->setElement(factory->addElement(token->getToken()));
-            delete state;
-            state = new XMLDirector::InsideAttrName;
-            break;
-        }
-
-        default: {
-            break;
-        }
-    }
-    return state;
-}
-
-XMLDirector::State*
-XMLDirector::InsideAttrName::process(XMLTokenizer::XMLToken* token,
-                                     XMLBuilder* factory, bool& tagCloseStart) {
-
-    XMLDirector::State* state = this;
-
-    // std::cout << "InsideAttrName ";
 
     switch (token->getTokenType()) {
 
@@ -167,52 +103,108 @@ XMLDirector::InsideAttrName::process(XMLTokenizer::XMLToken* token,
             std::cout << '\n';
             break;
         }
+        default: {
+            delete state;
+            state = new XMLDirector::NoOp;
+        }
+    }
+
+    return state;
+}
+
+XMLDirector::State* XMLDirector::InsideElement::process(
+    State* lastState, XMLTokenizer::XMLToken* token, XMLBuilder* factory) {
+
+    XMLDirector::State* state = this;
+
+    switch (token->getTokenType()) {
 
         case XMLTokenizer::XMLToken::ELEMENT: {
 
-            std::cout << "ELEMENT ";
-            if (!tagCloseStart) {
-                std::cout << "tag end";
+            std::cout << "ELEMENT";
+            if (dynamic_cast<TagCloseEnd*>(lastState)) {
+                std::cout << " tag end";
                 factory->setElement(factory->addElement(token->getToken()));
-            } else {
-                std::cout << "tag close start";
+            } else if (dynamic_cast<TagCloseStart*>(lastState)) {
+                std::cout << " tag close start";
                 factory->setElement(factory->getElementParent());
             }
             std::cout << '\n';
             break;
         }
 
+        default: {
+            delete state;
+            state = new XMLDirector::NoOp;
+        }
+    }
+
+    return state;
+}
+
+XMLDirector::State* XMLDirector::NoOp::process(State* lastState,
+                                               XMLTokenizer::XMLToken* token,
+                                               XMLBuilder* factory) {
+
+    XMLDirector::State* state = this;
+
+    return state;
+}
+
+XMLDirector::State* XMLDirector::TagCloseStart::process(
+    State* lastState, XMLTokenizer::XMLToken* token, XMLBuilder* factory) {
+
+    XMLDirector::State* state = this;
+
+    return state;
+}
+
+XMLDirector::State* XMLDirector::TagCloseEnd::process(
+    State* lastState, XMLTokenizer::XMLToken* token, XMLBuilder* factory) {
+
+    XMLDirector::State* state = this;
+
+    return state;
+}
+
+XMLDirector::State* XMLDirector::AddText::process(State* lastState,
+                                                  XMLTokenizer::XMLToken* token,
+                                                  XMLBuilder* factory) {
+
+    XMLDirector::State* state = this;
+
+    switch (token->getTokenType()) {
+
         case XMLTokenizer::XMLToken::VALUE: {
 
-            std::cout << "VALUE\n";
             factory->addText(token->getToken());
             break;
         }
 
-        case XMLTokenizer::XMLToken::TAG_CLOSE_START: {
-
-            std::cout << "TAG_CLOSE_START\n";
-            tagCloseStart = true;
-            break;
+        default: {
+            delete state;
+            state = new XMLDirector::NoOp;
         }
+    }
 
-        case XMLTokenizer::XMLToken::TAG_END: {
+    return state;
+}
+XMLDirector::State* XMLDirector::InNullTagEnd::process(
+    State* lastState, XMLTokenizer::XMLToken* token, XMLBuilder* factory) {
 
-            std::cout << "TAG_END\n";
-            tagCloseStart = false;
-            break;
-        }
+    XMLDirector::State* state = this;
+
+    switch (token->getTokenType()) {
 
         case XMLTokenizer::XMLToken::NULL_TAG_END: {
 
-            std::cout << "NULL_TAG_END\n";
             factory->setElement(factory->getElementParent());
             break;
         }
 
         default: {
-            // do nothing
-            break;
+            delete state;
+            state = new XMLDirector::NoOp;
         }
     }
 
