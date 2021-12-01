@@ -10,50 +10,51 @@ private:
     XMLTokenizer tokenizer;
 
     struct State {
-        virtual State* process(dom::Element*, XMLTokenizer::XMLToken*,
-                               XMLTokenizer::XMLToken::TokenTypes,
-                               XMLBuilder*) = 0;
+        virtual ~State() {}
+        virtual State* process(XMLTokenizer::XMLToken*, XMLBuilder*, bool&) = 0;
     };
 
-    struct InsideTag : public State {
-        virtual State* process(dom::Element*, XMLTokenizer::XMLToken*,
-                               XMLTokenizer::XMLToken::TokenTypes, XMLBuilder*);
-    };
+    // struct InsideTag : public State {
+    //     virtual State* process(dom::Element*, XMLTokenizer::XMLToken*,
+    //                            XMLTokenizer::XMLToken::TokenTypes,
+    //                            XMLBuilder*);
+    // };
 
     struct InsideAttrName : public State {
-        virtual State* process(dom::Element*, XMLTokenizer::XMLToken*,
-                               XMLTokenizer::XMLToken::TokenTypes, XMLBuilder*);
+        virtual State* process(XMLTokenizer::XMLToken*, XMLBuilder*, bool&);
     };
 
-    struct InsideAttrValue : public State {
-        virtual State* process(dom::Element*, XMLTokenizer::XMLToken*,
-                               XMLTokenizer::XMLToken::TokenTypes, XMLBuilder*);
-    };
+    // struct InsideAttrValue : public State {
+    //     virtual State* process(dom::Element*, XMLTokenizer::XMLToken*,
+    //                            XMLTokenizer::XMLToken::TokenTypes,
+    //                            XMLBuilder*);
+    // };
 
     struct TagCloseStart : public State {
-        virtual State* process(dom::Element*, XMLTokenizer::XMLToken*,
-                               XMLTokenizer::XMLToken::TokenTypes, XMLBuilder*);
+        virtual State* process(XMLTokenizer::XMLToken*, XMLBuilder*, bool&);
     };
 
     struct TagCloseEnd : public State {
-        virtual State* process(dom::Element*, XMLTokenizer::XMLToken*,
-                               XMLTokenizer::XMLToken::TokenTypes, XMLBuilder*);
+        virtual State* process(XMLTokenizer::XMLToken*, XMLBuilder*, bool&);
     };
 
-    struct InNullTag : public State {
-        virtual State* process(dom::Element*, XMLTokenizer::XMLToken*,
-                               XMLTokenizer::XMLToken::TokenTypes, XMLBuilder*);
-    };
+    // struct InNullTag : public State {
+    //     virtual State* process(dom::Element*, XMLTokenizer::XMLToken*,
+    //                            XMLTokenizer::XMLToken::TokenTypes,
+    //                            XMLBuilder*);
+    // };
 
-    struct InElementValue : public State {
-        virtual State* process(dom::Element*, XMLTokenizer::XMLToken*,
-                               XMLTokenizer::XMLToken::TokenTypes, XMLBuilder*);
-    };
+    // struct InElementValue : public State {
+    //     virtual State* process(dom::Element*, XMLTokenizer::XMLToken*,
+    //                            XMLTokenizer::XMLToken::TokenTypes,
+    //                            XMLBuilder*);
+    // };
 
-    struct End : public State {
-        virtual State* process(dom::Element*, XMLTokenizer::XMLToken*,
-                               XMLTokenizer::XMLToken::TokenTypes, XMLBuilder*);
-    };
+    // struct End : public State {
+    //     virtual State* process(dom::Element*, XMLTokenizer::XMLToken*,
+    //                            XMLTokenizer::XMLToken::TokenTypes,
+    //                            XMLBuilder*);
+    // };
 
     State* currentState;
 
