@@ -1,5 +1,4 @@
 #include "XMLDirector.hpp"
-#include <iostream>
 
 XMLDirector::XMLDirector(XMLBuilder* builder, std::string fileName)
     : factory(builder), tokenizer(fileName), currentState(nullptr) {}
@@ -12,7 +11,7 @@ void XMLDirector::construct() {
 
     XMLTokenizer::XMLToken* token = tokenizer.getNextToken();
     State* state = new XMLDirector::NoOp;
-    State* lastState = new XMLDirector::NoOp;
+    State* lastTagState = new XMLDirector::NoOp;
 
     while (token->getTokenType() != XMLTokenizer::XMLToken::NULL_TOKEN) {
 
@@ -35,32 +34,27 @@ void XMLDirector::construct() {
 
             case XMLTokenizer::XMLToken::VALUE: {
 
-                std::cout << "VALUE\n";
                 delete state;
                 state = new XMLDirector::AddText;
-
                 break;
             }
 
             case XMLTokenizer::XMLToken::TAG_CLOSE_START: {
 
-                std::cout << "TAG_CLOSE_START\n";
-                delete lastState;
-                lastState = new XMLDirector::TagCloseStart;
+                delete lastTagState;
+                lastTagState = new XMLDirector::TagCloseStart;
                 break;
             }
 
             case XMLTokenizer::XMLToken::TAG_END: {
 
-                std::cout << "TAG_END\n";
-                delete lastState;
-                lastState = new XMLDirector::TagCloseEnd;
+                delete lastTagState;
+                lastTagState = new XMLDirector::TagCloseEnd;
                 break;
             }
 
             case XMLTokenizer::XMLToken::NULL_TAG_END: {
 
-                std::cout << "NULL_TAG_END\n";
                 delete state;
                 state = new XMLDirector::InNullTagEnd;
                 break;
@@ -72,7 +66,7 @@ void XMLDirector::construct() {
             }
         }
 
-        state = state->process(lastState, token, factory);
+        state = state->process(lastTagState, token, factory);
         delete token;
         token = tokenizer.getNextToken();
     }
@@ -80,8 +74,9 @@ void XMLDirector::construct() {
     delete token;
 }
 
-XMLDirector::State* XMLDirector::InsideAttr::process(
-    State* lastState, XMLTokenizer::XMLToken* token, XMLBuilder* factory) {
+XMLDirector::State*
+XMLDirector::InsideAttr::process(State*, XMLTokenizer::XMLToken* token,
+                                 XMLBuilder* factory) {
 
     XMLDirector::State* state = this;
 
@@ -89,18 +84,14 @@ XMLDirector::State* XMLDirector::InsideAttr::process(
 
         case XMLTokenizer::XMLToken::ATTRIBUTE: {
 
-            std::cout << "ATTRIBUTE\n";
             factory->addAttrName(token->getToken());
             break;
         }
 
         case XMLTokenizer::XMLToken::ATTRIBUTE_VALUE: {
-            std::cout << "ATTRIBUTE_VALUE";
             if (factory->getElement()) {
-                std::cout << " success";
                 factory->addAttrValue(token->getToken());
             }
-            std::cout << '\n';
             break;
         }
         default: {
@@ -113,7 +104,7 @@ XMLDirector::State* XMLDirector::InsideAttr::process(
 }
 
 XMLDirector::State* XMLDirector::InsideElement::process(
-    State* lastState, XMLTokenizer::XMLToken* token, XMLBuilder* factory) {
+    State* lastTagState, XMLTokenizer::XMLToken* token, XMLBuilder* factory) {
 
     XMLDirector::State* state = this;
 
@@ -121,15 +112,11 @@ XMLDirector::State* XMLDirector::InsideElement::process(
 
         case XMLTokenizer::XMLToken::ELEMENT: {
 
-            std::cout << "ELEMENT";
-            if (dynamic_cast<TagCloseEnd*>(lastState)) {
-                std::cout << " tag end";
+            if (dynamic_cast<TagCloseEnd*>(lastTagState)) {
                 factory->setElement(factory->addElement(token->getToken()));
-            } else if (dynamic_cast<TagCloseStart*>(lastState)) {
-                std::cout << " tag close start";
+            } else if (dynamic_cast<TagCloseStart*>(lastTagState)) {
                 factory->setElement(factory->getElementParent());
             }
-            std::cout << '\n';
             break;
         }
 
@@ -142,32 +129,24 @@ XMLDirector::State* XMLDirector::InsideElement::process(
     return state;
 }
 
-XMLDirector::State* XMLDirector::NoOp::process(State* lastState,
-                                               XMLTokenizer::XMLToken* token,
-                                               XMLBuilder* factory) {
-
-    XMLDirector::State* state = this;
-
-    return state;
+XMLDirector::State* XMLDirector::NoOp::process(State*, XMLTokenizer::XMLToken*,
+                                               XMLBuilder*) {
+    return this;
 }
 
-XMLDirector::State* XMLDirector::TagCloseStart::process(
-    State* lastState, XMLTokenizer::XMLToken* token, XMLBuilder* factory) {
-
-    XMLDirector::State* state = this;
-
-    return state;
+XMLDirector::State* XMLDirector::TagCloseStart::process(State*,
+                                                        XMLTokenizer::XMLToken*,
+                                                        XMLBuilder*) {
+    return this;
 }
 
-XMLDirector::State* XMLDirector::TagCloseEnd::process(
-    State* lastState, XMLTokenizer::XMLToken* token, XMLBuilder* factory) {
-
-    XMLDirector::State* state = this;
-
-    return state;
+XMLDirector::State* XMLDirector::TagCloseEnd::process(State*,
+                                                      XMLTokenizer::XMLToken*,
+                                                      XMLBuilder*) {
+    return this;
 }
 
-XMLDirector::State* XMLDirector::AddText::process(State* lastState,
+XMLDirector::State* XMLDirector::AddText::process(State*,
                                                   XMLTokenizer::XMLToken* token,
                                                   XMLBuilder* factory) {
 
@@ -189,8 +168,9 @@ XMLDirector::State* XMLDirector::AddText::process(State* lastState,
 
     return state;
 }
-XMLDirector::State* XMLDirector::InNullTagEnd::process(
-    State* lastState, XMLTokenizer::XMLToken* token, XMLBuilder* factory) {
+XMLDirector::State*
+XMLDirector::InNullTagEnd::process(State*, XMLTokenizer::XMLToken* token,
+                                   XMLBuilder* factory) {
 
     XMLDirector::State* state = this;
 
