@@ -8,9 +8,10 @@ class XMLDirector {
 private:
     XMLBuilder* factory;
     XMLTokenizer tokenizer;
+    static bool lastTagState;
 
     struct State {
-        virtual ~State() {}
+        virtual ~State();
         virtual void process(XMLTokenizer::XMLToken*, XMLBuilder*) = 0;
     };
 
@@ -30,7 +31,7 @@ private:
         virtual void process(XMLTokenizer::XMLToken*, XMLBuilder*);
     };
 
-    struct InNullTagEnd : public State {
+    struct InNullTag : public State {
         virtual void process(XMLTokenizer::XMLToken*, XMLBuilder*);
     };
 
@@ -38,7 +39,6 @@ private:
         virtual void process(XMLTokenizer::XMLToken*, XMLBuilder*);
     };
 
-    static bool lastTagState;
     static State* currentState;
 
 public:

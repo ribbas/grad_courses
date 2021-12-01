@@ -9,13 +9,6 @@ private:
     std::fstream* file;
     WhitespaceStrategy* whitespace;
 
-public:
-    XMLSerializer(std::fstream*);
-    ~XMLSerializer();
-    virtual void serializePretty();
-    virtual void serializeMinimal();
-
-private:
     class PrettyWhitespaceStrategy : public WhitespaceStrategy {
     private:
         int indentationLevel;
@@ -40,6 +33,12 @@ private:
     virtual void visitElement(dom::Element*) override;
     virtual void visitAttr(dom::Attr*) override;
     virtual void visitText(dom::Text*) override;
+
+public:
+    XMLSerializer(std::fstream*);
+    ~XMLSerializer();
+    virtual void serializePretty();
+    virtual void serializeMinimal();
 };
 
 #endif // XML_SERIALIZER_HPP

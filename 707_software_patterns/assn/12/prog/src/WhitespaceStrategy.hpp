@@ -6,7 +6,6 @@
 class WhitespaceStrategy {
 public:
     virtual ~WhitespaceStrategy() {}
-
     virtual void prettyIndentation(std::fstream*) = 0;
     virtual void incrementIndentation() = 0;
     virtual void decrementIndentation() = 0;

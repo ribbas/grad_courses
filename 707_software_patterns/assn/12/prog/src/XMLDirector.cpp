@@ -3,6 +3,8 @@
 XMLDirector::State* XMLDirector::currentState = new XMLDirector::NoOp;
 bool XMLDirector::lastTagState = false;
 
+XMLDirector::State::~State() {}
+
 XMLDirector::XMLDirector(XMLBuilder* builder, std::string fileName)
     : factory(builder), tokenizer(fileName) {}
 
@@ -48,7 +50,7 @@ void XMLDirector::construct() {
 
             case XMLTokenizer::XMLToken::NULL_TAG_END: {
 
-                currentState = new XMLDirector::InNullTagEnd;
+                currentState = new XMLDirector::InNullTag;
                 break;
             }
 
@@ -164,8 +166,8 @@ void XMLDirector::AddText::process(XMLTokenizer::XMLToken* token,
     }
 }
 
-void XMLDirector::InNullTagEnd::process(XMLTokenizer::XMLToken* token,
-                                        XMLBuilder* factory) {
+void XMLDirector::InNullTag::process(XMLTokenizer::XMLToken* token,
+                                     XMLBuilder* factory) {
 
     currentState = this;
 
