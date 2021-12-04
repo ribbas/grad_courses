@@ -1,25 +1,30 @@
 #include "Node.hpp"
+#include <iostream>
 
 Node_Impl::Node_Impl(const std::string& name, short type,
                      dom::Document* document)
-    : name(name), nodeType(type), parent(nullptr), document(document) {}
+    : parent(nullptr), document(document) {
+    this->sharedNameValue = NodeFlyweightFactory::getFlyweight(name, "", type);
+}
 
 Node_Impl::~Node_Impl() {}
 
 const std::string& Node_Impl::getNodeName() {
-    return name;
+    return sharedNameValue->name;
 }
 
 const std::string& Node_Impl::getNodeValue() {
-    return value;
+    return sharedNameValue->value;
 }
 
 void Node_Impl::setNodeValue(const std::string& nodeValue) {
-    value = nodeValue;
+    std::cout << "setting " << nodeValue << '\n';
+    this->sharedNameValue =
+        NodeFlyweightFactory::getFlyweight(sharedNameValue->name, nodeValue, 0);
 }
 
 short Node_Impl::getNodeType() {
-    return nodeType;
+    return sharedNameValue->nodeType;
 }
 
 dom::Node* Node_Impl::getParentNode() {
@@ -139,7 +144,7 @@ bool Node_Impl::hasChildNodes() {
 }
 
 const std::string& Node_Impl::getLocalName() {
-    return name;
+    return sharedNameValue->name;
 }
 
 void Node_Impl::setParent(dom::Node* parent) {

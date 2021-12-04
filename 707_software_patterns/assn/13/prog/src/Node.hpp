@@ -1,6 +1,7 @@
 #ifndef NODE_HPP
 #define NODE_HPP
 
+#include "NodeFlyweight.hpp"
 #include "NodeList.hpp"
 #include "WhitespaceStrategy.hpp"
 #include <string>
@@ -71,9 +72,7 @@ public:
 
 class Node_Impl : public virtual dom::Node {
 private:
-    std::string name;
-    std::string value;
-    short nodeType;
+    NodeFlyweight* sharedNameValue;
     dom::Node* parent;
     dom::NodeList nodes;
 

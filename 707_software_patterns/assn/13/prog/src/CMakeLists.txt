@@ -14,6 +14,7 @@ if(Boost_FOUND)
 		Iterator.cpp
 		NamedNodeMap.cpp
 		Node.cpp
+		NodeFlyweight.cpp
 		Text.cpp
 		ValidChildren.cpp
 		XMLBuilder.cpp
