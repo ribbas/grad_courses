@@ -1,11 +1,11 @@
 #ifndef NODE_HPP
 #define NODE_HPP
 
-// #include "DOMFlyweight.hpp"
+#include "DOMException.hpp"
+#include "Flyweight.hpp"
 #include "NodeList.hpp"
 #include "WhitespaceStrategy.hpp"
 #include <string>
-#include <unordered_map>
 
 namespace dom {
 
@@ -41,53 +41,6 @@ public:
     virtual bool hasChildNodes() = 0;
     virtual const std::string& getLocalName() = 0;
     virtual void serialize(std::fstream*, WhitespaceStrategy*) = 0;
-};
-
-class DOMException {
-private:
-    int reason;
-    std::string description;
-
-public:
-    DOMException(int r, const std::string& d) : reason(r), description(d) {}
-
-    virtual ~DOMException() {}
-
-    int getReason() {
-        return reason;
-    }
-    const std::string& getDescription() {
-        return description;
-    }
-
-    static const int WRONG_DOCUMENT_ERR = 0;
-    static const int INUSE_ATTRIBUTE_ERR = 1;
-    static const int INDEX_SIZE_ERR = 2;
-    static const int NOT_FOUND_ERR = 3;
-    static const int NO_MODIFICATION_ALLOWED_ERR = 4;
-    static const int INVALID_CHARACTER_ERR = 5;
-    static const int HIERARCHY_REQUEST_ERR = 6;
-};
-
-struct Flyweight {
-    std::string name;
-    std::string value;
-    short nodeType;
-
-    Flyweight(const std::string& _name, const std::string& _value,
-              const short _nodeType)
-        : name(_name), value(_value), nodeType(_nodeType) {}
-};
-
-// Factory that stores shared flyweight nodes
-class FlyweightFactory {
-public:
-    static Flyweight* getFlyweight(const std::string&, const std::string&,
-                                   const short);
-
-private:
-    // map of flyweight pointers
-    static std::unordered_map<std::string, Flyweight*> nodeFlyweights;
 };
 
 }; // namespace dom

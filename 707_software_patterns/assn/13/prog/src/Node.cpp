@@ -1,19 +1,5 @@
 #include "Node.hpp"
 
-// declare the map
-std::unordered_map<std::string, dom::Flyweight*>
-    dom::FlyweightFactory::nodeFlyweights;
-
-dom::Flyweight* dom::FlyweightFactory::getFlyweight(const std::string& name,
-                                                    const std::string& value,
-                                                    const short nodeType) {
-    std::string key = name + value + std::to_string(nodeType);
-    if (nodeFlyweights.find(key) == nodeFlyweights.end()) {
-        nodeFlyweights[key] = new Flyweight(name, value, nodeType);
-    }
-    return nodeFlyweights[key];
-}
-
 Node_Impl::Node_Impl(const std::string& name, short type,
                      dom::Document* document)
     : parent(nullptr), document(document) {

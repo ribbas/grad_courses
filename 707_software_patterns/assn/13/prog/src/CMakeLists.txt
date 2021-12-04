@@ -10,6 +10,7 @@ if(Boost_FOUND)
 	target_sources(${CMAKE_PROJECT_NAME} PUBLIC
 		Attr.cpp
 		Document.cpp
+		DOMException.cpp
 		Element.cpp
 		Iterator.cpp
 		NamedNodeMap.cpp
@@ -18,6 +19,8 @@ if(Boost_FOUND)
 		ValidChildren.cpp
 		XMLBuilder.cpp
 		XMLDirector.cpp
+		Flyweight.cpp
+		XMLFacade.cpp
 		XMLSerializer.cpp
 		XMLTokenizer.cpp
 		XMLValidator.cpp
