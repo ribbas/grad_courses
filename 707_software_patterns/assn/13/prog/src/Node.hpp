@@ -1,10 +1,11 @@
 #ifndef NODE_HPP
 #define NODE_HPP
 
-#include "NodeFlyweight.hpp"
+// #include "DOMFlyweight.hpp"
 #include "NodeList.hpp"
 #include "WhitespaceStrategy.hpp"
 #include <string>
+#include <unordered_map>
 
 namespace dom {
 
@@ -68,11 +69,32 @@ public:
     static const int HIERARCHY_REQUEST_ERR = 6;
 };
 
+struct Flyweight {
+    std::string name;
+    std::string value;
+    short nodeType;
+
+    Flyweight(const std::string& _name, const std::string& _value,
+              const short _nodeType)
+        : name(_name), value(_value), nodeType(_nodeType) {}
+};
+
+// Factory that stores shared flyweight nodes
+class FlyweightFactory {
+public:
+    static Flyweight* getFlyweight(const std::string&, const std::string&,
+                                   const short);
+
+private:
+    // map of flyweight pointers
+    static std::unordered_map<std::string, Flyweight*> nodeFlyweights;
+};
+
 }; // namespace dom
 
 class Node_Impl : public virtual dom::Node {
 private:
-    Flyweight* sharedStates;
+    dom::Flyweight* sharedStates;
     dom::Node* parent;
     dom::NodeList nodes;
 

@@ -1,10 +1,23 @@
 #include "Node.hpp"
-#include <iostream>
+
+// declare the map
+std::unordered_map<std::string, dom::Flyweight*>
+    dom::FlyweightFactory::nodeFlyweights;
+
+dom::Flyweight* dom::FlyweightFactory::getFlyweight(const std::string& name,
+                                                    const std::string& value,
+                                                    const short nodeType) {
+    std::string key = name + value + std::to_string(nodeType);
+    if (nodeFlyweights.find(key) == nodeFlyweights.end()) {
+        nodeFlyweights[key] = new Flyweight(name, value, nodeType);
+    }
+    return nodeFlyweights[key];
+}
 
 Node_Impl::Node_Impl(const std::string& name, short type,
                      dom::Document* document)
     : parent(nullptr), document(document) {
-    this->sharedStates = FlyweightFactory::getFlyweight(name, "", type);
+    this->sharedStates = dom::FlyweightFactory::getFlyweight(name, "", type);
 }
 
 Node_Impl::~Node_Impl() {}
@@ -18,8 +31,7 @@ const std::string& Node_Impl::getNodeValue() {
 }
 
 void Node_Impl::setNodeValue(const std::string& nodeValue) {
-    std::cout << "setting " << nodeValue << '\n';
-    this->sharedStates = FlyweightFactory::getFlyweight(
+    this->sharedStates = dom::FlyweightFactory::getFlyweight(
         sharedStates->name, nodeValue, sharedStates->nodeType);
 }
 
