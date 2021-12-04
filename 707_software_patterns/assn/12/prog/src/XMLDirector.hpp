@@ -8,7 +8,6 @@ class XMLDirector {
 private:
     XMLBuilder* factory;
     XMLTokenizer tokenizer;
-    static bool lastTagState;
 
     struct State {
         virtual ~State();
@@ -39,6 +38,7 @@ private:
         virtual void process(XMLTokenizer::XMLToken*, XMLBuilder*);
     };
 
+    static bool lastTagState;
     static State* currentState;
 
 public:

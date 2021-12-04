@@ -1,28 +1,14 @@
 #include "NodeFlyweight.hpp"
 
-#include <iostream>
+// declare the map
+std::unordered_map<std::string, Flyweight*> FlyweightFactory::nodeFlyweights;
 
-size_t NodeFlyweight::Hash::operator()(NodeFlyweight* flyweight) const {
-    std::string temp = flyweight->name + flyweight->value + "0";
-    //    std::to_string(flyweight->nodeType);
-    return std::hash<std::string>()(temp);
-}
-
-NodeFlyweight* NodeFlyweightFactory::getFlyweight(const std::string& name,
-                                                  const std::string& value,
-                                                  const short nodeType) {
-    std::cout << "YO_" << name << '_' << value << '_' << nodeType << '\n';
-    NodeFlyweight lookupFlyweight(name, value, nodeType);
-    auto flyweightIt = nodeFlyweights.find(&lookupFlyweight);
-    if (flyweightIt == nodeFlyweights.end()) {
-        // std::cout << "not found\n";
-        return *(nodeFlyweights.insert(new NodeFlyweight(name, value, nodeType))
-                     .first);
+Flyweight* FlyweightFactory::getFlyweight(const std::string& name,
+                                          const std::string& value,
+                                          const short nodeType) {
+    std::string key = name + value + std::to_string(nodeType);
+    if (nodeFlyweights.find(key) == nodeFlyweights.end()) {
+        nodeFlyweights[key] = new Flyweight(name, value, nodeType);
     }
-    std::cout << "found\n";
-    return *flyweightIt;
+    return nodeFlyweights[key];
 }
-
-// Declare the set
-std::unordered_set<NodeFlyweight*, NodeFlyweight::Hash>
-    NodeFlyweightFactory::nodeFlyweights;

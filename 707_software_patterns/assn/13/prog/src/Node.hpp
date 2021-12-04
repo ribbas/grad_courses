@@ -72,7 +72,7 @@ public:
 
 class Node_Impl : public virtual dom::Node {
 private:
-    NodeFlyweight* sharedNameValue;
+    Flyweight* sharedStates;
     dom::Node* parent;
     dom::NodeList nodes;
 
