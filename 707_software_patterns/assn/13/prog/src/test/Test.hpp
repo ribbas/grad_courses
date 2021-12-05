@@ -29,6 +29,6 @@ void testSerializer(int, char**);
 void testValidator(int, char**);
 void testBuilder(int, char**);
 void testIterator(int, char**);
-void testInterpreter(int, char**);
+void testFacade(int, char**);
 
 #endif // TEST_HPP

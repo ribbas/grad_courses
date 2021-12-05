@@ -27,7 +27,7 @@ if(Boost_FOUND)
 		XMLValidator.cpp
 		test/Test.cpp
 		test/TestBuilder.cpp
-		test/TestInterpreter.cpp
+		test/TestFacade.cpp
 		test/TestIterator.cpp
 		test/TestSerializer.cpp
 		test/TestTokenizer.cpp

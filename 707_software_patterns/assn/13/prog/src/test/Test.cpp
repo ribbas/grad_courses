@@ -15,11 +15,11 @@ int main(int argc, char** argv) {
             break;
         case 'E':
         case 'e':
-            testInterpreter(argc, argv);
+            testFacade(argc, argv);
             break;
         case 'I':
         case 'i':
-            testIterator(argc, argv);
+            testFacade(argc, argv);
             break;
         case 'T':
         case 't':
