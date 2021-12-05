@@ -1,33 +1,43 @@
 #include "Test.hpp"
 
 void testInterpreter(int argc, char** argv) {
-    if (argc < 2) {
+    if (argc < 4) {
         printUsage();
         exit(0);
     }
 
-    XMLBuilder* builder = new XMLBuilder();
-    XMLDirector director(builder, argv[2]);
-    director.construct();
-    dom::Document* builtDocument = director.getResult();
+    XMLFacade* xmlApp = new XMLFacade;
 
-    dom::Iterator* it = builtDocument->createIterator();
-    dom::Node* currentNode;
+    xmlApp->parse(argv[2]);
+    xmlApp->serialize(argv[3], false);
+    xmlApp->tokenize(argv[2]);
+    xmlApp->iterateToStdout();
+    xmlApp->interpret();
 
-    XMLInterpreter* interpreter = new XMLInterpreter();
+    delete xmlApp;
 
-    for (it->first(); !it->isDone(); it->next()) {
+    // XMLBuilder* builder = new XMLBuilder();
+    // XMLDirector director(builder, argv[2]);
+    // director.construct();
+    // dom::Document* builtDocument = director.getResult();
 
-        currentNode = it->currentItem();
-        if (dynamic_cast<dom::Element*>(currentNode)) {
-            interpreter->interpret(dynamic_cast<dom::Element*>(currentNode));
-        }
-    }
+    // dom::Iterator* it = builtDocument->createIterator();
+    // dom::Node* currentNode;
 
-    std::cout << "RESULT: " << interpreter->eval() << '\n';
+    // XMLInterpreter* interpreter = new XMLInterpreter();
 
-    delete interpreter;
-    delete builtDocument;
-    delete builder;
-    delete it;
+    // for (it->first(); !it->isDone(); it->next()) {
+
+    //     currentNode = it->currentItem();
+    //     if (dynamic_cast<dom::Element*>(currentNode)) {
+    //         interpreter->interpret(dynamic_cast<dom::Element*>(currentNode));
+    //     }
+    // }
+
+    // std::cout << "RESULT: " << interpreter->eval() << '\n';
+
+    // delete interpreter;
+    // delete builtDocument;
+    // delete builder;
+    // delete it;
 }

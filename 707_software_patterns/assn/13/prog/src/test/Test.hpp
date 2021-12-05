@@ -7,6 +7,7 @@
 #include "../Text.hpp"
 #include "../XMLBuilder.hpp"
 #include "../XMLDirector.hpp"
+#include "../XMLFacade.hpp"
 #include "../XMLInterpreter.hpp"
 #include "../XMLSerializer.hpp"
 #include "../XMLTokenizer.hpp"

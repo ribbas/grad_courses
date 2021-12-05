@@ -5,15 +5,18 @@
 
 class XMLFacade {
 private:
-    static dom::Document* document;
-    static void printToStdout(dom::Node*);
+    dom::Document* document;
+    void printToStdout(dom::Node*);
 
 public:
-    static void setDocument(dom::Document*);
-    static void serialize(const std::string&, bool);
-    static void parse(const std::string&);
-    static void tokenize(const std::string&);
-    static void iterateToStdout();
+    XMLFacade();
+    ~XMLFacade();
+    void setDocument(dom::Document*);
+    void serialize(const std::string&, bool);
+    void parse(const std::string&);
+    void tokenize(const std::string&);
+    void iterateToStdout();
+    void interpret();
 };
 
 #endif
