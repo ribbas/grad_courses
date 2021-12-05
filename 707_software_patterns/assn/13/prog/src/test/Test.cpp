@@ -13,9 +13,9 @@ int main(int argc, char** argv) {
         case 'b':
             testBuilder(argc, argv);
             break;
-        case 'C':
-        case 'c':
-            testChainOfResponsibility(argc, argv);
+        case 'E':
+        case 'e':
+            testInterpreter(argc, argv);
             break;
         case 'I':
         case 'i':

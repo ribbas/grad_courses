@@ -21,12 +21,13 @@ if(Boost_FOUND)
 		XMLDirector.cpp
 		Flyweight.cpp
 		XMLFacade.cpp
+		XMLInterpreter.cpp
 		XMLSerializer.cpp
 		XMLTokenizer.cpp
 		XMLValidator.cpp
 		test/Test.cpp
 		test/TestBuilder.cpp
-		test/TestChainOfResponsibility.cpp
+		test/TestInterpreter.cpp
 		test/TestIterator.cpp
 		test/TestSerializer.cpp
 		test/TestTokenizer.cpp

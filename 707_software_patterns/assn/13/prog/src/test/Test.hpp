@@ -7,6 +7,7 @@
 #include "../Text.hpp"
 #include "../XMLBuilder.hpp"
 #include "../XMLDirector.hpp"
+#include "../XMLInterpreter.hpp"
 #include "../XMLSerializer.hpp"
 #include "../XMLTokenizer.hpp"
 #include "../XMLValidator.hpp"
@@ -27,6 +28,6 @@ void testSerializer(int, char**);
 void testValidator(int, char**);
 void testBuilder(int, char**);
 void testIterator(int, char**);
-void testChainOfResponsibility(int, char**);
+void testInterpreter(int, char**);
 
 #endif // TEST_HPP
