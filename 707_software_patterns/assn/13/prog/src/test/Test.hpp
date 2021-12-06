@@ -17,7 +17,7 @@
 inline void printUsage() {
     printf("Usage:\n");
     printf("\tTest b [file1] [file2]\n");
-    printf("\tTest c [file]\n");
+    printf("\tTest f [file]\n");
     printf("\tTest i [file]\n");
     printf("\tTest t [file] ...\n");
     printf("\tTest s [file1] [file2]\n");

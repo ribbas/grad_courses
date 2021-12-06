@@ -13,8 +13,8 @@ int main(int argc, char** argv) {
         case 'b':
             testBuilder(argc, argv);
             break;
-        case 'E':
-        case 'e':
+        case 'F':
+        case 'f':
             testFacade(argc, argv);
             break;
         case 'I':

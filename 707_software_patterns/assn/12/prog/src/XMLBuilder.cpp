@@ -69,15 +69,6 @@ dom::Attr* XMLBuilder::addAttrValue(std::string value) {
     return newAttribute;
 }
 
-// dom::Attr* XMLBuilder::addAttribute(std::string name, std::string value) {
-
-//     trimAttr(name, value);
-//     dom::Attr* newAttribute = document->createAttribute(name);
-//     newAttribute->setValue(value);
-//     currentElement->setAttributeNode(newAttribute);
-//     return newAttribute;
-// }
-
 dom::Text* XMLBuilder::addText(std::string data) {
 
     data = ltrim(data);

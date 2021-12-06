@@ -23,7 +23,6 @@ public:
     dom::Document* getDocument();
     dom::Element* addElement(std::string);
     dom::Element* getElement();
-    // dom::Attr* addAttribute(std::string, std::string);
     void addAttrName(std::string);
     dom::Attr* addAttrValue(std::string);
     dom::Text* addText(std::string);
