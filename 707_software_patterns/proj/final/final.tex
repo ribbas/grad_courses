@@ -23,11 +23,21 @@
 
 \maketitle
 
+{\hypersetup{hidelinks}
+    \tableofcontents
+}
+\newpage
+
 \section{Introduction}
 In software engineering, design patterns are general, reusable solutions to commonly occurring problems \cite{source-making}. It is generally considered good practice to integrate design patterns into software products, especially large projects, since it allows the developers to focus their time and attention towards specific implementations. The purpose of this draft is to introduce an open-source project and present analysis on the software patterns within the implementation.
 
 \section{Structural Simulation Toolkit (SST)}
-The software that is being focused on in the final project is Structural Simulation Toolkit (SST). It is a simulation framework that prioritizes high performance computing (HPC) models \cite{sst}. Since SST is a large scale project with many stable extensions implemented for its kernel, the scope of the project will be limited to specific sections of the core repository. The repository is hosted on GitHub \cite{sst-repo}.
+The software that is being focused on in the final project is Structural Simulation Toolkit (SST). It is a simulation framework that prioritizes high performance computing (HPC) models \cite{sst}. SST provides the user with a fully modular design in a parallel simulation environment based on MPI. The SST library can be imported in a C++ script to be executed as a model by a custom interpreter provided by SST. Several prebuilt models, known as SST Elements, have been implemented for frequently used simulation subsystems.
+
+Since SST is a large scale project with many stable extensions implemented for its kernel, the scope of the project will be limited to specific sections of the core repository. The repository is hosted on GitHub \cite{sst-repo}.
+
+\subsection{Project structure}
+The project is structured as a library that is to be imported by the Client. The library implements and supplies its own \texttt{main} function, which restricts the Client from creating an entry point. In order to utilize the library, the Client must create derived classes to be executed with the command line tools provided by SST. The source files are compiled with the library using any popular C++ compilers that support MPI, but is executed by the provided SST executables and Python interpreters.
 
 \section{Software Patterns Present in SST}
 The following patterns can be observed to have been already implemented in the project:
@@ -58,8 +68,123 @@ Base* Create(const std::string& type, CtorArgs&& ... args)
 The singleton pattern is present in the \texttt{SST::Factory} class. In the repository, the class can be located at \texttt{factory.h}. The class is used to instantiate other concrete simulation classes. SST requires simulation objects to be synchronized throughout the kernel, especially since they can be running on a distributed system where race conditions can become major issues. The software forces these simulation objects to be singletons.
 
 \subsection{Strategy pattern}
-
 The strategy pattern is present in the \texttt{SST::Core::Serialization::serializer} class. The class is implemented throughout multiple files in \texttt{serialization}, where it is overloaded in the files with various parameter types, with all the various versions of the class simply overloading the function call operator (\texttt{operator()}).
+
+\section{Recommended Software Patterns in SST}
+The following patterns can be considered appropriate to implement in the project:
+\begin{enumerate}
+    \item Façade pattern
+    \item Interpreter pattern
+\end{enumerate}
+Other patterns are present in the project, such as C++ idioms (Include Guard Macro, enable\_if, etc.)
+
+\subsection{Façade pattern}
+The current method for a Client to interface the library is to create a derived class of Component and override its methods. While this approach provides extensive control over the functionality of crucial methods such as \texttt{void setup(unsigned int)}, \texttt{void finish(unsigned int)} and \texttt{bool tick(SST::Cycle\_t)}, it requires the Client to have extensive knowledge of the subsystems in the framework. The aforementioned methods, if overridden by the Client, must be implemented properly for the model and the simulation to be functional.
+
+The following listing is an interface of a valid Component that simulates a primitive full adder hardware unit.
+
+\begin{lstlisting}[language=c++]
+#include <sst/core/component.h>
+#include <sst/core/interfaces/stringEvent.h>
+#include <sst/core/link.h>
+
+class FullAdder : public SST::Component {
+public:
+    // register and manually configure each of the SST::Links
+    // to their corresponding event handlers
+    FullAdder(SST::ComponentId_t id, SST::Params& params);
+
+    // implement logic for the model when it is being loaded into
+    // the simulation
+    void setup() override;
+
+    // implement logic for the model when it is being unloaded from
+    // the simulation
+    void finish() override;
+
+    // implement logic for the model on every clock cycle in
+    // the simulation
+    bool tick(SST::Cycle_t cycle);
+
+    // event handlers for all the member SST::Link attributes
+    void handle_opand1(SST::Event* event);
+    void handle_opand2(SST::Event* event);
+    void handle_cin(SST::Event* event);
+
+    // register the component
+    SST_ELI_REGISTER_COMPONENT(
+        FullAdder, // class
+        "calculator", // element library
+        "fulladder", // component
+        SST_ELI_ELEMENT_VERSION(1, 0, 0),
+        "SST parent model",
+        COMPONENT_CATEGORY_UNCATEGORIZED)
+
+    // port name, description, event type
+    SST_ELI_DOCUMENT_PORTS(
+        {"opand1", "Operand 1", {"sst.Interfaces.StringEvent"}},
+        {"opand2", "Operand 2", {"sst.Interfaces.StringEvent"}},
+        {"cin", "Carry-in", {"sst.Interfaces.StringEvent"}},
+        {"sum", "Sum", {"sst.Interfaces.StringEvent"}},
+        {"cout", "Carry-out", {"sst.Interfaces.StringEvent"}})
+
+private:
+    // SST parameters
+    std::string clock;
+
+    // SST links
+    SST::Link *opand1_link, *opand2_link, *cin_link, 
+        *sum_link, *cout_link;
+
+    // other attributes
+    std::string opand1, opand2, cin;
+    SST::Output output;
+};
+\end{lstlisting}
+
+This Component is a relatively simple example of a model that can be simulated in the SST framework. The hardware logic for the full adder will be implemented in the tick function, where the output values (\texttt{sum} and \texttt{cout}) are evaluated using the member attributes \texttt{opand1}, \texttt{opand2}, and \texttt{cin} after they are processed by their corresponding handlers.
+
+Exposing all the complexity of the base methods to the Client can lead to many potential issues. One way to reduce the chances of such issues is to abstract away the steps and methods from the Client using a Facade design pattern. The library, in its current state, does not provide a method to call any of the constructors of the Simulation objects, such as Components and SubComponents. Execution of such objects is done through various command line tools. Even testing of the classes appear to be done through external tools and Python interpreters, which compare the outputs to the expected outputs rather than using asserts.
+
+The method of interfacing the library is restricted due to it binding all of its classes to a \texttt{main} function as well. This \texttt{main} function is processed whenever the library gets imported.
+
+\begin{lstlisting}[language=c++]
+#include <sst/core/component.h>
+#include <sst/core/interfaces/stringEvent.h>
+#include <sst/core/link.h>
+
+int main() {
+    SST::Component* component = new SST::Component(params);
+
+    component->register(
+        FullAdder, // class
+        "calculator", // element library
+        "fulladder", // component
+        SST_ELI_ELEMENT_VERSION(1, 0, 0),
+        "SST parent model",
+        COMPONENT_CATEGORY_UNCATEGORIZED);
+    component->registerPort("opand1", "Operand 1", 
+        {"sst.Interfaces.StringEvent"});
+    ...
+
+    component->defaultSetup();
+    component->defaultFinish();
+    component->overrideTick();
+    component->setMPIRank(0);
+    component->run();
+
+    delete component;
+
+    return 0;
+}
+\end{lstlisting}
+
+\subsection{Interpreter pattern}
+
+\begin{appendices}
+    \section{Full Adder Hardware Design}
+    The contents...
+\end{appendices}
 
 \bibliographystyle{plain}
 \bibliography{ref}
