@@ -1,4 +1,3 @@
-
 \section{Software Patterns Present in SST}
 The following patterns can be observed to have been already implemented in the project:
 \begin{enumerate}
@@ -12,7 +11,7 @@ Other patterns are present in the project, such as C++ idioms (Include Guard Mac
 
 \subsection{Abstract Factory/Factory Method}
 The abstract factory and factory method patterns are present in the \texttt{SST::Factory} class. In the repository, the class can be located at \texttt{factory.h}. In the repository, it is used to create several concrete classes, including \texttt{Component} and \texttt{Module} objects. The class also provides templated variadic methods to create concrete classes of generic classes, such as
-\begin{lstlisting}[language=c++]
+\begin{lstlisting}[style=customC++]
 // src/sst/core/factory.h
 /*
  * General function to create a given base class.

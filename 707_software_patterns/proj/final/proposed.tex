@@ -1,4 +1,3 @@
-
 \section{Recommended Software Patterns in SST}
 The following patterns can be considered appropriate to implement in the project:
 \begin{enumerate}
@@ -30,8 +29,8 @@ public:
     // the simulation
     void finish() override;
 
-    // implement logic for the model on every clock cycle in
-    // the simulation
+    // implement logic for the model on every clock cycle in the
+    // simulation
     bool tick(SST::Cycle_t cycle);
 
     // event handlers for all the member SST::Link attributes
@@ -78,10 +77,6 @@ The following listing is a potential interface that may be possible with the int
 
 \begin{lstlisting}[style=customC++]
 #include <sst/core/facade.h>
-
-bool customTickFunc(unsigned int cycle) {
-    // do something
-}
 
 int main(int argc, char* argv[]) {
     SST::Facade* facade = new SST::Facade(argc, argv);
