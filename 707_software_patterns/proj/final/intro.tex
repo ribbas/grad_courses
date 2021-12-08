@@ -7,7 +7,7 @@ The software that is being focused on in the final project is Structural Simulat
 Due to SST being a large scale project with many stable extensions implemented for its kernel, the scope of the project will be limited to specific sections of the core repository. The repository is hosted on GitHub \cite{sst-repo}. The source files that will be analyzed reside in \texttt{src/sst/core/}.
 
 \subsection{Project structure}
-This section describes, in a high level overview, the structure of SST's code base. Analysis of the layout will assist in understanding the various design patterns that are present or proposed for the project.
+This section provides a high level overview of the structure of SST's code base. Analysis of the layout will assist in understanding the various design patterns that are present or proposed for the project.
 
 SST is structured as a library that is to be imported by the Client. The library implements and supplies its own \texttt{main} function, which restricts the Client from creating an entry point. In order to utilize the library, the Client must create derived classes to be executed with the command line tools provided by SST. The source files are compiled with the library using any popular C++ compilers that support MPI. The compiled objects can be executed by the provided SST executables that wrap the \texttt{mpirun} command. The Client is also required to provide accompanying Python scripts to provide driver functions with the desired parameters.
 

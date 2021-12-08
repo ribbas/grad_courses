@@ -5,23 +5,55 @@
 \usepackage[toc,page]{appendix}
 \usepackage{xcolor}
 
-\definecolor{mygray}{RGB}{44, 62, 80}
-\definecolor{mygreen}{RGB}{22, 160, 133}
-\definecolor{myorange}{rgb}{1.0,0.4,0}
+\definecolor{cmt}{RGB}{44, 62, 80}
+\definecolor{kw}{RGB}{142, 68, 173}
+\definecolor{str}{RGB}{39, 174, 96}
 
-\lstset{
-commentstyle=\color{mygray},
-% frame=single,
-numbers=left,
-framextopmargin=5pt,
-frame=lines,
-% numbersep=5pt,
-% numberstyle=\tiny\color{mygray},
-keywordstyle=\color{mygreen},
-showspaces=false,
-showstringspaces=false,
-stringstyle=\color{myorange},
-tabsize=2
+\lstdefinestyle{customC++}{
+    language=c++,
+    frame=lines,
+    framextopmargin=5pt,
+    numbers=left,
+    stringstyle=\color{str},
+    commentstyle=\color{cmt},
+    keywordstyle=\color{kw},
+    moredelim=**[directive][\color{str}]\#,
+    moredelim=**[s][\color{str}]<>,
+    keywordstyle=\color{kw},
+    morekeywords={final, override},
+    deletekeywords={register},
+    showspaces=false,
+    showstringspaces=false
 }
+
+\lstdefinestyle{customPython}{
+    language=python,
+    frame=lines,
+    framextopmargin=5pt,
+    numbers=left,
+    stringstyle=\color{str},
+    commentstyle=\color{cmt},
+    keywordstyle=\color{kw},
+    keywordstyle=\color{kw},
+    showspaces=false,
+    showstringspaces=false
+}
+
+\lstdefinestyle{customXML}{
+    language=xml,
+    frame=lines,
+    framextopmargin=5pt,
+    numbers=left,
+    stringstyle=\color{str},
+    commentstyle=\color{cmt},
+    keywordstyle=\color{kw},
+    keywordstyle=\color{kw},
+    morekeywords={config, component, setProgramOption, param, link},
+    deletekeywords={register},
+    showspaces=false,
+    showstringspaces=false
+}
+
+
 \setlength{\parindent}{0em}
 \setlength{\parskip}{1em}

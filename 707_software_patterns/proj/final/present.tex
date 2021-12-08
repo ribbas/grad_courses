@@ -4,6 +4,7 @@ The following patterns can be observed to have been already implemented in the p
 \begin{enumerate}
     \item Abstract factory pattern
     \item Factory method pattern
+    \item Prototype pattern
     \item Singleton pattern
     \item Strategy pattern
 \end{enumerate}
@@ -25,7 +26,10 @@ Base* Create(const std::string& type, CtorArgs&& ... args)
 \end{lstlisting}
 
 \subsection{Singleton}
-The singleton pattern is present in the \texttt{SST::Factory} class. In the repository, the class can be located at \texttt{factory.h}. The class is used to instantiate other concrete simulation classes. SST requires simulation objects to be synchronized throughout the kernel, especially since they can be running on a distributed system where race conditions can become major issues. The software forces these simulation objects to be singletons.
+The singleton pattern is present in the \texttt{SST::Factory} class. In the repository, the class can be located at \texttt{factory.h}. The class is used to instantiate other concrete simulation classes. SST requires simulation objects to be synchronized throughout the kernel, especially since they can be running on a distributed system where race conditions can become major issues. The software forces these simulation objects to be Singletons.
 
 \subsection{Strategy pattern}
-The strategy pattern is present in the \texttt{SST::Core::Serialization::serializer} class. The class is implemented throughout multiple files in \texttt{serialization}, where it is overloaded in the files with various parameter types, with all the various versions of the class simply overloading the function call operator (\texttt{operator()}).
+The Strategy pattern is present in the \texttt{SST::Core::Serialization::serializer} class. The class is implemented throughout multiple files in \texttt{serialization}, where it is overloaded in the files with various parameter types, with all the various versions of the class simply overloading the function call operator (\texttt{operator()}).
+
+\subsection{Prototype pattern}
+The Prototype pattern is present in the project, although in a very limited manner. Select \texttt{SST::Core::Interfaces} classes implement a \texttt{clone} method to provide the ability to copy instances of themselves. The \\ \texttt{SST::Core::Interfaces::StringEvent} class provides a shallow copy of itself to instantiate its ConcretePrototype, while \texttt{SST::Core::Interfaces::SimpleNetwork} performs a deep copy.

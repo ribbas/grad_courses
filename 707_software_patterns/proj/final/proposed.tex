@@ -11,7 +11,7 @@ The current method for a Client to interface the library is to create a derived 
 
 The following listing is an interface of a simple Component that simulates a primitive full adder hardware unit.
 
-\begin{lstlisting}[language=c++]
+\begin{lstlisting}[style=customC++]
 #include <sst/core/component.h>
 #include <sst/core/interfaces/stringEvent.h>
 #include <sst/core/link.h>
@@ -76,7 +76,7 @@ Exposing all the complexity of the base methods to the Client can lead to many p
 
 The following listing is a potential interface that may be possible with the integration of a Facade object into the project.
 
-\begin{lstlisting}[language=c++]
+\begin{lstlisting}[style=customC++]
 #include <sst/core/facade.h>
 
 bool customTickFunc(unsigned int cycle) {
@@ -109,3 +109,66 @@ int main(int argc, char* argv[]) {
 \end{lstlisting}
 
 \subsection{Interpreter pattern}
+SST requires external Python scripts to configure and run the Client models. The configuration file provides a vast amount of options; from setting the duration of the simulation to providing custom parameters to the models. The configuration file is imported by the provided executables and parsed by the \texttt{SST::Core::Model::Python} classes. The classes map the parameterized method calls made in the configuration file to the implemented class methods.
+
+This method of interpreting the configuration file to generate SST Components for its simulation requires the usage of a Python interpreter. This external dependency potentially adds unnecessary overhead that can be circumvented by integrating the Interpreter pattern into the project. Adding an AbstractExpression class in native C++ will allow the project to not have to rely on an external framework and language to run its simulations.
+
+Instead of a Python script, the simulation configuration can be represented in an XML format. XML parsing is a fairly common task in commercial software that is often achieved by external libraries. Configuration options in SST may require a very simple parser. The AbstractExpression class will perform a similar role to the current \texttt{SST::Core::Model::Python} classes and create SST Components for the simulation.
+
+The following listings are an example of the potential translation the method can bring to parsing configurations:
+\begin{lstlisting}[style=customPython]
+# run.py
+import sst
+
+sst.setProgramOption("stopAtCycle", "5s")
+
+full_add_0 = sst.Component("Full Adder 0", "fulladder.fulladder")
+full_add_0.addParams({"clock": "1Hz"})
+
+full_add_1 = sst.Component("Full Adder 1", "fulladder.fulladder")
+full_add_1.addParams({"clock": "1Hz"})
+
+full_add_2 = sst.Component("Full Adder 2", "fulladder.fulladder")
+full_add_2.addParams({"clock": "1Hz"})
+
+full_add_3 = sst.Component("Full Adder 3", "fulladder.fulladder")
+full_add_3.addParams({"clock": "1Hz"})
+
+sst.Link("cout0").connect(
+    (full_add_0, "cout0", "1ps"),
+    (full_add_1, "cin1", "1ps")
+)
+sst.Link("cout1").connect(
+    (full_add_1, "cout1", "1ps"),
+    (full_add_2, "cin2", "1ps")
+)
+sst.Link("cout2").connect(
+    (full_add_2, "cout2", "1ps"),
+    (full_add_3, "cin3", "1ps")
+)
+\end{lstlisting}
+
+\begin{lstlisting}[style=customXML]
+<? xml version="1.0" encoding="UTF-8"?>
+<config>
+    <setProgramOption stopAtCycle="5s"/><setProgramOption/>
+    <component id="full_add_0" name="Full Adder 0" class="fulladder"/>
+        <param key="clock" value="1Hz"/><param/>
+        <link from="cout0" to="full_add_1" port="cin1"/></link>
+    <component/>
+    <component id="full_add_1" name="Full Adder 1" class="fulladder"/>
+        <param key="clock" value="1Hz"/><param/>
+        <link from="cout1" to="full_add_2" port="cin2"/></link>
+    <component/>
+    <component id="full_add_2" name="Full Adder 2" class="fulladder"/>
+        <param key="clock" value="1Hz"/><param/>
+        <link from="cout2" to="full_add_3" port="cin3"/></link>
+    <component/>
+    <component id="full_add_3" name="Full Adder 3" class="fulladder"/>
+        <param key="clock" value="1Hz"/><param/>
+    <component/>
+</config>
+\end{lstlisting}
+
+\subsection{Other minor idioms}
+The project can be found with several \texttt{goto} statements within the code base. The use of this unconditional jump is highly discouraged in the C++ community, although its usage is not considered a part of any idioms. Regardless, the project would benefit from discarding these statements and replacing them with proper conditional jumps for increased clarity and understanding of the project.
