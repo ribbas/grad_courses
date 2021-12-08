@@ -1,0 +1,31 @@
+
+\section{Software Patterns Present in SST}
+The following patterns can be observed to have been already implemented in the project:
+\begin{enumerate}
+    \item Abstract factory pattern
+    \item Factory method pattern
+    \item Singleton pattern
+    \item Strategy pattern
+\end{enumerate}
+Other patterns are present in the project, such as C++ idioms (Include Guard Macro, enable\_if, etc.)
+
+\subsection{Abstract Factory/Factory Method}
+The abstract factory and factory method patterns are present in the \texttt{SST::Factory} class. In the repository, the class can be located at \texttt{factory.h}. In the repository, it is used to create several concrete classes, including \texttt{Component} and \texttt{Module} objects. The class also provides templated variadic methods to create concrete classes of generic classes, such as
+\begin{lstlisting}[language=c++]
+// src/sst/core/factory.h
+/*
+ * General function to create a given base class.
+ *
+ * @param type
+ * @param params
+ * @param args Constructor arguments
+ */
+template<class Base, class ... CtorArgs>
+Base* Create(const std::string& type, CtorArgs&& ... args)
+\end{lstlisting}
+
+\subsection{Singleton}
+The singleton pattern is present in the \texttt{SST::Factory} class. In the repository, the class can be located at \texttt{factory.h}. The class is used to instantiate other concrete simulation classes. SST requires simulation objects to be synchronized throughout the kernel, especially since they can be running on a distributed system where race conditions can become major issues. The software forces these simulation objects to be singletons.
+
+\subsection{Strategy pattern}
+The strategy pattern is present in the \texttt{SST::Core::Serialization::serializer} class. The class is implemented throughout multiple files in \texttt{serialization}, where it is overloaded in the files with various parameter types, with all the various versions of the class simply overloading the function call operator (\texttt{operator()}).
