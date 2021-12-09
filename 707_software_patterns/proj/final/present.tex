@@ -1,16 +1,8 @@
-
-% Section 3.1:  Make sure to explain why you have both AF and FM patterns here.  Is one implementing the other?
-% Explain whether or not the variadic form is consistent with the pattern.  Just from the function signature that you've shown I'm not sure that it is.
-% In general be sure to explain all of the roles of the pattern and how they are filled by the implementation or not.  Roles include not just the classes, but the relationships and methods, too.
-% Explain how the implementation deals with issues that were part of our discussion, for example, how is the client configured with a particular ConcreteCreator?
-
 % Section 3.3:  Does the Strategy have a Context?  How is the ConcreteStrategy chosen?
-
 
 \section{Software Patterns Present in SST}
 The following patterns can be observed to have been already implemented in the project:
 \begin{enumerate}
-    \item Abstract factory pattern
     \item Factory method pattern
     \item Prototype pattern
     \item Singleton pattern
@@ -18,21 +10,26 @@ The following patterns can be observed to have been already implemented in the p
 \end{enumerate}
 Other patterns are present in the project, such as C++ idioms (Include Guard Macro, enable\_if, etc.)
 
-\subsection{Abstract Factory/Factory Method}
-The abstract factory and factory method patterns are present in the \texttt{SST::Factory} class. In the repository, the class can be located at \texttt{factory.h}. In the repository, it is used to create several concrete classes, including \texttt{Component} and \texttt{Module} objects. The class also provides templated variadic methods to create concrete classes of generic classes, such as
-\begin{lstlisting}[style=customC++,label=af,caption=Abstract Factory]
-// src/sst/core/factory.h
-/*
- * General function to create a given base class.
- *
- * @param type
- * @param params
- * @param args Constructor arguments
- */
-template<class Base, class ... CtorArgs>
-Base* Create(const std::string& type, CtorArgs&& ... args)
-\end{lstlisting}
+% Section 3.1:  Make sure to explain why you have both AF and FM patterns here.  Is one implementing the other?
+% Explain whether or not the variadic form is consistent with the pattern.  Just from the function signature that you've shown I'm not sure that it is.
+% In general be sure to explain all of the roles of the pattern and how they are filled by the implementation or not.  Roles include not just the classes, but the relationships and methods, too.
+% Explain how the implementation deals with issues that were part of our discussion, for example, how is the client configured with a particular ConcreteCreator?
 
+\subsection{Abstract Factory}
+The abstract factory pattern is present in the \texttt{SST::Factory} class. In the repository, the class can be located at \texttt{factory.h}. The class is used to create several concrete products, including \texttt{Component} and \texttt{Module} objects.
+
+The following excerpt lists the methods of the class following the typical steps dictated by the pattern.
+
+\begin{lstlisting}[style=customC++,label=fm,caption=Factory Implementing the Abstract Factory Pattern]
+// src/sst/core/factory.h
+Component* CreateComponent(...);
+
+Module* CreateModule(...);
+
+Module* CreateModuleWithComponent(...);
+
+Partition::SSTPartitioner* CreatePartitioner(...);
+\end{lstlisting}
 
 % Section 3.2:  Is the Singleton implemented correctly?  Does it have any special features that help it deal with being instantiated in a multi-threaded environment, like locks, DCL or being instantiated at a particular place in the program?  Is it ever destroyed?
 
@@ -61,7 +58,6 @@ Factory::Factory(...) {
     instance = this;
     ...
 }
-...
 \end{lstlisting}
 
 Although SST is primarily intended for multi-threaded applications, the Singleton class does not utilize any locks to account for the potential issues imposed by concurrency. Locks do exist in abundance throughout the project and within the class itself, but not when checking for instances of itself in other threads. The \texttt{Factory} class is responsible for creating SST Components, SubComponents, Modules, etc. as models for the simulation. It appears that the Singleton is instantiated by \texttt{mpirun} as a single thread which spawns the other processes after it completes analysis of the configuration options. The intent of the pattern is still preserved, although with the aforementioned assumptions that the executable instantiates it with a single thread.
