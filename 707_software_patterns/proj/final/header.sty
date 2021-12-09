@@ -1,57 +1,52 @@
 \usepackage[margin=1.0in]{geometry}
+\usepackage{caption}
 \usepackage{forest}
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
 \usepackage{listings}
 \usepackage[toc,page]{appendix}
 \usepackage{xcolor}
+
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
 
 \definecolor{cmt}{RGB}{44, 62, 80}
 \definecolor{kw}{RGB}{142, 68, 173}
 \definecolor{str}{RGB}{39, 174, 96}
 
-\lstdefinestyle{customC++}{
-    language=c++,
-    frame=lines,
+
+\lstdefinestyle{base}{
+    basicstyle=\ttfamily,
+    frame=bottomline,
     framextopmargin=5pt,
     numbers=left,
     stringstyle=\color{str},
     commentstyle=\color{cmt},
     keywordstyle=\color{kw},
-    moredelim=**[directive][\color{str}]\#,
-    moredelim=**[s][\color{str}]<>,
     keywordstyle=\color{kw},
-    morekeywords={final, override},
-    deletekeywords={register},
     showspaces=false,
     showstringspaces=false
+}
+
+
+\lstdefinestyle{customC++}{
+    style=base,
+    language=c++,
+    moredelim=**[directive][\color{str}]\#,
+    moredelim=**[s][\color{str}]<>,
+    morekeywords={final, override},
+    deletekeywords={register}
 }
 
 \lstdefinestyle{customPython}{
-    language=python,
-    frame=lines,
-    framextopmargin=5pt,
-    numbers=left,
-    stringstyle=\color{str},
-    commentstyle=\color{cmt},
-    keywordstyle=\color{kw},
-    keywordstyle=\color{kw},
-    showspaces=false,
-    showstringspaces=false
+    style=base,
+    language=python
 }
 
 \lstdefinestyle{customXML}{
+    style=base,
     language=xml,
-    frame=lines,
-    framextopmargin=5pt,
-    numbers=left,
-    stringstyle=\color{str},
-    commentstyle=\color{cmt},
-    keywordstyle=\color{kw},
-    keywordstyle=\color{kw},
-    morekeywords={config, component, setProgramOption, param, link},
-    deletekeywords={register},
-    showspaces=false,
-    showstringspaces=false
+    morekeywords={config, component, setProgramOption, param, link}
 }
 
 
