@@ -33,7 +33,7 @@ The following figure lists the methods of the class following the typical steps 
 \begin{figure}[h]
     \caption{Factory Implementing the Abstract Factory Pattern}
     \centering
-    \includegraphics[width=1\textwidth]{af.png}
+    \includegraphics[width=0.8\textwidth]{af.png}
 \end{figure}
 
 % Section 3.2:  Is the Singleton implemented correctly?  Does it have any special features that help it deal with being instantiated in a multi-threaded environment, like locks, DCL or being instantiated at a particular place in the program?  Is it ever destroyed?
@@ -44,21 +44,19 @@ The singleton pattern is present in the \texttt{SST::Factory} class. In the repo
 \begin{figure}[h]
     \caption{Factory Implementing the Singleton Pattern}
     \centering
-    \includegraphics[width=1\textwidth]{singleton.png}
+    \includegraphics[width=0.8\textwidth]{singleton.png}
 \end{figure}
+\newpage
 
 The following listing consolidates all instances of the class following the typical steps dictated by the pattern.
 
-\begin{lstlisting}[style=customC++,label=singleton,caption=Factory Implementing the Singleton Pattern \\ File: src/sst/core/factory.h]
+\begin{lstlisting}[style=customC++,label=singleton,caption=Factory Implementing the Singleton Pattern \\ File: src/sst/core/factory.h and src/sst/core/factory.cc]
 class Factory {
-    ...
     Factory(const std::string& searchPaths);
     ~Factory();
     static Factory* instance;
-    ...
 }
 
-// src/sst/core/factory.cc
 Factory* Factory::instance = nullptr;
 
 Factory::Factory(...) {
@@ -66,7 +64,6 @@ Factory::Factory(...) {
         out.fatal(CALL_INFO, 1, "Already initialized a factory.\n");
     }
     instance = this;
-    ...
 }
 \end{lstlisting}
 
@@ -77,31 +74,29 @@ The safety of the Singleton can be improved with the usage of mutexes to impleme
 % \subsection{Strategy pattern}
 % The Strategy pattern is present in the \texttt{SST::Core::Serialization::serializer} class. The class is implemented throughout multiple files in \texttt{serialization}, where it is overloaded in the files with various parameter types, with all the various versions of the class simply overloading the function call operator (\texttt{operator()}).
 
+\newpage
 \subsection{Prototype Pattern}
 The Prototype pattern is present in the project, although in a very limited manner. Select \texttt{SST::Core::Interfaces} classes implement a \texttt{clone} method to provide the ability to copy instances of themselves. The \texttt{StringEvent} class provides a shallow copy of itself to instantiate its ConcretePrototype, while \texttt{SimpleNetwork::Request} performs a deep copy.
 
 \begin{figure}[h]
     \caption{Factory Implementing the Prototype Pattern}
     \centering
-    \includegraphics[width=1\textwidth]{proto.png}
+    \includegraphics[width=0.8\textwidth]{proto.png}
 \end{figure}
 
 The following listings demonstrate the instances of the project following the typical steps dictated by the pattern:
 
 \begin{lstlisting}[style=customC++,label=prototype1,caption=StringEvent Implementing the Prototype Pattern \\ File: src/sst/core/interfaces/stringEvent.h]
 class StringEvent : public SST::Event, ... {
-    ...
     virtual Event* clone() override {
         return new StringEvent(*this);
     }
-    ...
 }
 \end{lstlisting}
 
 \begin{lstlisting}[style=customC++,label=prototype2,caption=SimpleNetwork::Request Implementing the Prototype Pattern \\ File: src/sst/core/interfaces/simpleNetwork.h]
 class SimpleNetwork : public SubComponent {
     class Request : public ... {
-        ...
         inline Request* clone() {
             Request* req = new Request(*this);
             // Copy constructor only makes a shallow copy, need to
@@ -111,8 +106,6 @@ class SimpleNetwork : public SubComponent {
             }
             return req;
         }
-        ...
     }
-    ...
 }
 \end{lstlisting}
