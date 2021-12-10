@@ -6,3 +6,4 @@ proj/*/*
 !proj/*/*.tex
 !proj/*/*.pdf
 !proj/*.pdf
+!proj/*/statics/

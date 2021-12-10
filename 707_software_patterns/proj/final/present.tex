@@ -4,9 +4,9 @@
 The following patterns can be observed to have been already implemented in the project:
 \begin{enumerate}
     \item Factory method pattern
-    \item Prototype pattern
     \item Singleton pattern
-    \item Strategy pattern
+    \item Prototype pattern
+          % \item Strategy pattern
 \end{enumerate}
 Other patterns are present in the project, such as C++ idioms (Include Guard Macro, enable\_if, etc.)
 
@@ -15,7 +15,7 @@ Other patterns are present in the project, such as C++ idioms (Include Guard Mac
 % In general be sure to explain all of the roles of the pattern and how they are filled by the implementation or not.  Roles include not just the classes, but the relationships and methods, too.
 % Explain how the implementation deals with issues that were part of our discussion, for example, how is the client configured with a particular ConcreteCreator?
 
-\subsection{Abstract Factory}
+\subsection{Abstract Factory Pattern}
 The abstract factory pattern is present in the \texttt{SST::Factory} class. In the repository, the class can be located at \texttt{factory.h}. The class is used to create several concrete products, including \texttt{Component} and \texttt{Module} objects.
 
 The following excerpt lists the methods of the class following the typical steps dictated by the pattern.
@@ -23,17 +23,20 @@ The following excerpt lists the methods of the class following the typical steps
 \begin{lstlisting}[style=customC++,label=fm,caption=Factory Implementing the Abstract Factory Pattern]
 // src/sst/core/factory.h
 Component* CreateComponent(...);
-
 Module* CreateModule(...);
-
 Module* CreateModuleWithComponent(...);
-
 Partition::SSTPartitioner* CreatePartitioner(...);
 \end{lstlisting}
 
+\begin{figure}[h]
+    \caption{Example of a parametric plot ($\sin (x), \cos(x), x$)}
+    \centering
+    \includegraphics[width=0.5\textwidth]{fm.jpg}
+\end{figure}
+
 % Section 3.2:  Is the Singleton implemented correctly?  Does it have any special features that help it deal with being instantiated in a multi-threaded environment, like locks, DCL or being instantiated at a particular place in the program?  Is it ever destroyed?
 
-\subsection{Singleton}
+\subsection{Singleton Pattern}
 The singleton pattern is present in the \texttt{SST::Factory} class. In the repository, the class can be located at \texttt{factory.h}. The class is used to instantiate other concrete simulation classes. SST requires simulation objects to be synchronized throughout the kernel, especially since they can be running on a distributed system where race conditions can become major issues. The software forces these simulation objects to be Singletons.
 
 The following listing consolidates all instances of the class following the typical steps dictated by the pattern.
@@ -64,10 +67,10 @@ Although SST is primarily intended for multi-threaded applications, the Singleto
 
 The safety of the Singleton can be improved with the usage of mutexes to implement a double-checked locking \cite{dcl}, which is cited as an efficient method for implementing lazy initialization in a multi-threaded environment.
 
-\subsection{Strategy pattern}
-The Strategy pattern is present in the \texttt{SST::Core::Serialization::serializer} class. The class is implemented throughout multiple files in \texttt{serialization}, where it is overloaded in the files with various parameter types, with all the various versions of the class simply overloading the function call operator (\texttt{operator()}).
+% \subsection{Strategy pattern}
+% The Strategy pattern is present in the \texttt{SST::Core::Serialization::serializer} class. The class is implemented throughout multiple files in \texttt{serialization}, where it is overloaded in the files with various parameter types, with all the various versions of the class simply overloading the function call operator (\texttt{operator()}).
 
-\subsection{Prototype pattern}
+\subsection{Prototype Pattern}
 The Prototype pattern is present in the project, although in a very limited manner. Select \texttt{SST::Core::Interfaces} classes implement a \texttt{clone} method to provide the ability to copy instances of themselves. The \texttt{StringEvent} class provides a shallow copy of itself to instantiate its ConcretePrototype, while \texttt{SimpleNetwork::Request} performs a deep copy.
 
 The following listings demonstrate the instances of the project following the typical steps dictated by the pattern:

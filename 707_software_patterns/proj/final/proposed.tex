@@ -5,7 +5,7 @@ The following patterns can be considered appropriate to implement in the project
     \item Interpreter pattern
 \end{enumerate}
 
-\subsection{Façade pattern}
+\subsection{Façade Pattern}
 The current method for a Client to interface the library is to create a derived class of Component and override its methods. While this approach provides extensive control over the functionality of crucial methods such as \texttt{void setup(unsigned int)}, \texttt{void finish(unsigned int)} and \texttt{bool tick(SST::Cycle\_t)}, it requires the Client to have extensive knowledge of the subsystems in the framework. The aforementioned methods, if overridden by the Client, must be implemented properly for the model and the simulation to be functional.
 
 The following listing is an interface of a simple Component that simulates a primitive full adder hardware unit.
@@ -94,7 +94,7 @@ delete component;
 delete facade;
 \end{lstlisting}
 
-\subsection{Interpreter pattern}
+\subsection{Interpreter Pattern}
 SST requires external Python scripts to configure and run the Client models. The configuration file provides a vast amount of options; from setting the duration of the simulation to providing custom parameters to the models. The configuration file is imported by the provided executables and parsed by the \texttt{SST::Core::Model::Python} classes. The classes map the parameterized method calls made in the configuration file to the implemented class methods.
 
 This method of interpreting the configuration file to generate SST Components for its simulation requires the usage of a Python interpreter. This external dependency potentially adds unnecessary overhead that can be circumvented by integrating the Interpreter pattern into the project. Adding an AbstractExpression class in native C++ will allow the project to not have to rely on an external framework and language to run its simulations.
@@ -156,5 +156,5 @@ sst.Link("cout2").connect(
 </config>
 \end{lstlisting}
 
-\subsection{Other minor idioms}
+\subsection{Other Minor Idioms}
 The project can be found with several \texttt{goto} statements within the code base. The use of this unconditional jump is highly discouraged in the C++ community, although its usage is not considered a part of any idioms. Regardless, the project would benefit from discarding these statements and replacing them with proper conditional jumps for increased clarity and understanding of the project.
