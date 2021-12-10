@@ -10,38 +10,10 @@ The following patterns can be observed to have been already implemented in the p
 \end{enumerate}
 Other patterns are present in the project, such as C++ idioms (Include Guard Macro, enable\_if, etc.)
 
-% Section 3.1:  Make sure to explain why you have both AF and FM patterns here.  Is one implementing the other?
-% Explain whether or not the variadic form is consistent with the pattern.  Just from the function signature that you've shown I'm not sure that it is.
-% In general be sure to explain all of the roles of the pattern and how they are filled by the implementation or not.  Roles include not just the classes, but the relationships and methods, too.
-% Explain how the implementation deals with issues that were part of our discussion, for example, how is the client configured with a particular ConcreteCreator?
-
-\subsection{Abstract Factory Pattern}
-The abstract factory pattern is present in the \texttt{SST::Factory} class. In the repository, the class can be located at \texttt{factory.h}. The class is used to create several concrete products, including \texttt{Component} and \texttt{Module} objects.
-
-The following figure lists the methods of the class following the typical steps dictated by the pattern.
-
-% The following excerpt lists the methods of the class following the typical steps dictated by the pattern.
-
-% \begin{lstlisting}[style=customC++,label=fm,caption=Factory Implementing the Abstract Factory Pattern]
-% // src/sst/core/factory.h
-% Component* CreateComponent(...);
-% Module* CreateModule(...);
-% Module* CreateModuleWithComponent(...);
-% Partition::SSTPartitioner* CreatePartitioner(...);
-% \end{lstlisting}
-
-\begin{figure}[h]
-    \caption{Factory Implementing the Abstract Factory Pattern}
-    \centering
-    \includegraphics[width=0.8\textwidth]{af.png}
-\end{figure}
+\input{abstractfactory.tex}
 
 \input{singleton.tex}
 
-% \subsection{Strategy pattern}
-% The Strategy pattern is present in the \texttt{SST::Core::Serialization::serializer} class. The class is implemented throughout multiple files in \texttt{serialization}, where it is overloaded in the files with various parameter types, with all the various versions of the class simply overloading the function call operator (\texttt{operator()}).
-
-% \newpage
 \subsection{Prototype Pattern}
 The Prototype pattern is present in the project, although in a very limited manner. Select \texttt{SST::Core::Interfaces} classes implement a \texttt{clone} method to provide the ability to copy instances of themselves. The \texttt{StringEvent} class provides a shallow copy of itself to instantiate its ConcretePrototype, while \texttt{SimpleNetwork::Request} performs a deep copy.
 
@@ -55,24 +27,22 @@ The following listings demonstrate the instances of the project following the ty
 
 \begin{lstlisting}[style=customC++,label=prototype1,caption=StringEvent Implementing the Prototype Pattern \\ File: src/sst/core/interfaces/stringEvent.h]
 class StringEvent : public SST::Event, ... {
-    virtual Event* clone() override {
-        return new StringEvent(*this);
-    }
+  virtual Event* clone() override {
+    return new StringEvent(*this);
+  }
 }
 \end{lstlisting}
 
 \begin{lstlisting}[style=customC++,label=prototype2,caption=SimpleNetwork::Request Implementing the Prototype Pattern \\ File: src/sst/core/interfaces/simpleNetwork.h]
 class SimpleNetwork : public SubComponent {
-    class Request : public ... {
-        inline Request* clone() {
-            Request* req = new Request(*this);
-            // Copy constructor only makes a shallow copy, need to
-            // clone the event.
-            if (payload != nullptr) {
-                req->payload = payload->clone();
-            }
-            return req;
-        }
+  class Request : public ... {
+    Request* clone() {
+      Request* req = new Request(*this);
+      if (payload != nullptr) {
+        req->payload = payload->clone();
+      }
+      return req;
     }
+  }
 }
 \end{lstlisting}

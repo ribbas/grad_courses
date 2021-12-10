@@ -46,7 +46,7 @@ It appears that the Singleton is instantiated by \texttt{mpirun} as a single thr
 
 Listing \ref{simClassDecl} demonstrates the declaration of the other Singleton class, \texttt{Simulation\_impl}.
 
-\begin{lstlisting}[style=customC++,label=simClassDecl,caption=Excerpt of Simulation\_impl Interface \\ File: src/sst/core/Simulation\_impl.h]
+\begin{lstlisting}[style=customC++,label=simClassDecl,caption=Excerpt of Simulation\_impl Interface \\ File: src/sst/core/simulation\_impl.h]
 class Simulation_impl : public Simulation {
 public:
   static Simulation_impl* getSimulation();
