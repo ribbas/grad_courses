@@ -9,6 +9,13 @@ The following patterns can be considered appropriate to implement in the project
 The current method for a Client to interface the library is to create a derived class of Component and override its methods. While this approach provides extensive control over the functionality of crucial methods such as \texttt{void setup(unsigned int)}, \texttt{void finish(unsigned int)} and \texttt{bool tick(SST::Cycle\_t)}, it requires the Client to have extensive knowledge of the subsystems in the framework. The aforementioned methods, if overridden by the Client, must be implemented properly for the model and the simulation to be functional.
 
 The following listing is an interface of a simple Component that simulates a primitive full adder hardware unit.
+
+\begin{figure}[h]
+    \caption{Circuit Design of a Simple Full Adder}
+    \centering
+    \includegraphics[width=1\textwidth]{circuit.png}
+\end{figure}
+
 \newpage
 \begin{lstlisting}[style=customC++,label=currentModel,caption=Example Interface of an SST Component Model]
 class FullAdder : public SST::Component {
@@ -101,9 +108,8 @@ This method of interpreting the configuration file to generate SST Components fo
 
 Instead of a Python script, the simulation configuration can be represented in an XML format. XML parsing is a fairly common task in commercial software that is often achieved by external libraries. Configuration options in SST may require a very simple parser. The AbstractExpression class will perform a similar role to the current \texttt{SST::Core::Model::Python} classes and create SST Components for the simulation.
 
-The following listings are an example of the potential translation the method can bring to parsing configurations:
-\begin{lstlisting}[style=customPython,label=runPy,caption=Example SST Configuration File]
-# run.py
+The following listing is an example of a configuration file for the preceding FullAdder model.
+\begin{lstlisting}[style=customPython,label=runPy,caption=Example SST Configuration File \\ File: run.py]
 import sst
 
 sst.setProgramOption("stopAtCycle", "5s")
@@ -134,7 +140,8 @@ sst.Link("cout2").connect(
 )
 \end{lstlisting}
 
-\begin{lstlisting}[style=customXML,label=xml,caption=Potential Implementation of an SST Configuration File]
+The following listing is a potential translation of the preceding configuration file.
+\begin{lstlisting}[style=customXML,label=xml,caption=Potential Implementation of an SST Configuration File \\ File: run.xml]
 <? xml version="1.0" encoding="UTF-8"?>
 <config>
     <setProgramOption stopAtCycle="5s"/><setProgramOption/>
