@@ -28,12 +28,15 @@
     showstringspaces=false
 }
 
+\newif\ifcoloranglebrackets
+\coloranglebracketsfalse
+\newcommand\coloroncondition{\ifcoloranglebrackets\color{str}\fi}
 
 \lstdefinestyle{customC++}{
     style=base,
     language=c++,
-    moredelim=**[directive][\color{str}]\#,
-    moredelim=**[s][\color{str}]<>,
+    moredelim=**[directive][\coloranglebracketstrue]\#,
+    moredelim=**[s][\coloroncondition]<>,
     morekeywords={final, override},
     deletekeywords={register}
 }
@@ -48,7 +51,6 @@
     language=xml,
     morekeywords={config, component, setProgramOption, param, link}
 }
-
 
 \setlength{\parindent}{0em}
 \setlength{\parskip}{1em}

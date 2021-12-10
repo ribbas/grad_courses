@@ -1,0 +1,84 @@
+\subsection{Singleton Pattern}
+The singleton pattern is present in the \texttt{Factory} and \texttt{Simulation.Simulation\_impl} classes. In the repository, the classes can be located at \texttt{factory.h} and \texttt{Simulation\_impl.h} respectively.
+
+\subsubsection{Factory}
+The \texttt{Factory} class is used to instantiate other concrete simulation classes. SST requires objects to be synchronized throughout the kernel, especially since they can be running on a distributed system where race conditions can become major issues. The software forces these simulation objects to be Singletons.
+
+\begin{figure}[ht]
+    \caption{Factory Implementing the Singleton Pattern}
+    \centering
+    \includegraphics[width=0.8\textwidth]{singleton.png}
+\end{figure}
+\newpage
+
+Listing \ref{singleton} demonstrates the \texttt{Factory} class following the typical steps dictated by the pattern.
+
+\begin{lstlisting}[style=customC++,label=singleton,caption=Factory Implementing the Singleton Pattern \\ Files: src/sst/core/factory.h and src/sst/core/factory.cc]
+class Factory {
+  Factory(...);
+  ~Factory();
+  static Factory* instance;
+}
+
+Factory* Factory::instance = nullptr;
+
+Factory::Factory(...) {
+  if (instance) {
+    ...
+    // exit 1
+  }
+  instance = this;
+}
+\end{lstlisting}
+
+Although SST is primarily intended for multi-threaded applications, the \texttt{Factory} Singleton class does not utilize any locks to account for the potential issues imposed by concurrency. Locks do exist in abundance throughout the project and within the class itself, but not when checking for instances of the class in other threads. The \texttt{Factory} class is responsible for creating SST Components, SubComponents, Modules, etc. as models for the simulation.
+
+It appears that the Singleton is instantiated by \texttt{mpirun} as a single thread which spawns the other processes after it completes analysis of the configuration options. The intent of the pattern is still preserved, although with the aforementioned assumptions that the executable instantiates it with a single thread.
+\newpage
+
+\subsubsection{Simulation\_impl}
+
+\begin{figure}[ht]
+    \caption{Simulation\_impl Implementing the Singleton Pattern}
+    \centering
+    \includegraphics[width=0.8\textwidth]{singleton2.png}
+\end{figure}
+
+Listing \ref{simClassDecl} demonstrates the declaration of the other Singleton class, \texttt{Simulation\_impl}.
+
+\begin{lstlisting}[style=customC++,label=simClassDecl,caption=Excerpt of Simulation\_impl Interface \\ File: src/sst/core/Simulation\_impl.h]
+class Simulation_impl : public Simulation {
+public:
+  static Simulation_impl* getSimulation();
+  static Simulation_impl* createSimulation();
+protected:
+  Simulation_impl(...) {}
+private:
+  static std::unordered_map<std::thread::id, Simulation_impl*> instanceMap;
+}
+\end{lstlisting}
+
+Unlike \texttt{Factory}, this class is used by multiple classes in the framework which potentially may be on multiple threads. The \texttt{Simulation\_impl} class does implement a relatively safer version of a Singleton instance by using a mutex.
+
+Listing \ref{singleton2} demonstrates the \texttt{Simulation\_impl} class following the typical steps dictated by the pattern, using a mutex to account for potential issues raised by multi-threaded processes.
+
+\begin{lstlisting}[style=customC++,label=singleton2,caption=Simulation\_impl Implementing the Singleton Pattern \\ File: src/sst/core/simulation\_impl.cc]
+std::unordered_map<std::thread::id, Simulation_impl*>
+  Simulation_impl::instanceMap;
+
+Simulation_impl* getSimulation() {
+  return instanceMap.at(std::this_thread::get_id());
+}
+
+Simulation_Impl::createSimulation(...) {
+  std::thread::id tid = std::this_thread::get_id();
+  Simulation_impl* instance = new Simulation_impl(...);
+
+  std::lock_guard<std::mutex> lock(simulationMutex);
+  instanceMap[tid] = instance;
+  ...
+  return instance;
+}
+\end{lstlisting}
+
+\texttt{Simulation\_impl} appears to create an instance of itself on every thread. Each of the instances follow the restrictions enacted by the Singleton pattern. This method allows for a Singleton object on every thread and therefore the core intent of the pattern remains preserved.
