@@ -3,10 +3,10 @@
 \section{Software Patterns Present in SST}
 The following patterns can be observed to have been already implemented in the project:
 \begin{enumerate}
-    \item Factory method pattern
-    \item Singleton pattern
-    \item Prototype pattern
-          % \item Strategy pattern
+  \item Factory method pattern
+  \item Singleton pattern
+  \item Prototype pattern
+        % \item Strategy pattern
 \end{enumerate}
 Other patterns are present in the project, such as C++ idioms (Include Guard Macro, enable\_if, etc.)
 
@@ -18,9 +18,9 @@ Other patterns are present in the project, such as C++ idioms (Include Guard Mac
 The Prototype pattern is present in the project, although in a very limited manner. Select \texttt{SST::Core::Interfaces} classes implement a \texttt{clone} method to provide the ability to copy instances of themselves. The \texttt{StringEvent} class provides a shallow copy of itself to instantiate its ConcretePrototype, while \texttt{SimpleNetwork::Request} performs a deep copy.
 
 \begin{figure}[h]
-    \caption{Factory Implementing the Prototype Pattern}
-    \centering
-    \includegraphics[width=0.8\textwidth]{proto.png}
+  \caption{SST Classes Implementing the Prototype Pattern}
+  \centering
+  \includegraphics[width=0.8\textwidth]{proto.png}
 \end{figure}
 
 The following listings demonstrate the instances of the project following the typical steps dictated by the pattern:

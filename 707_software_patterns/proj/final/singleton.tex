@@ -5,9 +5,9 @@ The singleton pattern is present in the \texttt{Factory} and \texttt{Simulation.
 The \texttt{Factory} class is used to instantiate other concrete simulation classes. SST requires objects to be synchronized throughout the kernel, especially since they can be running on a distributed system where race conditions can become major issues. The software forces these simulation objects to be Singletons.
 
 \begin{figure}[ht]
-    \caption{Factory Implementing the Singleton Pattern}
-    \centering
-    \includegraphics[width=0.8\textwidth]{singleton.png}
+  \caption{Factory Implementing the Singleton Pattern}
+  \centering
+  \includegraphics[width=0.8\textwidth]{singleton.png}
 \end{figure}
 \newpage
 
@@ -39,9 +39,9 @@ It appears that the Singleton is instantiated by \texttt{mpirun} as a single thr
 \subsubsection{Simulation\_impl}
 
 \begin{figure}[ht]
-    \caption{Simulation\_impl Implementing the Singleton Pattern}
-    \centering
-    \includegraphics[width=0.8\textwidth]{singleton2.png}
+  \caption{Simulation\_impl Implementing the Singleton Pattern}
+  \centering
+  \includegraphics[width=0.8\textwidth]{singleton2.png}
 \end{figure}
 
 Listing \ref{simClassDecl} demonstrates the declaration of the other Singleton class, \texttt{Simulation\_impl}.
@@ -51,6 +51,7 @@ class Simulation_impl : public Simulation {
 public:
   static Simulation_impl* getSimulation();
   static Simulation_impl* createSimulation();
+  static void shutdown();
 protected:
   Simulation_impl(...) {}
 private:
@@ -79,6 +80,10 @@ Simulation_Impl::createSimulation(...) {
   ...
   return instance;
 }
+
+void Simulation_impl::shutdown() {
+  instanceMap.clear();
+}
 \end{lstlisting}
 
-\texttt{Simulation\_impl} appears to create an instance of itself on every thread. Each of the instances follow the restrictions enacted by the Singleton pattern. This method allows for a Singleton object on every thread and therefore the core intent of the pattern remains preserved.
+\texttt{Simulation\_impl} appears to create an instance of itself on every thread and store them in the static unordered\_map attribute, instanceMap. Each of the instances follow the restrictions enacted by the Singleton pattern. This method allows for a Singleton object on every thread and therefore the core intent of the pattern remains preserved. The map's contents are destroyed with the public \texttt{shutdown} method which is accessible by the main function, which runs on the primary thread.
