@@ -47,14 +47,13 @@ public:
 
 class Node_Impl : public virtual dom::Node {
 private:
-    dom::Flyweight* sharedStates;
     dom::Node* parent;
     dom::NodeList nodes;
 
     dom::Node* getSibling(int);
 
 protected:
-    dom::Document* document;
+    dom::Flyweight* sharedStates;
 
     Node_Impl(const std::string&, short, dom::Document*);
 

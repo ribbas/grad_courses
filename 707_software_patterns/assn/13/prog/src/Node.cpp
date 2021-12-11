@@ -2,8 +2,9 @@
 
 Node_Impl::Node_Impl(const std::string& name, short type,
                      dom::Document* document)
-    : parent(nullptr), document(document) {
-    this->sharedStates = dom::FlyweightFactory::getFlyweight(name, "", type);
+    : parent(nullptr) {
+    this->sharedStates =
+        dom::FlyweightFactory::getFlyweight(name, "", type, document);
 }
 
 Node_Impl::~Node_Impl() {}
@@ -18,7 +19,8 @@ const std::string& Node_Impl::getNodeValue() {
 
 void Node_Impl::setNodeValue(const std::string& nodeValue) {
     this->sharedStates = dom::FlyweightFactory::getFlyweight(
-        sharedStates->name, nodeValue, sharedStates->nodeType);
+        sharedStates->name, nodeValue, sharedStates->nodeType,
+        sharedStates->document);
 }
 
 short Node_Impl::getNodeType() {
@@ -50,7 +52,7 @@ dom::Node* Node_Impl::getNextSibling() {
 }
 
 dom::Document* Node_Impl::getOwnerDocument() {
-    return document;
+    return sharedStates->document;
 }
 
 dom::Node* Node_Impl::insertBefore(dom::Node* newChild, dom::Node* refChild) {

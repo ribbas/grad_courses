@@ -73,8 +73,9 @@ void Text_Impl::replaceData(int offset, int count, const std::string& arg) {
 
 dom::Text* Text_Impl::splitText(int offset) {
     try {
-        dom::Text* text = new Text_Impl(
-            substringData(offset, getLength() - offset), document);
+        dom::Text* text =
+            new Text_Impl(substringData(offset, getLength() - offset),
+                          sharedStates->document);
 
         setValue(substringData(0, offset));
 
@@ -83,6 +84,7 @@ dom::Text* Text_Impl::splitText(int offset) {
         }
 
         return text;
+
     } catch (std::out_of_range&) {
         throw dom::DOMException(dom::DOMException::INDEX_SIZE_ERR,
                                 "Index larget than Text node's value.");
