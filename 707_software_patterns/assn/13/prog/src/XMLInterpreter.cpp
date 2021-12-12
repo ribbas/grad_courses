@@ -1,4 +1,5 @@
 #include "XMLInterpreter.hpp"
+#include <algorithm>
 
 XMLInterpreter::XMLInterpreter() {}
 
@@ -44,7 +45,6 @@ double XMLInterpreter::eval() {
 
         if (isNumber(currentTerm)) {
 
-            std::cout << "LITERAL " << currentTerm << '\n';
             numOpands++;
             if (numOpands == 1) {
                 result = std::stod(currentTerm);
@@ -53,25 +53,22 @@ double XMLInterpreter::eval() {
             }
 
         } else {
+
             if (currentTerm == "+") {
-                // std::cout << "ADD " << currentTerm << '\n';
                 if (numOpands == 2) {
                     result += opand2;
                 }
             } else if (currentTerm == "-") {
-                // std::cout << "SUB " << currentTerm << '\n';
                 if (numOpands == 2) {
                     result = opand2 - result;
                 } else if (numOpands == 1) {
                     result = -result;
                 }
             } else if (currentTerm == "*") {
-                // std::cout << "MUL " << currentTerm << '\n';
                 if (numOpands == 2) {
                     result *= opand2;
                 }
             } else if (currentTerm == "/") {
-                // std::cout << "DIV " << terms.top() << '\n';
                 if (numOpands == 2) {
                     result = opand2 / result;
                 }

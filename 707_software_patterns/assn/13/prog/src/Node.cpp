@@ -18,7 +18,7 @@ const std::string& Node_Impl::getNodeValue() {
 }
 
 void Node_Impl::setNodeValue(const std::string& nodeValue) {
-    this->sharedStates = dom::FlyweightFactory::getFlyweight(
+    sharedStates = dom::FlyweightFactory::getFlyweight(
         sharedStates->name, nodeValue, sharedStates->nodeType,
         sharedStates->document);
 }

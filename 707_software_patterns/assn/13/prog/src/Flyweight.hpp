@@ -19,7 +19,6 @@ struct Flyweight {
               dom::Document*);
 };
 
-// Factory that stores shared flyweight nodes
 class FlyweightFactory {
 public:
     static Flyweight* getFlyweight(const std::string&, const std::string&,

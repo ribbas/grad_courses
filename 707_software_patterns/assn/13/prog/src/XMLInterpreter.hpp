@@ -3,8 +3,6 @@
 
 #include "Element.hpp"
 #include "Text.hpp"
-#include <algorithm>
-#include <iostream>
 #include <stack>
 #include <string>
 

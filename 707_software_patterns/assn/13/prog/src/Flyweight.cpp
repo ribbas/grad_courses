@@ -12,7 +12,6 @@ dom::Flyweight* dom::FlyweightFactory::getFlyweight(const std::string& name,
                                                     const std::string& value,
                                                     const short nodeType,
                                                     dom::Document* document) {
-
     std::stringstream keySS;
     keySS << name << value << nodeType << document;
     std::string key = keySS.str();
