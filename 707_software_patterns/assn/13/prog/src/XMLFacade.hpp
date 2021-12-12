@@ -19,4 +19,4 @@ public:
     void interpret();
 };
 
-#endif
+#endif // XML_FACADE_HPP
