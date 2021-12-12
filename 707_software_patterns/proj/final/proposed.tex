@@ -6,7 +6,7 @@ The following patterns can be considered appropriate to implement in the project
 \end{enumerate}
 
 \subsection{Façade Pattern}
-The current method for a Client to interface the library is to create a derived class of Component and override its methods. While this approach provides extensive control over the functionality of crucial methods such as \texttt{void setup(unsigned int)}, \texttt{void finish(unsigned int)} and \texttt{bool tick(SST::Cycle\_t)}, it requires the Client to have extensive knowledge of the subsystems in the framework. The aforementioned methods, if overridden by the Client, must be implemented properly for the model and the simulation to be functional.
+The current method for a Client to interface the library is to create a derived class of Component and override its methods. While this approach provides extensive control over the functionality of crucial methods such as \texttt{setup(unsigned int):void}, \texttt{finish(unsigned int):void} and \texttt{tick(SST.Cycle\_t):bool}, it requires the Client to have extensive knowledge of the subsystems in the framework. The aforementioned methods, if overridden by the Client, must be implemented properly for the model and the simulation to be functional.
 
 Listing \ref{currentModel} is an interface of a simple Component that simulates a primitive full adder hardware unit.
 
@@ -17,12 +17,19 @@ Listing \ref{currentModel} is an interface of a simple Component that simulates 
 \end{figure}
 
 \newpage
-\begin{lstlisting}[style=customC++,label=currentModel,caption=Example Interface of an SST Component Model]
+\begin{lstlisting}[style=customC++,label=currentModel,caption=Example Interface of an SST Component Model \\ File: FullAdder.hpp]
 #include <sst/core/component.h>
 #include <sst/core/interfaces/stringEvent.h>
 #include <sst/core/link.h>
 
 class FullAdder : public SST::Component {
+  // SST parameters
+  std::string clock;
+  // SST links
+  SST::Link *A_link, *B_link, *C_in_link, *S_link, *C_out_link;
+  // other attributes
+  std::string A, B, C_in;
+  SST::Output output;
 public:
   // register and manually configure each of the SST::Links
   // to their corresponding event handlers
@@ -61,14 +68,6 @@ public:
     {"C_in", "Carry-in", {"sst.Interfaces.StringEvent"}},
     {"S", "Sum", {"sst.Interfaces.StringEvent"}},
     {"C_out", "Carry-out", {"sst.Interfaces.StringEvent"}})
-
-private:
-  std::string clock;  // SST parameters
-  // SST links
-  SST::Link *A_link, *B_link, *C_in_link, *S_link, *C_out_link;
-  // other attributes
-  std::string A, B, C_in;
-  SST::Output output;
 };
 \end{lstlisting}
 \newpage
@@ -82,8 +81,9 @@ The following listing is a potential interface that may be possible with the int
 \begin{figure}[h]
   \caption{Potential Implementation of the Facade Pattern}
   \centering
-  \includegraphics[width=0.8\textwidth]{facade.png}
+  \includegraphics[width=0.6\textwidth]{facade.png}
 \end{figure}
+\newpage
 
 \begin{lstlisting}[style=customC++,label=facade,caption=Potential Implementation of Facade]
 SST::Facade* facade = new SST::Facade(argc, argv);
@@ -108,11 +108,11 @@ delete facade;
 
 \newpage
 \subsection{Interpreter Pattern}
-SST requires external Python scripts to configure and run the Client models. The configuration file provides a vast amount of options; from setting the duration of the simulation to providing custom parameters to the models. The configuration file is imported by the provided executables and parsed by the \texttt{Model::Python} classes. The classes map the parameterized method calls made in the configuration file to the implemented class methods.
+SST requires external Python scripts to configure and run the Client models. The configuration file provides a vast amount of options; from setting the duration of the simulation to providing custom parameters to the models. The configuration file is imported by the provided executables and parsed by the \texttt{Model.Python} classes. The classes map the parameterized method calls made in the configuration file to the implemented class methods.
 
 This method of interpreting the configuration file to generate SST Components for its simulation requires the usage of a Python interpreter. This external dependency potentially adds unnecessary overhead that can be circumvented by integrating the Interpreter pattern into the project. Adding an AbstractExpression class in native C++ will allow the project to not have to rely on an external framework and language to run its simulations.
 
-Instead of a Python script, the simulation configuration can be represented in an XML format. XML parsing is a fairly common task in commercial software that is often achieved by external libraries. Configuration options in SST may require a very simple parser. The AbstractExpression class will perform a similar role to the current \texttt{Model::Python} classes and create SST Components for the simulation.
+Instead of a Python script, the simulation configuration can be represented in an XML format. XML parsing is a fairly common task in commercial software that is often achieved by external libraries. Configuration options in SST may require a very simple parser. The AbstractExpression class will perform a similar role to the current \texttt{Model.Python} classes and create SST Components for the simulation.
 
 The following listing is an example of a configuration file for the preceding FullAdder model.
 \begin{lstlisting}[style=customPython,label=runPy,caption=Example SST Configuration File \\ File: run.py]
@@ -153,15 +153,15 @@ The following listing is a potential translation of the preceding configuration 
   <setProgramOption stopAtCycle="5s"/><setProgramOption/>
   <component id="full_add_0" name="Full Adder 0" class="fulladder"/>
     <param key="clock" value="1Hz"/><param/>
-    <link from="C_out0" to="full_add_1" port="C_in1"/></link>
+    <link from="C_out0" to="C_in1" dest="full_add_1"/></link>
   <component/>
   <component id="full_add_1" name="Full Adder 1" class="fulladder"/>
     <param key="clock" value="1Hz"/><param/>
-    <link from="C_out1" to="full_add_2" port="C_in2"/></link>
+    <link from="C_out1" to="C_in2" dest="full_add_2"/></link>
   <component/>
   <component id="full_add_2" name="Full Adder 2" class="fulladder"/>
     <param key="clock" value="1Hz"/><param/>
-    <link from="C_out2" to="full_add_3" port="C_in3"/></link>
+    <link from="C_out2" to="C_in3" dest="full_add_3"/></link>
   <component/>
   <component id="full_add_3" name="Full Adder 3" class="fulladder"/>
     <param key="clock" value="1Hz"/><param/>

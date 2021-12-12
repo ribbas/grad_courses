@@ -2,6 +2,7 @@ proj/*
 !proj/*/
 proj/*/*
 !proj/*/Makefile
+!proj/*/*.bib
 !proj/*/*.sty
 !proj/*/*.tex
 !proj/*/*.pdf
