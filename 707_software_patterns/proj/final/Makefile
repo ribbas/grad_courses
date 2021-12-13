@@ -15,6 +15,6 @@ latex:
 
 clean:
 	# clean out cache and temporary files
-	rm -rf *.aux *.log *.out *.dvi
+	rm -rf *.aux *.log *.out *.dvi *.toc
 	rm -rf *.bbl *.blg
 	rm -rf *.fls *.fdb_latexmk *.synctex.gz
