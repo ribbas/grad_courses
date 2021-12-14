@@ -74,7 +74,7 @@ public:
 
 This Component is a relatively simple example of a model that can be simulated in the SST framework. The hardware logic for the full adder will be implemented in the tick function, where the output values (\texttt{S} and \texttt{C\_out}) are evaluated using the member attributes \texttt{A}, \texttt{B}, and \texttt{C\_in} after they are processed by their corresponding handlers.
 
-Exposing all the complexity of the base methods to the Client can lead to many potential issues. One way to reduce the chances of such issues is to abstract away the steps and methods from the Client using a Facade design pattern. The library, in its current state, does not provide a method to call any of the constructors of the Simulation objects, such as Components and SubComponents. Execution of such objects is done through various command line tools. Even testing of the classes appear to be done through external tools and Python interpreters, which compare the outputs to the expected outputs rather than using asserts.
+Exposing all the complexity of the base methods to the Client can lead to many potential issues. One way to reduce the chances of such issues is to abstract away the steps and methods from the Client using a Facade design pattern. The library, in its current state, does not provide a method to call any of the constructors of the Simulation objects, such as Components and SubComponents. Execution of such objects is done through various command-line tools. Even testing of the classes appears to be done through external tools and Python interpreters, which compare the outputs to the expected outputs rather than using asserts.
 
 The following listing is a potential interface that may be possible with the integration of a Facade object into the project.
 
@@ -170,4 +170,4 @@ The following listing is a potential translation of the preceding configuration 
 \end{lstlisting}
 
 \subsection{Other Minor Idioms}
-The project can be found with several \texttt{goto} statements within the code base. The use of this unconditional jump is highly discouraged in the C++ community, although its usage is not considered a part of any idioms. Regardless, the project would benefit from discarding these statements and replacing them with proper conditional jumps for increased clarity and understanding of the project.
+The project can be found with several \texttt{goto} statements within the codebase. The use of this unconditional jump is highly discouraged in the C++ community, although its usage is not considered a part of any idioms. Regardless, the project would benefit from discarding these statements and replacing them with proper conditional jumps for increased clarity and understanding of the project.

@@ -33,7 +33,7 @@ Factory::Factory(...) {
 
 Although SST is primarily intended for multi-threaded applications, the \texttt{Factory} Singleton class does not utilize any locks to account for the potential issues imposed by concurrency. Locks do exist in abundance throughout the project and within the class itself, but not when checking for instances of the class in other threads. The \texttt{Factory} class is responsible for creating SST Components, SubComponents, Modules, etc. as models for the simulation.
 
-It appears that the Singleton is instantiated by \texttt{mpirun} as a single thread which spawns the other processes after it completes analysis of the configuration options. The intent of the pattern is still preserved, although with the aforementioned assumptions that the executable instantiates it with a single thread.
+It appears that the Singleton is instantiated by \texttt{mpirun} as a single thread which spawns the other processes after it completes the analysis of the configuration options. The intent of the pattern is still preserved, although with the aforementioned assumptions that the executable instantiates it with a single thread.
 \newpage
 
 \subsubsection{Simulation\_impl}
@@ -86,4 +86,4 @@ void Simulation_impl::shutdown() {
 }
 \end{lstlisting}
 
-\texttt{Simulation\_impl} appears to create an instance of itself on every thread and store them in the static unordered\_map attribute, instanceMap. Each of the instances follow the restrictions enacted by the Singleton pattern. This method allows for a Singleton object on every thread and therefore the core intent of the pattern remains preserved. The map's contents are destroyed with the public \texttt{shutdown} method which is accessible by the main function, which runs on the primary thread.
+\texttt{Simulation\_impl} appears to create an instance of itself on every thread and store them in the static unordered\_map attribute, instanceMap. Each of the instances follows the restrictions enacted by the Singleton pattern. This method allows for a Singleton object on every thread and therefore the core intent of the pattern remains preserved. The map's contents are destroyed with the public \texttt{shutdown} method which is accessible by the main function, which runs on the primary thread.
