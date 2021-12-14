@@ -1,48 +1,55 @@
 \section{Introduction}
-In software engineering, design patterns are general, reusable solutions to commonly occurring problems \cite{source-making}. It is generally considered good practice to integrate design patterns into software products, especially large projects, since it allows the developers to focus their time and attention towards specific implementations. The purpose of this draft is to introduce an open-source project and present analysis on the software patterns within the implementation.
+In software engineering, design patterns are general, reusable solutions to commonly occurring problems \cite{source-making}. It is generally considered good practice to integrate design patterns into software products, especially large projects, since it allows the developers to focus their time and attention towards specific implementations. The purpose of this paper is to introduce an open-source project and present analysis on the software patterns within the implementation.
 
 \section{Structural Simulation Toolkit (SST)}
 The software that is being focused on in the final project is Structural Simulation Toolkit (SST). It is a simulation framework that prioritizes high performance computing (HPC) models \cite{sst}. SST provides the user with a fully modular design in a parallel simulation environment based on MPI. The SST library can be imported in a C++ script to be executed as a model by a custom interpreter provided by SST. Several prebuilt models, known as SST Elements, have been implemented for frequently used simulation subsystems.
 
-Due to SST being a large scale project with many stable extensions implemented for its kernel, the scope of the project will be limited to specific sections of the core repository. The repository is hosted on GitHub \cite{sst-repo}. The source files that will be analyzed reside in \texttt{src/sst/core/}.
+Due to SST being a large scale project with many stable extensions implemented for its kernel, the scope of the project will be limited to specific sections of the core repository. The repository is hosted on GitHub \cite{sst-repo}. The source files that will be analyzed are located in \texttt{src/sst/core/}.
 
 \subsection{Project structure}
 This section provides a high level overview of the structure of SST's code base. Analysis of the layout will assist in understanding the various design patterns that are present or proposed for the project.
 
 SST is structured as a library that is to be imported by the Client. The library implements and supplies its own \texttt{main} function, which restricts the Client from creating an entry point. In order to utilize the library, the Client must create derived classes to be executed with the command line tools provided by SST. The source files are compiled with the library using any popular C++ compilers that support MPI. The compiled objects can be executed by the provided SST executables that wrap the \texttt{mpirun} command. The Client is also required to provide accompanying Python scripts to provide driver functions with the desired parameters.
 
-The following is a typical project layout using SST:
+% The following is a typical project layout using SST:
 
-\begin{forest}
-    for tree={
-    font=\ttfamily,
-    grow'=0,
-    child anchor=west,
-    parent anchor=south,
-    anchor=west,
-    calign=first,
-    edge path={
-            \noexpand\path [draw, \forestoption{edge}]
-            (!u.south west) +(7pt,0) |- node[fill,inner sep=1pt] {} (.child anchor)\forestoption{edge label};
-        },
-    before typesetting nodes={
-            if n=1
-                {insert before={[,phantom]}}
-                {}
-        },
-    fit=band,
-    before computing xy={l=15pt},
-    }
-    [src
-        [parent.cpp]
-        [model.cpp]
-        [CMakeLists.txt]
-        [run.py]
-        [docs/]
-    ]
-\end{forest}
+% \begin{forest}
+%     for tree={
+%     font=\ttfamily,
+%     grow'=0,
+%     child anchor=west,
+%     parent anchor=south,
+%     anchor=west,
+%     calign=first,
+%     edge path={
+%             \noexpand\path [draw, \forestoption{edge}]
+%             (!u.south west) +(7pt,0) |- node[fill,inner sep=1pt] {} (.child anchor)\forestoption{edge label};
+%         },
+%     before typesetting nodes={
+%             if n=1
+%                 {insert before={[,phantom]}}
+%                 {}
+%         },
+%     fit=band,
+%     before computing xy={l=15pt},
+%     }
+%     [src
+%         [parent.cpp]
+%         [model.cpp]
+%         [CMakeLists.txt]
+%         [run.py]
+%         [docs/]
+%     ]
+% \end{forest}
+
+The following are additional files that are required to run a single-file SST model.
 
 \begin{enumerate}
     \item \texttt{CMakeLists.txt} is responsible for linking the files with SST and compiling the shared objects with a C++ compiler
-    \item \texttt{run.py} is a required Python script that has to import the library into its interpreter to be executed by the provided executables. A typical method to run the user's model in the SST framework is \texttt{sst run.py}.
+    \item \texttt{run.py} is a required Python script that has to import the library into its interpreter to be executed by the provided executables.
 \end{enumerate}
+
+\begin{lstlisting}[caption=A typical method to run the user's model in the SST framework,style=base]
+sst run.py
+\end{lstlisting}
+\newpage
