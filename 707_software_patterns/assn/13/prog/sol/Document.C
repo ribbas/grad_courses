@@ -1,0 +1,163 @@
+#include "Document.H"
+#include "Element.H"
+#include "Text.H"
+#include "Attr.H"
+#include "NodeList.H"
+#include "XMLValidator.H"
+#include "Visitor.H"
+
+Document_Impl::Document_Impl(void) : Node_Impl("", dom::Node::DOCUMENT_NODE)
+{
+	Node_Impl::document	= this;
+}
+
+Document_Impl::~Document_Impl() {}
+
+void Document_Impl::Accept(Visitor * visitor)
+{
+	visitor->VisitDocument(this);
+}
+
+dom::Element *	Document_Impl::createElement(const std::string & tagName)
+{
+	return new Element_Impl(tagName, this);
+}
+
+dom::Text *	Document_Impl::createTextNode(const std::string & data)
+{
+	for (std::vector<dom::Text *>::iterator i = text_nodes.begin(); i != text_nodes.end(); i++)
+		if ((*i)->getValue() == data)
+			return *i;
+
+	dom::Text *	temp	= new Text_Impl(data, this);
+	text_nodes.push_back(temp);
+	return temp;
+}
+
+dom::Attr *	Document_Impl::createAttribute(const std::string & name, const std::string & value)
+{
+	for (std::vector<dom::Attr *>::iterator i = attribute_nodes.begin(); i != attribute_nodes.end(); i++)
+		if ((*i)->getValue() == value && (*i)->getName() == name)
+			return *i;
+
+	dom::Attr *	temp	= new Attr_Impl(name, value, this);
+	attribute_nodes.push_back(temp);
+	return temp;
+}
+
+dom::Element * Document_Impl::getDocumentElement()
+{
+	for (dom::NodeList::iterator i = getChildNodes()->begin(); i != getChildNodes()->end(); i++)
+		if (dynamic_cast<dom::Element *>(*i.operator->()) != 0)
+			return dynamic_cast<dom::Element *>(*i.operator->());
+
+	return 0;
+}
+
+dom::Iterator * Document_Impl::createIterator(dom::Node * node)
+{
+	return new DOMIterator(node, this);
+}
+
+dom::Node * Document_Impl::cloneNode(bool deep)
+{
+	return 0;	// This implementation doesn't have the ability to reparent a cloned tree into a new document.
+			// Therefore it can't usefully support cloning of Document.
+}
+
+dom::Node * DocumentValidator::cloneNode(bool deep)
+{
+	return parent->cloneNode(deep);
+}
+
+DocumentValidator::DocumentValidator(dom::Document * _parent, XMLValidator * xmlValidator) :
+  Node_Impl("", dom::Node::DOCUMENT_NODE),
+  parent(_parent)
+{
+	schemaElement	= *xmlValidator->findSchemaElement("");
+}
+
+dom::Node * DocumentValidator::insertBefore(dom::Node * newChild, dom::Node * refChild)
+{
+	if (schemaElement == 0 || schemaElement->childIsValid(newChild->getNodeName(), false))
+		return parent->insertBefore(newChild, refChild);
+	else
+		throw dom::DOMException(dom::DOMException::VALIDATION_ERR, "Invalid root node " + newChild->getNodeName() + ".");
+}
+
+dom::Node * DocumentValidator::replaceChild(dom::Node * newChild, dom::Node * oldChild)
+{
+	if (schemaElement == 0 || schemaElement->childIsValid(newChild->getNodeName(), false))
+		return parent->replaceChild(newChild, oldChild);
+	else
+		throw dom::DOMException(dom::DOMException::VALIDATION_ERR, "Invalid root node " + newChild->getNodeName() + ".");
+}
+
+dom::Node * DocumentValidator::appendChild(dom::Node * newChild)
+{
+	if (schemaElement == 0 || schemaElement->childIsValid(newChild->getNodeName(), false))
+		return parent->appendChild(newChild);
+	else
+		throw dom::DOMException(dom::DOMException::VALIDATION_ERR, "Invalid root node " + newChild->getNodeName() + ".");
+}
+
+DOMIterator::DOMIterator(dom::Node * startWithNode, Document_Impl * document) :
+  firstNode(startWithNode == 0 ? (dom::Node * )document->getDocumentElement() : startWithNode)
+{
+	if (firstNode != 0)
+		for (dom::Node * node = firstNode; node->getChildNodes()->size() >0; node = *node->getChildNodes()->begin())
+		{
+			listStack.push(node->getChildNodes());
+			indexStack.push(0);
+		}
+}
+
+dom::Node * DOMIterator::elementAt(dom::NodeList * currentList, int currentIndex)
+{
+	int			i;
+	dom::NodeList::iterator	it;
+
+	for (i = 0, it = currentList->begin(); it != currentList->end() && i < currentIndex; i++, it++);
+
+	return *it;
+}
+
+bool DOMIterator::hasNext()
+{
+	return firstNode != 0;
+}
+
+dom::Node * DOMIterator::next()
+{
+	dom::NodeList *	currentList	= listStack.size() > 0 ? listStack.top() : 0;
+
+	if (currentList == 0)
+	{
+		dom::Node *	temp	= firstNode;
+		firstNode		= 0;
+		return temp;
+	}
+	else
+	{
+		int		currentIndex	= indexStack.top();
+		indexStack.pop();
+		dom::Node *	temp		= elementAt(currentList, currentIndex++);
+
+		if (currentIndex >= currentList->size())
+			listStack.pop();
+		else
+		{
+			indexStack.push(currentIndex);
+
+			for (dom::Node * node = elementAt(currentList, currentIndex);
+			  node->getChildNodes()->size() > 0;
+			  node = *node->getChildNodes()->begin())
+			{
+				listStack.push(node->getChildNodes());
+				indexStack.push(0);
+			}
+		}
+
+		return temp;
+	}
+}
