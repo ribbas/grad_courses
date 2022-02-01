@@ -28,7 +28,31 @@ std::string read_file(std::fstream& file) {
 }
 
 bool is_numeric(std::string token_name) {
-    return token_name.find_first_not_of("0123456789") == std::string::npos;
+
+    for (unsigned int i = 0; i < token_name.length(); i++) {
+
+        switch (token_name[i]) {
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9': {
+                break;
+            }
+
+            // if non-numeric character
+            default: {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 void update_token_type(Token* token) {
@@ -51,77 +75,19 @@ void update_token_type(Token* token) {
     }
 }
 
-void tokenize(std::string contents) {
+void tokenize(std::string contents, std::vector<Token*>* tokens) {
 
-    std::vector<Token*> tokens;
-    int contents_len = 0;
     Token* token = new Token;
+    unsigned int inc = 0;
 
-    while (contents_len < contents.length()) {
+    while (inc < contents.length()) {
 
-        switch (contents[contents_len]) {
+        switch (contents[inc]) {
 
-            case ' ': {
-
-                if (token->name.length()) {
-                    token->type = KW;
-                    tokens.push_back(token);
-                }
-
-                token = new Token;
-                token->name = "\\s";
-                token->type = WS;
-                tokens.push_back(token);
-                token = new Token;
-
-                break;
-            };
-
-            case '\t': {
-                if (token->name.length()) {
-                    token->type = KW;
-                    tokens.push_back(token);
-                }
-
-                token = new Token;
-                token->name = "\\t";
-                token->type = WS;
-                tokens.push_back(token);
-                token = new Token;
-
-                break;
-            };
-
-            case '\n': {
-                if (token->name.length()) {
-                    token->type = KW;
-                    tokens.push_back(token);
-                }
-
-                token = new Token;
-                token->name = "\\n";
-                token->type = WS;
-                tokens.push_back(token);
-                token = new Token;
-
-                break;
-            };
-
-            case '\r': {
-                if (token->name.length()) {
-                    token->type = KW;
-                    tokens.push_back(token);
-                }
-
-                token = new Token;
-                token->name = "\\r";
-                token->type = WS;
-                tokens.push_back(token);
-                token = new Token;
-
-                break;
-            };
-
+            case ' ':
+            case '\t':
+            case '\r':
+            case '\n':
             case '(':
             case ')':
             case '=':
@@ -130,30 +96,70 @@ void tokenize(std::string contents) {
 
                 if (token->name.length()) {
                     token->type = KW;
-                    tokens.push_back(token);
+                    tokens->push_back(token);
+                }
+                token = new Token;
+
+                switch (contents[inc]) {
+
+                    case ' ': {
+
+                        token->name = "\\s";
+                        token->type = WS;
+                        break;
+                    };
+
+                    case '\t': {
+
+                        token->name = "\\t";
+                        token->type = WS;
+                        break;
+                    };
+
+                    case '\n': {
+
+                        token->name = "\\n";
+                        token->type = WS;
+                        break;
+                    };
+
+                    case '\r': {
+
+                        token->name = "\\r";
+                        token->type = WS;
+                        break;
+                    };
+
+                    case '(':
+                    case ')':
+                    case '=':
+                    case '+':
+                    case ';': {
+
+                        token->name = contents[inc];
+                        token->type = SYM;
+                        break;
+                    }
+
+                    // should not reach here
+                    default: {
+                        break;
+                    }
                 }
 
-                token = new Token;
-                token->name = contents[contents_len];
-                token->type = SYM;
-                tokens.push_back(token);
+                tokens->push_back(token);
                 token = new Token;
 
                 break;
             }
 
             default: {
-                token->name += contents[contents_len];
+                token->name += contents[inc];
                 break;
             }
         }
 
-        contents_len++;
-    }
-
-    for (int i = 0; i < tokens.size(); i++) {
-        update_token_type(tokens[i]);
-        std::cout << tokens[i]->to_string() << '\n';
+        inc++;
     }
 }
 
@@ -161,6 +167,21 @@ int main(int, char** argv) {
     std::fstream file = std::fstream(argv[1], std::fstream::in);
     std::string contents = read_file(file);
     std::cout << contents << '\n';
-    tokenize(contents);
+
+    std::vector<Token*>* tokens = new std::vector<Token*>;
+    tokenize(contents, tokens);
+    for (unsigned int i = 0; i < tokens->size(); i++) {
+        update_token_type((*tokens)[i]);
+        std::cout << (*tokens)[i]->to_string() << '\n';
+    }
+
+    // free up space
+    for (unsigned int i = 0; i < tokens->size(); i++) {
+        delete (*tokens)[i];
+        (*tokens)[i] = nullptr;
+    }
+    delete tokens;
+    tokens = nullptr;
+
     file.close();
 }
