@@ -97,6 +97,8 @@ void tokenize(std::string contents, std::vector<Token*>* tokens) {
                 if (token->name.length()) {
                     token->type = KW;
                     tokens->push_back(token);
+                } else {
+                    delete token;
                 }
                 token = new Token;
 
@@ -161,6 +163,10 @@ void tokenize(std::string contents, std::vector<Token*>* tokens) {
 
         inc++;
     }
+
+    if (!token->name.length()) {
+        delete token;
+    }
 }
 
 int main(int, char** argv) {
@@ -175,7 +181,7 @@ int main(int, char** argv) {
         std::cout << (*tokens)[i]->to_string() << '\n';
     }
 
-    // free up space
+    // clean up
     for (unsigned int i = 0; i < tokens->size(); i++) {
         delete (*tokens)[i];
         (*tokens)[i] = nullptr;
