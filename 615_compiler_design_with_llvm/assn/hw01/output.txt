@@ -1,0 +1,12 @@
+if (ed = 10) then return; else ED = ed+1; end;
+("if", KW),("\s", WS),("(", SYM),("ed", ID),("\s", WS),("=", SYM),("\s", WS),("10", NUM),(")", SYM),("\s", WS),("then", KW),("\s", WS),("return", KW),(";", SYM),("\s", WS),("else", KW),("\s", WS),("ED", ID),("\s", WS),("=", SYM),("\s", WS),("ed", ID),("+", SYM),("1", NUM),(";", SYM),("\s", WS),("end", KW),(";", SYM),("\n", WS)
+
+Logical count: 161
+Char comparison count: 844
+
+Total tokens: 29
+KW count: 5
+WS count: 11
+SYM count: 8
+ID count: 3
+NUM count: 2
