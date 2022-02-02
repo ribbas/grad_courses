@@ -14,9 +14,8 @@
 #include <string>
 #include <vector>
 
-typedef enum { KW, WS, SYM, ID, NUM } token_type;
-
 std::string token_type_str[5] = {"KW", "WS", "SYM", "ID", "NUM"};
+typedef enum { KW, WS, SYM, ID, NUM } token_type;
 
 struct Token {
     std::string name;
@@ -54,6 +53,9 @@ std::string to_lower_case(std::string token_name) {
     std::string lower = token_name;
     for (unsigned int i = 0; i < lower.length(); i++) {
 
+        // +1 for the for-loop
+        // +1 for the char comparison
+        CHAR_CMP_COUNT += 2;
         if ((lower[i] >= 'A') && (lower[i] <= 'Z')) {
             lower[i] += ('a' - 'A');
         }
@@ -69,7 +71,11 @@ bool is_numeric_type(std::string token_name) {
 
     for (unsigned int i = 0; i < token_name.length(); i++) {
 
+        // +1 for the for-loop
+        LOGICAL_COUNT++;
+        // +10 for the char comparisons
         CHAR_CMP_COUNT += 10;
+
         switch (token_name[i]) {
             case '0':
             case '1':
@@ -98,6 +104,7 @@ bool is_numeric_type(std::string token_name) {
  * Determine if Token string is KW
  */
 bool is_keyword_type(std::string token_name) {
+    // +19 for the length of the keyword strings
     CHAR_CMP_COUNT += 19;
     return (token_name == "if") || (token_name == "then") ||
            (token_name == "else") || (token_name == "end") ||
@@ -112,7 +119,7 @@ void update_token_type(Token* token) {
     // if token is not WS or SYM
     if ((++LOGICAL_COUNT) && !(token->type == WS) && !(token->type == SYM)) {
 
-        // transform Token name to lowercase
+        // transform token name to lowercase
         std::string token_name = to_lower_case(token->name);
 
         // if token is not KW
@@ -142,8 +149,10 @@ void tokenize(std::string contents, std::vector<Token*>* tokens) {
     // loop through the content string
     while ((++LOGICAL_COUNT) && cursor < contents.length()) {
 
-        // compare char, where WS or SYM are considered delimiters
+        // +9 for char comparison
         CHAR_CMP_COUNT += 9;
+
+        // compare char, where WS or SYM are considered delimiters
         switch (contents[cursor]) {
 
             // if char is WS or SYM
@@ -167,6 +176,7 @@ void tokenize(std::string contents, std::vector<Token*>* tokens) {
                 }
                 token = new Token;
 
+                // +9 for char comparison
                 CHAR_CMP_COUNT += 9;
                 switch (contents[cursor]) {
 
