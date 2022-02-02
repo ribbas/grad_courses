@@ -46,6 +46,23 @@ std::string read_file(std::fstream& file) {
 }
 
 /**
+ * Convert Token name to lowercase to make string comparisons
+ * case-insensitive
+ */
+std::string to_lower_case(std::string token_name) {
+
+    std::string lower = token_name;
+    for (unsigned int i = 0; i < lower.length(); i++) {
+
+        if ((lower[i] >= 'A') && (lower[i] <= 'Z')) {
+            lower[i] += ('a' - 'A');
+        }
+    }
+
+    return lower;
+}
+
+/**
  * Determine if Token string is NUM
  */
 bool is_numeric_type(std::string token_name) {
@@ -93,15 +110,16 @@ bool is_keyword_type(std::string token_name) {
 void update_token_type(Token* token) {
 
     // if token is not WS or SYM
-    if ((LOGICAL_COUNT = LOGICAL_COUNT + 2) && !(token->type == WS) &&
-        !(token->type == SYM)) {
+    if ((++LOGICAL_COUNT) && !(token->type == WS) && !(token->type == SYM)) {
+
+        // transform Token name to lowercase
+        std::string token_name = to_lower_case(token->name);
 
         // if token is not KW
-        if ((LOGICAL_COUNT = LOGICAL_COUNT + 5) &&
-            !is_keyword_type(token->name)) {
+        if ((++LOGICAL_COUNT) && !is_keyword_type(token_name)) {
 
             //  if token name is numeric
-            if ((++LOGICAL_COUNT) && is_numeric_type(token->name)) {
+            if ((++LOGICAL_COUNT) && is_numeric_type(token_name)) {
 
                 token->type = NUM;
 
@@ -220,6 +238,7 @@ void tokenize(std::string contents, std::vector<Token*>* tokens) {
     // if an extra token was created
     if (!token->name.length()) {
         delete token;
+        token = nullptr;
     }
 }
 
