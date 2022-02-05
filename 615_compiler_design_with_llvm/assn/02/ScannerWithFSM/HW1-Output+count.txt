@@ -1,0 +1,64 @@
+Start of HW1
+
+Input:
+if (ed = 10) then return; else ED = ed+1; end;
+
+Output:
+("if", KW), (" ", WS), ("(", SYM), ("ed", ID), (" ", WS), 
+("=", SYM), (" ", WS), ("10", NUM), (")", SYM), (" ", WS), 
+("then", KW), (" ", WS), ("return", KW), (";", SYM), (" ", WS), 
+("else", KW), (" ", WS), ("ed", ID), (" ", WS), ("=", SYM), 
+(" ", WS), ("ed", ID), ("+", SYM), ("1", NUM), (";", SYM), 
+(" ", WS), ("end", KW), (";", SYM), ("\n", WS), ("", UNKNOWN), 
+
+Tests:
+    Initial Jumps   = 30
+    Initial catches =  0
+
+    WS  tokens = 11  characters = 11  tests = 22  excess =  0
+    SYM tokens =  8  characters =  8  tests = 16  excess =  0
+    KW  tokens =  5  characters = 19  tests = 37  excess = 13
+    ID  tokens =  3  characters =  6  tests =  7  excess = -2
+    NUM tokens =  2  characters =  3  tests =  5  excess =  0
+    Unk tokens =  1
+    -----------------------------------------------------
+    total toks = 30  characters = 47  tests = 87  excess = 11
+
+End of HW1
+
+
+ASCII.h              133
+ASCII_KW.h            64
+getToken.h            14
+Token.h               17
+                    ----
+                     228
+
+getID.cpp              2    14
+getKeyword.cpp         4    24
+getNumber.cpp          2    11
+getSymbol.cpp          2    11
+getToken.cpp           4    52
+getWhiteSpace.cpp      2    11
+inputError.cpp         2     3
+Token.cpp              1    40
+HW1-Driver.cpp         5    41
+                      --   ---
+                      24   207
+
+if (ed = 10) then return; else ED = ed+1; end;
+
+keyword  8 entries
+           in-loop post-loop
+1  if *     3       1
+2  ed       2       1
+3  then *   5       1
+4  return * 7       1
+5  else *   5       1
+6  ED       1       1
+7  ed+      2       1
+8  end *    4       1
+           29       8
+
+for each KW size + 2 = #char + 2*#tok
+for each ID 2 + #matches = 2*#tok + matches, matches decrement the ID count
