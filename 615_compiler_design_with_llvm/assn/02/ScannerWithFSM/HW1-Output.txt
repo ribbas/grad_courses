@@ -2,7 +2,6 @@ Start of HW1
 
 Input:
 if (ed = 10) then return; else ED = ed+1; end;
-
 Output:
 ("if", KW), (" ", WS), ("(", SYM), ("ed", ID), (" ", WS), 
 ("=", SYM), (" ", WS), ("10", NUM), (")", SYM), (" ", WS), 
@@ -25,7 +24,3 @@ Tests:
     total toks = 30 tests = 87
 
 End of HW1
-
-47 characters
-29 tokens
-76 tests (minimum)
