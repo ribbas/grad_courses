@@ -52,7 +52,7 @@ void scanLine(char* line, TableOfCells& symTab) {
         line_len++;
     }
 
-    if (line_len >= 2) {
+    if (line_len >= 3) {
 
         int col_ix = (int)HW2_Index[int(line[0])];
         int row_ix = (int)HW2_Index[int(line[1])];
@@ -61,43 +61,73 @@ void scanLine(char* line, TableOfCells& symTab) {
         // if column and row indices are valid
         if (col_ix == 1 && row_ix == 2) {
 
-            if (line_len == 2) {
+            if (line[2] == ' ') {
 
-                symTab.getCell(row_id)->setKind(BLANK);
-                symTab.getCell(row_id)->setDisplay("");
-                cout << "CLEARED\n";
+                if (line_len == 3) {
 
-            } else if (line[2] == ' ' && line_len > 3) {
+                    symTab.getCell(row_id)->setKind(BLANK);
+                    symTab.getCell(row_id)->setError(false);
+                    symTab.getCell(row_id)->clearCell();
+                    cout << "CLEARED\n";
 
-                cout << line << '\n';
-                string value = "";
+                } else {
 
-                // if beginning of text
-                if (line[3] == '"') {
-
-                    unsigned int i = 4;
-
-                    while (line[i] != '"' && i < 11) {
-                        value += line[i];
+                    unsigned int i = 3;
+                    string value = "";
+                    while (line[i] == ' ') {
                         i++;
                     }
 
-                    if (line[line_len - 1] == '"') {
+                    // if beginning of text
+                    if (line[i] == '"') {
 
-                        symTab.getCell(row_id)->setKind(TEXT);
-                        symTab.getCell(row_id)->setDisplay(value);
+                        i++;
+                        int textCount = 0;
+                        while (line[i] != '"' && textCount < 8) {
+                            value += line[i];
+                            i++;
+                            // textCount++;
+                        }
+                        std::cout << value << '\n';
+
+                        if (line[i] == '"') {
+
+                            symTab.getCell(row_id)->setKind(TEXT);
+                            symTab.getCell(row_id)->setTXTCell(value);
+
+                        } else {
+
+                            symTab.getCell(row_id)->setError(true);
+                            symTab.getCell(row_id)->setTXTCell("ERROR");
+                            cout << "ERROR "
+                                 << symTab.getCell(row_id)->isError() << '\n';
+                        }
+
+                        // if beginning of number
+                    } else if ((int)HW2_Index[int(line[i])] == 2 ||
+                               (int)HW2_Index[int(line[i])] == 4) {
+
+                        value += line[i];
+
+                        i++;
+                        while ((int)HW2_Index[int(line[i])] == 2) {
+                            value += line[i];
+                            i++;
+                        }
+                        std::cout << "num " << value << '\n';
+
+                        symTab.getCell(row_id)->setKind(NUMBER);
+                        symTab.getCell(row_id)->setNUMCell(value);
+
+                    } else {
+                        std::cout << "pass\n";
+                        symTab.getCell(row_id)->setError(true);
+                        symTab.getCell(row_id)->setTXTCell("ERROR");
                     }
-
-                    // if beginning of number
-                } else if ((int)HW2_Index[int(line[3])] == 2 ||
-                           (int)HW2_Index[int(line[3])] == 4) {
-
-                    symTab.getCell(row_id)->setKind(NUMBER);
-                    symTab.getCell(row_id)->setDisplay(line);
-
-                } else {
-                    cout << "ERROR\n";
                 }
+
+            } else {
+                cout << "INVALID\n";
             }
         }
     }
