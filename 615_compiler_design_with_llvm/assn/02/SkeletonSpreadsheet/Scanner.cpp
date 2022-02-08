@@ -70,13 +70,23 @@ void scanLine(char* line, TableOfCells& symTab) {
             } else if (line[2] == ' ' && line_len > 3) {
 
                 cout << line << '\n';
+                string value = "";
 
                 // if beginning of text
                 if (line[3] == '"') {
 
-                    symTab.getCell(row_id)->setKind(TEXT);
-                    symTab.getCell(row_id)->setDisplay(line);
-                    cout << symTab.getCell(row_id)->getKind() << '\n';
+                    unsigned int i = 4;
+
+                    while (line[i] != '"' && i < 11) {
+                        value += line[i];
+                        i++;
+                    }
+
+                    if (line[line_len - 1] == '"') {
+
+                        symTab.getCell(row_id)->setKind(TEXT);
+                        symTab.getCell(row_id)->setDisplay(value);
+                    }
 
                     // if beginning of number
                 } else if ((int)HW2_Index[int(line[3])] == 2 ||
@@ -84,7 +94,6 @@ void scanLine(char* line, TableOfCells& symTab) {
 
                     symTab.getCell(row_id)->setKind(NUMBER);
                     symTab.getCell(row_id)->setDisplay(line);
-                    cout << symTab.getCell(row_id)->getKind() << '\n';
 
                 } else {
                     cout << "ERROR\n";
