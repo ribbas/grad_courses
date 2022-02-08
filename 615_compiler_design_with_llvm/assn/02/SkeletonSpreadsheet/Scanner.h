@@ -9,10 +9,13 @@
 #ifndef SCANNER_H_
 #define SCANNER_H_
 
-#include <string>
 #include <fstream>
-using namespace std;
+#include <string>
 
+#include "SS_Cell.h"
+#include "Token.h"
+
+using namespace std;
 
 enum command { CONTINUE, QUIT };
 
@@ -28,6 +31,6 @@ void scanLine(char* line, TableOfCells& symTab);
 
 // for HW2 Only:
 void parseEquation(char*& ch, SS_Cell* cell);
-//Token* getToken(char* line, char*& ch); // friend in class Token
+// Token* getToken(char* line, char*& ch); // friend in class Token
 
 #endif /* SCANNER_H_ */

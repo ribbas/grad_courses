@@ -1,4 +1,4 @@
-// getToken.cpp
+// getSymbol.cpp
 //
 // by Allyn Shell
 // 1/2018
@@ -15,7 +15,7 @@ extern int SYMtests;
 extern int catches;
 
 // HW2 Symbol list:
-// + – * / < <= == >= > = ( ) # ” // /* */
+// + - * / < <= == >= > = ( ) # " // /* */
 Token* getSymbol(char* input, char*& ch, char* startCh) {
 
     int accept = 0;

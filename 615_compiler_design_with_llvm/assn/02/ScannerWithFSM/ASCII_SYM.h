@@ -37,7 +37,9 @@ const char SYM_Index[128] = {
 // The SYM_State table maps the next FSM state
 // transition index. The first index is the
 // current state. The second index is the
-// index from the SYM_IND table.
+// index from the SYM_index table.
+// the comments next to the state arrays indicate the corresponding states
+// $ indicates end of string 
 const char SYM_State[19][12] = { // indexed by [state][index]
     //    ”   #   (   )   *   +   –   /   <   =   >
     { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 }, //  0 exit

@@ -1,26 +1,28 @@
 Start of HW1
 
 Input:
-if (ed = 10) then return; else ED = ed+1; end;
++ - * / < <= == >= > = ( ) # " // /* */
+
 Output:
-("if", KW), (" ", WS), ("(", SYM), ("ed", ID), (" ", WS), 
-("=", SYM), (" ", WS), ("10", NUM), (")", SYM), (" ", WS), 
-("then", KW), (" ", WS), ("return", KW), (";", SYM), (" ", WS), 
-("else", KW), (" ", WS), ("ed", ID), (" ", WS), ("=", SYM), 
-(" ", WS), ("ed", ID), ("+", SYM), ("1", NUM), (";", SYM), 
-(" ", WS), ("end", KW), (";", SYM), ("\n", WS), ("", UNKNOWN), 
+("+", SYM), (" ", WS), ("-", SYM), (" ", WS), ("*", SYM), 
+(" ", WS), ("/", SYM), (" ", WS), ("<", SYM), (" ", WS), 
+("<=", SYM), (" ", WS), ("==", SYM), (" ", WS), (">=", SYM), 
+(" ", WS), (">", SYM), (" ", WS), ("=", SYM), (" ", WS), 
+("(", SYM), (" ", WS), (")", SYM), (" ", WS), ("#", SYM), 
+(" ", WS), (""", SYM), (" ", WS), ("//", SYM), (" ", WS), 
+("/*", SYM), (" ", WS), ("*/", SYM), ("\n\n", WS), ("", UNKNOWN), 
 
 Tests:
-    Initial Jumps   = 30
+    Initial Jumps   = 35
     Initial catches =  0
 
-    WS  tokens = 11 tests = 22
-    SYM tokens =  8 tests = 16
-    KW  tokens =  5 tests = 37
-    ID  tokens =  3 tests =  7
-    NUM tokens =  2 tests =  5
+    WS  tokens = 17 tests = 35
+    SYM tokens =  17 tests = 57
+    KW  tokens =  0 tests = 0
+    ID  tokens =  0 tests =  0
+    NUM tokens =  0 tests =  0
     Unk tokens =  1
     --------------------------
-    total toks = 30 tests = 87
+    total toks = 35 tests = 92
 
 End of HW1
