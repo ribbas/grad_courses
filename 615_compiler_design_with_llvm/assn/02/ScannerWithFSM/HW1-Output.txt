@@ -1,28 +1,27 @@
 Start of HW1
 
 Input:
-+ - * / < <= == >= > = ( ) # " // /* */
-
+ +  -  *  /  <  <=  ==  >=  >  =  (  )  #  "  //  /*  */  ;
 Output:
-("+", SYM), (" ", WS), ("-", SYM), (" ", WS), ("*", SYM), 
-(" ", WS), ("/", SYM), (" ", WS), ("<", SYM), (" ", WS), 
-("<=", SYM), (" ", WS), ("==", SYM), (" ", WS), (">=", SYM), 
-(" ", WS), (">", SYM), (" ", WS), ("=", SYM), (" ", WS), 
-("(", SYM), (" ", WS), (")", SYM), (" ", WS), ("#", SYM), 
-(" ", WS), (""", SYM), (" ", WS), ("//", SYM), (" ", WS), 
-("/*", SYM), (" ", WS), ("*/", SYM), ("\n\n", WS), ("", UNKNOWN), 
-
+(" ", WS), ("+", SYM), ("  ", WS), ("-", SYM), ("  ", WS), 
+("*", SYM), ("  ", WS), ("/", SYM), ("  ", WS), ("<", SYM), 
+("  ", WS), ("<=", SYM), ("  ", WS), ("==", SYM), ("  ", WS), 
+(">=", SYM), ("  ", WS), (">", SYM), ("  ", WS), ("=", SYM), 
+("  ", WS), ("(", SYM), ("  ", WS), (")", SYM), ("  ", WS), 
+("#", SYM), ("  ", WS), (""", SYM), ("  ", WS), ("//", SYM), 
+("  ", WS), ("/*", SYM), ("  ", WS), ("*/", SYM), ("  ", WS), 
+(";", SYM), ("", UNKNOWN), 
 Tests:
-    Initial Jumps   = 35
+    Initial Jumps   = 37
     Initial catches =  0
 
-    WS  tokens = 17 tests = 35
-    SYM tokens =  17 tests = 57
+    WS  tokens = 18 tests = 53
+    SYM tokens =  18 tests = 60
     KW  tokens =  0 tests = 0
     ID  tokens =  0 tests =  0
     NUM tokens =  0 tests =  0
     Unk tokens =  1
     --------------------------
-    total toks = 35 tests = 92
+    total toks = 37 tests = 113
 
 End of HW1

@@ -1,8 +1,7 @@
 # Homework 2: Scanner with FSM
 
 For this portion of Homework 2, modifications were made to the provided Hw1-ScannerWithFSM files to add support for scanning the following tokens as SYMBOLS:
-
-+ - * / < <= == >= > = ( ) # " // /* */
++ - * / < <= == >= > = ( ) # " // /* */ ;
 
 ## Modifications
 
@@ -10,7 +9,7 @@ The following modifications were made to achieve the requirements:
 
 1. Logic was added in the `getSymbol` function in getSymbol.cpp. Similarly to `getKeyword`, the scanning function follows an FSM logic utilizing the states declared in `ASCII_SYM.h`.
 
-2. `ASCII_SYM.h` was added. The file is similar to `ASCII_KW.h` as it consists of its own versions of the variables defined for the keyword FSM. The ASCII indices are modified to capture the following characters: ", #, (, ), *, +, -, /, <, =, and >. The array of states consist of 19 states.
+2. `ASCII_SYM.h` was added. The file is identical to the structure and logic implemented in `ASCII_KW.h`. It consists of its own versions of the variables defined for the Keyword FSM. The ASCII indices are modified to capture the following 12 characters: ", #, (, ), *, +, -, /, ;, <, =, and >. The array of states consist of 19 states.
 
 3. A minor update to `Token.cpp` was added, where the following line:
 ```
@@ -22,8 +21,10 @@ if (*c == '\n' || *c == '\r') {
 ```
 to account for the different line feeds on my development operating system.
 
-4. The contents of `HW1-Input.txt` was replaced with the following:
-+ - * / < <= == >= > = ( ) # " // /* */
+4. A minor update to `HW1-Driver.cpp` was added, where the size of the input line was extended to 60.
+
+5. The contents of `HW1-Input.txt` was replaced with the following:
+ +  -  *  /  <  <=  ==  >=  >  =  (  )  #  "  //  /*  */  ;
 
 This change is also reflected on the output that gets saved into `HW1-Output.txt`.
 

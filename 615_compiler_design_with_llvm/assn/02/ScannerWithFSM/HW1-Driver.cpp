@@ -6,10 +6,11 @@
 
 #include "Token.h"
 #include "getToken.h"
-#include <iostream>
 #include <fstream>
-using namespace std;
+#include <iostream>
 
+using namespace std;
+// clang-format off
 
 int main() {
 	// open output tile
@@ -34,7 +35,7 @@ int main() {
 
 	// new input line
 	// read then close input
-	const int size = 48;
+	const int size = 60;
 	char* input = new char[size];
 	ifs.read(input,size);
 	ifs.close();
@@ -63,5 +64,4 @@ int main() {
 	delete[](input);
 	return 0;
 }
-
-
+// clang-format on
