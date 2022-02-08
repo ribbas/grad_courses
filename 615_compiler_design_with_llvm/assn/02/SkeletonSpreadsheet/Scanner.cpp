@@ -46,8 +46,52 @@ Token* getToken(char* line, char*& ch);
 // The newline will be missing. This routine
 // and those below must be filled in for HW2.
 void scanLine(char* line, TableOfCells& symTab) {
-    // TBD ... This is to be filled in for HW2
-    cout << line << '\n';
+
+    unsigned int line_len = 0;
+    while (line[line_len]) {
+        line_len++;
+    }
+
+    if (line_len >= 2) {
+
+        int col_ix = (int)HW2_Index[int(line[0])];
+        int row_ix = (int)HW2_Index[int(line[1])];
+        string row_id{line[0], line[1]};
+
+        // if column and row indices are valid
+        if (col_ix == 1 && row_ix == 2) {
+
+            if (line_len == 2) {
+
+                symTab.getCell(row_id)->setKind(BLANK);
+                symTab.getCell(row_id)->setDisplay("");
+                cout << "CLEARED\n";
+
+            } else if (line[2] == ' ' && line_len > 3) {
+
+                cout << line << '\n';
+
+                // if beginning of text
+                if (line[3] == '"') {
+
+                    symTab.getCell(row_id)->setKind(TEXT);
+                    symTab.getCell(row_id)->setDisplay(line);
+                    cout << symTab.getCell(row_id)->getKind() << '\n';
+
+                    // if beginning of number
+                } else if ((int)HW2_Index[int(line[3])] == 2 ||
+                           (int)HW2_Index[int(line[3])] == 4) {
+
+                    symTab.getCell(row_id)->setKind(NUMBER);
+                    symTab.getCell(row_id)->setDisplay(line);
+                    cout << symTab.getCell(row_id)->getKind() << '\n';
+
+                } else {
+                    cout << "ERROR\n";
+                }
+            }
+        }
+    }
     return;
 }
 
