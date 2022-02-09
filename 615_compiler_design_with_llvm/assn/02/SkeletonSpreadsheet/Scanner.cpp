@@ -2,9 +2,9 @@
 // Allyn Shell
 // July 2019
 // Modified by:
-// TBD ... This is to be filled in for HW2
+// Sabbir Ahmed
 // Modified date:
-// TBD ... This is to be filled in for HW2
+// 2/2022
 
 #include "Scanner.h"
 #include <fstream>
@@ -39,19 +39,12 @@ const char HW2_Index[128] = {
 };
 // clang-format on
 
-Token* getToken(char*& ch);
-
-int getHwIndex(char ch) {
-    return (int)HW2_Index[int(ch)];
-}
-
+int getHwIndex(char);
 void lstrip(char*&);
 
-void lstrip(char*& ch) {
-    while (*ch == ' ') {
-        *ch++;
-    }
-}
+Token* getToken(char*& ch);
+void parseText(char*&, SS_Cell*);
+void parseNumber(char*&, SS_Cell*);
 
 // this routine is called by readInputFile and
 // by readCommandLine, one line at a time.
@@ -59,6 +52,7 @@ void lstrip(char*& ch) {
 // and those below must be filled in for HW2.
 void scanLine(char* line, TableOfCells& symTab) {
 
+    // strip whitespace before ID
     lstrip(line);
     unsigned int line_len = 0;
     while (line[line_len]) {
@@ -66,12 +60,14 @@ void scanLine(char* line, TableOfCells& symTab) {
     }
 
     int col_ix = getHwIndex(line[0]);
-    // if first character is '#'
+
+    // if first char is '#'
     if (col_ix == 7) {
         // comment line - do not continue parsing
         return;
     }
 
+    // if first char is a valid col char and line consists of at least 3 chars
     if (col_ix == 1 && line_len >= 3) {
 
         int row_ix = getHwIndex(line[1]);
@@ -80,107 +76,54 @@ void scanLine(char* line, TableOfCells& symTab) {
         // if column and row indices are valid
         if (row_ix == 2) {
 
+            SS_Cell* cell = symTab.getCell(row_id);
+
             if (line[2] == ' ') {
 
+                // if line consists of ID and a single whitespace, clear the
+                // cell
                 if (line_len == 3) {
 
-                    symTab.getCell(row_id)->setError(false);
-                    symTab.getCell(row_id)->clearCell();
-                    cout << "CLEARED\n";
+                    cell->setError(false);
+                    cell->clearCell();
 
                 } else {
 
-                    unsigned int i = 3;
-                    string value = "";
-                    while (line[i] == ' ') {
-                        i++;
+                    // move pointer to after ID
+                    for (unsigned int i = 0; i < 3; i++) {
+                        *++line;
                     }
+                    // strip whitespace after ID
+                    lstrip(line);
 
                     // if beginning of text
-                    if (line[i] == '"') {
+                    if (*line == '"') {
 
-                        // move pointer of line up to the first quote
-                        while (*line != '"') {
-                            *line++;
-                        }
-                        *line++;
-                        // move line into value up to the second quote or
-                        // nullptr
-                        while (*line && *line != '"') {
-                            value += *line;
-                            *line++;
-                        }
-
-                        if (*line == '"') {
-
-                            while (*++line) {
-                                if (ASCII[*line]) {
-                                    symTab.getCell(row_id)->setTXTCell("ERROR");
-                                    symTab.getCell(row_id)->setError(true);
-                                    return;
-                                }
-                            }
-
-                            symTab.getCell(row_id)->setTXTCell(value);
-
-                        } else {
-
-                            symTab.getCell(row_id)->setTXTCell("ERROR");
-                            symTab.getCell(row_id)->setError(true);
-                        }
+                        parseText(line, cell);
 
                         // if beginning of number
-                    } else if (getHwIndex(line[i]) == 2 ||
-                               getHwIndex(line[i]) == 4) {
+                    } else if (getHwIndex(*line) == 2 ||
+                               getHwIndex(*line) == 4) {
 
-                        value += line[i];
-                        lstrip(line);
-                        bool scannedValue = false;
-                        while (line[++i]) {
-                            // if char is numeric and value isn't parsed yet
-                            if (getHwIndex(line[i]) == 2 && !scannedValue) {
-                                value += line[i];
-
-                            } else {
-
-                                // if trailing chars are non-numeric and
-                                // non-whitespace
-                                if (ASCII[line[i]]) {
-                                    // label cell as an error cell
-                                    symTab.getCell(row_id)->setTXTCell("ERROR");
-                                    symTab.getCell(row_id)->setError(true);
-                                    return;
-
-                                    // if whitespace is found after the value
-                                    // was scanned
-                                } else {
-                                    // any chars, numeric or not, after this
-                                    // results in a parse error
-                                    scannedValue = true;
-                                }
-                            }
-                        }
-
-                        symTab.getCell(row_id)->setNUMCell(value);
+                        parseNumber(line, cell);
 
                         // if beginning of equation
-                    } else if (line[i] == '=') {
+                    } else if (*line == '=') {
 
-                        char* test = line;
-                        i++;
-                        memcpy(test, &line[i], line_len + 1);
-
-                        auto cell = symTab.getCell(row_id);
+                        *++line;
                         parseEquation(line, cell);
                         cell->setKind(EXPRESSION);
                         cell->calculateExpression();
 
                         // if cell is of any other type, it is an error cell
                     } else {
-                        symTab.getCell(row_id)->setTXTCell("ERROR");
-                        symTab.getCell(row_id)->setError(true);
+                        cell->setError(true);
                     }
                 }
+            }
+
+            if (cell->isError()) {
+                cell->setTXTCell("ERROR");
             }
         }
     }
@@ -229,49 +172,113 @@ Token* getToken(char*& ch) {
     string lexeme = "";
     TokenKind kind = T_ERROR;
 
-    // std::cout << "A |" << ch << '\n';
     lstrip(ch);
-    // std::cout << "B |" << ch << '\n';
-
-    unsigned int i = 0;
     bool scanned = false;
     while (getHwIndex(*ch) && !scanned) {
 
         if (getHwIndex(*ch) == 3) {
             kind = ADD;
             lexeme = *ch;
-            // cout << "ADD|" << lexeme << "|\n";
             scanned = true;
         } else if (getHwIndex(*ch) == 4) {
             kind = SUB;
             lexeme = *ch;
-            // cout << "SUB|" << lexeme << "|\n";
             scanned = true;
         } else if (getHwIndex(*ch) == 5) {
             kind = MULT;
             lexeme = *ch;
-            // cout << "MULT|" << lexeme << "|\n";
             scanned = true;
         } else if (getHwIndex(*ch) == 6) {
             kind = DIV;
             lexeme = *ch;
-            // cout << "DIV|" << lexeme << "|\n";
             scanned = true;
         } else if (getHwIndex(*ch) == 1 || getHwIndex(*ch) == 2) {
             lexeme += *ch;
             if (getHwIndex(*ch) == 2) {
                 kind = ID;
-                // cout << "ID|" << lexeme << "|\n";
                 scanned = true;
             }
         }
 
         *ch++;
-        i++;
     }
-    // cout << "LEX|" << lexeme << "|\n";
 
-    return new Token(lexeme, kind); // temp ?
+    return new Token(lexeme, kind);
+}
+
+void parseText(char*& ch, SS_Cell* cell) {
+
+    string value = "";
+    // move pointer of line up to the first quote
+    while (*ch != '"') {
+        *ch++;
+    }
+    *ch++;
+
+    // move ch into value up to the second quote or nullptr
+    while (*ch && *ch != '"') {
+        value += *ch;
+        *ch++;
+    }
+
+    if (*ch == '"') {
+
+        // if more chars present after second quote
+        while (*++ch) {
+            // if non-whitespace char, label as an error cell
+            if (ASCII[*ch]) {
+                cell->setError(true);
+                return;
+            }
+        }
+
+        cell->setTXTCell(value);
+
+    } else {
+
+        cell->setError(true);
+    }
+}
+
+void parseNumber(char*& ch, SS_Cell* cell) {
+
+    string value = "";
+    value += *ch;
+    bool scannedValue = false;
+    while (*++ch) {
+
+        // if char is numeric and value isn't parsed yet
+        if (getHwIndex(*ch) == 2 && !scannedValue) {
+            value += *ch;
+
+        } else {
+
+            // if trailing chars are non-numeric and non-whitespace
+            if (ASCII[*ch]) {
+                // label cell as an error cell
+                cell->setError(true);
+                return;
+
+                // if whitespace is found after the value was scanned
+            } else {
+                // any chars, numeric or not, after this results in a parse
+                // error
+                scannedValue = true;
+            }
+        }
+    }
+
+    cell->setNUMCell(value);
+}
+
+int getHwIndex(char ch) {
+    return (int)HW2_Index[int(ch)];
+}
+
+void lstrip(char*& ch) {
+    while (*ch == ' ') {
+        *ch++;
+    }
 }
 
 // Put your scanner tables here if any others are necessary.
