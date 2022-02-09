@@ -99,32 +99,27 @@ void scanLine(char* line, TableOfCells& symTab) {
                     // if beginning of text
                     if (line[i] == '"') {
 
-                        cout << "A|" << line << '\n';
                         // move pointer of line up to the first quote
                         while (*line != '"') {
                             *line++;
                         }
                         *line++;
-                        cout << "B|" << line << '\n';
                         // move line into value up to the second quote or
                         // nullptr
                         while (*line && *line != '"') {
                             value += *line;
                             *line++;
                         }
-                        cout << "C|" << value << '\n';
 
                         if (*line == '"') {
 
-                            // *line++;
-                            // while (*line) {
-                            //     if (ASCII[line[i]]) {
-                            //         symTab.getCell(row_id)->setTXTCell("ERROR");
-                            //         symTab.getCell(row_id)->setError(true);
-                            //         return;
-                            //     }
-                            //     *line++;
-                            // }
+                            while (*++line) {
+                                if (ASCII[*line]) {
+                                    symTab.getCell(row_id)->setTXTCell("ERROR");
+                                    symTab.getCell(row_id)->setError(true);
+                                    return;
+                                }
+                            }
 
                             symTab.getCell(row_id)->setTXTCell(value);
 
