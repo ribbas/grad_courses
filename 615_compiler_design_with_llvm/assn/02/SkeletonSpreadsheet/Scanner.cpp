@@ -40,7 +40,6 @@ const char HW2_Index[128] = {
 // clang-format on
 
 Token* getToken(char*& ch);
-// Token* getToken(char* line, char*& ch);
 
 int getHwIndex(char ch) {
     return (int)HW2_Index[int(ch)];
@@ -66,14 +65,20 @@ void scanLine(char* line, TableOfCells& symTab) {
         line_len++;
     }
 
-    if (line_len >= 3) {
+    int col_ix = getHwIndex(line[0]);
+    // if first character is '#'
+    if (col_ix == 7) {
+        // comment line - do not continue parsing
+        return;
+    }
 
-        int col_ix = getHwIndex(line[0]);
+    if (col_ix == 1 && line_len >= 3) {
+
         int row_ix = getHwIndex(line[1]);
         string row_id{line[0], line[1]};
 
         // if column and row indices are valid
-        if (col_ix == 1 && row_ix == 2) {
+        if (row_ix == 2) {
 
             if (line[2] == ' ') {
 
@@ -94,16 +99,32 @@ void scanLine(char* line, TableOfCells& symTab) {
                     // if beginning of text
                     if (line[i] == '"') {
 
-                        i++;
-                        int textCount = 0;
-                        while (line[i] != '"' && textCount < 8) {
-                            value += line[i];
-                            i++;
-                            // textCount++;
+                        cout << "A|" << line << '\n';
+                        // move pointer of line up to the first quote
+                        while (*line != '"') {
+                            *line++;
                         }
-                        std::cout << value << '\n';
+                        *line++;
+                        cout << "B|" << line << '\n';
+                        // move line into value up to the second quote or
+                        // nullptr
+                        while (*line && *line != '"') {
+                            value += *line;
+                            *line++;
+                        }
+                        cout << "C|" << value << '\n';
 
-                        if (line[i] == '"') {
+                        if (*line == '"') {
+
+                            // *line++;
+                            // while (*line) {
+                            //     if (ASCII[line[i]]) {
+                            //         symTab.getCell(row_id)->setTXTCell("ERROR");
+                            //         symTab.getCell(row_id)->setError(true);
+                            //         return;
+                            //     }
+                            //     *line++;
+                            // }
 
                             symTab.getCell(row_id)->setTXTCell(value);
 
@@ -111,8 +132,6 @@ void scanLine(char* line, TableOfCells& symTab) {
 
                             symTab.getCell(row_id)->setTXTCell("ERROR");
                             symTab.getCell(row_id)->setError(true);
-                            cout << "ERROR "
-                                 << symTab.getCell(row_id)->isError() << '\n';
                         }
 
                         // if beginning of number
@@ -120,23 +139,31 @@ void scanLine(char* line, TableOfCells& symTab) {
                                getHwIndex(line[i]) == 4) {
 
                         value += line[i];
-                        i++;
+                        lstrip(line);
                         bool scannedValue = false;
-                        while (line[i]) {
-                            if (!scannedValue) {
-                                if (getHwIndex(line[i]) == 2) {
-                                    value += line[i];
-                                } else if (!ASCII[line[i]]) {
-                                    scannedValue = true;
-                                }
+                        while (line[++i]) {
+                            // if char is numeric and value isn't parsed yet
+                            if (getHwIndex(line[i]) == 2 && !scannedValue) {
+                                value += line[i];
+
                             } else {
-                                if (scannedValue && ASCII[line[i]] != 0) {
+
+                                // if trailing chars are non-numeric and
+                                // non-whitespace
+                                if (ASCII[line[i]]) {
+                                    // label cell as an error cell
                                     symTab.getCell(row_id)->setTXTCell("ERROR");
                                     symTab.getCell(row_id)->setError(true);
                                     return;
+
+                                    // if whitespace is found after the value
+                                    // was scanned
+                                } else {
+                                    // any chars, numeric or not, after this
+                                    // results in a parse error
+                                    scannedValue = true;
                                 }
                             }
-                            i++;
                         }
 
                         symTab.getCell(row_id)->setNUMCell(value);
@@ -153,17 +180,16 @@ void scanLine(char* line, TableOfCells& symTab) {
                         cell->setKind(EXPRESSION);
                         cell->calculateExpression();
 
+                        // if cell is of any other type, it is an error cell
                     } else {
                         symTab.getCell(row_id)->setTXTCell("ERROR");
                         symTab.getCell(row_id)->setError(true);
                     }
                 }
-
-            } else {
-                cout << "INVALID\n";
             }
         }
     }
+
     return;
 }
 
