@@ -126,6 +126,8 @@ void scanLine(char* line, TableOfCells& symTab) {
                 cell->setTXTCell("ERROR");
             }
         }
+    } else if (ASCII[*line] && line_len) {
+        cout << "Error: Invalid ID" << endl << flush;
     }
 
     return;
