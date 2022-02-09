@@ -39,13 +39,6 @@ const char HW2_Index[128] = {
 };
 // clang-format on
 
-int getHwIndex(char);
-void lstrip(char*&);
-
-Token* getToken(char*& ch);
-void parseText(char*&, SS_Cell*);
-void parseNumber(char*&, SS_Cell*);
-
 // this routine is called by readInputFile and
 // by readCommandLine, one line at a time.
 // The newline will be missing. This routine
@@ -80,8 +73,7 @@ void scanLine(char* line, TableOfCells& symTab) {
 
             if (line[2] == ' ') {
 
-                // if line consists of ID and a single whitespace, clear the
-                // cell
+                // if line consists of ID and a single whitespace, clear cell
                 if (line_len == 3) {
 
                     cell->setError(false);

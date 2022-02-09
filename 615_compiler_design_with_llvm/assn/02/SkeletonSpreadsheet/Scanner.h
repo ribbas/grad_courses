@@ -31,6 +31,14 @@ void scanLine(char* line, TableOfCells& symTab);
 
 // for HW2 Only:
 void parseEquation(char*& ch, SS_Cell* cell);
+void parseText(char*& ch, SS_Cell* cell);
+void parseNumber(char*& ch, SS_Cell* cell);
+
+// helper functions
+int getHwIndex(char ch);
+void lstrip(char*& ch);
+
+Token* getToken(char*& ch);
 // Token* getToken(char* line, char*& ch); // friend in class Token
 
 #endif /* SCANNER_H_ */
