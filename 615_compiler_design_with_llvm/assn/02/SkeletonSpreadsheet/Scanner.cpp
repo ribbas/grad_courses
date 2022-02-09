@@ -21,7 +21,7 @@ const char HW2_Index[128] = {
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
 
-    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 7, 0, 0, 0, 0, // #
     0, 0, 5, 3, 0, 4, 0, 6, // *, +, -, /
     2, 2, 2, 2, 2, 2, 2, 2, // 0, 1, 2, 3, 4, 5, 6, 7
     2, 2, 0, 0, 0, 0, 0, 0, // 8, 9
@@ -41,6 +41,10 @@ const char HW2_Index[128] = {
 Token* getToken(char*& ch);
 Token* getToken(char* line, char*& ch);
 
+int getHwIndex(char ch) {
+    return (int)HW2_Index[int(ch)];
+}
+
 // this routine is called by readInputFile and
 // by readCommandLine, one line at a time.
 // The newline will be missing. This routine
@@ -54,8 +58,8 @@ void scanLine(char* line, TableOfCells& symTab) {
 
     if (line_len >= 3) {
 
-        int col_ix = (int)HW2_Index[int(line[0])];
-        int row_ix = (int)HW2_Index[int(line[1])];
+        int col_ix = getHwIndex(line[0]);
+        int row_ix = getHwIndex(line[1]);
         string row_id{line[0], line[1]};
 
         // if column and row indices are valid
@@ -65,7 +69,6 @@ void scanLine(char* line, TableOfCells& symTab) {
 
                 if (line_len == 3) {
 
-                    symTab.getCell(row_id)->setKind(BLANK);
                     symTab.getCell(row_id)->setError(false);
                     symTab.getCell(row_id)->clearCell();
                     cout << "CLEARED\n";
@@ -92,37 +95,45 @@ void scanLine(char* line, TableOfCells& symTab) {
 
                         if (line[i] == '"') {
 
-                            symTab.getCell(row_id)->setKind(TEXT);
                             symTab.getCell(row_id)->setTXTCell(value);
 
                         } else {
 
-                            symTab.getCell(row_id)->setError(true);
                             symTab.getCell(row_id)->setTXTCell("ERROR");
+                            symTab.getCell(row_id)->setError(true);
                             cout << "ERROR "
                                  << symTab.getCell(row_id)->isError() << '\n';
                         }
 
                         // if beginning of number
-                    } else if ((int)HW2_Index[int(line[i])] == 2 ||
-                               (int)HW2_Index[int(line[i])] == 4) {
+                    } else if (getHwIndex(line[i]) == 2 ||
+                               getHwIndex(line[i]) == 4) {
 
                         value += line[i];
-
                         i++;
-                        while ((int)HW2_Index[int(line[i])] == 2) {
-                            value += line[i];
+                        bool scannedValue = false;
+                        while (line[i]) {
+                            if (!scannedValue) {
+                                if (getHwIndex(line[i]) == 2) {
+                                    value += line[i];
+                                } else if (!ASCII[line[i]]) {
+                                    scannedValue = true;
+                                }
+                            } else {
+                                if (scannedValue && ASCII[line[i]] != 0) {
+                                    symTab.getCell(row_id)->setTXTCell("ERROR");
+                                    symTab.getCell(row_id)->setError(true);
+                                    return;
+                                }
+                            }
                             i++;
                         }
-                        std::cout << "num " << value << '\n';
 
-                        symTab.getCell(row_id)->setKind(NUMBER);
                         symTab.getCell(row_id)->setNUMCell(value);
 
                     } else {
-                        std::cout << "pass\n";
-                        symTab.getCell(row_id)->setError(true);
                         symTab.getCell(row_id)->setTXTCell("ERROR");
+                        symTab.getCell(row_id)->setError(true);
                     }
                 }
 
