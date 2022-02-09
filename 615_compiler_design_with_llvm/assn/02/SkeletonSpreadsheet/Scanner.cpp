@@ -9,6 +9,7 @@
 #include "Scanner.h"
 #include <fstream>
 #include <iostream>
+#include <string.h>
 #include <string>
 
 using namespace std;
@@ -39,10 +40,18 @@ const char HW2_Index[128] = {
 // clang-format on
 
 Token* getToken(char*& ch);
-Token* getToken(char* line, char*& ch);
+// Token* getToken(char* line, char*& ch);
 
 int getHwIndex(char ch) {
     return (int)HW2_Index[int(ch)];
+}
+
+void lstrip(char*&);
+
+void lstrip(char*& ch) {
+    while (*ch == ' ') {
+        *ch++;
+    }
 }
 
 // this routine is called by readInputFile and
@@ -51,6 +60,7 @@ int getHwIndex(char ch) {
 // and those below must be filled in for HW2.
 void scanLine(char* line, TableOfCells& symTab) {
 
+    lstrip(line);
     unsigned int line_len = 0;
     while (line[line_len]) {
         line_len++;
@@ -131,6 +141,18 @@ void scanLine(char* line, TableOfCells& symTab) {
 
                         symTab.getCell(row_id)->setNUMCell(value);
 
+                        // if beginning of equation
+                    } else if (line[i] == '=') {
+
+                        char* test = line;
+                        i++;
+                        memcpy(test, &line[i], line_len + 1);
+
+                        auto cell = symTab.getCell(row_id);
+                        parseEquation(line, cell);
+                        cell->setKind(EXPRESSION);
+                        cell->calculateExpression();
+
                     } else {
                         symTab.getCell(row_id)->setTXTCell("ERROR");
                         symTab.getCell(row_id)->setError(true);
@@ -182,20 +204,58 @@ void parseEquation(char*& ch, SS_Cell* cell) {
     return;
 }
 
-Token* getToken(char*& ch) {}
+Token* getToken(char*& ch) {
+    string lexeme = "";
+    TokenKind kind = T_ERROR;
+
+    // std::cout << "A |" << ch << '\n';
+    lstrip(ch);
+    // std::cout << "B |" << ch << '\n';
+
+    unsigned int i = 0;
+    bool scanned = false;
+    while (getHwIndex(*ch) && !scanned) {
+
+        if (getHwIndex(*ch) == 3) {
+            kind = ADD;
+            lexeme = *ch;
+            // cout << "ADD|" << lexeme << "|\n";
+            scanned = true;
+        } else if (getHwIndex(*ch) == 4) {
+            kind = SUB;
+            lexeme = *ch;
+            // cout << "SUB|" << lexeme << "|\n";
+            scanned = true;
+        } else if (getHwIndex(*ch) == 5) {
+            kind = MULT;
+            lexeme = *ch;
+            // cout << "MULT|" << lexeme << "|\n";
+            scanned = true;
+        } else if (getHwIndex(*ch) == 6) {
+            kind = DIV;
+            lexeme = *ch;
+            // cout << "DIV|" << lexeme << "|\n";
+            scanned = true;
+        } else if (getHwIndex(*ch) == 1 || getHwIndex(*ch) == 2) {
+            lexeme += *ch;
+            if (getHwIndex(*ch) == 2) {
+                kind = ID;
+                // cout << "ID|" << lexeme << "|\n";
+                scanned = true;
+            }
+        }
+
+        *ch++;
+        i++;
+    }
+    // cout << "LEX|" << lexeme << "|\n";
+
+    return new Token(lexeme, kind); // temp ?
+}
 
 // Put your scanner tables here if any others are necessary.
 
 // The getToken routine is called by the
 // parseEquation routine and any of its
 // future subordinate routines.
-Token* getToken(char* line, char*& ch) {
-    string lexeme = "";
-    TokenKind kind = T_ERROR;
-    try {
-        // TBD ... This is be filled in for HW2
-        return new Token(lexeme, kind); // temp ?
-    } catch (...) {
-        return new Token(lexeme, kind); // temp ?
-    }
-}
+Token* getToken(char* line, char*& ch) {}
