@@ -3,7 +3,21 @@
 # Makefile
 # Makefile for the project src
 
-.PHONY: it install depend clean
+CXX ?= $(which $CXX)
+
+ROOT = $(CURDIR)
+SRC = $(ROOT)/src
+LIB = lib
+BIN = $(SRC)/bin
+INC = $(ROOT)/include
+
+SUBDIRS := lib bin
+EXE = 
+
+.PHONY: it install depend clean $(SUBDIRS)
+
+$(SUBDIRS):
+	$(MAKE) -C $@ $(MAKECMDGOALS)
 
 it:
 	# pass
@@ -11,7 +25,8 @@ it:
 install:
 	# pass
 
-depend:
+depend: $(SUBDIRS)
+	@echo $(CURDIR)
 	# pass
 
 clean:

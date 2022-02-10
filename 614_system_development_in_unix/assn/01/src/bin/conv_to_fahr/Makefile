@@ -3,6 +3,7 @@
 # Makefile
 # Main Makefile for the project
 
+CXX ?= $(which $CXX)
 .PHONY: it install depend clean
 
 it:
@@ -13,6 +14,7 @@ install:
 
 depend:
 	# pass
+	@$(CXX) -M -I ../../../include -g conv_to_fahr.cpp >> depend_list
 
 clean:
 	# clean out cache and temporary files

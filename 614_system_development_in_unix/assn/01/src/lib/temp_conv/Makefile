@@ -3,6 +3,8 @@
 # Makefile
 # Main Makefile for the project
 
+CXX ?= $(which $CXX)
+
 .PHONY: it install depend clean
 
 it:
@@ -13,7 +15,8 @@ install:
 
 depend:
 	# pass
+	$(CXX) -M -g -I ../../../include cent_convert.cpp fahr_convert.cpp > depend_list
 
 clean:
 	# clean out cache and temporary files
-	rm *.o
+	@echo $(CURDIR)

@@ -3,6 +3,8 @@
 # Makefile
 # Main Makefile for the project
 
+CXX ?= $(which $CXX)
+
 .PHONY: it install depend clean
 
 it:
@@ -13,6 +15,9 @@ install:
 
 depend:
 	# pass
+	@echo > depend_list
+	@$(CXX) -M -I ../../../include -g conv_to_cent.cpp >> depend_list
+
 
 clean:
 	# clean out cache and temporary files

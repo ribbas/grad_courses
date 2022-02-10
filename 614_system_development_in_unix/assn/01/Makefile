@@ -10,7 +10,8 @@ SRC = $(ROOT)/src
 LIB = $(SRC)/lib
 BIN = $(SRC)/bin
 INC = $(ROOT)/include
-SUBDIRS := $(SRC) $(BIN) $(LIB)
+
+SUBDIRS := src
 EXE = 
 
 .PHONY: it install depend clean $(SUBDIRS)
@@ -24,9 +25,10 @@ it:
 install:
 	# pass
 
-depend:
+depend: $(SUBDIRS)
 	# pass
+	@echo $(CURDIR)
 
 clean: $(SUBDIRS)
 	# clean out cache and temporary files
-	@echo $(CURDIR)
+	@find . -name "depend_list" -delete
