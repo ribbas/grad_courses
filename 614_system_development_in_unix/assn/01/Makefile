@@ -3,12 +3,20 @@
 # Makefile
 # Root Makefile for the project
 
+CXX ?= $(which $CXX)
+
 ROOT = $(CURDIR)
 SRC = $(ROOT)/src
-BIN = $(SRC)/bin
 LIB = $(SRC)/lib
+BIN = $(SRC)/bin
+INC = $(ROOT)/include
+SUBDIRS := $(SRC) $(BIN) $(LIB)
+EXE = 
 
-.PHONY: it install depend clean
+.PHONY: it install depend clean $(SUBDIRS)
+
+$(SUBDIRS):
+	$(MAKE) -C $@ $(MAKECMDGOALS)
 
 it:
 	# pass
@@ -19,6 +27,6 @@ install:
 depend:
 	# pass
 
-clean:
+clean: $(SUBDIRS)
 	# clean out cache and temporary files
-	rm *.a *.o
+	@echo $(CURDIR)

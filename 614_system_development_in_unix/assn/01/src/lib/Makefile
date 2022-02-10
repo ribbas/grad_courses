@@ -16,4 +16,4 @@ depend:
 
 clean:
 	# clean out cache and temporary files
-	rm *.o
+	@echo $(CURDIR)

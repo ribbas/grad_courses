@@ -1,7 +1,7 @@
 # Sabbir Ahmed
 # System Development in the Unix Environment (605.614)
 # Makefile
-# Main Makefile for the project
+# Makefile for the project src
 
 .PHONY: it install depend clean
 
@@ -16,4 +16,4 @@ depend:
 
 clean:
 	# clean out cache and temporary files
-	rm *.o
+	@echo $(CURDIR)
