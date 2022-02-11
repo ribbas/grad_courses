@@ -1,0 +1,22 @@
+// setScanGen3.txt
+// by Allyn Shell
+// October 2020
+
+// Example NAMELIST input
+
+NAMELIST ScanGen = defaults  // reset statement
+
+NAMELIST ScanGen { 
+    caseSensitive = true
+    prefix = "SYM3"
+
+    numWords = 1
+    firstWordOffset = 7
+    word[0] = "\""
+
+
+    createTokenPointers = false
+    lexemeContinues = false
+
+    nextInputFilename = "setScanGen4.txt"
+}

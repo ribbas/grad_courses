@@ -1,0 +1,27 @@
+// setScanGen5.txt
+// by Allyn Shell
+// October 2020
+
+// Example NAMELIST input
+
+NAMELIST ScanGen = defaults  // reset statement
+
+NAMELIST ScanGen { 
+    caseSensitive = true
+    prefix = "KW5"
+
+    numWords = 5
+    firstWordOffset = 2
+    word[0] = "include"
+    word[1] = "define"
+    word[2] = "undef"
+    word[3] = "ifndef"
+    word[4] = "endif"
+    
+    createTokenPointers = false
+    lexemeContinues = true
+    continuationPrefix = "ID5"
+
+    nextInputFilename = ""
+}
+

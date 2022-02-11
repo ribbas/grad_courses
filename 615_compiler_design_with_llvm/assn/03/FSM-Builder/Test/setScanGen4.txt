@@ -1,0 +1,25 @@
+// setScanGen4.txt
+// by Allyn Shell
+// October 2020
+
+// Example NAMELIST input
+
+NAMELIST ScanGen = defaults  // reset statement
+
+NAMELIST ScanGen { 
+    caseSensitive = true
+    prefix = "KW4"
+
+    numWords = 3
+    firstWordOffset = 9
+    word[0] = "static"
+    word[1] = "private"
+    word[2] = "public"
+
+    createTokenPointers = false
+    lexemeContinues = true
+    continuationPrefix = "ID4"
+
+    nextInputFilename = "setScanGen5.txt"
+}
+

@@ -1,0 +1,23 @@
+// setScanGen2.txt
+// by Allyn Shell
+// October 2020
+
+// Example NAMELIST input
+
+NAMELIST ScanGen = defaults
+
+NAMELIST ScanGen { 
+    caseSensitive = true
+    prefix = "KW2"
+
+    numWords = 2
+    firstWordOffset = 5
+    word[0] = "ifndef"
+    word[1] = "endif"
+
+    createTokenPointers = false
+    lexemeContinues = true
+    continuationPrefix = "ID2"
+
+    nextInputFilename = "setScanGen3.txt"
+}
