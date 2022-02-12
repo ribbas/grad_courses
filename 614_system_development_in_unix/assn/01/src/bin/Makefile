@@ -6,26 +6,21 @@
 CXX ?= $(which $(CXX))
 
 ROOT = $(CURDIR)
-# SRC = $(ROOT)/src
-# LIB = $(SRC)/lib
-# BIN = $(SRC)/bin
-# INC = $(ROOT)/include
 SUBDIRS := conv_to_fahr conv_to_cent
-EXE = 
 
 .PHONY: it install depend clean $(SUBDIRS)
 
 $(SUBDIRS):
 	$(MAKE) -C $@ $(MAKECMDGOALS)
 
+# pass
 it: $(SUBDIRS)
-	# pass
 
+# pass
 install: $(SUBDIRS)
-	# pass
 
+# pass
 depend: $(SUBDIRS)
-	# pass
 
 clean: $(SUBDIRS)
 	# clean out temporary and library files and executable
