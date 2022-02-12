@@ -11,8 +11,7 @@ BIN := ../../../bin
 
 SRC := conv_to_fahr.cpp
 OBJ = $(SRC:%.cpp=%.o)
-# EXE = $(SRC:%.cpp=%)
-EXE = conv_to_fahr
+EXE = $(SRC:%.cpp=%)
 
 .PHONY: it install depend clean
 
@@ -33,4 +32,5 @@ depend:
 clean:
 	# clean out temporary and library files and executable
 	@find . -name "depend_list" -delete
-	@find . -type f \( -name "*.o" -o -name "*.a" \) -delete
+	@find . -type f \( -name "*.o" -o -name "*.a" -o -name "*.out" \) -delete
+	@find . -name "$(EXE)" -delete

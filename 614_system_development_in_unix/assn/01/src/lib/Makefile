@@ -30,4 +30,4 @@ depend: $(SUBDIRS)
 clean:
 	# clean out temporary and library files and executable
 	@find . -name "depend_list" -delete
-	@find . -type f \( -name "*.o" -o -name "*.a" \) -delete
+	@find . -type f \( -name "*.o" -o -name "*.a" -o -name "*.out" \) -delete

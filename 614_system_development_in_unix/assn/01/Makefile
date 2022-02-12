@@ -7,12 +7,9 @@ CXX ?= $(which $(CXX))
 
 ROOT = $(CURDIR)
 SRC = $(ROOT)/src
-# LIB = $(SRC)/lib
 BIN = $(ROOT)/bin
-# INC = $(ROOT)/include
 
-SUBDIRS := src
-EXE = 
+SUBDIRS := $(SRC)
 
 .PHONY: it install depend clean $(SUBDIRS)
 
@@ -31,5 +28,5 @@ depend: $(SUBDIRS)
 clean: $(SUBDIRS)
 	# clean out temporary and library files and executable
 	@find . -name "depend_list" -delete
-	@find . -type f \( -name "*.o" -o -name "*.a" \) -delete
-	rm $(BIN)/*
+	@find . -type f \( -name "*.o" -o -name "*.a" -o -name "*.out" \) -delete
+	@find $(BIN) -name "*" -delete
