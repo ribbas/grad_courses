@@ -3,19 +3,23 @@
 # Makefile
 # Main Makefile for the project
 
-CXX ?= $(which $CXX)
+CXX ?= $(which $(CXX))
 .PHONY: it install depend clean
 
 it:
-	# pass
+	$(CXX) -g -I../../../include -c getarg.cpp
+	ar cr libgetarg.a getarg.o
+	cp libgetarg.a ../../../lib
+	ranlib ../../../lib/libgetarg.a
 
 install:
-	# pass
+	cp libgetarg.a ../../../lib
+	ranlib ../../../lib/libgetarg.a
 
 depend:
-	# pass
-	$(CXX) -M -g -I ../../../include getarg.cpp > depend_list
+	$(CXX) -M -g -I../../../include getarg.cpp > depend_list
 
 clean:
-	# clean out cache and temporary files
-	rm *.o
+	# clean out temporary and library files and executable
+	@find . -name "depend_list" -delete
+	@find . -type f \( -name "*.o" -o -name "*.a" \) -delete

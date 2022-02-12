@@ -3,13 +3,14 @@
 # Makefile
 # Makefile for the project src
 
-CXX ?= $(which $CXX)
+CXX ?= $(which $(CXX))
 
 ROOT = $(CURDIR)
-SRC = $(ROOT)/src
-LIB = lib
-BIN = $(SRC)/bin
-INC = $(ROOT)/include
+LIB = $(ROOT)/lib
+BIN = $(ROOT)/bin
+# LIB = lib
+# BIN = $(SRC)/bin
+# INC = $(ROOT)/include
 
 SUBDIRS := lib bin
 EXE = 
@@ -19,16 +20,16 @@ EXE =
 $(SUBDIRS):
 	$(MAKE) -C $@ $(MAKECMDGOALS)
 
-it:
+it: $(SUBDIRS)
 	# pass
 
-install:
+install: $(SUBDIRS)
 	# pass
 
 depend: $(SUBDIRS)
-	@echo $(CURDIR)
 	# pass
 
 clean:
-	# clean out cache and temporary files
-	@echo $(CURDIR)
+	# clean out temporary and library files and executable
+	@find . -name "depend_list" -delete
+	@find . -type f \( -name "*.o" -o -name "*.a" \) -delete

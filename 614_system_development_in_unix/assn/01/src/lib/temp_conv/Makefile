@@ -1,22 +1,25 @@
 # Sabbir Ahmed
 # System Development in the Unix Environment (605.614)
 # Makefile
-# Main Makefile for the project
+# Makefile for libtemp_conv
 
-CXX ?= $(which $CXX)
-
+CXX ?= $(which $(CXX))
 .PHONY: it install depend clean
 
 it:
-	# pass
+	$(CXX) -g -I../../../include -c cent_convert.cpp fahr_convert.cpp
+	ar cr libtemp_conv.a cent_convert.o fahr_convert.o
+	cp libtemp_conv.a ../../../lib
+	ranlib ../../../lib/libtemp_conv.a
 
 install:
-	# pass
+	cp libtemp_conv.a ../../../lib
+	ranlib ../../../lib/libtemp_conv.a
 
 depend:
-	# pass
-	$(CXX) -M -g -I ../../../include cent_convert.cpp fahr_convert.cpp > depend_list
+	$(CXX) -M -g -I../../../include cent_convert.cpp fahr_convert.cpp > depend_list
 
 clean:
-	# clean out cache and temporary files
-	@echo $(CURDIR)
+	# clean out temporary and library files and executable
+	@find . -name "depend_list" -delete
+	@find . -type f \( -name "*.o" -o -name "*.a" \) -delete
