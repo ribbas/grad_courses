@@ -1,15 +1,21 @@
 #include "conv_to_cent.hpp"
-#include <cstdlib>
+#include "getarg.hpp"
+
 #include <iostream>
 
 int main(int argc, char* argv[]) {
 
-    if (argc < 2) {
-        return -1;
+    double value = 0.0;
+
+    int arg_status = get_argument(argc, argv, &value);
+
+    if (!arg_status) {
+        double converted_value = convert_to_cent(value);
+        std::cout << value << " degrees Fahrenheit is " << converted_value
+                  << " degrees centigrade\n";
     } else {
-        std::cout << "cent\n";
-        std::cout << convert_to_cent(std::atof(argv[1])) << '\n';
+        std::cout << "No args\n";
     }
 
-    return 0;
+    return arg_status;
 }

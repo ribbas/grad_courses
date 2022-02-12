@@ -1,15 +1,17 @@
 #include "conv_to_fahr.hpp"
-#include <cstdlib>
+#include "getarg.hpp"
+
 #include <iostream>
 
-int main(int argc, char* argv[]) {
+int main() {
 
-    if (argc < 2) {
-        return -1;
-    } else {
-        std::cout << "fahr\n";
-        std::cout << convert_to_fahr(std::atof(argv[1])) << '\n';
-    }
+    double value = 0.0;
+
+    std::cout << "Enter number of centigrade degrees: ";
+    std::cin >> value;
+    double converted_value = convert_to_fahr(value);
+    std::cout << value << " degrees centigrade is " << converted_value
+              << " degrees Fahrenheit\n";
 
     return 0;
 }

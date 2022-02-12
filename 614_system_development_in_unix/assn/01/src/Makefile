@@ -20,14 +20,14 @@ EXE =
 $(SUBDIRS):
 	$(MAKE) -C $@ $(MAKECMDGOALS)
 
+# pass
 it: $(SUBDIRS)
-	# pass
 
+# pass
 install: $(SUBDIRS)
-	# pass
 
+# pass
 depend: $(SUBDIRS)
-	# pass
 
 clean: $(SUBDIRS)
 	# clean out temporary and library files and executable

@@ -12,6 +12,7 @@ BIN = $(ROOT)/bin
 SUBDIRS := $(SRC)
 
 .PHONY: it install depend clean $(SUBDIRS)
+default: it
 
 $(SUBDIRS):
 	$(MAKE) -C $@ $(MAKECMDGOALS)
