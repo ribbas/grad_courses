@@ -29,7 +29,7 @@ install: $(SUBDIRS)
 depend: $(SUBDIRS)
 	# pass
 
-clean:
+clean: $(SUBDIRS)
 	# clean out temporary and library files and executable
 	@find . -name "depend_list" -delete
 	@find . -type f \( -name "*.o" -o -name "*.a" \) -delete

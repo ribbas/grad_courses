@@ -4,21 +4,31 @@
 # Main Makefile for the project
 
 CXX ?= $(which $(CXX))
+
+LIB := ../../../lib
+INC := ../../../include
+BIN := ../../../bin
+
+SRC := conv_to_fahr.cpp
+OBJ = $(SRC:%.cpp=%.o)
+# EXE = $(SRC:%.cpp=%)
+EXE = conv_to_fahr
+
 .PHONY: it install depend clean
 
 it:
-	$(CXX) -I../../../include -g -c conv_to_fahr.cpp
-	$(CXX) -I../../../include -g conv_to_fahr.o -L../../../lib -lgetarg -ltemp_conv -o conv_to_fahr
-	chmod 755 conv_to_fahr
+	$(CXX) -I$(INC) -g -c $(SRC)
+	$(CXX) -I$(INC) -g $(OBJ) -L$(LIB) -larg -ltemp_conv -o $(EXE)
+	chmod 755 $(EXE)
 
 install:
-	$(CXX) -I../../../include -g conv_to_fahr.o -L../../../lib -lgetarg -ltemp_conv
-	chmod 755 conv_to_fahr
-	cp conv_to_fahr ../../../bin
+	$(CXX) -I$(INC) -g $(OBJ) -L$(LIB) -larg -ltemp_conv
+	chmod 755 $(EXE)
+	cp $(EXE) $(BIN)
 
 depend:
 	@echo > depend_list
-	@$(CXX) -M -I../../../include -g conv_to_fahr.cpp >> depend_list
+	@$(CXX) -M -I$(INC) -g $(SRC) >> depend_list
 
 clean:
 	# clean out temporary and library files and executable

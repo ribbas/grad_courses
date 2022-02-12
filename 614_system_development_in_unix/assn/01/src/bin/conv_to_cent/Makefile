@@ -4,21 +4,31 @@
 # Makefile for conv_to_cent
 
 CXX ?= $(which $CXX)
+
+LIB := ../../../lib
+INC := ../../../include
+BIN := ../../../bin
+
+SRC := conv_to_cent.cpp
+OBJ = $(SRC:%.cpp=%.o)
+# EXE = $(SRC:%.cpp=%)
+EXE = conv_to_cent
+
 .PHONY: it install depend clean
 
 it:
-	$(CXX) -I../../../include -g -c conv_to_cent.cpp
-	$(CXX) -I../../../include -g conv_to_cent.o -L../../../lib -lgetarg -ltemp_conv -o conv_to_cent
-	chmod 755 conv_to_cent
+	$(CXX) -I$(INC) -g -c $(SRC)
+	$(CXX) -I$(INC) -g $(OBJ) -L$(LIB) -larg -ltemp_conv -o $(EXE)
+	chmod 755 $(EXE)
 
 install:
-	$(CXX) -I../../../include -g conv_to_cent.o -L../../../lib -lgetarg -ltemp_conv
-	chmod 755 conv_to_cent
-	cp conv_to_cent ../../../bin
+	$(CXX) -I$(INC) -g $(OBJ) -L$(LIB) -larg -ltemp_conv
+	chmod 755 $(EXE)
+	cp $(EXE) $(BIN)
 
 depend:
 	@echo > depend_list
-	@$(CXX) -M -I../../../include -g conv_to_cent.cpp >> depend_list
+	@$(CXX) -M -I$(INC) -g $(SRC) >> depend_list
 
 clean:
 	# clean out temporary and library files and executable

@@ -4,20 +4,28 @@
 # Makefile for libtemp_conv
 
 CXX ?= $(which $(CXX))
+
+LIB := ../../../lib
+INC := ../../../include
+
+SRC := cent_convert.cpp fahr_convert.cpp
+LIB_NAME := libtemp_conv.a
+OBJ = $(SRC:%.cpp=%.o)
+
 .PHONY: it install depend clean
 
 it:
-	$(CXX) -g -I../../../include -c cent_convert.cpp fahr_convert.cpp
-	ar cr libtemp_conv.a cent_convert.o fahr_convert.o
-	cp libtemp_conv.a ../../../lib
-	ranlib ../../../lib/libtemp_conv.a
+	$(CXX) -g -I$(INC) -c $(SRC)
+	ar cr $(LIB_NAME) $(OBJ)
+	cp $(LIB_NAME) $(LIB)
+	ranlib $(LIB)/$(LIB_NAME)
 
 install:
-	cp libtemp_conv.a ../../../lib
-	ranlib ../../../lib/libtemp_conv.a
+	cp $(LIB_NAME) $(LIB)
+	ranlib $(LIB)/$(LIB_NAME)
 
 depend:
-	$(CXX) -M -g -I../../../include cent_convert.cpp fahr_convert.cpp > depend_list
+	$(CXX) -M -g -I$(INC) $(SRC) > depend_list
 
 clean:
 	# clean out temporary and library files and executable

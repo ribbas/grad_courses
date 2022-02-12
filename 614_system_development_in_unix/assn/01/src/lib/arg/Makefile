@@ -4,20 +4,28 @@
 # Main Makefile for the project
 
 CXX ?= $(which $(CXX))
+
+LIB := ../../../lib
+INC := ../../../include
+
+SRC := arg.cpp
+LIB_NAME := libarg.a
+OBJ = $(SRC:.cpp=.o)
+
 .PHONY: it install depend clean
 
 it:
-	$(CXX) -g -I../../../include -c getarg.cpp
-	ar cr libgetarg.a getarg.o
-	cp libgetarg.a ../../../lib
-	ranlib ../../../lib/libgetarg.a
+	$(CXX) -g -I$(INC) -c $(SRC)
+	ar cr $(LIB_NAME) $(OBJ)
+	cp $(LIB_NAME) $(LIB)
+	ranlib $(LIB)/$(LIB_NAME)
 
 install:
-	cp libgetarg.a ../../../lib
-	ranlib ../../../lib/libgetarg.a
+	cp $(LIB_NAME) $(LIB)
+	ranlib $(LIB)/$(LIB_NAME)
 
 depend:
-	$(CXX) -M -g -I../../../include getarg.cpp > depend_list
+	$(CXX) -M -g -I$(INC) $(SRC) > depend_list
 
 clean:
 	# clean out temporary and library files and executable

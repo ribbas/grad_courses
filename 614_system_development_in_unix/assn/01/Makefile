@@ -8,7 +8,7 @@ CXX ?= $(which $(CXX))
 ROOT = $(CURDIR)
 SRC = $(ROOT)/src
 # LIB = $(SRC)/lib
-# BIN = $(SRC)/bin
+BIN = $(ROOT)/bin
 # INC = $(ROOT)/include
 
 SUBDIRS := src
@@ -32,3 +32,4 @@ clean: $(SUBDIRS)
 	# clean out temporary and library files and executable
 	@find . -name "depend_list" -delete
 	@find . -type f \( -name "*.o" -o -name "*.a" \) -delete
+	rm $(BIN)/*
