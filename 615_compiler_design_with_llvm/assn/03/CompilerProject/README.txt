@@ -2,7 +2,9 @@
 
 ## Compilation
 
-ANTLR4 and its dependencies were installed on the system using `apt`. The following commands were used to generate the java files, the class files and the token files:
+The ANTLR4 tool was installed and ran using the instructions in the official documentations, https://github.com/antlr/antlr4/blob/master/doc/getting-started.md.
+
+The tool and its dependencies were installed on the system using `apt`. The following commands were used to generate the java files, the class files and the token files:
 
 ```
 antlr4 Cminus.g4
@@ -14,6 +16,8 @@ Once the files were generated, the following command was used to generate the tr
 ```
 grun Cminus program -tree < C-Input-files/C-Input-X.txt > C-Output-X.txt
 ```
+
+The commonly used commands for this assignment were consolidated into the attached Makefile.
 
 ## System
 

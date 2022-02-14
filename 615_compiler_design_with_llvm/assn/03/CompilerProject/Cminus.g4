@@ -21,12 +21,12 @@ statement:
 	| selection_statement
 	| iteration_statement
 	| return_statement;
-expression_statement: expression? ';';
+expression_statement: expression ';' | ';';
 selection_statement:
 	'if' '(' expression ')' statement
 	| 'if' '(' expression ')' statement 'else' statement;
 iteration_statement: 'while' '(' expression ')' statement;
-return_statement: 'return' expression? ';';
+return_statement: 'return' ';' | 'return' expression ';';
 expression: var '=' expression | simple_expression;
 var: ID | ID '[' expression ']';
 simple_expression:
