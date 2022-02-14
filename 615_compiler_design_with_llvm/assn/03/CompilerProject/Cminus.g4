@@ -20,13 +20,13 @@ statement:
 	| compound_statement
 	| selection_statement
 	| iteration_statement
-	| return_statemet;
+	| return_statement;
 expression_statement: expression? ';';
 selection_statement:
 	'if' '(' expression ')' statement
 	| 'if' '(' expression ')' statement 'else' statement;
 iteration_statement: 'while' '(' expression ')' statement;
-return_statemet: 'return' expression? ';';
+return_statement: 'return' expression? ';';
 expression: var '=' expression | simple_expression;
 var: ID | ID '[' expression ']';
 simple_expression:
@@ -42,7 +42,7 @@ call: ID '(' args ')';
 args: arg_list?;
 arg_list: arg_list ',' expression | expression;
 
-COMMENT: '/*' (.)*? '*/' -> channel(HIDDEN);
+COMMENT: '/*' (.)*? '*/' -> skip;
 ID: [a-zA-Z]+;
 NUMBER: '0' | [1-9][0-9]*;
-WS: [ \t\r\n]+ -> channel(HIDDEN);
+WS: [ \t\r\n]+ -> skip;
