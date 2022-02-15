@@ -1,3 +1,9 @@
+# Makefile
+# Sabbir Ahmed
+# 2/15/22
+# Makefile for setting up and running ANTLR4 to generate the tree and
+# token files from the grammar file
+
 CLASSPATH = .:/usr/local/lib/antlr-4.9-complete.jar
 JAVA = $(shell which java)
 JAVAC = $(shell which javac)

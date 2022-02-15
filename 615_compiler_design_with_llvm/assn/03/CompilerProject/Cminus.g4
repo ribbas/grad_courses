@@ -36,7 +36,7 @@ statement:
 	| selection_statement
 	| iteration_statement
 	| return_statement;
-expression_statement: expression ';' | ';';
+expression_statement: expression? ';';
 selection_statement:
 	'if' '(' expression ')' statement ('else' statement)?;
 iteration_statement: 'while' '(' expression ')' statement;
