@@ -26,7 +26,7 @@ fun_declaration:
 	type_specifier ID '(' params ')' compound_statement;
 params: param_list | 'void';
 param_list: param_list ',' param | param;
-param: type_specifier ID | type_specifier ID '[' ']';
+param: type_specifier ID ('[' ']')?;
 compound_statement: '{' local_declarations statement_list '}';
 local_declarations: local_declarations var_declaration |;
 statement_list: statement_list statement |;
@@ -38,15 +38,13 @@ statement:
 	| return_statement;
 expression_statement: expression ';' | ';';
 selection_statement:
-	'if' '(' expression ')' statement
-	| 'if' '(' expression ')' statement 'else' statement;
+	'if' '(' expression ')' statement ('else' statement)?;
 iteration_statement: 'while' '(' expression ')' statement;
-return_statement: 'return' ';' | 'return' expression ';';
+return_statement: 'return' (expression)? ';';
 expression: var '=' expression | simple_expression;
-var: ID | ID '[' expression ']';
+var: ID ('[' expression ']')?;
 simple_expression:
-	additive_expression relop additive_expression
-	| additive_expression;
+	additive_expression (relop additive_expression)?;
 relop: '<=' | '<' | '>' | '>=' | '==' | '!=';
 additive_expression: additive_expression addop term | term;
 addop: '+' | '-';
