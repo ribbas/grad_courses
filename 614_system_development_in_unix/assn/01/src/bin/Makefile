@@ -12,12 +12,12 @@ SUBDIRS := conv_to_fahr conv_to_cent
 
 $(SUBDIRS):
 	@echo "<<< $@ >>>"
-	@$(MAKE) --no-print-directory -C $@ $(MAKECMDGOALS)
+	@cd $@ && $(MAKE) --no-print-directory $(MAKECMDGOALS)
 
 # pass
 it install depend: $(SUBDIRS)
 
 # clean out temporary objects and files
 clean: $(SUBDIRS)
-	@rm -f *.o *.a *.out
-	@rm -f depend_list
+	rm -f *.o *.a *.out
+	rm -f depend_list

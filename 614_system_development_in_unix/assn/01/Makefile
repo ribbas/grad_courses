@@ -16,12 +16,12 @@ default: it
 
 $(SUBDIRS):
 	@echo "<<< $@ >>>"
-	@$(MAKE) --no-print-directory -C $@ $(MAKECMDGOALS)
+	@cd $@ && $(MAKE) --no-print-directory $(MAKECMDGOALS)
 
 # pass
 it install depend: $(SUBDIRS)
 
 # clean out library files and executables
 clean: $(SUBDIRS)
-	@rm -f $(LIB)/*
-	@rm -f $(BIN)/*
+	rm -f $(LIB)/*
+	rm -f $(BIN)/*

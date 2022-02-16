@@ -29,5 +29,5 @@ depend:
 
 # clean out temporary objects and files
 clean:
-	@rm -f *.o *.a
-	@rm -f depend_list
+	rm -f *.o *.a
+	rm -f depend_list

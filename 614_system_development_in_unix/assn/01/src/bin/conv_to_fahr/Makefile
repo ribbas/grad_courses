@@ -31,5 +31,5 @@ depend:
 
 # clean out temporary objects and executables
 clean:
-	@rm -f *.o *.a *.out
-	@rm -f depend_list $(EXE)
+	rm -f *.o *.a *.out
+	rm -f depend_list $(EXE)

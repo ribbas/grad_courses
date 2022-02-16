@@ -12,7 +12,7 @@ SUBDIRS := arg temp_conv
 
 $(SUBDIRS):
 	@echo "<<< $@ >>>"
-	@$(MAKE) --no-print-directory -C $@ $(MAKECMDGOALS)
+	@cd $@ && $(MAKE) --no-print-directory $(MAKECMDGOALS)
 
 # pass
 it install depend clean: $(SUBDIRS)
