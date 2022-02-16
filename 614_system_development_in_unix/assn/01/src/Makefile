@@ -3,7 +3,7 @@
 # Makefile
 # Makefile for the project src
 
-CXX ?= $(which $(CXX))
+CXX = /usr/bin/g++
 
 ROOT = $(CURDIR)
 LIB = $(ROOT)/lib
@@ -31,5 +31,5 @@ depend: $(SUBDIRS)
 
 clean: $(SUBDIRS)
 	# clean out temporary and library files and executable
-	@find . -name "depend_list" -delete
-	@find . -type f \( -name "*.o" -o -name "*.a" -o -name "*.out" \) -delete
+	@rm -f *.o *.a *.out
+	@rm -f depend_list

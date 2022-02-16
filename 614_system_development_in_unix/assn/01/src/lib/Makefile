@@ -3,7 +3,7 @@
 # Makefile
 # Makefile for the project src/lib
 
-CXX ?= $(which $(CXX))
+CXX = /usr/bin/g++
 
 ROOT = $(CURDIR)
 # SRC = $(ROOT)/src
@@ -18,16 +18,14 @@ EXE =
 $(SUBDIRS):
 	$(MAKE) -C $@ $(MAKECMDGOALS)
 
+# pass
 it: $(SUBDIRS)
-	# pass
 
+# pass
 install: $(SUBDIRS)
-	# pass
 
+# pass
 depend: $(SUBDIRS)
-	# pass
 
-clean:
-	# clean out temporary and library files and executable
-	@find . -name "depend_list" -delete
-	@find . -type f \( -name "*.o" -o -name "*.a" -o -name "*.out" \) -delete
+# pass
+clean: $(SUBDIRS)

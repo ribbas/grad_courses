@@ -3,7 +3,7 @@
 # Makefile
 # Makefile for libtemp_conv
 
-CXX ?= $(which $(CXX))
+CXX = /usr/bin/g++
 
 LIB := ../../../lib
 INC := ../../../include
@@ -29,5 +29,5 @@ depend:
 
 clean:
 	# clean out temporary and library files and executable
-	@find . -name "depend_list" -delete
-	@find . -type f \( -name "*.o" -o -name "*.a" -o -name "*.out" \) -delete
+	@rm -f *.o *.a
+	@rm -f depend_list
