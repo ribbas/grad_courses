@@ -3,7 +3,7 @@
 # Makefile
 # Makefile for conv_to_cent
 
-CXX = /usr/bin/g++
+CXX ?= $(shell which c++)
 
 LIB := ../../../lib
 INC := ../../../include
@@ -29,7 +29,7 @@ depend:
 	@echo > depend_list
 	@$(CXX) -M -I$(INC) -g $(SRC) >> depend_list
 
+# clean out temporary objects and executables
 clean:
-	# clean out temporary and library files and executable
 	@rm -f *.o *.a *.out
 	@rm -f depend_list $(EXE)

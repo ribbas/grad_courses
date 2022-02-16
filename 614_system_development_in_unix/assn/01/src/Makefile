@@ -3,33 +3,23 @@
 # Makefile
 # Makefile for the project src
 
-CXX = /usr/bin/g++
+CXX ?= $(shell which c++)
 
 ROOT = $(CURDIR)
 LIB = $(ROOT)/lib
 BIN = $(ROOT)/bin
-# LIB = lib
-# BIN = $(SRC)/bin
-# INC = $(ROOT)/include
-
 SUBDIRS := lib bin
-EXE = 
 
 .PHONY: it install depend clean $(SUBDIRS)
 
 $(SUBDIRS):
-	$(MAKE) -C $@ $(MAKECMDGOALS)
+	@echo "<<< $@ >>>"
+	@$(MAKE) --no-print-directory -C $@ $(MAKECMDGOALS)
 
 # pass
-it: $(SUBDIRS)
+it install depend: $(SUBDIRS)
 
-# pass
-install: $(SUBDIRS)
-
-# pass
-depend: $(SUBDIRS)
-
+# clean out temporary objects and files
 clean: $(SUBDIRS)
-	# clean out temporary and library files and executable
 	@rm -f *.o *.a *.out
 	@rm -f depend_list

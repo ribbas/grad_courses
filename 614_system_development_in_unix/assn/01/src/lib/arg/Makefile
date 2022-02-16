@@ -3,7 +3,7 @@
 # Makefile
 # Main Makefile for the project
 
-CXX = /usr/bin/g++
+CXX ?= $(shell which c++)
 
 LIB := ../../../lib
 INC := ../../../include
@@ -27,7 +27,7 @@ install:
 depend:
 	$(CXX) -M -g -I$(INC) $(SRC) > depend_list
 
+# clean out temporary objects and files
 clean:
-	# clean out temporary and library files and executable
 	@rm -f *.o *.a
 	@rm -f depend_list

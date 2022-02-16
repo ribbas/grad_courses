@@ -3,7 +3,7 @@
 # Makefile
 # Makefile for the project src/bin
 
-CXX = /usr/bin/g++
+CXX ?= $(shell which c++)
 
 ROOT = $(CURDIR)
 SUBDIRS := conv_to_fahr conv_to_cent
@@ -11,18 +11,13 @@ SUBDIRS := conv_to_fahr conv_to_cent
 .PHONY: it install depend clean $(SUBDIRS)
 
 $(SUBDIRS):
-	$(MAKE) -C $@ $(MAKECMDGOALS)
+	@echo "<<< $@ >>>"
+	@$(MAKE) --no-print-directory -C $@ $(MAKECMDGOALS)
 
 # pass
-it: $(SUBDIRS)
+it install depend: $(SUBDIRS)
 
-# pass
-install: $(SUBDIRS)
-
-# pass
-depend: $(SUBDIRS)
-
+# clean out temporary objects and files
 clean: $(SUBDIRS)
-	# clean out temporary and library files and executable
 	@rm -f *.o *.a *.out
 	@rm -f depend_list
