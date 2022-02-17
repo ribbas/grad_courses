@@ -17,7 +17,6 @@ OBJS = $(SRC:%.cpp=%.o)
 
 all: it
 it: $(LIBS)
-
 $(LIBS): $(OBJS)
 	ar cr $(LIBS) $^
 	cp $(LIBS) $(LIB_DIR)
@@ -35,5 +34,4 @@ depend:
 
 # clean out temporary objects and files
 clean:
-	rm -f *.o *.a
-	rm -f depend_list
+	rm -f *.o *.a depend_list

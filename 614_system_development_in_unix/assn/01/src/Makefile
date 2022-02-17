@@ -18,5 +18,4 @@ it install depend: $(SUBDIRS)
 
 # clean out temporary objects and files
 clean: $(SUBDIRS)
-	rm -f *.o *.a *.out
-	rm -f depend_list
+	rm -f *.o *.a *.out depend_list

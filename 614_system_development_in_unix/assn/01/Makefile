@@ -18,5 +18,4 @@ it install depend: $(SUBDIRS)
 
 # clean out library files and executables
 clean: $(SUBDIRS)
-	rm -f lib/*
-	rm -f bin/*
+	rm -f lib/* bin/*
