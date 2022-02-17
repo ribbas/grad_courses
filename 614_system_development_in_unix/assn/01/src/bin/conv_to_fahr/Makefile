@@ -10,11 +10,11 @@ LIB_DIR := ../../../lib
 INC_DIR := ../../../include
 BIN_DIR := ../../../bin
 
-SRC := conv_to_fahr.cpp
-OBJ = $(SRC:%.cpp=%.o)
-LIBS = "$(LIB_DIR)"/*.a
+SRC = conv_to_fahr.cpp
+LIBS = $(LIB_DIR)/libarg.a $(LIB_DIR)/libtemp_conv.a
 DEPS := $(INC_DIR)/$(SRC:%.cpp=%.hpp)
-EXE = $(SRC:%.cpp=%)
+OBJ := $(SRC:%.cpp=%.o)
+EXE := $(SRC:%.cpp=%)
 
 .PHONY: it install depend clean
 
@@ -29,6 +29,7 @@ $(OBJ):
 
 $(LIBS):
 	@cd ../../lib && $(MAKE) --no-print-directory it
+
 
 install:
 	cp $(EXE) $(BIN_DIR)

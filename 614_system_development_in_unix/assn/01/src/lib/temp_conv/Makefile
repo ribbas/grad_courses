@@ -7,8 +7,8 @@
 CXX ?= $(shell which c++)
 
 LIB_DIR := ../../../lib
-INC := ../../../include
-DEPS := $(INC)/conv_to_cent.hpp $(INC)/conv_to_fahr.hpp
+INC_DIR := ../../../include
+DEPS := $(INC_DIR)/conv_to_cent.hpp $(INC_DIR)/conv_to_fahr.hpp
 
 SRC := cent_convert.cpp fahr_convert.cpp
 LIBS := libtemp_conv.a
@@ -24,14 +24,14 @@ $(LIBS): $(OBJS)
 	ranlib $(LIB_DIR)/$(LIBS)
 
 $(OBJS): $(DEPS)
-	$(CXX) -g -I$(INC) -c $(@:%.o=%.cpp) -o $@
+	$(CXX) -g -I$(INC_DIR) -c $(@:%.o=%.cpp) -o $@
 
 install:
 	cp $(LIBS) $(LIB_DIR)
 	ranlib $(LIB_DIR)/$(LIBS)
 
 depend:
-	$(CXX) -M -g -I$(INC) $(SRC) > depend_list
+	$(CXX) -M -g -I$(INC_DIR) $(SRC) > depend_list
 
 # clean out temporary objects and files
 clean:

@@ -10,6 +10,7 @@ SUBDIRS := conv_to_fahr conv_to_cent
 
 .PHONY: it install depend clean $(SUBDIRS)
 
+# target to propagate make through all the subdirectories
 $(SUBDIRS):
 	@echo "<<< $@ >>>"
 	@cd $@ && $(MAKE) --no-print-directory $(MAKECMDGOALS)
