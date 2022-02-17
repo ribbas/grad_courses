@@ -5,7 +5,6 @@
 
 CXX ?= $(shell which c++)
 
-ROOT = $(CURDIR)
 SUBDIRS := arg temp_conv
 
 .PHONY: it install depend clean $(SUBDIRS)

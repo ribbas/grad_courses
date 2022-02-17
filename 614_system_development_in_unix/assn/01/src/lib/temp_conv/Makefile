@@ -5,24 +5,30 @@
 
 CXX ?= $(shell which c++)
 
-LIB := ../../../lib
+LIB_DIR := ../../../lib
 INC := ../../../include
+DEPS := $(INC)/conv_to_cent.hpp $(INC)/conv_to_fahr.hpp
 
 SRC := cent_convert.cpp fahr_convert.cpp
-LIB_NAME := libtemp_conv.a
-OBJ = $(SRC:%.cpp=%.o)
+LIBS := libtemp_conv.a
+OBJS = $(SRC:%.cpp=%.o)
 
 .PHONY: it install depend clean
 
-it:
-	$(CXX) -g -I$(INC) -c $(SRC)
-	ar cr $(LIB_NAME) $(OBJ)
-	cp $(LIB_NAME) $(LIB)
-	ranlib $(LIB)/$(LIB_NAME)
+all: it
+it: $(LIBS)
+
+$(LIBS): $(OBJS)
+	ar cr $(LIBS) $^
+	cp $(LIBS) $(LIB_DIR)
+	ranlib $(LIB_DIR)/$(LIBS)
+
+$(OBJS): $(DEPS)
+	$(CXX) -g -I$(INC) -c $(@:%.o=%.cpp) -o $@
 
 install:
-	cp $(LIB_NAME) $(LIB)
-	ranlib $(LIB)/$(LIB_NAME)
+	cp $(LIBS) $(LIB_DIR)
+	ranlib $(LIB_DIR)/$(LIBS)
 
 depend:
 	$(CXX) -M -g -I$(INC) $(SRC) > depend_list

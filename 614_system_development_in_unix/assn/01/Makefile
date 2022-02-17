@@ -4,11 +4,6 @@
 # Root Makefile for the project
 
 CXX ?= $(shell which c++)
-
-ROOT = $(CURDIR)
-SRC = $(ROOT)/src
-BIN = $(ROOT)/bin
-LIB = $(ROOT)/lib
 SUBDIRS := src
 
 .PHONY: it install depend clean $(SUBDIRS)
@@ -23,5 +18,5 @@ it install depend: $(SUBDIRS)
 
 # clean out library files and executables
 clean: $(SUBDIRS)
-	rm -f $(LIB)/*
-	rm -f $(BIN)/*
+	rm -f lib/*
+	rm -f bin/*

@@ -5,9 +5,6 @@
 
 CXX ?= $(shell which c++)
 
-ROOT = $(CURDIR)
-LIB = $(ROOT)/lib
-BIN = $(ROOT)/bin
 SUBDIRS := lib bin
 
 .PHONY: it install depend clean $(SUBDIRS)

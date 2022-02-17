@@ -5,24 +5,30 @@
 
 CXX ?= $(shell which c++)
 
-LIB := ../../../lib
+LIB_DIR := ../../../lib
 INC := ../../../include
 BIN := ../../../bin
 
 SRC := conv_to_cent.cpp
 OBJ = $(SRC:%.cpp=%.o)
+DEPS := $(INC)/$(SRC:%.cpp=%.hpp)
 EXE = $(SRC:%.cpp=%)
 
 .PHONY: it install depend clean
+all: it
+it: $(EXE)
 
-it:
-	$(CXX) -I$(INC) -g -c $(SRC)
-	$(CXX) -I$(INC) -g $(OBJ) -L$(LIB) -larg -ltemp_conv -o $(EXE)
+$(EXE): $(OBJ)
+	$(CXX) -I$(INC) -g $(OBJ) -L$(LIB_DIR) -larg -ltemp_conv -o $(EXE)
 	chmod 755 $(EXE)
+
+$(OBJ): $(INC)/$(SRC:%.cpp=%.hpp) $(LIB_DIR)/libarg.a $(LIB_DIR)/libtemp_conv.a
+	$(CXX) -I$(INC) -g -c $(SRC)
+
+$(LIB_DIR)/libarg.a $(LIB_DIR)/libtemp_conv.a:
+	@cd ../../lib && $(MAKE) --no-print-directory it
 
 install:
-	$(CXX) -I$(INC) -g $(OBJ) -L$(LIB) -larg -ltemp_conv
-	chmod 755 $(EXE)
 	cp $(EXE) $(BIN)
 
 depend:

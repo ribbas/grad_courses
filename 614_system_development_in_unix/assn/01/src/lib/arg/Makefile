@@ -5,24 +5,30 @@
 
 CXX ?= $(shell which c++)
 
-LIB := ../../../lib
+LIB_DIR := ../../../lib
 INC := ../../../include
+DEPS := $(INC)/conv_to_cent.hpp $(INC)/conv_to_fahr.hpp
 
 SRC := arg.cpp
 LIB_NAME := libarg.a
-OBJ = $(SRC:.cpp=.o)
+OBJS = $(SRC:.cpp=.o)
 
 .PHONY: it install depend clean
 
-it:
-	$(CXX) -g -I$(INC) -c $(SRC)
-	ar cr $(LIB_NAME) $(OBJ)
-	cp $(LIB_NAME) $(LIB)
-	ranlib $(LIB)/$(LIB_NAME)
+all: it
+it: $(LIB_NAME)
+
+$(LIB_NAME): $(OBJS)
+	ar cr $(LIB_NAME) $(OBJS)
+	cp $(LIB_NAME) $(LIB_DIR)
+	ranlib $(LIB_DIR)/$(LIB_NAME)
+
+$(OBJS): $(DEPS)
+	$(CXX) -g -I$(INC) -c $(@:%.o=%.cpp) -o $@
 
 install:
-	cp $(LIB_NAME) $(LIB)
-	ranlib $(LIB)/$(LIB_NAME)
+	cp $(LIB_NAME) $(LIB_DIR)
+	ranlib $(LIB_DIR)/$(LIB_NAME)
 
 depend:
 	$(CXX) -M -g -I$(INC) $(SRC) > depend_list
