@@ -1,7 +1,8 @@
+# Makefile
 # Sabbir Ahmed
 # System Development in the Unix Environment (605.614)
-# Makefile
-# Makefile for libtemp_conv
+#
+# Makefile for lib/temp_conv
 
 CXX ?= $(shell which c++)
 

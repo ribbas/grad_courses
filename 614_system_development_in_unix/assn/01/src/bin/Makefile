@@ -1,7 +1,8 @@
+# Makefile
 # Sabbir Ahmed
 # System Development in the Unix Environment (605.614)
-# Makefile
-# Makefile for the project src/bin
+# 
+# Makefile for src/bin
 
 CXX ?= $(shell which c++)
 

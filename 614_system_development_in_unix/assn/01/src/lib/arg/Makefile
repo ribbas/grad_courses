@@ -1,7 +1,8 @@
+# Makefile
 # Sabbir Ahmed
 # System Development in the Unix Environment (605.614)
-# Makefile
-# Main Makefile for the project
+# 
+# Makefile for lib/arg
 
 CXX ?= $(shell which c++)
 

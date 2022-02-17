@@ -1,6 +1,7 @@
+# Makefile
 # Sabbir Ahmed
 # System Development in the Unix Environment (605.614)
-# Makefile
+# 
 # Makefile for conv_to_cent
 
 CXX ?= $(shell which c++)
@@ -33,8 +34,8 @@ install:
 	cp $(EXE) $(BIN_DIR)
 
 depend:
-	@echo > depend_list
-	@$(CXX) -M -I$(INC_DIR) -g $(SRC) >> depend_list
+	echo > depend_list
+	$(CXX) -M -I$(INC_DIR) -g $(SRC) >> depend_list
 
 # clean out temporary objects and executables
 clean:
