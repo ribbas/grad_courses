@@ -1,4 +1,4 @@
-#include "getarg.hpp"
+#include "arg.hpp"
 #include <cstdlib>
 
 #define ERROR -1

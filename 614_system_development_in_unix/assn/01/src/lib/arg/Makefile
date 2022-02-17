@@ -4,26 +4,32 @@
 # 
 # Makefile for lib/arg
 
+# set the C++ compiler if unset
 CXX ?= $(shell which c++)
 
+# root directory paths
 LIB_DIR := ../../../lib
 INC_DIR := ../../../include
-DEPS := $(INC_DIR)/conv_to_cent.hpp $(INC_DIR)/conv_to_fahr.hpp
 
+# source file for library file
 SRC := arg.cpp
-LIB := libarg.a
-OBJS = $(SRC:.cpp=.o)
+
+# declare include headers as dependencies for the executable
+DEPS := $(INC_DIR)/$(SRC:.cpp=.hpp)
+# construct library paths
+LIB = $(SRC:%.cpp=lib%.a)
+# construct objects
+OBJ = $(SRC:.cpp=.o)
 
 .PHONY: it install depend clean
 
-all: it
 it: $(LIB)
-$(LIB): $(OBJS)
-	ar cr $(LIB) $(OBJS)
+$(LIB): $(OBJ)
+	ar cr $(LIB) $(OBJ)
 	cp $(LIB) $(LIB_DIR)
 	ranlib $(LIB_DIR)/$(LIB)
 
-$(OBJS): $(DEPS)
+$(OBJ): $(DEPS)
 	$(CXX) -g -I$(INC_DIR) -c $(@:%.o=%.cpp) -o $@
 
 install:

@@ -4,10 +4,12 @@
 #
 # Root Makefile for the project
 
+# set the C++ compiler if unset
 CXX ?= $(shell which c++)
+
 SUBDIRS := src
 
-.PHONY: it install depend clean $(SUBDIRS)
+.PHONY: default it install depend clean $(SUBDIRS)
 default: it
 
 # target to propagate make through all the subdirectories

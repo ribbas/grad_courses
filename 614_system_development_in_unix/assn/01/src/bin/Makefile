@@ -4,6 +4,7 @@
 # 
 # Makefile for src/bin
 
+# set the C++ compiler if unset
 CXX ?= $(shell which c++)
 
 SUBDIRS := conv_to_fahr conv_to_cent

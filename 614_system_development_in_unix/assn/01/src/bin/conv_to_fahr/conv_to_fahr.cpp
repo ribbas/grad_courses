@@ -1,5 +1,5 @@
 #include "conv_to_fahr.hpp"
-#include "getarg.hpp"
+#include "arg.hpp"
 
 #include <iostream>
 

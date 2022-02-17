@@ -4,31 +4,37 @@
 #
 # Makefile for lib/temp_conv
 
+# set the C++ compiler if unset
 CXX ?= $(shell which c++)
 
+# root directory paths
 LIB_DIR := ../../../lib
 INC_DIR := ../../../include
-DEPS := $(INC_DIR)/conv_to_cent.hpp $(INC_DIR)/conv_to_fahr.hpp
 
+# source files for library file
 SRC := cent_convert.cpp fahr_convert.cpp
-LIBS := libtemp_conv.a
-OBJS = $(SRC:%.cpp=%.o)
+
+# declare include headers as dependencies for the executable
+DEPS := $(INC_DIR)/conv_to_cent.hpp $(INC_DIR)/conv_to_fahr.hpp
+# declare library paths
+LIB := libtemp_conv.a
+# construct objects
+OBJ = $(SRC:%.cpp=%.o)
 
 .PHONY: it install depend clean
 
-all: it
-it: $(LIBS)
-$(LIBS): $(OBJS)
-	ar cr $(LIBS) $^
-	cp $(LIBS) $(LIB_DIR)
-	ranlib $(LIB_DIR)/$(LIBS)
+it: $(LIB)
+$(LIB): $(OBJ)
+	ar cr $(LIB) $^
+	cp $(LIB) $(LIB_DIR)
+	ranlib $(LIB_DIR)/$(LIB)
 
-$(OBJS): $(DEPS)
+$(OBJ): $(DEPS)
 	$(CXX) -g -I$(INC_DIR) -c $(@:%.o=%.cpp) -o $@
 
 install:
-	cp $(LIBS) $(LIB_DIR)
-	ranlib $(LIB_DIR)/$(LIBS)
+	cp $(LIB) $(LIB_DIR)
+	ranlib $(LIB_DIR)/$(LIB)
 
 depend:
 	$(CXX) -M -g -I$(INC_DIR) $(SRC) > depend_list

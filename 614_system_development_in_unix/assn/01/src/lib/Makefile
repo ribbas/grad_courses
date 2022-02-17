@@ -4,10 +4,13 @@
 #
 # Makefile for src/lib
 
+# set the C++ compiler if unset
 CXX ?= $(shell which c++)
+
 SUBDIRS := arg temp_conv
 
-.PHONY: it install depend clean $(SUBDIRS)
+.PHONY: default it install depend clean $(SUBDIRS)
+default: it
 
 # target to propagate make through all the subdirectories
 $(SUBDIRS):
