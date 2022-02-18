@@ -16,7 +16,7 @@ BIN_DIR := ../../../bin
 SRC = conv_to_fahr.cpp
 
 # required libraries for executable
-LIBS = arg temp_conv
+LIBS = temp_conv
 # construct library paths
 LIB_ARS = $(LIBS:%=$(LIB_DIR)/lib%.a)
 # construct library flags

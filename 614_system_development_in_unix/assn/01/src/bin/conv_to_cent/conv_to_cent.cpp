@@ -1,3 +1,13 @@
+/*
+ * conv_to_cent.cpp
+ *
+ * Sabbir Ahmed
+ * System Development in the Unix Environment (605.614)
+ *
+ * This file contains the driver for conv_to_cent
+ *
+ */
+
 #include "conv_to_cent.hpp"
 #include "arg.hpp"
 
@@ -9,12 +19,11 @@ int main(int argc, char* argv[]) {
 
     int arg_status = get_argument(argc, argv, &value);
 
+    // if return value is OK
     if (!arg_status) {
         double converted_value = convert_to_cent(value);
         std::cout << value << " degrees Fahrenheit is " << converted_value
                   << " degrees centigrade\n";
-    } else {
-        std::cout << "No args\n";
     }
 
     return arg_status;

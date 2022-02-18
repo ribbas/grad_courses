@@ -1,43 +1,5 @@
 # Homework Project #1
-
 # System Development in the Unix Environment (605.614)
-
-## File Hierarchy
-
-The project is structured according to the hierarchy specified in the assignment prompt. The following directory tree represents the current structure:
-
-```
-.
-├── bin/
-├── include/
-│   ├── conv_to_cent.hpp
-│   ├── conv_to_fahr.hpp
-│   └── getarg.hpp
-├── lib/
-├── Makefile
-├── prompt.pdf
-├── README
-├── release.py
-└── src/
-    ├── bin/
-    │   ├── conv_to_cent/
-    │   │   ├── conv_to_cent.cpp
-    │   │   └── Makefile
-    │   ├── conv_to_fahr/
-    │   │   ├── conv_to_fahr.cpp
-    │   │   └── Makefile
-    │   └── Makefile
-    ├── lib/
-    │   ├── arg/
-    │   │   ├── arg.cpp
-    │   │   └── Makefile
-    │   ├── Makefile
-    │   └── temp_conv/
-    │       ├── cent_convert.cpp
-    │       ├── fahr_convert.cpp
-    │       └── Makefile
-    └── Makefile
-```
 
 ## Makefile
 

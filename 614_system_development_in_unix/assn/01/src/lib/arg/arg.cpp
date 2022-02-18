@@ -1,16 +1,37 @@
-#include "arg.hpp"
-#include <cstdlib>
+/*
+ * arg.cpp
+ *
+ * Sabbir Ahmed
+ * System Development in the Unix Environment (605.614)
+ *
+ * This file contains the implementations for arg
+ *
+ */
 
-#define ERROR -1
-#define OK 0
+#include "arg.hpp"
+
+#include <cstdlib>
+#include <iostream>
+#include <string>
 
 int get_argument(int argc, char* argv[], double* return_value) {
-    if (argc < 2) {
-        return ERROR;
-    } else {
-        *return_value = std::atof(argv[1]);
-        return OK;
-    }
 
-    return 0;
+    if (argc != 2) {
+
+        std::cout << "No arguments provided\n";
+        return ERROR;
+
+    } else {
+
+        try {
+
+            *return_value = std::stod(argv[1]);
+            return OK;
+
+        } catch (std::exception& e) {
+
+            std::cout << "Invalid arguments provided\n";
+            return ERROR;
+        }
+    }
 }
