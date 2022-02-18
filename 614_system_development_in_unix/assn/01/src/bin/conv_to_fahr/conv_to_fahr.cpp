@@ -11,6 +11,7 @@
 #include "conv_to_fahr.hpp"
 #include "arg.hpp"
 
+#include <cstdlib>
 #include <iostream>
 #include <string>
 
@@ -27,13 +28,10 @@ int main() {
         return ERROR;
     }
 
-    double value = 0.0;
-    // if user input can be converted to a double
-    try {
-        value = std::stod(user_input);
-
-        // else, return ERROR
-    } catch (std::exception& e) {
+    double value = std::atof(user_input.c_str());
+    // if user input is non-zero and atof returns 0 (conversion failed),
+    // return ERROR
+    if (user_input != "0" && value == 0) {
 
         std::cout << "Invalid arguments provided\n";
         return ERROR;
