@@ -1,0 +1,16 @@
+# Homework 3: Spreadsheet Recursive Decent Parser
+
+## Compilation
+
+The attached CMakeLists.txt was used to compile the assignment files. The following are the version numbers of the tools used:
+
+| Tool    | Version |
+| ------- | ------- |
+| Clang++ | 13.0.0  |
+| CMake   | 3.22.2  |
+
+The target machine used was an Ubuntu 20.04 64-bit virtual machine. The Linux kernel version is 5.13.0-28-generic. The following output is generated from running the command `uname -orm`:
+
+```
+5.13.0-28-generic x86_64 GNU/Linux
+```
