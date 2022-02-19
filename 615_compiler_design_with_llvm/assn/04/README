@@ -1,6 +1,6 @@
-# Homework 3: Spreadsheet Recursive Decent Parser
+# Week 4: Spreadsheet Recursive Descent Parser
 
-## Compilation
+## System Dependencies
 
 The attached CMakeLists.txt was used to compile the assignment files. The following are the version numbers of the tools used:
 

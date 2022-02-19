@@ -18,7 +18,7 @@ using namespace std;
 //  <equation>  => <term> { <add-op> <term> }        // remember rotation
 //  <add-op>    => '+' | '-'
 //  <term>      => <factor> { < mult-op> <factor> }  // remember rotation
-//  <mult-op>   => '*' | '/'  		(note this is integer division)
+//  <mult-op>   => '*' | '/'  		    (note this is integer division)
 //  <factor>    => <NUM> | <ID> | <paren-exp>
 //  <paren-exp> => '(' <equation> ')'
 
@@ -36,7 +36,7 @@ Token* getToken(char*& ch); // in Scanner.cpp
 // grammar rules given in the HW3 handout.
 void Parser::parseEquation(char*& ch, SS_Cell* cell) {
 
-    Parser::token = getToken(ch);
+    token = getToken(ch);
 
     Node* node = equation(ch);
     cell->setExpNode(node);

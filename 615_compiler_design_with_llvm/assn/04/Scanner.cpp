@@ -16,31 +16,6 @@
 
 using namespace std;
 
-// ASCII translation table for HW2
-// clang-format off
-const char HW2_Index[128] = {
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-
-    0, 0, 0, 7, 0, 0, 0, 0, // #
-    0, 0, 5, 3, 0, 4, 0, 6, // *, +, -, /
-    2, 2, 2, 2, 2, 2, 2, 2, // 0, 1, 2, 3, 4, 5, 6, 7
-    2, 2, 0, 0, 0, 0, 0, 0, // 8, 9
-
-    0, 1, 1, 1, 1, 1, 1, 0, // A, B, C, D, E, F
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0
-};
-// clang-format on
-
 // this routine is called by readInputFile and
 // by readCommandLine, one line at a time.
 // The newline will be missing. This routine
@@ -105,7 +80,7 @@ void scanLine(char* line, TableOfCells& symTab) {
                     } else if (*line == '=') {
 
                         *++line;
-                        // parseEquation(line, cell);
+                        Parser::parseEquation(line, cell);
                         cell->setKind(EXPRESSION);
                         cell->calculateExpression();
 
@@ -127,75 +102,13 @@ void scanLine(char* line, TableOfCells& symTab) {
     return;
 }
 
-// // This routine should be called by scanLine
-// // to parse the equation part of an equation
-// // line. This routine will be updated in HW3.
-// void parseEquation(char*& ch, SS_Cell* cell) {
-
-//     Token* left = getToken(ch);
-//     if (left->getKind() == ID) {
-//         cell->setLeft(left->getLexeme());
-//     } else {
-//         cout << "Error: unrecognized left ID token" << endl << flush;
-//     }
-//     delete left;
-
-//     Token* op = getToken(ch);
-//     int kind = op->getKind();
-//     if (kind == ADD) {
-//         cell->setOp(op_ADD);
-//     } else if (kind == SUB) {
-//         cell->setOp(op_SUB);
-//     } else if (kind == MULT) {
-//         cell->setOp(op_MULT);
-//     } else {
-//         cout << "Error: unrecognized operator token" << endl << flush;
-//     }
-//     delete op;
-
-//     Token* right = getToken(ch);
-//     if (right->getKind() == ID) {
-//         cell->setRight(right->getLexeme());
-//     } else {
-//         cout << "Error: unrecognized right ID token" << endl << flush;
-//     }
-//     delete right;
-
-//     return;
-// }
-
 Token* getToken(char*& ch) {
     string lexeme = "";
     TokenKind kind = T_ERROR;
 
     lstrip(ch);
-    bool scanned = false;
-    while (getHwIndex(*ch) && !scanned) {
-
-        if (getHwIndex(*ch) == 3) {
-            kind = ADD;
-            lexeme = *ch;
-            scanned = true;
-        } else if (getHwIndex(*ch) == 4) {
-            kind = SUB;
-            lexeme = *ch;
-            scanned = true;
-        } else if (getHwIndex(*ch) == 5) {
-            kind = MULT;
-            lexeme = *ch;
-            scanned = true;
-        } else if (getHwIndex(*ch) == 6) {
-            kind = DIV;
-            lexeme = *ch;
-            scanned = true;
-        } else if (getHwIndex(*ch) == 1 || getHwIndex(*ch) == 2) {
-            lexeme += *ch;
-            if (getHwIndex(*ch) == 2) {
-                kind = ID;
-                scanned = true;
-            }
-        }
-
+    while (*ch == ' ') {
+        lexeme += *ch;
         *ch++;
     }
 
