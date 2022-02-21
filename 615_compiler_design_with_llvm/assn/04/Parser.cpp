@@ -102,7 +102,6 @@ Node* Parser::addOp(char*& ch) {
     }
     temp->tok = lookahead;
     lookahead = match(ch, lookahead->getKind());
-    // lookahead = getToken(ch);
     return temp;
 }
 
@@ -110,11 +109,12 @@ Node* Parser::term(char*& ch) {
     std::cout << "term\n";
     Node* temp = factor(ch);
     while (lookahead->getLexeme() == "*" || lookahead->getLexeme() == "/") {
+
+        std::cout << "in loop\n";
         Node* op = mulOp(ch);
         op->left = temp;
         op->right = factor(ch);
         temp = op;
-        lookahead = getToken(ch);
     }
     std::cout << "/term\n";
     return temp;
@@ -129,7 +129,6 @@ Node* Parser::mulOp(char*& ch) {
     }
     temp->tok = lookahead;
     lookahead = match(ch, lookahead->getKind());
-    // lookahead = getToken(ch);
     return temp;
 }
 
