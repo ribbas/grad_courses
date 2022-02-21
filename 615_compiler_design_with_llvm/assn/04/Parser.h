@@ -26,14 +26,16 @@ public:
     static bool peek(TokenKind expectedToken);
     static Node* equation(char*& ch);
     static Node* addOp(char*& ch);
-    // static Node* equationRepr(Node* arg, char*& ch);
+    static Node* mulOp(char*& ch);
     static Node* term(char*& ch);
     static Node* factor(char*& ch);
-    // static Node* factorRepr(Node* arg, char*& ch);
-    static Node* parenExp(char*& ch);
+    // static Node* parenExp(char*& ch);
 
     static Token* match(char*& ch, TokenKind expected);
     friend Token* getToken(char*& ch); // in Scanner.cpp
+
+    static Node* number(char*& ch);
+    static Node* digit(char*& ch);
 };
 
 #endif // PARSER_H

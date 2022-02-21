@@ -78,53 +78,102 @@ Token* Parser::match(char*& ch, TokenKind expected) {
 }
 
 Node* Parser::equation(char*& ch) {
-
-    Node* temp = nullptr;
-    while (peek(ADD) || peek(SUB)) {
-        std::cout << "inside " << '\n';
+    std::cout << "equation\n";
+    Node* temp = term(ch);
+    std::cout << "back ";
+    std::cout << temp->tok->getLexeme() << '\n';
+    while (lookahead->getLexeme() == "+" || lookahead->getLexeme() == "-") {
         Node* op = addOp(ch);
-        op->right = temp;
-        op->tok = getToken(ch);
+        op->left = temp;
+        op->right = term(ch);
         temp = op;
+        lookahead = getToken(ch);
     }
-    std::cout << "here " << '\n';
     return temp;
 }
 
 Node* Parser::addOp(char*& ch) {
-
-    Node* op = nullptr;
-    Token* temp = nullptr;
-
-    switch (lookahead->getKind()) {
-        case ADD: {
-            temp = match(ch, ADD);
-            break;
-        }
-        case SUB: {
-            temp = match(ch, SUB);
-            break;
-        }
-        default: {
-            return 0;
-            break;
-        }
+    Node* temp = new Node();
+    if (lookahead->getLexeme() == "+") {
+        std::cout << "add\n";
+    } else if (lookahead->getLexeme() == "-") {
+        std::cout << "sub\n";
     }
-    op->tok = temp;
-    return op;
+    temp->tok = lookahead;
+    lookahead = getToken(ch);
+    return temp;
 }
 
 Node* Parser::term(char*& ch) {
-    // TBD ... This is to be filled in for HW3
-    return 0;
+    std::cout << "term\n";
+    Node* temp = factor(ch);
+    while (lookahead->getLexeme() == "*" || lookahead->getLexeme() == "/") {
+        Node* op = mulOp(ch);
+        op->left = temp;
+        op->right = factor(ch);
+        temp = op;
+        lookahead = getToken(ch);
+    }
+    return temp;
+}
+
+Node* Parser::mulOp(char*& ch) {
+    Node* temp = new Node();
+    if (lookahead->getLexeme() == "*") {
+        std::cout << "mul\n";
+    } else if (lookahead->getLexeme() == "/") {
+        std::cout << "div\n";
+    }
+    temp->tok = lookahead;
+    lookahead = getToken(ch);
+    return temp;
 }
 
 Node* Parser::factor(char*& ch) {
-    // TBD ... This is to be filled in for HW3
-    return 0;
+    std::cout << "factor\n";
+    Node* temp = new Node();
+    if (lookahead->getKind() == NUM) {
+        temp->tok = lookahead;
+        std::cout << "num " << temp->tok->getLexeme() << '\n';
+        lookahead = getToken(ch);
+    } else {
+        std::cout << "WOT " << lookahead->getKind() << '\n';
+    }
+    return temp;
+
+    // if (lookahead->getLexeme() == "(") {
+    //     lookahead = getToken(ch);
+    //     temp = equation(ch);
+    //     if (lookahead->getLexeme() == ")") {
+    //         lookahead = getToken(ch);
+    //     } else {
+    //         throw std::logic_error("FACTOR: unbalanced parentheses: invalid "
+    //                                "arithmetic expression");
+    //     }
+    // } else {
+    //     temp = number(ch);
+    // }
+    // std::cout << "back " << temp->tok->getLexeme() << '\n';
+    // return temp;
 }
 
-Node* Parser::parenExp(char*& ch) {
-    // TBD ... This is to be filled in for HW3
-    return 0;
+Node* Parser::number(char*& ch) {
+    std::cout << "num\n";
+    return digit(ch); // only parses single digits
+}
+
+Node* Parser::digit(char*& ch) {
+    std::cout << "digit\n";
+    Node* temp = new Node();
+    if (lookahead->getKind() == NUM) {
+        std::cout << "huh\n";
+        temp->tok = lookahead;
+        std::cout << "token added " << lookahead->getLexeme() << '\n';
+        lookahead = getToken(ch);
+        // } else {
+        //     throw std::logic_error(
+        //         "DIGIT: missing operand: invalid arithmetic expression");
+    }
+    std::cout << "done " << temp->tok->getLexeme() << '\n';
+    return temp;
 }
