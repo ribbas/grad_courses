@@ -51,6 +51,7 @@ void Parser::parseEquation(char*& ch, SS_Cell* cell) {
               << '\n';
 
     Node* node = equation(ch);
+    std::cout << "equation " << node->tok->getLexeme() << '\n';
     cell->setExpNode(node);
     if (!node) {
         std::cout << "Error: " << cell->getID() << "\n";
@@ -83,7 +84,7 @@ Node* Parser::equation(char*& ch) {
     std::cout << "equation\n";
     Node* temp = term(ch);
     std::cout << "back " << temp->tok->getLexeme() << '\n';
-    while (lookahead->getKind() == ADD || lookahead->getKind() == SUB) {
+    while (peek(ADD) || peek(SUB)) {
         std::cout << "in loop\n";
         Node* op = addOp(ch);
         op->left = temp;
@@ -123,7 +124,7 @@ Node* Parser::addOp(char*& ch) {
 Node* Parser::term(char*& ch) {
     std::cout << "term\n";
     Node* temp = factor(ch);
-    while (lookahead->getKind() == MULT || lookahead->getKind() == DIV) {
+    while (peek(MULT) || peek(DIV)) {
         Node* op = mulOp(ch);
         op->left = temp;
         op->right = factor(ch);
@@ -162,28 +163,33 @@ Node* Parser::mulOp(char*& ch) {
 Node* Parser::factor(char*& ch) {
     std::cout << "factor\n";
     Node* temp = new Node();
-    if (lookahead->getKind() == NUM || lookahead->getKind() == ID) {
+    if (peek(LPAREN) || peek(RPAREN)) {
+        temp = parenExp(ch);
+    } else if (peek(NUM) || peek(ID)) {
         temp->tok = lookahead;
         std::cout << "num " << temp->tok->getLexeme() << '\n';
         lookahead = match(ch, lookahead->getKind());
     } else {
-        std::cout << "WOT " << lookahead->getKind() << '\n';
+        std::cout << "NOOOOOOOOOOOOOOO " << lookahead->getKind() << '\n';
     }
     std::cout << "/factor\n";
     return temp;
+}
 
-    // if (lookahead->getLexeme() == "(") {
-    //     lookahead = getToken(ch);
-    //     temp = equation(ch);
-    //     if (lookahead->getLexeme() == ")") {
-    //         lookahead = getToken(ch);
-    //     } else {
-    //         throw std::logic_error("FACTOR: unbalanced parentheses: invalid "
-    //                                "arithmetic expression");
-    //     }
-    // } else {
-    //     temp = number(ch);
-    // }
-    // std::cout << "back " << temp->tok->getLexeme() << '\n';
-    // return temp;
+Node* Parser::parenExp(char*& ch) {
+    std::cout << "paren\n";
+    Node* temp = new Node();
+    if (peek(LPAREN)) {
+        lookahead = match(ch, LPAREN);
+        temp = equation(ch);
+        if (peek(RPAREN)) {
+            lookahead = match(ch, RPAREN);
+        } else {
+            throw std::logic_error("FACTOR: unbalanced parentheses: invalid "
+                                   "arithmetic expression");
+        }
+    }
+    std::cout << "/paren\n";
+    std::cout << "GOT THIS " << temp->tok->getKind() << '\n';
+    return temp;
 }
