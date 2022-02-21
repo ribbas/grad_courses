@@ -70,25 +70,26 @@ bool Parser::peek(TokenKind expectedToken) {
 }
 
 Token* Parser::match(char*& ch, TokenKind expected) {
-    if (peek(expected)) {
+
+    if (peek(expected))
         return getToken(ch);
-    } else {
-        return nullptr;
+    else {
+        std::cout << "unexpected token \n";
     }
 }
 
 Node* Parser::equation(char*& ch) {
     std::cout << "equation\n";
     Node* temp = term(ch);
-    std::cout << "back ";
-    std::cout << temp->tok->getLexeme() << '\n';
+    std::cout << "back " << temp->tok->getLexeme() << '\n';
     while (lookahead->getLexeme() == "+" || lookahead->getLexeme() == "-") {
+        std::cout << "in loop\n";
         Node* op = addOp(ch);
         op->left = temp;
         op->right = term(ch);
         temp = op;
-        lookahead = getToken(ch);
     }
+    std::cout << "out of loop " << lookahead->getLexeme() << '\n';
     return temp;
 }
 
@@ -100,7 +101,8 @@ Node* Parser::addOp(char*& ch) {
         std::cout << "sub\n";
     }
     temp->tok = lookahead;
-    lookahead = getToken(ch);
+    lookahead = match(ch, lookahead->getKind());
+    // lookahead = getToken(ch);
     return temp;
 }
 
@@ -114,6 +116,7 @@ Node* Parser::term(char*& ch) {
         temp = op;
         lookahead = getToken(ch);
     }
+    std::cout << "/term\n";
     return temp;
 }
 
@@ -125,7 +128,8 @@ Node* Parser::mulOp(char*& ch) {
         std::cout << "div\n";
     }
     temp->tok = lookahead;
-    lookahead = getToken(ch);
+    lookahead = match(ch, lookahead->getKind());
+    // lookahead = getToken(ch);
     return temp;
 }
 
@@ -135,10 +139,12 @@ Node* Parser::factor(char*& ch) {
     if (lookahead->getKind() == NUM) {
         temp->tok = lookahead;
         std::cout << "num " << temp->tok->getLexeme() << '\n';
-        lookahead = getToken(ch);
+        lookahead = match(ch, lookahead->getKind());
+        // lookahead = getToken(ch);
     } else {
         std::cout << "WOT " << lookahead->getKind() << '\n';
     }
+    std::cout << "/factor\n";
     return temp;
 
     // if (lookahead->getLexeme() == "(") {
@@ -157,23 +163,23 @@ Node* Parser::factor(char*& ch) {
     // return temp;
 }
 
-Node* Parser::number(char*& ch) {
-    std::cout << "num\n";
-    return digit(ch); // only parses single digits
-}
+// Node* Parser::number(char*& ch) {
+//     std::cout << "num\n";
+//     return digit(ch); // only parses single digits
+// }
 
-Node* Parser::digit(char*& ch) {
-    std::cout << "digit\n";
-    Node* temp = new Node();
-    if (lookahead->getKind() == NUM) {
-        std::cout << "huh\n";
-        temp->tok = lookahead;
-        std::cout << "token added " << lookahead->getLexeme() << '\n';
-        lookahead = getToken(ch);
-        // } else {
-        //     throw std::logic_error(
-        //         "DIGIT: missing operand: invalid arithmetic expression");
-    }
-    std::cout << "done " << temp->tok->getLexeme() << '\n';
-    return temp;
-}
+// Node* Parser::digit(char*& ch) {
+//     std::cout << "digit\n";
+//     Node* temp = new Node();
+//     if (lookahead->getKind() == NUM) {
+//         std::cout << "huh\n";
+//         temp->tok = lookahead;
+//         std::cout << "token added " << lookahead->getLexeme() << '\n';
+//         lookahead = getToken(ch);
+//         // } else {
+//         //     throw std::logic_error(
+//         //         "DIGIT: missing operand: invalid arithmetic expression");
+//     }
+//     std::cout << "done " << temp->tok->getLexeme() << '\n';
+//     return temp;
+// }
