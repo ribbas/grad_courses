@@ -19,9 +19,9 @@ using namespace std;
 
 enum command { CONTINUE, QUIT };
 
-// ASCII translation table for HW2
+// ASCII translation table
 // clang-format off
-const char HW2_Index[128] = {
+const char ASCII_Index[128] = {
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
@@ -57,7 +57,7 @@ void scanLine(char* line, TableOfCells& symTab);
 void parseText(char*& ch, SS_Cell* cell);
 void parseNumber(char*& ch, SS_Cell* cell);
 
-int getHwIndex(char ch);
+int getAsciiIndex(char ch);
 void lstrip(char*& ch);
 
 #endif /* SCANNER_H_ */

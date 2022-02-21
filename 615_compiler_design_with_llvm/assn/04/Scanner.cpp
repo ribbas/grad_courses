@@ -29,7 +29,7 @@ void scanLine(char* line, TableOfCells& symTab) {
         line_len++;
     }
 
-    int col_ix = getHwIndex(line[0]);
+    int col_ix = getAsciiIndex(line[0]);
 
     // if first char is '#'
     if (col_ix == 7) {
@@ -40,7 +40,7 @@ void scanLine(char* line, TableOfCells& symTab) {
     // if first char is a valid col char and line consists of at least 3 chars
     if (col_ix == 1 && line_len >= 3) {
 
-        int row_ix = getHwIndex(line[1]);
+        int row_ix = getAsciiIndex(line[1]);
         string row_id{line[0], line[1]};
 
         // if column and row indices are valid
@@ -71,8 +71,8 @@ void scanLine(char* line, TableOfCells& symTab) {
                         parseText(line, cell);
 
                         // if beginning of number
-                    } else if (getHwIndex(*line) == 2 ||
-                               getHwIndex(*line) == 4) {
+                    } else if (getAsciiIndex(*line) == 2 ||
+                               getAsciiIndex(*line) == 4) {
 
                         parseNumber(line, cell);
 
@@ -107,8 +107,33 @@ Token* getToken(char*& ch) {
     TokenKind kind = T_ERROR;
 
     lstrip(ch);
-    while (*ch == ' ') {
-        lexeme += *ch;
+    bool scanned = false;
+    while (getAsciiIndex(*ch) && !scanned) {
+
+        if (getAsciiIndex(*ch) == 3) {
+            kind = ADD;
+            lexeme = *ch;
+            scanned = true;
+        } else if (getAsciiIndex(*ch) == 4) {
+            kind = SUB;
+            lexeme = *ch;
+            scanned = true;
+        } else if (getAsciiIndex(*ch) == 5) {
+            kind = MULT;
+            lexeme = *ch;
+            scanned = true;
+        } else if (getAsciiIndex(*ch) == 6) {
+            kind = DIV;
+            lexeme = *ch;
+            scanned = true;
+        } else if (getAsciiIndex(*ch) == 1 || getAsciiIndex(*ch) == 2) {
+            lexeme += *ch;
+            if (getAsciiIndex(*ch) == 2) {
+                kind = NUM;
+                scanned = true;
+            }
+        }
+
         *ch++;
     }
 
@@ -157,7 +182,7 @@ void parseNumber(char*& ch, SS_Cell* cell) {
     while (*++ch) {
 
         // if char is numeric and value isn't parsed yet
-        if (getHwIndex(*ch) == 2 && !scannedValue) {
+        if (getAsciiIndex(*ch) == 2 && !scannedValue) {
             value += *ch;
 
         } else {
@@ -180,8 +205,8 @@ void parseNumber(char*& ch, SS_Cell* cell) {
     cell->setNUMCell(value);
 }
 
-int getHwIndex(char ch) {
-    return (int)HW2_Index[int(ch)];
+int getAsciiIndex(char ch) {
+    return (int)ASCII_Index[int(ch)];
 }
 
 void lstrip(char*& ch) {

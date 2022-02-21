@@ -15,15 +15,25 @@ using namespace std;
 
 // EBNF for homework parser
 //  <$>         => <equation>
-//  <equation>  => <term> { <add-op> <term> }        // remember rotation
+//  <equation>  => <term> { <add-op> <term> }
 //  <add-op>    => '+' | '-'
-//  <term>      => <factor> { < mult-op> <factor> }  // remember rotation
-//  <mult-op>   => '*' | '/'  		    (note this is integer division)
+//  <term>      => <factor> { <mult-op> <factor> }
+//  <mult-op>   => '*' | '/'
 //  <factor>    => <NUM> | <ID> | <paren-exp>
 //  <paren-exp> => '(' <equation> ')'
 
-Token* Parser::token;
-Token* getToken(char*& ch); // in Scanner.cpp
+// BNF
+//  <$>         => <equation>
+//  <equation>  => <term> <equation-repr>
+//  <equation-repr>  => <add-op> <term> <equation-repr> | e
+//  <add-op>    => '+' | '-'
+//  <term>      => <factor> <factor-repr>
+//  <factor-repr>  => <mult-op> <factor> <factor-repr> | e
+//  <mult-op>   => '*' | '/'
+//  <factor>    => <NUM> | <ID> | <paren-exp>
+//  <paren-exp> => '(' <equation> ')'
+
+Token* Parser::lookahead;
 
 // Any global variables for your HW3 parser
 // should be placed here.
@@ -36,10 +46,17 @@ Token* getToken(char*& ch); // in Scanner.cpp
 // grammar rules given in the HW3 handout.
 void Parser::parseEquation(char*& ch, SS_Cell* cell) {
 
-    token = getToken(ch);
+    lookahead = getToken(ch);
+    std::cout << "token " << lookahead->getLexeme() << lookahead->getKind()
+              << '\n';
 
     Node* node = equation(ch);
     cell->setExpNode(node);
+    if (!node) {
+        std::cout << "Error: " << cell->getID() << "\n";
+        cell->setError(true);
+        return;
+    }
 
     cell->identifyControllers(cell->getExpNode());
     cell->updateControllerUsers();
@@ -48,18 +65,53 @@ void Parser::parseEquation(char*& ch, SS_Cell* cell) {
     return;
 }
 
-bool Parser::nextIs(TokenKind expectedToken) {
-    return token->getKind() == expectedToken;
+bool Parser::peek(TokenKind expectedToken) {
+    return lookahead->getKind() == expectedToken;
 }
 
 Token* Parser::match(char*& ch, TokenKind expected) {
-    // TBD ... This is to be filled in for HW3
-    return 0;
+    if (peek(expected)) {
+        return getToken(ch);
+    } else {
+        return nullptr;
+    }
 }
 
 Node* Parser::equation(char*& ch) {
-    // TBD ... This is to be filled in for HW3
-    return 0;
+
+    Node* temp = nullptr;
+    while (peek(ADD) || peek(SUB)) {
+        std::cout << "inside " << '\n';
+        Node* op = addOp(ch);
+        op->right = temp;
+        op->tok = getToken(ch);
+        temp = op;
+    }
+    std::cout << "here " << '\n';
+    return temp;
+}
+
+Node* Parser::addOp(char*& ch) {
+
+    Node* op = nullptr;
+    Token* temp = nullptr;
+
+    switch (lookahead->getKind()) {
+        case ADD: {
+            temp = match(ch, ADD);
+            break;
+        }
+        case SUB: {
+            temp = match(ch, SUB);
+            break;
+        }
+        default: {
+            return 0;
+            break;
+        }
+    }
+    op->tok = temp;
+    return op;
 }
 
 Node* Parser::term(char*& ch) {
