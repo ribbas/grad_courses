@@ -110,28 +110,55 @@ Token* getToken(char*& ch) {
     bool scanned = false;
     while (getAsciiIndex(*ch) && !scanned) {
 
+        // if '+'
         if (getAsciiIndex(*ch) == 3) {
             kind = ADD;
             lexeme = *ch;
             scanned = true;
+
+            // if '-'
         } else if (getAsciiIndex(*ch) == 4) {
             kind = SUB;
             lexeme = *ch;
             scanned = true;
+
+            // if '*'
         } else if (getAsciiIndex(*ch) == 5) {
             kind = MULT;
             lexeme = *ch;
             scanned = true;
+
+            // if '/'
         } else if (getAsciiIndex(*ch) == 6) {
             kind = DIV;
             lexeme = *ch;
             scanned = true;
-        } else if (getAsciiIndex(*ch) == 1 || getAsciiIndex(*ch) == 2) {
+
+            // if '('
+        } else if (getAsciiIndex(*ch) == 8) {
+            kind = LPAREN;
+            lexeme = *ch;
+            scanned = true;
+
+            // if ')'
+        } else if (getAsciiIndex(*ch) == 9) {
+            kind = RPAREN;
+            lexeme = *ch;
+            scanned = true;
+
+            // if 'ID'
+        } else if (getAsciiIndex(*ch) == 1) {
             lexeme += *ch;
+            *ch++;
             if (getAsciiIndex(*ch) == 2) {
-                kind = NUM;
+                lexeme += *ch;
+                kind = ID;
                 scanned = true;
             }
+
+        } else if (getAsciiIndex(*ch) == 2) {
+            lexeme += *ch;
+            kind = NUM;
         }
 
         *ch++;

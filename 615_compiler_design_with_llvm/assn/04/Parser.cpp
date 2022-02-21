@@ -74,7 +74,8 @@ Token* Parser::match(char*& ch, TokenKind expected) {
     if (peek(expected))
         return getToken(ch);
     else {
-        std::cout << "unexpected token \n";
+        std::cerr << "Unexpected token: " << expected << '\n';
+        return nullptr;
     }
 }
 
@@ -82,7 +83,7 @@ Node* Parser::equation(char*& ch) {
     std::cout << "equation\n";
     Node* temp = term(ch);
     std::cout << "back " << temp->tok->getLexeme() << '\n';
-    while (lookahead->getLexeme() == "+" || lookahead->getLexeme() == "-") {
+    while (lookahead->getKind() == ADD || lookahead->getKind() == SUB) {
         std::cout << "in loop\n";
         Node* op = addOp(ch);
         op->left = temp;
@@ -94,23 +95,35 @@ Node* Parser::equation(char*& ch) {
 }
 
 Node* Parser::addOp(char*& ch) {
+
     Node* temp = new Node();
-    if (lookahead->getLexeme() == "+") {
-        std::cout << "add\n";
-    } else if (lookahead->getLexeme() == "-") {
-        std::cout << "sub\n";
+    TokenKind tempKind = T_ERROR;
+
+    switch (lookahead->getKind()) {
+        case ADD: {
+            tempKind = ADD;
+            break;
+        }
+
+        case SUB: {
+            tempKind = SUB;
+            break;
+        }
+
+        default: {
+            break;
+        }
     }
+
     temp->tok = lookahead;
-    lookahead = match(ch, lookahead->getKind());
+    lookahead = match(ch, tempKind);
     return temp;
 }
 
 Node* Parser::term(char*& ch) {
     std::cout << "term\n";
     Node* temp = factor(ch);
-    while (lookahead->getLexeme() == "*" || lookahead->getLexeme() == "/") {
-
-        std::cout << "in loop\n";
+    while (lookahead->getKind() == MULT || lookahead->getKind() == DIV) {
         Node* op = mulOp(ch);
         op->left = temp;
         op->right = factor(ch);
@@ -121,25 +134,38 @@ Node* Parser::term(char*& ch) {
 }
 
 Node* Parser::mulOp(char*& ch) {
+
     Node* temp = new Node();
-    if (lookahead->getLexeme() == "*") {
-        std::cout << "mul\n";
-    } else if (lookahead->getLexeme() == "/") {
-        std::cout << "div\n";
+    TokenKind tempKind = T_ERROR;
+
+    switch (lookahead->getKind()) {
+        case MULT: {
+            tempKind = MULT;
+            break;
+        }
+
+        case DIV: {
+            tempKind = DIV;
+            break;
+        }
+
+        default: {
+            break;
+        }
     }
+
     temp->tok = lookahead;
-    lookahead = match(ch, lookahead->getKind());
+    lookahead = match(ch, tempKind);
     return temp;
 }
 
 Node* Parser::factor(char*& ch) {
     std::cout << "factor\n";
     Node* temp = new Node();
-    if (lookahead->getKind() == NUM) {
+    if (lookahead->getKind() == NUM || lookahead->getKind() == ID) {
         temp->tok = lookahead;
         std::cout << "num " << temp->tok->getLexeme() << '\n';
         lookahead = match(ch, lookahead->getKind());
-        // lookahead = getToken(ch);
     } else {
         std::cout << "WOT " << lookahead->getKind() << '\n';
     }
@@ -161,24 +187,3 @@ Node* Parser::factor(char*& ch) {
     // std::cout << "back " << temp->tok->getLexeme() << '\n';
     // return temp;
 }
-
-// Node* Parser::number(char*& ch) {
-//     std::cout << "num\n";
-//     return digit(ch); // only parses single digits
-// }
-
-// Node* Parser::digit(char*& ch) {
-//     std::cout << "digit\n";
-//     Node* temp = new Node();
-//     if (lookahead->getKind() == NUM) {
-//         std::cout << "huh\n";
-//         temp->tok = lookahead;
-//         std::cout << "token added " << lookahead->getLexeme() << '\n';
-//         lookahead = getToken(ch);
-//         // } else {
-//         //     throw std::logic_error(
-//         //         "DIGIT: missing operand: invalid arithmetic expression");
-//     }
-//     std::cout << "done " << temp->tok->getLexeme() << '\n';
-//     return temp;
-// }
