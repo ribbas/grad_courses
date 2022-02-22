@@ -16,17 +16,12 @@
 
 using namespace std;
 
-// this routine is called by readInputFile and
-// by readCommandLine, one line at a time.
-// The newline will be missing. This routine
-// and those below must be filled in for HW2.
-void scanLine(char* line, TableOfCells& symTab) {
+bool isValidLine(char* line, unsigned int* lineLen) {
 
     // strip whitespace before ID
     lstrip(line);
-    unsigned int line_len = 0;
-    while (line[line_len]) {
-        line_len++;
+    while (line[*lineLen]) {
+        (*lineLen)++;
     }
 
     int col_ix = getAsciiIndex(line[0]);
@@ -34,24 +29,36 @@ void scanLine(char* line, TableOfCells& symTab) {
     // if first char is '#'
     if (col_ix == 7) {
         // comment line - do not continue parsing
-        return;
+        return false;
     }
 
-    // if first char is a valid col char and line consists of at least 3 chars
-    if (col_ix == 1 && line_len >= 3) {
+    return (col_ix == 1 && *lineLen >= 3);
+}
 
-        int row_ix = getAsciiIndex(line[1]);
-        string row_id{line[0], line[1]};
+// this routine is called by readInputFile and
+// by readCommandLine, one line at a time.
+// The newline will be missing. This routine
+// and those below must be filled in for HW2.
+void scanLine(char* line, TableOfCells& symTab) {
+
+    unsigned int lineLen = 0;
+    bool validLine = isValidLine(line, &lineLen);
+
+    // if first char is a valid col char and line consists of at least 3 chars
+    if (validLine) {
+
+        int rowIndex = getAsciiIndex(line[1]);
+        string rowId{line[0], line[1]};
 
         // if column and row indices are valid
-        if (row_ix == 2) {
+        if (rowIndex == 2) {
 
-            SS_Cell* cell = symTab.getCell(row_id);
+            SS_Cell* cell = symTab.getCell(rowId);
 
             if (line[2] == ' ') {
 
                 // if line consists of ID and a single whitespace, clear cell
-                if (line_len == 3) {
+                if (lineLen == 3) {
 
                     cell->setError(false);
                     cell->clearCell();
@@ -62,6 +69,7 @@ void scanLine(char* line, TableOfCells& symTab) {
                     for (unsigned int i = 0; i < 3; i++) {
                         *++line;
                     }
+
                     // strip whitespace after ID
                     lstrip(line);
 
@@ -93,9 +101,12 @@ void scanLine(char* line, TableOfCells& symTab) {
 
             if (cell->getError()) {
                 cell->setTXTCell("ERROR");
+            } else {
+                cell->calculateUserExpressions();
             }
         }
-    } else if (ASCII[*line] && line_len) {
+
+    } else if (ASCII[*line] && lineLen) {
         cout << "Error: Invalid ID" << endl << flush;
     }
 
@@ -103,6 +114,7 @@ void scanLine(char* line, TableOfCells& symTab) {
 }
 
 Token* getToken(char*& ch) {
+
     string lexeme = "";
     TokenKind kind = T_ERROR;
 
@@ -110,65 +122,80 @@ Token* getToken(char*& ch) {
     bool scanned = false;
     while (getAsciiIndex(*ch) && !scanned) {
 
-        // if '+'
-        if (getAsciiIndex(*ch) == 3) {
-            kind = ADD;
-            lexeme = *ch;
-            scanned = true;
-
-            // if '-'
-        } else if (getAsciiIndex(*ch) == 4) {
-            kind = SUB;
-            lexeme = *ch;
-            scanned = true;
-
-            // if '*'
-        } else if (getAsciiIndex(*ch) == 5) {
-            kind = MULT;
-            lexeme = *ch;
-            scanned = true;
-
-            // if '/'
-        } else if (getAsciiIndex(*ch) == 6) {
-            kind = DIV;
-            lexeme = *ch;
-            scanned = true;
-
-            // if '('
-        } else if (getAsciiIndex(*ch) == 8) {
-            kind = LPAREN;
-            lexeme = *ch;
-            scanned = true;
-
-            // if ')'
-        } else if (getAsciiIndex(*ch) == 9) {
-            kind = RPAREN;
-            lexeme = *ch;
-            scanned = true;
+        lexeme += *ch;
+        switch (getAsciiIndex(*ch)) {
 
             // if 'ID'
-        } else if (getAsciiIndex(*ch) == 1) {
-            lexeme += *ch;
-            *ch++;
-            if (getAsciiIndex(*ch) == 2) {
-                lexeme += *ch;
-                kind = ID;
-                scanned = true;
+            case 1: {
+                // if next character is NUM
+                if (getAsciiIndex(*(ch + 1)) == 2) {
+                    *ch++;
+                    lexeme += *ch;
+                    kind = ID;
+                    scanned = true;
+                }
+                break;
             }
 
-        } else if (getAsciiIndex(*ch) == 2) {
-            std::cout << "NUM " << *ch << '\n';
-            lexeme += *ch;
-            kind = NUM;
-            if (!(getAsciiIndex(*(ch + 1)) == 2)) {
+            // if 'NUM'
+            case 2: {
+                kind = NUM;
+                // if next character is not NUM
+                if (!(getAsciiIndex(*(ch + 1)) == 2)) {
+                    scanned = true;
+                }
+                break;
+            }
+
+            // if '+'
+            case 3: {
+                kind = ADD;
                 scanned = true;
+                break;
+            }
+
+            // if '-'
+            case 4: {
+                kind = SUB;
+                scanned = true;
+                break;
+            }
+
+            // if '*'
+            case 5: {
+                kind = MULT;
+                scanned = true;
+                break;
+            }
+
+            // if '/'
+            case 6: {
+                kind = DIV;
+                scanned = true;
+                break;
+            }
+
+            // if '('
+            case 8: {
+                kind = LPAREN;
+                scanned = true;
+                break;
+            }
+
+            // if ')'
+            case 9: {
+                kind = RPAREN;
+                scanned = true;
+                break;
+            }
+
+            default: {
+                break;
             }
         }
 
         *ch++;
     }
-
-    std::cout << "NEW TOK " << lexeme << '\n';
 
     return new Token(lexeme, kind);
 }

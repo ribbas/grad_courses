@@ -22,21 +22,9 @@ using namespace std;
 //  <factor>    => <NUM> | <ID> | <paren-exp>
 //  <paren-exp> => '(' <equation> ')'
 
-// BNF
-//  <$>         => <equation>
-//  <equation>  => <term> <equation-repr>
-//  <equation-repr>  => <add-op> <term> <equation-repr> | e
-//  <add-op>    => '+' | '-'
-//  <term>      => <factor> <factor-repr>
-//  <factor-repr>  => <mult-op> <factor> <factor-repr> | e
-//  <mult-op>   => '*' | '/'
-//  <factor>    => <NUM> | <ID> | <paren-exp>
-//  <paren-exp> => '(' <equation> ')'
-
-Token* Parser::lookahead;
-
 // Any global variables for your HW3 parser
 // should be placed here.
+Token* Parser::lookahead;
 
 // This routine should be called by scanLine
 // to parse the equation part of an equation
@@ -46,14 +34,21 @@ Token* Parser::lookahead;
 // grammar rules given in the HW3 handout.
 void Parser::parseEquation(char*& ch, SS_Cell* cell) {
 
-    lookahead = getToken(ch);
-    std::cout << "token " << lookahead->getLexeme() << lookahead->getKind()
-              << '\n';
+    string equationStr = std::string(ch);
+    cell->setEquation(equationStr.substr(0, equationStr.length() - 1));
 
-    Node* node = equation(ch);
-    std::cout << "equation " << node->tok->getLexeme() << '\n';
-    cell->setExpNode(node);
-    if (!node) {
+    lookahead = getToken(ch);
+
+    if (lookahead->getKind() == T_ERROR) {
+        std::cout << "Error: " << cell->getID() << "\n";
+        cell->setError(true);
+        return;
+    }
+
+    Node* equationNode = equation(ch);
+
+    cell->setExpNode(equationNode);
+    if (equationNode->error) {
         std::cout << "Error: " << cell->getID() << "\n";
         cell->setError(true);
         return;
@@ -73,34 +68,40 @@ bool Parser::peek(TokenKind expectedToken) {
 Token* Parser::match(char*& ch, TokenKind expected) {
 
     if (peek(expected))
+
         return getToken(ch);
+
     else {
+
         std::cerr << "Unexpected token: " << expected << '\n';
         return nullptr;
     }
 }
 
+// <equation> => <term> { <add-op> <term> }
 Node* Parser::equation(char*& ch) {
-    std::cout << "equation\n";
+
     Node* temp = term(ch);
-    std::cout << "back " << temp->tok->getLexeme() << '\n';
+
     while (peek(ADD) || peek(SUB)) {
-        std::cout << "in loop\n";
+
         Node* op = addOp(ch);
         op->left = temp;
         op->right = term(ch);
         temp = op;
     }
-    std::cout << "out of loop " << lookahead->getLexeme() << '\n';
+
     return temp;
 }
 
+// <add-op> => '+' | '-'
 Node* Parser::addOp(char*& ch) {
 
     Node* temp = new Node();
     TokenKind tempKind = T_ERROR;
 
     switch (lookahead->getKind()) {
+
         case ADD: {
             tempKind = ADD;
             break;
@@ -121,25 +122,30 @@ Node* Parser::addOp(char*& ch) {
     return temp;
 }
 
+// <term> => <factor> { <mult-op> <factor> }
 Node* Parser::term(char*& ch) {
-    std::cout << "term\n";
+
     Node* temp = factor(ch);
+
     while (peek(MULT) || peek(DIV)) {
+
         Node* op = mulOp(ch);
         op->left = temp;
         op->right = factor(ch);
         temp = op;
     }
-    std::cout << "/term\n";
+
     return temp;
 }
 
+// <mult-op> => '*' | '/'
 Node* Parser::mulOp(char*& ch) {
 
     Node* temp = new Node();
     TokenKind tempKind = T_ERROR;
 
     switch (lookahead->getKind()) {
+
         case MULT: {
             tempKind = MULT;
             break;
@@ -160,38 +166,53 @@ Node* Parser::mulOp(char*& ch) {
     return temp;
 }
 
+// <factor> => <NUM> | <ID> | <paren-exp>
 Node* Parser::factor(char*& ch) {
-    std::cout << "factor\n";
+
     Node* temp = new Node();
+
     if (peek(LPAREN) || peek(RPAREN)) {
+
         temp = parenExp(ch);
+
     } else if (peek(NUM) || peek(ID)) {
+
         temp->tok = lookahead;
-        std::cout << "num " << temp->tok->getLexeme() << '\n';
         lookahead = match(ch, lookahead->getKind());
-    } else {
-        std::cout << "NOOOOOOOOOOOOOOO " << lookahead->getKind() << '\n';
     }
-    std::cout << "/factor\n";
+
     return temp;
 }
 
+// <paren-exp> => '(' <equation> ')'
 Node* Parser::parenExp(char*& ch) {
-    std::cout << "paren" << *ch << '\n';
+
     Node* temp = new Node();
+    bool unbalancedParen = false;
+
     if (peek(LPAREN)) {
+
         lookahead = match(ch, LPAREN);
-        std::cout << "leaving paren\n";
         temp = equation(ch);
-        std::cout << "back paren\n";
+
         if (peek(RPAREN)) {
+
             lookahead = match(ch, RPAREN);
+
+            if (peek(RPAREN)) {
+                unbalancedParen = true;
+            }
+
         } else {
-            throw std::logic_error("FACTOR: unbalanced parentheses: invalid "
-                                   "arithmetic expression");
+            unbalancedParen = true;
         }
     }
-    std::cout << "/paren\n";
-    std::cout << "GOT THIS " << temp->tok->getKind() << '\n';
+
+    if (unbalancedParen) {
+        temp->error = true;
+        std::cerr << "FACTOR: unbalanced parentheses: invalid arithmetic "
+                     "expression\n";
+    }
+
     return temp;
 }
