@@ -177,11 +177,13 @@ Node* Parser::factor(char*& ch) {
 }
 
 Node* Parser::parenExp(char*& ch) {
-    std::cout << "paren\n";
+    std::cout << "paren" << *ch << '\n';
     Node* temp = new Node();
     if (peek(LPAREN)) {
         lookahead = match(ch, LPAREN);
+        std::cout << "leaving paren\n";
         temp = equation(ch);
+        std::cout << "back paren\n";
         if (peek(RPAREN)) {
             lookahead = match(ch, RPAREN);
         } else {

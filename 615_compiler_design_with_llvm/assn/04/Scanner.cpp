@@ -157,12 +157,18 @@ Token* getToken(char*& ch) {
             }
 
         } else if (getAsciiIndex(*ch) == 2) {
+            std::cout << "NUM " << *ch << '\n';
             lexeme += *ch;
             kind = NUM;
+            if (!(getAsciiIndex(*(ch + 1)) == 2)) {
+                scanned = true;
+            }
         }
 
         *ch++;
     }
+
+    std::cout << "NEW TOK " << lexeme << '\n';
 
     return new Token(lexeme, kind);
 }
