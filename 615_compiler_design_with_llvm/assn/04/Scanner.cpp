@@ -22,13 +22,12 @@ using namespace std;
 void scanLine(char* line, TableOfCells& symTab) {
 
     // strip whitespace before ID
-    lstrip(line);
+    stripLeadingWS(line);
     lineKind validLine = getLineKind(line);
 
     // if first char is a valid col char and line consists of at least 3 chars
     if (validLine == VALIDLINE || validLine == BLANKLINE) {
 
-        // int rowIndex = getAsciiIndex(line[1]);
         string rowId{line[0], line[1]};
         SS_Cell* cell = symTab.getCell(rowId);
 
@@ -46,7 +45,7 @@ void scanLine(char* line, TableOfCells& symTab) {
             }
 
             // strip whitespace after ID
-            lstrip(line);
+            stripLeadingWS(line);
 
             // if beginning of text
             if (*line == '"') {
@@ -54,7 +53,7 @@ void scanLine(char* line, TableOfCells& symTab) {
                 parseText(line, cell);
 
                 // if beginning of number
-            } else if (getAsciiIndex(*line) == 2 || getAsciiIndex(*line) == 4) {
+            } else if (isIdNum(line) || *line == '-') {
 
                 parseNumber(line, cell);
 
@@ -95,72 +94,72 @@ Token* getToken(char*& ch) {
     while (*ch && !scanned) {
 
         lexeme += *ch;
-        switch (getAsciiIndex(*ch)) {
+        switch (*ch) {
 
             // if 'ID'
-            case 1: {
+            case 'A' ... 'F': {
+
                 // if next character is NUM
-                if (getAsciiIndex(*(ch + 1)) == 2) {
+                if (isIdNum(ch + 1)) {
                     ch++;
                     lexeme += *ch;
                     kind = ID;
                     scanned = true;
                 }
+
                 break;
             }
 
             // if 'NUM'
-            case 2: {
+            case '0' ... '9': {
                 kind = NUM;
+
                 // if next character is not NUM
-                if (!(getAsciiIndex(*(ch + 1)) == 2)) {
+                if (!isIdNum(ch + 1)) {
                     scanned = true;
                 }
+
                 break;
             }
 
-            // if '+'
-            case 3: {
+            case '+': {
                 kind = ADD;
                 scanned = true;
                 break;
             }
 
-            // if '-'
-            case 4: {
+            case '-': {
                 kind = SUB;
                 scanned = true;
                 break;
             }
 
-            // if '*'
-            case 5: {
+            case '*': {
                 kind = MULT;
                 scanned = true;
                 break;
             }
 
-            // if '/'
-            case 6: {
+            case '/': {
                 kind = DIV;
                 scanned = true;
                 break;
             }
 
-            // if '('
-            case 8: {
+            case '(': {
                 kind = LPAREN;
                 scanned = true;
                 break;
             }
 
-            // if ')'
-            case 9: {
+            case ')': {
                 kind = RPAREN;
                 scanned = true;
                 break;
             }
 
+            // unsupported token - create an error token with the rest of the
+            // equation as the lexeme
             default: {
                 lexeme = ch;
                 scanned = true;
@@ -216,7 +215,7 @@ void parseNumber(char*& ch, SS_Cell* cell) {
     while (*++ch) {
 
         // if char is numeric and value isn't parsed yet
-        if (getAsciiIndex(*ch) == 2 && !scannedValue) {
+        if (isIdNum(ch) && !scannedValue) {
             value += *ch;
 
         } else {
@@ -242,25 +241,21 @@ void parseNumber(char*& ch, SS_Cell* cell) {
 lineKind getLineKind(char* line) {
 
     unsigned int lineLen = 0;
-    // lstrip(line);
     while (line[lineLen]) {
         (lineLen)++;
     }
 
-    int colIndex = getAsciiIndex(line[0]);
-    int rowIndex = getAsciiIndex(line[1]);
-
     // if first char is '#'
-    if (colIndex == 7) {
+    if (*line == '#') {
         // comment line - do not continue parsing
         return NOOPLINE;
     }
 
     // if column and row indices are valid
-    if (rowIndex == 2 && line[2] == ' ') {
+    if (isIdNum(line + 1) && line[2] == ' ') {
 
         // if first char is 'A'-'F'
-        if (colIndex == 1 && lineLen > 3) {
+        if (*line >= 'A' && *line < 'G' && lineLen > 3) {
 
             return VALIDLINE;
 
@@ -277,12 +272,20 @@ lineKind getLineKind(char* line) {
     }
 }
 
-int getAsciiIndex(char ch) {
-    return (int)ASCII_Index[int(ch)];
-}
-
-void lstrip(char*& ch) {
+void stripLeadingWS(char*& ch) {
     while (*ch == ' ') {
         ch++;
+    }
+}
+
+bool isIdNum(char* ch) {
+    // if next character is NUM
+    switch (*ch) {
+        case '0' ... '9': {
+            return true;
+        }
+        default: {
+            return false;
+        }
     }
 }

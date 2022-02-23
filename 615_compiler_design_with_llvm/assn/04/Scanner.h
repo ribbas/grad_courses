@@ -20,31 +20,6 @@ using namespace std;
 enum command { CONTINUE, QUIT };
 enum lineKind { BLANKLINE, NOOPLINE, VALIDLINE, INVALIDLINE }; // line kind
 
-// ASCII translation table
-// clang-format off
-const char ASCII_Index[128] = {
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-
-    0, 0, 0, 7, 0, 0, 0, 0, // #
-    8, 9, 5, 3, 0, 4, 0, 6, // (, ), *, +, -, /
-    2, 2, 2, 2, 2, 2, 2, 2, // 0, 1, 2, 3, 4, 5, 6, 7
-    2, 2, 0, 0, 0, 0, 0, 0, // 8, 9
-
-    0, 1, 1, 1, 1, 1, 1, 0, // A, B, C, D, E, F
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0
-};
-// clang-format on
-
 // These routines are in SS_Scanner_Support.cpp
 void readInputFile(ifstream& ifs, TableOfCells& symTab);
 command readCommandLine(TableOfCells& symTab);
@@ -53,8 +28,8 @@ void printUsage(const string name);
 void printEntryOptions();
 
 lineKind getLineKind(char* line);
-int getAsciiIndex(char ch);
-void lstrip(char*& ch);
+void stripLeadingWS(char*& ch);
+bool isIdNum(char* ch);
 
 void parseText(char*& ch, SS_Cell* cell);
 void parseNumber(char*& ch, SS_Cell* cell);
