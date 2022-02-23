@@ -61,10 +61,16 @@ void Parser::parseEquation(char*& ch, SS_Cell* cell) {
     return;
 }
 
+/*
+ * Check if the TokenKind matches without updating lookahead
+ */
 bool Parser::peek(TokenKind expectedToken) {
     return lookahead->getKind() == expectedToken;
 }
 
+/*
+ * Update lookahead token if the TokenKind matches
+ */
 Token* Parser::match(char*& ch, TokenKind expected) {
 
     if (peek(expected)) {
