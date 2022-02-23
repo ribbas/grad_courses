@@ -12,7 +12,6 @@
 #include "Node.h"
 #include "SS_Cell.h"
 #include "Token.h"
-#include <string>
 
 using namespace std;
 

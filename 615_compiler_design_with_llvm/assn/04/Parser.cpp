@@ -1,18 +1,11 @@
 // Parser.cpp
 // Allyn Shell
 // July 2019
+//
 // Modified by:
-// TBD ... This is to be filled in for HW3
-// Modified date:
-// TBD ... This is to be filled in for HW3
-
-#include "Parser.h"
-#include "SS_Cell.h"
-#include "Token.h"
-#include <iostream>
-
-using namespace std;
-
+// Sabbir Ahmed
+// 2/22/2022
+//
 // EBNF for homework parser
 //  <$>         => <equation>
 //  <equation>  => <term> { <add-op> <term> }
@@ -21,6 +14,13 @@ using namespace std;
 //  <mult-op>   => '*' | '/'
 //  <factor>    => <NUM> | <ID> | <paren-exp>
 //  <paren-exp> => '(' <equation> ')'
+
+#include "Parser.h"
+#include "SS_Cell.h"
+#include "Token.h"
+#include <iostream>
+
+using namespace std;
 
 // Any global variables for your HW3 parser
 // should be placed here.
@@ -40,16 +40,15 @@ void Parser::parseEquation(char*& ch, SS_Cell* cell) {
     lookahead = getToken(ch);
 
     if (lookahead->getKind() == T_ERROR) {
-        std::cout << "Error: " << cell->getID() << "\n";
+        std::cerr << "Error: invalid token in " << cell->getID() << '\n';
         cell->setError(true);
         return;
     }
 
     Node* equationNode = equation(ch);
-
     cell->setExpNode(equationNode);
     if (equationNode->error) {
-        std::cout << "Error: " << cell->getID() << "\n";
+        std::cerr << "Error: invalid equation in " << cell->getID() << '\n';
         cell->setError(true);
         return;
     }
@@ -83,8 +82,10 @@ Node* Parser::equation(char*& ch) {
 
     Node* temp = term(ch);
 
+    // if next token is '+' or '-'
     while (peek(ADD) || peek(SUB)) {
 
+        // rotate nodes
         Node* op = addOp(ch);
         op->left = temp;
         op->right = term(ch);
@@ -127,8 +128,10 @@ Node* Parser::term(char*& ch) {
 
     Node* temp = factor(ch);
 
+    // if next token is '*' or '/'
     while (peek(MULT) || peek(DIV)) {
 
+        // rotate nodes
         Node* op = mulOp(ch);
         op->left = temp;
         op->right = factor(ch);
@@ -171,10 +174,12 @@ Node* Parser::factor(char*& ch) {
 
     Node* temp = new Node();
 
+    // if next token is '(' or ')'
     if (peek(LPAREN) || peek(RPAREN)) {
 
         temp = parenExp(ch);
 
+        // if next token is 'NUM' or 'ID'
     } else if (peek(NUM) || peek(ID)) {
 
         temp->tok = lookahead;
@@ -188,29 +193,33 @@ Node* Parser::factor(char*& ch) {
 Node* Parser::parenExp(char*& ch) {
 
     Node* temp = new Node();
-    bool unbalancedParen = false;
+    bool imbalancedParen = false;
 
+    // if next token is '('
     if (peek(LPAREN)) {
 
         lookahead = match(ch, LPAREN);
         temp = equation(ch);
 
+        // if next token is ')'
         if (peek(RPAREN)) {
 
             lookahead = match(ch, RPAREN);
 
+            // if next token is ')' again
             if (peek(RPAREN)) {
-                unbalancedParen = true;
+                imbalancedParen = true;
             }
 
         } else {
-            unbalancedParen = true;
+            imbalancedParen = true;
         }
     }
 
-    if (unbalancedParen) {
+    // if next token is '('
+    if (imbalancedParen) {
         temp->error = true;
-        std::cerr << "FACTOR: unbalanced parentheses: invalid arithmetic "
+        std::cerr << "FACTOR: imbalanced parentheses: invalid arithmetic "
                      "expression\n";
     }
 

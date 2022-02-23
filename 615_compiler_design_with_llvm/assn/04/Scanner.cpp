@@ -16,98 +16,71 @@
 
 using namespace std;
 
-bool isValidLine(char* line, unsigned int* lineLen) {
-
-    // strip whitespace before ID
-    lstrip(line);
-    while (line[*lineLen]) {
-        (*lineLen)++;
-    }
-
-    int col_ix = getAsciiIndex(line[0]);
-
-    // if first char is '#'
-    if (col_ix == 7) {
-        // comment line - do not continue parsing
-        return false;
-    }
-
-    return (col_ix == 1 && *lineLen >= 3);
-}
-
 // this routine is called by readInputFile and
 // by readCommandLine, one line at a time.
 // The newline will be missing. This routine
 // and those below must be filled in for HW2.
 void scanLine(char* line, TableOfCells& symTab) {
 
-    unsigned int lineLen = 0;
-    bool validLine = isValidLine(line, &lineLen);
+    lineKind validLine = getLineKind(line);
 
     // if first char is a valid col char and line consists of at least 3 chars
-    if (validLine) {
+    if (validLine == VALIDLINE || validLine == BLANKLINE) {
 
-        int rowIndex = getAsciiIndex(line[1]);
+        // int rowIndex = getAsciiIndex(line[1]);
         string rowId{line[0], line[1]};
+        SS_Cell* cell = symTab.getCell(rowId);
 
-        // if column and row indices are valid
-        if (rowIndex == 2) {
+        // clear cell
+        if (validLine == BLANKLINE) {
 
-            SS_Cell* cell = symTab.getCell(rowId);
+            cell->setError(false);
+            cell->clearCell();
 
-            if (line[2] == ' ') {
+        } else {
 
-                // if line consists of ID and a single whitespace, clear cell
-                if (lineLen == 3) {
-
-                    cell->setError(false);
-                    cell->clearCell();
-
-                } else {
-
-                    // move pointer to after ID
-                    for (unsigned int i = 0; i < 3; i++) {
-                        *++line;
-                    }
-
-                    // strip whitespace after ID
-                    lstrip(line);
-
-                    // if beginning of text
-                    if (*line == '"') {
-
-                        parseText(line, cell);
-
-                        // if beginning of number
-                    } else if (getAsciiIndex(*line) == 2 ||
-                               getAsciiIndex(*line) == 4) {
-
-                        parseNumber(line, cell);
-
-                        // if beginning of equation
-                    } else if (*line == '=') {
-
-                        *++line;
-                        Parser::parseEquation(line, cell);
-                        cell->setKind(EXPRESSION);
-                        cell->calculateExpression();
-
-                        // if cell is of any other type, it is an error cell
-                    } else {
-                        cell->setError(true);
-                    }
-                }
+            // move pointer to after ID
+            for (unsigned int i = 0; i < 3; i++) {
+                *++line;
             }
 
-            if (cell->getError()) {
-                cell->setTXTCell("ERROR");
+            // strip whitespace after ID
+            lstrip(line);
+
+            // if beginning of text
+            if (*line == '"') {
+
+                parseText(line, cell);
+
+                // if beginning of number
+            } else if (getAsciiIndex(*line) == 2 || getAsciiIndex(*line) == 4) {
+
+                parseNumber(line, cell);
+
+                // if beginning of equation
+            } else if (*line == '=') {
+
+                *++line;
+                Parser::parseEquation(line, cell);
+                cell->setKind(EXPRESSION);
+                cell->calculateExpression();
+
+                // if cell is of any other type, it is an error cell
             } else {
-                cell->calculateUserExpressions();
+                cell->setError(true);
             }
         }
 
-    } else if (ASCII[*line] && lineLen) {
-        cout << "Error: Invalid ID" << endl << flush;
+        if (cell->getError()) {
+            cell->setDisplay("ERROR");
+        } else {
+            std::cout << "recalc\n";
+            cell->calculateUserExpressions();
+        }
+    }
+
+    if (validLine == INVALIDLINE) {
+        cout << "Error: Invalid cell: " << line << '\n';
     }
 
     return;
@@ -263,6 +236,45 @@ void parseNumber(char*& ch, SS_Cell* cell) {
     }
 
     cell->setNUMCell(value);
+}
+
+lineKind getLineKind(char* line) {
+
+    unsigned int lineLen = 0;
+    // strip whitespace before ID
+    lstrip(line);
+    while (line[lineLen]) {
+        (lineLen)++;
+    }
+
+    int colIndex = getAsciiIndex(line[0]);
+    int rowIndex = getAsciiIndex(line[1]);
+
+    // if first char is '#'
+    if (colIndex == 7) {
+        // comment line - do not continue parsing
+        return NOOPLINE;
+    }
+
+    // if column and row indices are valid
+    if (rowIndex == 2 && line[2] == ' ') {
+
+        // if first char is 'A'-'F'
+        if (colIndex == 1 && lineLen > 3) {
+
+            return VALIDLINE;
+
+            // if line consists of ID and a single whitespace,
+        } else if (lineLen == 3) {
+            return BLANKLINE;
+        }
+    }
+
+    if (ASCII[*line] && lineLen) {
+        return INVALIDLINE;
+    } else {
+        return NOOPLINE;
+    }
 }
 
 int getAsciiIndex(char ch) {

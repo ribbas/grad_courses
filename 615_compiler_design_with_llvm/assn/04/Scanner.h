@@ -18,6 +18,7 @@
 using namespace std;
 
 enum command { CONTINUE, QUIT };
+enum lineKind { BLANKLINE, NOOPLINE, VALIDLINE, INVALIDLINE }; // line kind
 
 // ASCII translation table
 // clang-format off
@@ -51,13 +52,13 @@ void cellTests(TableOfCells& symTab);
 void printUsage(const string name);
 void printEntryOptions();
 
-// These routines are defined in Scanner.cpp
-void scanLine(char* line, TableOfCells& symTab);
+lineKind getLineKind(char* line);
+int getAsciiIndex(char ch);
+void lstrip(char*& ch);
 
 void parseText(char*& ch, SS_Cell* cell);
 void parseNumber(char*& ch, SS_Cell* cell);
 
-int getAsciiIndex(char ch);
-void lstrip(char*& ch);
+void scanLine(char* line, TableOfCells& symTab);
 
 #endif /* SCANNER_H_ */
