@@ -18,6 +18,7 @@
 #include "Parser.h"
 #include "SS_Cell.h"
 #include "Token.h"
+#include <cstring>
 #include <iostream>
 
 using namespace std;
@@ -25,6 +26,20 @@ using namespace std;
 // Any global variables for your HW3 parser
 // should be placed here.
 Token* Parser::lookahead;
+
+char* stripWS(char* input) {
+    int i, j;
+    char* output = input;
+    for (i = 0, j = 0; i < strlen(input); i++, j++) {
+        if (input[i] != ' ' && input[i] != '\n' && input[i] != '\r') {
+            output[j] = input[i];
+        } else {
+            j--;
+        }
+    }
+    output[j] = 0;
+    return output;
+}
 
 // This routine should be called by scanLine
 // to parse the equation part of an equation
@@ -34,8 +49,7 @@ Token* Parser::lookahead;
 // grammar rules given in the HW3 handout.
 void Parser::parseEquation(char*& ch, SS_Cell* cell) {
 
-    string equationStr = std::string(ch);
-    cell->setEquation(equationStr.substr(0, equationStr.length() - 1));
+    cell->setEquation(stripWS(ch));
 
     lookahead = getToken(ch);
 
