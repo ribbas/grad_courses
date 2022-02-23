@@ -26,20 +26,7 @@ using namespace std;
 // Any global variables for your HW3 parser
 // should be placed here.
 Token* Parser::lookahead;
-
-char* stripWS(char* input) {
-    int i, j;
-    char* output = input;
-    for (i = 0, j = 0; i < strlen(input); i++, j++) {
-        if (input[i] != ' ' && input[i] != '\n' && input[i] != '\r') {
-            output[j] = input[i];
-        } else {
-            j--;
-        }
-    }
-    output[j] = 0;
-    return output;
-}
+bool Parser::invalidToken = false;
 
 // This routine should be called by scanLine
 // to parse the equation part of an equation
@@ -49,8 +36,8 @@ char* stripWS(char* input) {
 // grammar rules given in the HW3 handout.
 void Parser::parseEquation(char*& ch, SS_Cell* cell) {
 
-    cell->setEquation(stripWS(ch));
-
+    ch = stripWS(ch);
+    cell->setEquation(ch);
     lookahead = getToken(ch);
 
     if (lookahead->getKind() == T_ERROR) {
@@ -60,14 +47,14 @@ void Parser::parseEquation(char*& ch, SS_Cell* cell) {
     }
 
     Node* equationNode = equation(ch);
-    cell->setExpNode(equationNode);
-    if (equationNode->error) {
+    if (invalidToken || !equationNode || equationNode->error) {
         std::cerr << "Error: invalid equation in " << cell->getID() << '\n';
         cell->setError(true);
         return;
     }
 
-    cell->identifyControllers(cell->getExpNode());
+    cell->setExpNode(equationNode);
+    cell->identifyControllers(equationNode);
     cell->updateControllerUsers();
     cell->calculateExpression();
 
@@ -80,14 +67,19 @@ bool Parser::peek(TokenKind expectedToken) {
 
 Token* Parser::match(char*& ch, TokenKind expected) {
 
-    if (peek(expected))
+    if (peek(expected)) {
 
-        return getToken(ch);
+        Token* nextToken = getToken(ch);
+        if ((nextToken->getKind() == T_ERROR) &&
+            (nextToken->getLexeme().length())) {
+            invalidToken = true;
+        }
+        return nextToken;
 
-    else {
+    } else {
 
         std::cerr << "Unexpected token: " << expected << '\n';
-        return nullptr;
+        return 0;
     }
 }
 
@@ -238,4 +230,18 @@ Node* Parser::parenExp(char*& ch) {
     }
 
     return temp;
+}
+
+char* stripWS(char* input) {
+    unsigned int i, j;
+    char* output = input;
+    for (i = 0, j = 0; i < strlen(input); i++, j++) {
+        if (ASCII[(int)input[i]]) {
+            output[j] = input[i];
+        } else {
+            j--;
+        }
+    }
+    output[j] = 0;
+    return output;
 }

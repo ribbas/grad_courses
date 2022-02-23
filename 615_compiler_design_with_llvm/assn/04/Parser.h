@@ -16,9 +16,11 @@
 using namespace std;
 
 Token* getToken(char*& ch); // in Scanner.cpp
+char* stripWS(char* input);
 
 class Parser {
     static Token* lookahead;
+    static bool invalidToken;
 
 public:
     static void parseEquation(char*& ch, SS_Cell* cell);

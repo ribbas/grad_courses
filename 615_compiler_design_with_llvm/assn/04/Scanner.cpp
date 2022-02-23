@@ -10,7 +10,6 @@
 #include "Parser.h"
 #include "SS_Cell.h"
 #include "Token.h"
-#include <fstream>
 #include <iostream>
 #include <string>
 
@@ -22,6 +21,8 @@ using namespace std;
 // and those below must be filled in for HW2.
 void scanLine(char* line, TableOfCells& symTab) {
 
+    // strip whitespace before ID
+    lstrip(line);
     lineKind validLine = getLineKind(line);
 
     // if first char is a valid col char and line consists of at least 3 chars
@@ -41,7 +42,7 @@ void scanLine(char* line, TableOfCells& symTab) {
 
             // move pointer to after ID
             for (unsigned int i = 0; i < 3; i++) {
-                *++line;
+                ++line;
             }
 
             // strip whitespace after ID
@@ -60,7 +61,7 @@ void scanLine(char* line, TableOfCells& symTab) {
                 // if beginning of equation
             } else if (*line == '=') {
 
-                *++line;
+                ++line;
                 Parser::parseEquation(line, cell);
                 cell->setKind(EXPRESSION);
                 cell->calculateExpression();
@@ -74,13 +75,12 @@ void scanLine(char* line, TableOfCells& symTab) {
         if (cell->getError()) {
             cell->setDisplay("ERROR");
         } else {
-            std::cout << "recalc\n";
             cell->calculateUserExpressions();
         }
     }
 
     if (validLine == INVALIDLINE) {
-        cout << "Error: Invalid cell: " << line << '\n';
+        cerr << "Error: Invalid cell: " << line << '\n';
     }
 
     return;
@@ -91,9 +91,8 @@ Token* getToken(char*& ch) {
     string lexeme = "";
     TokenKind kind = T_ERROR;
 
-    lstrip(ch);
     bool scanned = false;
-    while (getAsciiIndex(*ch) && !scanned) {
+    while (*ch && !scanned) {
 
         lexeme += *ch;
         switch (getAsciiIndex(*ch)) {
@@ -102,7 +101,7 @@ Token* getToken(char*& ch) {
             case 1: {
                 // if next character is NUM
                 if (getAsciiIndex(*(ch + 1)) == 2) {
-                    *ch++;
+                    ch++;
                     lexeme += *ch;
                     kind = ID;
                     scanned = true;
@@ -163,11 +162,13 @@ Token* getToken(char*& ch) {
             }
 
             default: {
+                lexeme = ch;
+                scanned = true;
                 break;
             }
         }
 
-        *ch++;
+        ch++;
     }
 
     return new Token(lexeme, kind);
@@ -178,14 +179,14 @@ void parseText(char*& ch, SS_Cell* cell) {
     string value = "";
     // move pointer of line up to the first quote
     while (*ch != '"') {
-        *ch++;
+        ch++;
     }
-    *ch++;
+    ch++;
 
     // move ch into value up to the second quote or nullptr
     while (*ch && *ch != '"') {
         value += *ch;
-        *ch++;
+        ch++;
     }
 
     if (*ch == '"') {
@@ -193,7 +194,7 @@ void parseText(char*& ch, SS_Cell* cell) {
         // if more chars present after second quote
         while (*++ch) {
             // if non-whitespace char, label as an error cell
-            if (ASCII[*ch]) {
+            if (ASCII[(int)*ch]) {
                 cell->setError(true);
                 return;
             }
@@ -221,7 +222,7 @@ void parseNumber(char*& ch, SS_Cell* cell) {
         } else {
 
             // if trailing chars are non-numeric and non-whitespace
-            if (ASCII[*ch]) {
+            if (ASCII[(int)*ch]) {
                 // label cell as an error cell
                 cell->setError(true);
                 return;
@@ -241,8 +242,7 @@ void parseNumber(char*& ch, SS_Cell* cell) {
 lineKind getLineKind(char* line) {
 
     unsigned int lineLen = 0;
-    // strip whitespace before ID
-    lstrip(line);
+    // lstrip(line);
     while (line[lineLen]) {
         (lineLen)++;
     }
@@ -270,7 +270,7 @@ lineKind getLineKind(char* line) {
         }
     }
 
-    if (ASCII[*line] && lineLen) {
+    if (ASCII[(int)*line] && lineLen) {
         return INVALIDLINE;
     } else {
         return NOOPLINE;
@@ -283,6 +283,6 @@ int getAsciiIndex(char ch) {
 
 void lstrip(char*& ch) {
     while (*ch == ' ') {
-        *ch++;
+        ch++;
     }
 }
