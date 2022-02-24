@@ -2,7 +2,7 @@
 # Sabbir Ahmed
 # System Development in the Unix Environment (605.614)
 # 
-# Makefile for conv_to_cent
+# Makefile for lots_of_logs
 
 # set the C++ compiler if unset
 CXX ?= $(shell which c++)
@@ -13,10 +13,10 @@ INC_DIR := ../../../include
 BIN_DIR := ../../../bin
 
 # source file for executable
-SRC = conv_to_cent.cpp
+SRC = lots_of_logs.cpp
 
 # required libraries for executable
-LIBS = arg temp_conv
+LIBS = log
 # construct library paths
 LIB_ARS = $(LIBS:%=$(LIB_DIR)/lib%.a)
 # construct library flags

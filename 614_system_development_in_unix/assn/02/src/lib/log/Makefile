@@ -12,7 +12,7 @@ LIB_DIR := ../../../lib
 INC_DIR := ../../../include
 
 # source file for library file
-SRC := arg.cpp
+SRC := log.cpp
 
 # declare include headers as dependencies for the executable
 DEPS := $(INC_DIR)/$(SRC:.cpp=.hpp)

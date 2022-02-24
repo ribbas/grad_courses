@@ -1,6 +1,6 @@
 #include <unistd.h>
 #include <stdlib.h>
-#include "log_mgr.h"
+#include "log_mgr.hpp"
 
 main()
 {
