@@ -36,8 +36,11 @@ bool Parser::invalidToken = false;
 // grammar rules given in the HW3 handout.
 void Parser::parseEquation(char*& ch, SS_Cell* cell) {
 
+    // strip all whitespace from equation
     ch = stripWS(ch);
     cell->setEquation(ch);
+
+    // get first token
     lookahead = getToken(ch);
 
     if (lookahead->getKind() == T_ERROR) {
@@ -46,14 +49,20 @@ void Parser::parseEquation(char*& ch, SS_Cell* cell) {
         return;
     }
 
+    // start parsing equation
     Node* equationNode = equation(ch);
+
     if (invalidToken || !equationNode || equationNode->error) {
         std::cerr << "Error: invalid equation in " << cell->getID() << '\n';
         cell->setError(true);
         return;
     }
 
+    // set equation node to the current cell
     cell->setExpNode(equationNode);
+
+    // propagate equation throughout the table by updating their controllers
+    // and users
     cell->identifyControllers(equationNode);
     cell->updateControllerUsers();
     cell->calculateExpression();
