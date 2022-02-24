@@ -1,0 +1,11 @@
+/* Examples of syntax errors in equation cells */
+
+# valid equations
+A0 = (1 + 1) + 1
+B0 = A0
+
+# mismatched parenthesis
+C0 = (A0 + B0)) / 3
+
+# unsupported operator
+D0 = A0 _ 3
