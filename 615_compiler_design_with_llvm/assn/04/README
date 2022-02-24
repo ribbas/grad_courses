@@ -5,12 +5,10 @@
 The provided Skeleton-Spreadsheet-v2 was used as the outline for this assignment. Only the following files were modified to implement the program:
 
 1. `HW2-Driver.cpp` was removed due to its lack of necessity for the assignment.
-2. `SS-Driver.cpp` was re-linted to remove unnecessary comments
+2. `SS-Driver.cpp` was reformatted to remove unnecessary comments
 3. `Scanner.h` and `Scanner.cpp` had attributes and methods added. Most of the additions were carried over from the Week 2 Assignment. Some attributes, such as `const char HW2_Index`, were removed after refactoring the methods that check for symbols. The `Token* getToken(char*& ch)` method was moved to `Parser` but implemented in this class. The method was modified to support additional symbols.
 4. `Parser.h` and `Parser.cpp` had all of its skeleton methods implemented. The attributes `Token* lookahead` and `bool invalidToken` were added to the class. `lookahead` is the current token that gets recursively parsed. `invalidToken` is set to true if an invalid token is found in the equation.
-5. `SS_Cell.cpp` had minor re-linted
-
-## Unresolved issues
+5. `SS_Cell.cpp` had minor modifications where every instance of `delete expNode` were wrapped in conditionals to check the existence of nodes before deletion, i.e. `if (expNode)`. The file was also reformatted.
 
 ## System Dependencies
 

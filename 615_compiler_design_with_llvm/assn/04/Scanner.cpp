@@ -28,14 +28,21 @@ void scanLine(char* line, TableOfCells& symTab) {
     // if first char is a valid col char and line consists of at least 3 chars
     if (validLine == VALIDLINE || validLine == BLANKLINE) {
 
-        string rowId{line[0], line[1]};
-        SS_Cell* cell = symTab.getCell(rowId);
+        SS_Cell* cell = symTab.getCell({line[0], line[1]});
 
         // clear cell
         if (validLine == BLANKLINE) {
 
             cell->setError(false);
-            cell->clearCell();
+            if (cell->getKind() == EXPRESSION) {
+                cell->clearCell();
+                // replace the Node with an empty Node to clear controllers and
+                // users
+                cell->identifyControllers(new Node());
+                cell->updateControllerUsers();
+            } else {
+                cell->clearCell();
+            }
 
         } else {
 
