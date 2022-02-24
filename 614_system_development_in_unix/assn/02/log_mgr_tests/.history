@@ -1,0 +1,8 @@
+chmod 700 log_lib
+pwd
+ls -l
+chown jcn log_lib
+ls -lg
+pwd
+ls -l
+ls -lg
