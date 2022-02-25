@@ -22,4 +22,4 @@ it install depend: $(SUBDIRS)
 
 # clean out library files and executables
 clean: $(SUBDIRS)
-	rm -f lib/* bin/* LOGnewlog LOGwarnlog
+	rm -f lib/* bin/* LOGnewlog LOGwarnlog logfile
