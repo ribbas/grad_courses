@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-main() {
+int main() {
     int i;
     float z = 0.5;
 

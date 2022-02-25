@@ -12,10 +12,10 @@ LIB_DIR := ../../../lib
 INC_DIR := ../../../include
 
 # source file for library file
-SRC := log.cpp
+SRC := log_mgr.cpp
 
 # declare include headers as dependencies for the executable
-DEPS := $(INC_DIR)/$(SRC:.cpp=.hpp)
+DEPS := $(INC_DIR)/$(SRC:%.cpp=%.hpp)
 # construct library paths
 LIB = $(SRC:%.cpp=lib%.a)
 # construct objects

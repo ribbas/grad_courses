@@ -5,6 +5,9 @@
 #include <sys/file.h>
 #include <unistd.h>
 
+const char* logfile = "logfile";
+int fd = 0;
+
 int log_event(Levels l, const char* fmt, ...) {
     char buffer[256];
     va_list args;

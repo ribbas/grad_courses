@@ -16,13 +16,13 @@ BIN_DIR := ../../../bin
 SRC = test_log2.cpp
 
 # required libraries for executable
-LIBS = log
+LIBS = log_mgr
 # construct library paths
 LIB_ARS = $(LIBS:%=$(LIB_DIR)/lib%.a)
 # construct library flags
 LD_FLAGS = -L$(LIB_DIR) $(LIBS:%=-l%)
 # declare include headers and libraries as dependencies for the executable
-DEP := $(INC_DIR)/$(SRC:%.cpp=%.hpp) $(LIB_ARS)
+DEP := $(INC_DIR)/$(LIBS).hpp $(LIB_ARS)
 
 # construct objects
 OBJ := $(SRC:%.cpp=%.o)

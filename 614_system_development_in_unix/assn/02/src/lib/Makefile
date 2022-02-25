@@ -7,7 +7,7 @@
 # set the C++ compiler if unset
 CXX ?= $(shell which c++)
 
-SUBDIRS := log
+SUBDIRS := log_mgr
 
 .PHONY: default it install depend clean $(SUBDIRS)
 default: it
