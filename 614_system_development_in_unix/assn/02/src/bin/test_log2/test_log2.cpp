@@ -6,7 +6,7 @@
 #define NUM_MSGS 100
 #define LOGFILE_NAME_LEN 80
 
-main() {
+int main() {
     int i;
     float z = 0.5;
     char logfilename[LOGFILE_NAME_LEN];

@@ -7,7 +7,7 @@
 # set the C++ compiler if unset
 CXX ?= $(shell which c++)
 
-SUBDIRS := test_log
+SUBDIRS := test_log test_log2 lots_of_logs
 
 .PHONY: it install depend clean $(SUBDIRS)
 

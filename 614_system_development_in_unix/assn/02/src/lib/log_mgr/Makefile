@@ -15,7 +15,7 @@ INC_DIR := ../../../include
 SRC := log_mgr.cpp
 
 # declare include headers as dependencies for the executable
-DEPS := $(INC_DIR)/$(SRC:%.cpp=%.hpp)
+DEPS := $(INC_DIR)/$(SRC:%.cpp=%.hpp) depend_list
 # construct library paths
 LIB = $(SRC:%.cpp=lib%.a)
 # construct objects
@@ -32,7 +32,7 @@ $(LIB): $(OBJ)
 $(OBJ): $(DEPS)
 	$(CXX) -g -I$(INC_DIR) -c $(@:%.o=%.cpp) -o $@
 
-install:
+install: it
 	cp $(LIB) $(LIB_DIR)
 	ranlib $(LIB_DIR)/$(LIB)
 

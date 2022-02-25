@@ -22,7 +22,7 @@ LIB_ARS = $(LIBS:%=$(LIB_DIR)/lib%.a)
 # construct library flags
 LD_FLAGS = -L$(LIB_DIR) $(LIBS:%=-l%)
 # declare include headers and libraries as dependencies for the executable
-DEP := $(INC_DIR)/$(LIBS).hpp $(LIB_ARS)
+DEP := $(INC_DIR)/$(LIBS).hpp $(LIB_ARS) depend_list
 
 # construct objects
 OBJ := $(SRC:%.cpp=%.o)
@@ -42,7 +42,7 @@ $(OBJ):
 $(LIBA):
 	@cd ../../lib && $(MAKE) --no-print-directory it
 
-install:
+install: it
 	cp $(EXE) $(BIN_DIR)
 
 depend:
