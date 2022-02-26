@@ -17,7 +17,7 @@ fragment DIGIT: [0-9];
 COMMENT: '/*' (.)*? '*/' -> skip;
 WS: [ \t\r\n]+ -> skip;
 
-program: declaration_list;
+program: declaration_list EOF;
 declaration_list: declaration_list declaration | declaration;
 declaration: var_declaration | fun_declaration;
 var_declaration: type_specifier ID ('[' NUM ']')? ';';
