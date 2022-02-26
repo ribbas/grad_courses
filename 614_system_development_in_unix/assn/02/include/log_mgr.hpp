@@ -13,14 +13,12 @@
 
 #define ERROR -1
 #define OK 0
+#define MAX_BUF 1000
 
 typedef enum { INFO, WARNING, FATAL } Levels;
 
 extern const char* logfile;
 extern int fd;
-const int MAX_BUF = 1000;
-extern char buffer[MAX_BUF];
-extern const char* level_str[3];
 
 int log_event(Levels l, const char* fmt, ...);
 int set_logfile(const char* logfile_name);

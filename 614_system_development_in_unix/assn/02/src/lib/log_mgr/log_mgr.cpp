@@ -5,13 +5,10 @@
 #include <fcntl.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <sys/file.h>
 #include <unistd.h>
 
 const char* logfile = "logfile";
 int fd = 0;
-const char* level_str[] = {"INFO", "WARNING", "FATAL"};
-char buffer[MAX_BUF];
 
 int log_event(Levels l, const char* fmt, ...) {
 
@@ -20,6 +17,9 @@ int log_event(Levels l, const char* fmt, ...) {
         return ERROR;
 
     } else {
+
+        const char* level_str[] = {"INFO", "WARNING", "FATAL"};
+        char buffer[MAX_BUF];
 
         // current time
         std::time_t t = std::time(0);
