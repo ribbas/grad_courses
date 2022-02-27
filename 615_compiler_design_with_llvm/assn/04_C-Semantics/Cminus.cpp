@@ -1,5 +1,7 @@
 #include "CminusLexer.h"
 #include "CminusParser.h"
+#include "Symtab.hpp"
+
 #include "antlr4-runtime.h"
 
 #include <iostream>

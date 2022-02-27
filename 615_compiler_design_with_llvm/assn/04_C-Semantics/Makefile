@@ -21,7 +21,7 @@ GRUN = $(JAVA) -Xmx500M -cp "$(CLASSPATH)" org.antlr.v4.gui.TestRig
 GRAMMAR=Cminus
 SRC=$(GRAMMAR).cpp
 
-ANTLRGEN=BaseListener Lexer Listener Parser 
+ANTLRGEN=BaseListener Lexer Listener Parser Visitor
 OBJS=$(addsuffix .o,$(addprefix $(OUTPUT)/$(GRAMMAR),$(ANTLRGEN)))
 GSOURCES=$(addsuffix .cpp,$(addprefix $(GENERATED)/$(GRAMMAR),$(ANTLRGEN)))
 

@@ -26,7 +26,6 @@ using namespace std;
 // Any global variables for your HW3 parser
 // should be placed here.
 Token* Parser::lookahead;
-bool Parser::invalidToken = false;
 
 // This routine should be called by scanLine
 // to parse the equation part of an equation
@@ -52,7 +51,7 @@ void Parser::parseEquation(char*& ch, SS_Cell* cell) {
     // start parsing equation
     Node* equationNode = equation(ch);
 
-    if (invalidToken || !equationNode || equationNode->error) {
+    if (!equationNode || equationNode->error) {
         std::cerr << "Error: invalid equation in " << cell->getID() << '\n';
         cell->setError(true);
         return;
@@ -84,17 +83,21 @@ Token* Parser::match(char*& ch, TokenKind expected) {
 
     if (peek(expected)) {
 
-        Token* nextToken = getToken(ch);
-        if ((nextToken->getKind() == T_ERROR) &&
-            (nextToken->getLexeme().length())) {
-            invalidToken = true;
+        Token* nextToken = lookahead;
+        lookahead = getToken(ch);
+
+        // if a non-empty error token
+        if ((lookahead->getKind() == T_ERROR) &&
+            (lookahead->getLexeme().length())) {
+            delete nextToken;
+            return nullptr;
         }
         return nextToken;
 
     } else {
 
         std::cerr << "Unexpected token: " << expected << '\n';
-        return 0;
+        return nullptr;
     }
 }
 
@@ -139,8 +142,7 @@ Node* Parser::addOp(char*& ch) {
         }
     }
 
-    temp->tok = lookahead;
-    lookahead = match(ch, tempKind);
+    temp->tok = match(ch, tempKind);
     return temp;
 }
 
@@ -185,8 +187,7 @@ Node* Parser::mulOp(char*& ch) {
         }
     }
 
-    temp->tok = lookahead;
-    lookahead = match(ch, tempKind);
+    temp->tok = match(ch, tempKind);
     return temp;
 }
 
@@ -203,8 +204,7 @@ Node* Parser::factor(char*& ch) {
         // if next token is 'NUM' or 'ID'
     } else if (peek(NUM) || peek(ID)) {
 
-        temp->tok = lookahead;
-        lookahead = match(ch, lookahead->getKind());
+        temp->tok = match(ch, lookahead->getKind());
     }
 
     return temp;
@@ -219,22 +219,37 @@ Node* Parser::parenExp(char*& ch) {
     // if next token is '('
     if (peek(LPAREN)) {
 
-        lookahead = match(ch, LPAREN);
-        temp = equation(ch);
+        Token* lparen = match(ch, LPAREN);
+        if (lparen) {
 
-        // if next token is ')'
-        if (peek(RPAREN)) {
+            temp = equation(ch);
 
-            lookahead = match(ch, RPAREN);
-
-            // if next token is ')' again
+            // if next token is ')'
             if (peek(RPAREN)) {
+
+                Token* rparen = match(ch, RPAREN);
+                if (rparen) {
+
+                    // if next token is ')' again
+                    if (peek(RPAREN)) {
+                        imbalancedParen = true;
+                    }
+
+                } else {
+                    std::cerr << "Invalid token after right parenthesis\n";
+                }
+
+                delete rparen;
+
+            } else {
                 imbalancedParen = true;
             }
 
         } else {
-            imbalancedParen = true;
+            std::cerr << "Invalid token after left parenthesis\n";
         }
+
+        delete lparen;
     }
 
     // if next token is '('
