@@ -190,28 +190,12 @@ void parseText(char*& ch, SS_Cell* cell) {
     ch++;
 
     // move ch into value up to the second quote or nullptr
-    while (*ch && *ch != '"') {
+    while (*ch != '"' && ASCII[(int)*ch]) {
         value += *ch;
         ch++;
     }
 
-    if (*ch == '"') {
-
-        // if more chars present after second quote
-        while (*++ch) {
-            // if non-whitespace char, label as an error cell
-            if (ASCII[(int)*ch]) {
-                cell->setError(true);
-                return;
-            }
-        }
-
-        cell->setTXTCell(value);
-
-    } else {
-
-        cell->setError(true);
-    }
+    cell->setTXTCell(value);
 }
 
 void parseNumber(char*& ch, SS_Cell* cell) {
