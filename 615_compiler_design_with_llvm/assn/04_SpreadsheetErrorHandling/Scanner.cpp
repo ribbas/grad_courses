@@ -183,7 +183,7 @@ Token* getToken(char*& ch) {
 void parseText(char*& ch, SS_Cell* cell) {
 
     string value = "";
-    // move pointer of line up to the first quote
+    // move pointer of line past the first quote
     while (*ch != '"') {
         ch++;
     }
