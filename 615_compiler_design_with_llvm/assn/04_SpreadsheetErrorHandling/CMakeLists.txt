@@ -4,6 +4,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
 add_executable(${CMAKE_PROJECT_NAME} SS-Driver.cpp)
 target_sources(${CMAKE_PROJECT_NAME} PUBLIC
+    FF_List.cpp
     ID_List.cpp 
     Node.cpp 
     Parser.cpp 

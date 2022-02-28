@@ -172,7 +172,7 @@ string itos(int value) {
 }
 
 SS_Cell::SS_Cell()
-    : id(""), error(false), kind(BLANK), display("    "), value(0) {}
+    : id(""), kind(BLANK), error(false), display("    "), value(0) {}
 
 void SS_Cell::setTXTCell(const string txt) {
     kind = TEXT;

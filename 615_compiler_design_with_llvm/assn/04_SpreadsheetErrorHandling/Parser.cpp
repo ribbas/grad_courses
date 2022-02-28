@@ -7,19 +7,33 @@
 // 2/22/2022
 //
 // EBNF for homework parser
-//  <$>         => <equation>
-//  <equation>  => <term> { <add-op> <term> }
+//  <$>         => <exp> <eof>
+//  <exp>       => <term> { <add-op> <term> }
 //  <add-op>    => '+' | '-'
 //  <term>      => <factor> { <mult-op> <factor> }
 //  <mult-op>   => '*' | '/'
 //  <factor>    => <NUM> | <ID> | <paren-exp>
-//  <paren-exp> => '(' <equation> ')'
+//  <paren-exp> => '(' <exp> ')'
+//
+// Original Grammar Rules                    |    Firsts      | Follows
+//  <$>       =>  <exp> <eof>                | <ID>, <NUM>, ( | <EOF>
+//  <exp>     => <term> {exp'}               | <ID>, <NUM>, ( | <EOF>, )
+//  {exp'}    => <+-op> <term> {exp'} | e    |    +, ', e     | <EOF>, )
+//  <+-op>  => '+' | '-'                     |    +, -        | <ID>, <NUM>, (
+//  <term>    =>  <fact> {term'}             | <ID>, <NUM>, ( | +, -, <EOF>, )
+//  {term'}   =>  <*-op> <fact> {term'} | e  |    *, /, e     | +, -, <EOF>, )
+//  <*-op> =>  '*' | '/'                     |    *, /        | <ID>, <NUM>, (
+//  <fact>    =>  <ID> | <NUM> | <paren-exp> | <ID>, <NUM>, ( | *,  /, +, -,
+//                                                              <EOF>, )
+//  <paren-exp> => '(' <exp> ')'
+//
 
 #include "Parser.h"
 #include "SS_Cell.h"
 #include "Token.h"
 #include <cstring>
 #include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -27,12 +41,74 @@ using namespace std;
 // should be placed here.
 Token* Parser::lookahead;
 
-// This routine should be called by scanLine
-// to parse the equation part of an equation
-// line. This routine and the others below
-// should be (re)written in HW3 to parse any
-// spreadsheet equation according to the
-// grammar rules given in the HW3 handout.
+// scanto(synchset) throws away tokens until
+// a synchronizing token is found in the sync_set.
+void Parser::scanto(char*& ch, FF_List synchset) {
+
+    while (!synchset.contains(lookahead->getKind())) {
+        TokenKind kind = lookahead->getKind();
+        ostringstream oss;
+        oss << "Panic Mode: Deleting token " << kind;
+        if (kind == ID || kind == NUM) {
+            oss << " " << lookahead->getLexeme();
+        }
+        std::cout << oss.str() << '\n';
+        // errorMessage(ch, oss.str());
+
+        delete lookahead;
+        lookahead = getToken(ch);
+    }
+    std::cout << "hmm\n";
+}
+
+// checkinput(firstset, synchset) verifies that the input token
+// matches the state of the parser at the start of a function.
+// If not, it produces an error message and calls scanto(synchset).
+void Parser::checkinput(char*& ch, FF_List firstset, FF_List synchset) {
+
+    TokenKind kind = lookahead->getKind();
+    std::cout << "looking for " << kind << '\n';
+    if (!firstset.contains(kind)) {
+
+        for (auto i : firstset.getTokenSet()) {
+            std::cout << "<" << i << ">\n";
+        }
+
+        ostringstream oss;
+        oss << "Error: Unrecognized token " << kind;
+        if (kind == ID || kind == NUM) {
+            oss << " " << lookahead->getLexeme();
+        }
+        std::cout << oss.str() << '\n';
+        // errorMessage(ch, oss.str());
+
+        firstset.merge(synchset.getTokenSet());
+        for (auto i : firstset.getTokenSet()) {
+            std::cout << "<" << i << ">\n";
+        }
+        scanto(ch, firstset);
+    } else {
+        std::cout << "found\n";
+    }
+}
+
+// checkfollows(synchset) verifies that the input token
+// matches the state of the parser at the end of a function.
+// If not, it produces an error message and calls scanto(synchset).
+void Parser::checkfollows(char*& ch, FF_List synchset) {
+    TokenKind kind = lookahead->getKind();
+    if (!synchset.contains(kind)) {
+        ostringstream oss;
+        oss << "Error: Unrecognized token " << kind;
+        if (kind == ID || kind == NUM) {
+            oss << " " << lookahead->getLexeme();
+        }
+        // errorMessage(ch, oss.str());
+
+        scanto(ch, synchset);
+    }
+}
+
 void Parser::parseEquation(char*& ch, SS_Cell* cell) {
 
     // strip all whitespace from equation
@@ -49,7 +125,7 @@ void Parser::parseEquation(char*& ch, SS_Cell* cell) {
     }
 
     // start parsing equation
-    Node* equationNode = equation(ch);
+    Node* equationNode = equation(ch, expFollows);
 
     if (!equationNode || equationNode->error) {
         std::cerr << "Error: invalid equation in " << cell->getID() << '\n';
@@ -72,7 +148,7 @@ void Parser::parseEquation(char*& ch, SS_Cell* cell) {
 /*
  * Check if the TokenKind matches without updating lookahead
  */
-bool Parser::peek(TokenKind expectedToken) {
+bool Parser::nextIs(TokenKind expectedToken) {
     return lookahead->getKind() == expectedToken;
 }
 
@@ -81,7 +157,7 @@ bool Parser::peek(TokenKind expectedToken) {
  */
 Token* Parser::match(char*& ch, TokenKind expected) {
 
-    if (peek(expected)) {
+    if (nextIs(expected)) {
 
         Token* nextToken = lookahead;
         lookahead = getToken(ch);
@@ -102,17 +178,18 @@ Token* Parser::match(char*& ch, TokenKind expected) {
 }
 
 // <equation> => <term> { <add-op> <term> }
-Node* Parser::equation(char*& ch) {
+Node* Parser::equation(char*& ch, FF_List synchset) {
 
-    Node* temp = term(ch);
+    checkinput(ch, expFirsts, synchset);
+    Node* temp = term(ch, termFollows);
 
     // if next token is '+' or '-'
-    while (peek(ADD) || peek(SUB)) {
+    while (nextIs(ADD) || nextIs(SUB)) {
 
         // rotate nodes
-        Node* op = addOp(ch);
+        Node* op = addOp(ch, addOpFollows);
         op->left = temp;
-        op->right = term(ch);
+        op->right = term(ch, termFollows);
         temp = op;
     }
 
@@ -120,7 +197,7 @@ Node* Parser::equation(char*& ch) {
 }
 
 // <add-op> => '+' | '-'
-Node* Parser::addOp(char*& ch) {
+Node* Parser::addOp(char*& ch, FF_List synchset) {
 
     Node* temp = new Node();
     TokenKind tempKind = T_ERROR;
@@ -147,17 +224,17 @@ Node* Parser::addOp(char*& ch) {
 }
 
 // <term> => <factor> { <mult-op> <factor> }
-Node* Parser::term(char*& ch) {
+Node* Parser::term(char*& ch, FF_List synchset) {
 
-    Node* temp = factor(ch);
+    Node* temp = factor(ch, factorFollows);
 
     // if next token is '*' or '/'
-    while (peek(MULT) || peek(DIV)) {
+    while (nextIs(MULT) || nextIs(DIV)) {
 
         // rotate nodes
-        Node* op = mulOp(ch);
+        Node* op = mulOp(ch, mulOpFollows);
         op->left = temp;
-        op->right = factor(ch);
+        op->right = factor(ch, factorFollows);
         temp = op;
     }
 
@@ -165,7 +242,7 @@ Node* Parser::term(char*& ch) {
 }
 
 // <mult-op> => '*' | '/'
-Node* Parser::mulOp(char*& ch) {
+Node* Parser::mulOp(char*& ch, FF_List synchset) {
 
     Node* temp = new Node();
     TokenKind tempKind = T_ERROR;
@@ -192,17 +269,17 @@ Node* Parser::mulOp(char*& ch) {
 }
 
 // <factor> => <NUM> | <ID> | <paren-exp>
-Node* Parser::factor(char*& ch) {
+Node* Parser::factor(char*& ch, FF_List synchset) {
 
     Node* temp = new Node();
 
     // if next token is '(' or ')'
-    if (peek(LPAREN) || peek(RPAREN)) {
+    if (nextIs(LPAREN) || nextIs(RPAREN)) {
 
-        temp = parenExp(ch);
+        temp = parenExp(ch, factorFollows);
 
         // if next token is 'NUM' or 'ID'
-    } else if (peek(NUM) || peek(ID)) {
+    } else if (nextIs(NUM) || nextIs(ID)) {
 
         temp->tok = match(ch, lookahead->getKind());
     }
@@ -211,27 +288,27 @@ Node* Parser::factor(char*& ch) {
 }
 
 // <paren-exp> => '(' <equation> ')'
-Node* Parser::parenExp(char*& ch) {
+Node* Parser::parenExp(char*& ch, FF_List synchset) {
 
     Node* temp = new Node();
     bool imbalancedParen = false;
 
     // if next token is '('
-    if (peek(LPAREN)) {
+    if (nextIs(LPAREN)) {
 
         Token* lparen = match(ch, LPAREN);
         if (lparen) {
 
-            temp = equation(ch);
+            temp = equation(ch, expFollows);
 
             // if next token is ')'
-            if (peek(RPAREN)) {
+            if (nextIs(RPAREN)) {
 
                 Token* rparen = match(ch, RPAREN);
                 if (rparen) {
 
                     // if next token is ')' again
-                    if (peek(RPAREN)) {
+                    if (nextIs(RPAREN)) {
                         imbalancedParen = true;
                     }
 
