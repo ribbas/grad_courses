@@ -23,9 +23,9 @@ class Parser {
     static Token* lookahead;
 
 public:
-    static void scanto(char*& ch, FF_List synchset);
-    static void checkinput(char*& ch, FF_List firstset, FF_List synchset);
-    static void checkfollows(char*& ch, FF_List synchset);
+    static void scanTo(char*& ch, FF_List synchset);
+    static void checkInput(char*& ch, FF_List firstset, FF_List synchset);
+    static void checkFollows(char*& ch, FF_List synchset);
 
     static void parseEquation(char*& ch, SS_Cell* cell);
 

@@ -10,6 +10,7 @@
 #include "Parser.h"
 #include "SS_Cell.h"
 #include "Token.h"
+
 #include <iostream>
 #include <string>
 
@@ -190,7 +191,7 @@ void parseText(char*& ch, SS_Cell* cell) {
     ch++;
 
     // move ch into value up to the second quote or nullptr
-    while (*ch != '"' && ASCII[(int)*ch]) {
+    while (*ch != '"' && *ch != '\r' && *ch != '\n') {
         value += *ch;
         ch++;
     }

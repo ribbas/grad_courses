@@ -1,13 +1,12 @@
 #include "FF_List.h"
 
 // Token        Firsts          Follows
-// $	        NUM, ID, (      $
-// exp	        NUM, ID, (      ), eof
+// exp	        NUM, ID, (      ), EOF
 // add-op	    +, -            NUM, ID, (
-// term	        NUM, ID, (      +, -, ), eof
+// term	        NUM, ID, (      +, -, ), EOF
 // mult-op	    *, /            NUM, ID, (
-// factor	    NUM, ID, (      *, /, +, -, ), eof
-// paren-exp	(               *, /, +, -, ), eof
+// factor	    NUM, ID, (      *, /, +, -, ), EOF
+// paren-exp	(               *, /, +, -, ), EOF
 SynchSet FF_List::expFirsts = {NUM, ID, LPAREN};
 SynchSet FF_List::expFollows = {RPAREN, T_ERROR};
 
@@ -26,6 +25,7 @@ SynchSet FF_List::factorFollows = {MULT, DIV, ADD, SUB, RPAREN, T_ERROR};
 SynchSet FF_List::parenExpFirsts = {LPAREN};
 SynchSet FF_List::parenExpFollows = {MULT, DIV, ADD, SUB, RPAREN, T_ERROR};
 
+FF_List::FF_List() : _synchSet({}) {}
 FF_List::FF_List(SynchSet synchSet) : _synchSet(synchSet) {}
 
 SynchSet FF_List::getSynchSet() {

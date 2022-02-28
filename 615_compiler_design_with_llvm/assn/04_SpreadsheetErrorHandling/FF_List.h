@@ -15,6 +15,7 @@
 #define FF_LIST_H
 
 #include "Token.h"
+#include <iostream>
 #include <set>
 #include <string>
 
@@ -23,6 +24,7 @@ typedef std::set<TokenKind> SynchSet;
 class FF_List {
 private:
     SynchSet _synchSet;
+    void merge(SynchSet other);
 
 public:
     static SynchSet expFirsts;
@@ -38,15 +40,15 @@ public:
     static SynchSet parenExpFirsts;
     static SynchSet parenExpFollows;
 
+    FF_List();
     FF_List(SynchSet synchSet);
     SynchSet getSynchSet();
     bool contains(TokenKind kind);
-    void merge(SynchSet other);
 
-    FF_List operator+(FF_List& b) {
-        FF_List other({});
-        this->_synchSet.insert(b.getSynchSet().begin(), b.getSynchSet().end());
-        return other;
+    FF_List operator+(FF_List other) {
+        FF_List b(this->getSynchSet());
+        b.merge(other.getSynchSet());
+        return b;
     }
 };
 

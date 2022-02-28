@@ -15,22 +15,8 @@
 //  <factor>    => <NUM> | <ID> | <paren-exp>
 //  <paren-exp> => '(' <exp> ')'
 //
-// Original Grammar Rules                    |    Firsts      | Follows
-//  <$>       =>  <exp> <eof>                | <ID>, <NUM>, ( | <EOF>
-//  <exp>     => <term> {exp'}               | <ID>, <NUM>, ( | <EOF>, )
-//  {exp'}    => <+-op> <term> {exp'} | e    |    +, ', e     | <EOF>, )
-//  <+-op>  => '+' | '-'                     |    +, -        | <ID>, <NUM>, (
-//  <term>    =>  <fact> {term'}             | <ID>, <NUM>, ( | +, -, <EOF>, )
-//  {term'}   =>  <*-op> <fact> {term'} | e  |    *, /, e     | +, -, <EOF>, )
-//  <*-op> =>  '*' | '/'                     |    *, /        | <ID>, <NUM>, (
-//  <fact>    =>  <ID> | <NUM> | <paren-exp> | <ID>, <NUM>, ( | *,  /, +, -,
-//                                                              <EOF>, )
-//  <paren-exp> => '(' <exp> ')'
-//
 
 #include "Parser.h"
-#include "SS_Cell.h"
-#include "Token.h"
 #include <cstring>
 #include <iostream>
 #include <sstream>
@@ -43,7 +29,7 @@ Token* Parser::lookahead;
 
 // scanto(synchset) throws away tokens until
 // a synchronizing token is found in the sync_set.
-void Parser::scanto(char*& ch, FF_List synchset) {
+void Parser::scanTo(char*& ch, FF_List synchset) {
 
     while (!synchset.contains(lookahead->getKind())) {
         TokenKind kind = lookahead->getKind();
@@ -58,16 +44,14 @@ void Parser::scanto(char*& ch, FF_List synchset) {
         delete lookahead;
         lookahead = getToken(ch);
     }
-    std::cout << "hmm\n";
 }
 
 // checkinput(firstset, synchset) verifies that the input token
 // matches the state of the parser at the start of a function.
 // If not, it produces an error message and calls scanto(synchset).
-void Parser::checkinput(char*& ch, FF_List firstset, FF_List synchset) {
+void Parser::checkInput(char*& ch, FF_List firstset, FF_List synchset) {
 
     TokenKind kind = lookahead->getKind();
-    std::cout << "looking for " << kind << '\n';
     if (!firstset.contains(kind)) {
 
         for (auto i : firstset.getSynchSet()) {
@@ -82,21 +66,17 @@ void Parser::checkinput(char*& ch, FF_List firstset, FF_List synchset) {
         std::cout << oss.str() << '\n';
         // errorMessage(ch, oss.str());
 
-        firstset.merge(synchset.getSynchSet());
-        for (auto i : firstset.getSynchSet()) {
+        for (auto i : (firstset + synchset).getSynchSet()) {
             std::cout << "<" << i << ">\n";
         }
-        scanto(ch, firstset);
-
-    } else {
-        std::cout << "found\n";
+        scanTo(ch, (firstset + synchset));
     }
 }
 
 // checkfollows(synchset) verifies that the input token
 // matches the state of the parser at the end of a function.
 // If not, it produces an error message and calls scanto(synchset).
-void Parser::checkfollows(char*& ch, FF_List synchset) {
+void Parser::checkFollows(char*& ch, FF_List synchset) {
     TokenKind kind = lookahead->getKind();
     if (!synchset.contains(kind)) {
         ostringstream oss;
@@ -106,7 +86,7 @@ void Parser::checkfollows(char*& ch, FF_List synchset) {
         }
         // errorMessage(ch, oss.str());
 
-        scanto(ch, synchset);
+        scanTo(ch, synchset);
     }
 }
 
@@ -178,41 +158,15 @@ Token* Parser::match(char*& ch, TokenKind expected) {
     }
 }
 
-// Node* Parser::expression(char*& ch, FF_List synchset) {
-//     checkinput(ch, *FF_List::expFirsts, synchset);
-//     Node* node = 0;
-//     bool error_in_child = false;
-//     if (not synchset.contains(lookahead->getKind())) {
-//         node = term(ch, synchset + *FF_List::FF_List::termFollows);
-//         if (not node)
-//             error_in_child = true;
-//         while (nextIs(ADD) or nextIs(SUB)) {
-//             Node* temp = new Node();
-//             if (temp) {
-//                 temp->left = node;
-//                 node = temp;
-//                 node->tok = lookahead;
-//                 lookahead = getToken(ch);
-//                 node->right =
-//                     term(ch, synchset + *FF_List::FF_List::termFollows);
-//                 if (not node->right or error_in_child)
-//                     delete node;
-//             }
-//         }
-//         checkfollows(ch, synchset);
-//     }
-//     return node;
-// }
-
 // <equation> => <term> { <add-op> <term> }
 Node* Parser::equation(char*& ch, FF_List synchset) {
 
-    checkinput(ch, FF_List::expFirsts, synchset);
+    checkInput(ch, FF_List::expFirsts, synchset);
     Node* node = nullptr;
     bool errorInChild = false;
     if (!synchset.contains(lookahead->getKind())) {
 
-        node = term(ch, FF_List::termFollows);
+        node = term(ch, (FF_List::termFollows));
         if (!node) {
             errorInChild = true;
         }
@@ -220,15 +174,15 @@ Node* Parser::equation(char*& ch, FF_List synchset) {
         while (nextIs(ADD) || nextIs(SUB)) {
 
             // rotate nodes
-            Node* temp = addOp(ch, FF_List::addOpFollows);
+            Node* temp = addOp(ch, (FF_List::addOpFollows));
             temp->left = node;
-            temp->right = term(ch, FF_List::termFollows);
-            if (!temp->right || errorInChild) {
+            temp->right = term(ch, (FF_List::termFollows));
+            node = temp;
+            if (!node->right || errorInChild) {
                 delete node;
             }
-            node = temp;
         }
-        checkfollows(ch, synchset);
+        checkFollows(ch, synchset);
     }
 
     return node;
@@ -237,7 +191,7 @@ Node* Parser::equation(char*& ch, FF_List synchset) {
 // <add-op> => '+' | '-'
 Node* Parser::addOp(char*& ch, FF_List synchset) {
 
-    checkinput(ch, FF_List::addOpFirsts, synchset);
+    checkInput(ch, FF_List::addOpFirsts, synchset);
     Node* node = nullptr;
     if (!synchset.contains(lookahead->getKind())) {
 
@@ -262,7 +216,7 @@ Node* Parser::addOp(char*& ch, FF_List synchset) {
         }
 
         node->tok = match(ch, nodeKind);
-        checkfollows(ch, synchset);
+        checkFollows(ch, synchset);
     }
 
     return node;
@@ -271,25 +225,25 @@ Node* Parser::addOp(char*& ch, FF_List synchset) {
 // <term> => <factor> { <mult-op> <factor> }
 Node* Parser::term(char*& ch, FF_List synchset) {
 
-    checkinput(ch, FF_List::termFirsts, synchset);
+    checkInput(ch, FF_List::termFirsts, synchset);
     Node* node = nullptr;
     bool errorInChild = false;
     if (!synchset.contains(lookahead->getKind())) {
-        node = factor(ch, FF_List::factorFollows);
+        node = factor(ch, (FF_List::factorFollows));
 
         // if next token is '*' or '/'
         while (nextIs(MULT) || nextIs(DIV)) {
 
             // rotate nodes
-            Node* temp = mulOp(ch, FF_List::mulOpFollows);
+            Node* temp = mulOp(ch, (FF_List::mulOpFollows));
             temp->left = node;
-            temp->right = factor(ch, FF_List::factorFollows);
-            if (!temp->right || errorInChild) {
+            temp->right = factor(ch, (FF_List::factorFollows));
+            node = temp;
+            if (!node->right || errorInChild) {
                 delete node;
             }
-            node = temp;
         }
-        checkfollows(ch, synchset);
+        checkFollows(ch, synchset);
     }
     return node;
 }
@@ -297,7 +251,7 @@ Node* Parser::term(char*& ch, FF_List synchset) {
 // <mult-op> => '*' | '/'
 Node* Parser::mulOp(char*& ch, FF_List synchset) {
 
-    checkinput(ch, FF_List::mulOpFirsts, synchset);
+    checkInput(ch, FF_List::mulOpFirsts, synchset);
     Node* node = nullptr;
     if (!synchset.contains(lookahead->getKind())) {
 
@@ -322,7 +276,7 @@ Node* Parser::mulOp(char*& ch, FF_List synchset) {
         }
 
         node->tok = match(ch, nodeKind);
-        checkfollows(ch, synchset);
+        checkFollows(ch, synchset);
     }
     return node;
 }
@@ -330,7 +284,7 @@ Node* Parser::mulOp(char*& ch, FF_List synchset) {
 // <factor> => <NUM> | <ID> | <paren-exp>
 Node* Parser::factor(char*& ch, FF_List synchset) {
 
-    checkinput(ch, FF_List::factorFirsts, synchset);
+    checkInput(ch, FF_List::factorFirsts, synchset);
     Node* node = nullptr;
     bool errorInChild = false;
     if (!synchset.contains(lookahead->getKind())) {
@@ -340,14 +294,17 @@ Node* Parser::factor(char*& ch, FF_List synchset) {
         // if next token is '(' or ')'
         if (nextIs(LPAREN) || nextIs(RPAREN)) {
 
-            node = parenExp(ch, FF_List::factorFollows);
+            node = parenExp(ch, (FF_List::parenExpFollows));
+            if (!node) {
+                errorInChild = true;
+            }
 
             // if next token is 'NUM' or 'ID'
         } else if (nextIs(NUM) || nextIs(ID)) {
 
             node->tok = match(ch, lookahead->getKind());
         }
-        checkfollows(ch, synchset);
+        checkFollows(ch, synchset);
     }
     return node;
 }
@@ -355,7 +312,7 @@ Node* Parser::factor(char*& ch, FF_List synchset) {
 // <paren-exp> => '(' <equation> ')'
 Node* Parser::parenExp(char*& ch, FF_List synchset) {
 
-    checkinput(ch, FF_List::parenExpFirsts, synchset);
+    checkInput(ch, FF_List::parenExpFirsts, synchset);
     Node* node = nullptr;
     bool errorInChild = false;
     if (!synchset.contains(lookahead->getKind())) {
@@ -371,7 +328,7 @@ Node* Parser::parenExp(char*& ch, FF_List synchset) {
                 node = equation(ch, FF_List::expFollows);
 
                 // if next token is ')'
-                if (nextIs(RPAREN)) {
+                if (node && nextIs(RPAREN)) {
 
                     Token* rparen = match(ch, RPAREN);
                     if (!rparen) {
@@ -389,6 +346,7 @@ Node* Parser::parenExp(char*& ch, FF_List synchset) {
 
             delete lparen;
         }
+        checkFollows(ch, synchset);
     }
 
     return node;

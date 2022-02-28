@@ -1,0 +1,10 @@
+# This input file is for the 605.615 Compiler Design with LLVM course 
+# Homework Assignment 5
+
+A0 = 8 *- 2
+B0 = 8 -* 2
+C0 = 8 +- 2
+D0 = 8 /* 2
+E0 = 8 / 2)
+
+A1 = 8 / 2A2
