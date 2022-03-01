@@ -13,31 +13,38 @@
 #include <string>
 using namespace std;
 
-
-enum TokenKind { T_ERROR, ID, NUM, ADD, SUB, MULT, DIV, LPAREN, RPAREN };
+enum TokenKind { T_ERROR, ID, NUM, ADD, SUB, MULT, DIV, LPAREN, RPAREN, T_EOF };
 ostream& operator<<(ostream& os, TokenKind kind); // in SS_Scanner_Support.cpp
 
-
 class Token {
-	friend class Parser; // contains:  Token* getToken(char*& ch);
+    friend class Parser; // contains:  Token* getToken(char*& ch);
 public:
     Token(string lex, TokenKind k) : lexeme(lex), kind(k) {
-		if (k == NUM) value = stoi(lex);
-	}
-   ~Token() {}
+        if (k == NUM)
+            value = stoi(lex);
+    }
+    ~Token() {}
 
-   friend Token* getToken(char*& ch); // in Scanner.cpp
+    friend Token* getToken(char*& ch); // in Scanner.cpp
 
-   string getLexeme() { return lexeme; }
-   TokenKind getKind() { return kind; }
-   int getValue() { return value; }
-   int getError() { return error; }
+    string getLexeme() {
+        return lexeme;
+    }
+    TokenKind getKind() {
+        return kind;
+    }
+    int getValue() {
+        return value;
+    }
+    int getError() {
+        return error;
+    }
 
 private:
     string lexeme;
     TokenKind kind;
-	int value = 0;
-	bool error = false;
+    int value = 0;
+    bool error = false;
 };
 
 #endif /* TOKEN_H_ */

@@ -99,6 +99,11 @@ Token* getToken(char*& ch) {
     TokenKind kind = T_ERROR;
 
     bool scanned = false;
+
+    if (!*ch) {
+        return new Token(lexeme, T_EOF);
+    }
+
     while (*ch && !scanned) {
 
         lexeme += *ch;

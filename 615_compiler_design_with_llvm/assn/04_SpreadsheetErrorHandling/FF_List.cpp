@@ -8,22 +8,22 @@
 // factor	    NUM, ID, (      *, /, +, -, ), EOF
 // paren-exp	(               *, /, +, -, ), EOF
 SynchSet FF_List::expFirsts = {NUM, ID, LPAREN};
-SynchSet FF_List::expFollows = {RPAREN, T_ERROR};
+SynchSet FF_List::expFollows = {RPAREN, T_EOF};
 
 SynchSet FF_List::addOpFirsts = {ADD, SUB};
 SynchSet FF_List::addOpFollows = {NUM, ID, LPAREN};
 
 SynchSet FF_List::termFirsts = {NUM, ID, LPAREN};
-SynchSet FF_List::termFollows = {ADD, SUB, RPAREN, T_ERROR};
+SynchSet FF_List::termFollows = {ADD, SUB, RPAREN, T_EOF};
 
 SynchSet FF_List::mulOpFirsts = {MULT, DIV};
 SynchSet FF_List::mulOpFollows = {NUM, ID, LPAREN};
 
 SynchSet FF_List::factorFirsts = {NUM, ID, LPAREN};
-SynchSet FF_List::factorFollows = {MULT, DIV, ADD, SUB, RPAREN, T_ERROR};
+SynchSet FF_List::factorFollows = {MULT, DIV, ADD, SUB, RPAREN, T_EOF};
 
 SynchSet FF_List::parenExpFirsts = {LPAREN};
-SynchSet FF_List::parenExpFollows = {MULT, DIV, ADD, SUB, RPAREN, T_ERROR};
+SynchSet FF_List::parenExpFollows = {MULT, DIV, ADD, SUB, RPAREN, T_EOF};
 
 FF_List::FF_List() : _synchSet({}) {}
 FF_List::FF_List(SynchSet synchSet) : _synchSet(synchSet) {}

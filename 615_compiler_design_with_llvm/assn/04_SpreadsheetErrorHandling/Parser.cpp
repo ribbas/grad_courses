@@ -8,24 +8,28 @@
 //
 // EBNF for homework parser
 //  <$>         => <exp> <eof>
-//  <exp>       => <term> { <add-op> <term> }
-//  <add-op>    => '+' | '-'
-//  <term>      => <factor> { <mult-op> <factor> }
-//  <mult-op>   => '*' | '/'
-//  <factor>    => <NUM> | <ID> | <paren-exp>
-//  <paren-exp> => '(' <exp> ')'
+// exp       -> term add-op term | term
+// add-op    -> + | -
+// term      -> factor mult-op factor | factor
+// mult-op   -> * | /
+// factor    -> NUM | ID | paren-exp
+// paren-exp -> ( exp )
 //
 
 #include "Parser.h"
+
 #include <cstring>
 #include <iostream>
 #include <sstream>
 
 using namespace std;
 
-// Any global variables for your HW3 parser
-// should be placed here.
 Token* Parser::lookahead;
+
+void errorMessage(char* ch, std::string error) {
+    std::cout << *ch << '\n';
+    std::cout << error << '\n';
+}
 
 // scanto(synchset) throws away tokens until
 // a synchronizing token is found in the sync_set.
@@ -38,8 +42,7 @@ void Parser::scanTo(char*& ch, FF_List synchset) {
         if (kind == ID || kind == NUM) {
             oss << " " << lookahead->getLexeme();
         }
-        std::cout << oss.str() << '\n';
-        // errorMessage(ch, oss.str());
+        errorMessage(ch, oss.str());
 
         delete lookahead;
         lookahead = getToken(ch);
@@ -54,21 +57,20 @@ void Parser::checkInput(char*& ch, FF_List firstset, FF_List synchset) {
     TokenKind kind = lookahead->getKind();
     if (!firstset.contains(kind)) {
 
-        for (auto i : firstset.getSynchSet()) {
-            std::cout << "<" << i << ">\n";
-        }
+        // for (auto i : firstset.getSynchSet()) {
+        //     std::cout << "<" << i << ">\n";
+        // }
 
         ostringstream oss;
         oss << "Error: Unrecognized token " << kind;
         if (kind == ID || kind == NUM) {
             oss << " " << lookahead->getLexeme();
         }
-        std::cout << oss.str() << '\n';
-        // errorMessage(ch, oss.str());
+        errorMessage(ch, oss.str());
 
-        for (auto i : (firstset + synchset).getSynchSet()) {
-            std::cout << "<" << i << ">\n";
-        }
+        // for (auto i : (firstset + synchset).getSynchSet()) {
+        //     std::cout << "<" << i << ">\n";
+        // }
         scanTo(ch, (firstset + synchset));
     }
 }
@@ -84,7 +86,7 @@ void Parser::checkFollows(char*& ch, FF_List synchset) {
         if (kind == ID || kind == NUM) {
             oss << " " << lookahead->getLexeme();
         }
-        // errorMessage(ch, oss.str());
+        errorMessage(ch, oss.str());
 
         scanTo(ch, synchset);
     }
@@ -312,44 +314,53 @@ Node* Parser::factor(char*& ch, FF_List synchset) {
 // <paren-exp> => '(' <equation> ')'
 Node* Parser::parenExp(char*& ch, FF_List synchset) {
 
-    checkInput(ch, FF_List::parenExpFirsts, synchset);
-    Node* node = nullptr;
-    bool errorInChild = false;
-    if (!synchset.contains(lookahead->getKind())) {
+    Node* temp = new Node();
+    bool imbalancedParen = false;
 
-        node = new Node();
+    // if next token is '('
+    if (nextIs(LPAREN)) {
 
-        // if next token is '('
-        if (nextIs(LPAREN)) {
+        Token* lparen = match(ch, LPAREN);
+        if (lparen) {
 
-            Token* lparen = match(ch, LPAREN);
-            if (lparen) {
+            temp = equation(ch, FF_List::expFollows);
 
-                node = equation(ch, FF_List::expFollows);
+            // if next token is ')'
+            if (nextIs(RPAREN)) {
 
-                // if next token is ')'
-                if (node && nextIs(RPAREN)) {
+                Token* rparen = match(ch, RPAREN);
+                if (rparen) {
 
-                    Token* rparen = match(ch, RPAREN);
-                    if (!rparen) {
-                        errorInChild = true;
-                        std::cerr << "Invalid token after right parenthesis\n";
+                    // if next token is ')' again
+                    if (nextIs(RPAREN)) {
+                        imbalancedParen = true;
                     }
 
-                    delete rparen;
+                } else {
+                    std::cerr << "Invalid token after right parenthesis\n";
                 }
 
+                delete rparen;
+
             } else {
-                errorInChild = true;
-                std::cerr << "Invalid token after left parenthesis\n";
+                imbalancedParen = true;
             }
 
-            delete lparen;
+        } else {
+            std::cerr << "Invalid token after left parenthesis\n";
         }
-        checkFollows(ch, synchset);
+
+        delete lparen;
     }
 
-    return node;
+    // if next token is '('
+    if (imbalancedParen) {
+        temp->error = true;
+        std::cerr << "FACTOR: imbalanced parentheses: invalid arithmetic "
+                     "expression\n";
+    }
+
+    return temp;
 }
 
 char* stripWS(char* input) {
