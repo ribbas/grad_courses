@@ -38,7 +38,6 @@ void Parser::parseEquation(char*& ch, SS_Cell* cell) {
     lookahead = getToken(ch);
 
     if (lookahead->getKind() == T_ERROR) {
-        std::cerr << "Error: invalid token in " << cell->getID() << '\n';
         cell->setError(true);
         return;
     }
@@ -47,7 +46,6 @@ void Parser::parseEquation(char*& ch, SS_Cell* cell) {
     Node* equationNode = equation(ch, FF_List::expFollows);
 
     if (!equationNode || equationNode->error) {
-        std::cerr << "Error: invalid equation in " << cell->getID() << '\n';
         cell->setError(true);
         return;
     }
@@ -72,7 +70,7 @@ Node* Parser::equation(char*& ch, FF_List synchset) {
     bool errorInChild = false;
     if (!synchset.contains(lookahead->getKind())) {
 
-        node = term(ch, (FF_List::termFollows));
+        node = term(ch, (synchset + FF_List::termFollows));
         if (!node) {
             errorInChild = true;
         }
@@ -80,9 +78,9 @@ Node* Parser::equation(char*& ch, FF_List synchset) {
         while (nextIs(ADD) || nextIs(SUB)) {
 
             // rotate nodes
-            Node* temp = addOp(ch, (FF_List::addOpFollows));
+            Node* temp = addOp(ch, FF_List::addOpFollows);
             temp->left = node;
-            temp->right = term(ch, (FF_List::termFollows));
+            temp->right = term(ch, (synchset + FF_List::termFollows));
             node = temp;
             if (!node->right || errorInChild) {
                 delete node;
@@ -135,15 +133,15 @@ Node* Parser::term(char*& ch, FF_List synchset) {
     Node* node = nullptr;
     bool errorInChild = false;
     if (!synchset.contains(lookahead->getKind())) {
-        node = factor(ch, (FF_List::factorFollows));
+        node = factor(ch, (synchset + FF_List::factorFollows));
 
         // if next token is '*' or '/'
         while (nextIs(MULT) || nextIs(DIV)) {
 
             // rotate nodes
-            Node* temp = mulOp(ch, (FF_List::mulOpFollows));
+            Node* temp = mulOp(ch, FF_List::mulOpFollows);
             temp->left = node;
-            temp->right = factor(ch, (FF_List::factorFollows));
+            temp->right = factor(ch, (synchset + FF_List::factorFollows));
             node = temp;
             if (!node->right || errorInChild) {
                 delete node;
@@ -200,7 +198,7 @@ Node* Parser::factor(char*& ch, FF_List synchset) {
         // if next token is '(' or ')'
         if (nextIs(LPAREN) || nextIs(RPAREN)) {
 
-            node = parenExp(ch, (FF_List::parenExpFollows));
+            node = parenExp(ch, (synchset + FF_List::parenExpFollows));
             if (!node) {
                 errorInChild = true;
             }
@@ -218,51 +216,53 @@ Node* Parser::factor(char*& ch, FF_List synchset) {
 // <paren-exp> => '(' <equation> ')'
 Node* Parser::parenExp(char*& ch, FF_List synchset) {
 
-    Node* temp = new Node();
-    bool imbalancedParen = false;
+    checkInput(ch, FF_List::parenExpFirsts, synchset);
+    Node* node = new Node();
+    bool parsedLParen = false;
+    bool parsedRParen = false;
+    bool unbalancedParen = false;
 
-    // if next token is '('
-    if (nextIs(LPAREN)) {
+    if (!synchset.contains(lookahead->getKind())) {
 
-        Token* lparen = match(ch, LPAREN);
-        if (lparen) {
+        // if next token is '('
+        if (nextIs(LPAREN)) {
 
-            temp = equation(ch, FF_List::expFollows);
+            Token* lparen = match(ch, LPAREN);
+            if (lparen) {
 
-            // if next token is ')'
-            if (nextIs(RPAREN)) {
+                node = equation(ch, (synchset + FF_List::expFollows));
 
-                Token* rparen = match(ch, RPAREN);
-                if (rparen) {
+                // if next token is ')'
+                if (nextIs(RPAREN)) {
 
-                    // if next token is ')' again
-                    if (nextIs(RPAREN)) {
-                        imbalancedParen = true;
+                    Token* rparen = match(ch, RPAREN);
+                    if (rparen) {
+
+                        // if next token is ')' again
+                        if (nextIs(RPAREN)) {
+                            unbalancedParen = true;
+                        }
                     }
 
+                    delete rparen;
+                    parsedLParen = true;
+
                 } else {
-                    std::cerr << "Invalid token after right parenthesis\n";
+                    unbalancedParen = true;
                 }
-
-                delete rparen;
-
-            } else {
-                imbalancedParen = true;
             }
 
-        } else {
-            std::cerr << "Invalid token after left parenthesis\n";
+            delete lparen;
         }
 
-        delete lparen;
+        checkFollows(ch, synchset);
     }
 
     // if next token is '('
-    if (imbalancedParen) {
-        temp->error = true;
-        std::cerr << "FACTOR: imbalanced parentheses: invalid arithmetic "
-                     "expression\n";
+    if (unbalancedParen) {
+        node->error = true;
+        std::cerr << "Error: unbalanced parentheses\n";
     }
 
-    return temp;
+    return node;
 }

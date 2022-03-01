@@ -43,7 +43,7 @@ void Parser::checkInput(char*& ch, FF_List firstset, FF_List synchset) {
     TokenKind kind = lookahead->getKind();
     if (!firstset.contains(kind)) {
 
-        std::cerr << "Error: Unrecognized token A" << kind;
+        std::cerr << "Error: Unrecognized token " << kind;
         if (kind == ID || kind == NUM) {
             std::cerr << ' ' << lookahead->getLexeme();
         }
@@ -61,7 +61,7 @@ void Parser::checkFollows(char*& ch, FF_List synchset) {
     TokenKind kind = lookahead->getKind();
     if (!synchset.contains(kind)) {
 
-        std::cerr << "Error: Unrecognized token B" << kind;
+        std::cerr << "Error: Unrecognized token " << kind;
         if (kind == ID || kind == NUM) {
             std::cerr << ' ' << lookahead->getLexeme();
         }
