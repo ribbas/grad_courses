@@ -8,7 +8,6 @@
 # the project into a tar.
 #
 
-from pathlib import Path
 import subprocess
 import sys
 
@@ -23,8 +22,6 @@ if __name__ == "__main__":
         tarfile_name: str = ""
         # files to archive
         arch_files: list = None
-        # current directory
-        cur_dir: Path = Path(__file__).parent
 
         # if user prompts for a binary release
         if sys.argv[-1] == "-b":
@@ -33,7 +30,7 @@ if __name__ == "__main__":
                 host_name: str = input("Please enter a hostname: ")
                 tarfile_name: str = f"homework1_{host_name}.tar"
 
-                arch_files = [cur_dir / "bin"]
+                arch_files = ["../homework2/bin"]
 
             else:
                 print("Binary release generation cancelled")
@@ -49,7 +46,7 @@ if __name__ == "__main__":
                 make_clean_cmd: list = ["make", "clean"]
                 subprocess.run(make_clean_cmd)
 
-                arch_files = list(i.name for i in cur_dir.iterdir())
+                arch_files = ["../homework2"]
 
             else:
                 print("Source release generation cancelled")
@@ -62,4 +59,4 @@ if __name__ == "__main__":
         # construct and run the tar command
         tar_command.append(tarfile_name)
         tar_command.extend(arch_files)
-        subprocess.run(tar_command)
+        subprocess.Popen(tar_command)

@@ -26,6 +26,7 @@ SynchSet FF_List::parenExpFirsts = {LPAREN};
 SynchSet FF_List::parenExpFollows = {MULT, DIV, ADD, SUB, RPAREN, T_EOF};
 
 FF_List::FF_List() : _synchSet({}) {}
+
 FF_List::FF_List(SynchSet synchSet) : _synchSet(synchSet) {}
 
 SynchSet FF_List::getSynchSet() {
