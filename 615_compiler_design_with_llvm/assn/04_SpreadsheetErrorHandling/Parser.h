@@ -17,12 +17,16 @@
 using namespace std;
 
 Token* getToken(char*& ch); // in Scanner.cpp
-char* stripWS(char* input);
 
 class Parser {
     static Token* lookahead;
+    static unsigned int charLen;
+    static std::string equationName;
 
 public:
+    static void errorMessage(char* ch, std::string error,
+                             bool showInput = false);
+    static char* stripWS(char* input);
     static void scanTo(char*& ch, FF_List synchset);
     static void checkInput(char*& ch, FF_List firstset, FF_List synchset);
     static void checkFollows(char*& ch, FF_List synchset);

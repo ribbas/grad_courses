@@ -18,85 +18,21 @@
 
 #include "Parser.h"
 
-#include <cstring>
 #include <iostream>
-#include <sstream>
 
 using namespace std;
 
-Token* Parser::lookahead;
-
-void errorMessage(char* ch, std::string error) {
-    std::cout << *ch << '\n';
-    std::cout << error << '\n';
-}
-
-// scanto(synchset) throws away tokens until
-// a synchronizing token is found in the sync_set.
-void Parser::scanTo(char*& ch, FF_List synchset) {
-
-    while (!synchset.contains(lookahead->getKind())) {
-        TokenKind kind = lookahead->getKind();
-        ostringstream oss;
-        oss << "Panic Mode: Deleting token " << kind;
-        if (kind == ID || kind == NUM) {
-            oss << " " << lookahead->getLexeme();
-        }
-        errorMessage(ch, oss.str());
-
-        delete lookahead;
-        lookahead = getToken(ch);
-    }
-}
-
-// checkinput(firstset, synchset) verifies that the input token
-// matches the state of the parser at the start of a function.
-// If not, it produces an error message and calls scanto(synchset).
-void Parser::checkInput(char*& ch, FF_List firstset, FF_List synchset) {
-
-    TokenKind kind = lookahead->getKind();
-    if (!firstset.contains(kind)) {
-
-        // for (auto i : firstset.getSynchSet()) {
-        //     std::cout << "<" << i << ">\n";
-        // }
-
-        ostringstream oss;
-        oss << "Error: Unrecognized token " << kind;
-        if (kind == ID || kind == NUM) {
-            oss << " " << lookahead->getLexeme();
-        }
-        errorMessage(ch, oss.str());
-
-        // for (auto i : (firstset + synchset).getSynchSet()) {
-        //     std::cout << "<" << i << ">\n";
-        // }
-        scanTo(ch, (firstset + synchset));
-    }
-}
-
-// checkfollows(synchset) verifies that the input token
-// matches the state of the parser at the end of a function.
-// If not, it produces an error message and calls scanto(synchset).
-void Parser::checkFollows(char*& ch, FF_List synchset) {
-    TokenKind kind = lookahead->getKind();
-    if (!synchset.contains(kind)) {
-        ostringstream oss;
-        oss << "Error: Unrecognized token " << kind;
-        if (kind == ID || kind == NUM) {
-            oss << " " << lookahead->getLexeme();
-        }
-        errorMessage(ch, oss.str());
-
-        scanTo(ch, synchset);
-    }
-}
+Token* Parser::lookahead = nullptr;
+unsigned int Parser::charLen;
+std::string Parser::equationName = "";
 
 void Parser::parseEquation(char*& ch, SS_Cell* cell) {
 
     // strip all whitespace from equation
+    charLen = 0;
     ch = stripWS(ch);
-    cell->setEquation(ch);
+    equationName = ch;
+    cell->setEquation(equationName);
 
     // get first token
     lookahead = getToken(ch);
@@ -126,38 +62,6 @@ void Parser::parseEquation(char*& ch, SS_Cell* cell) {
     cell->calculateExpression();
 
     return;
-}
-
-/*
- * Check if the TokenKind matches without updating lookahead
- */
-bool Parser::nextIs(TokenKind expectedToken) {
-    return lookahead->getKind() == expectedToken;
-}
-
-/*
- * Update lookahead token if the TokenKind matches
- */
-Token* Parser::match(char*& ch, TokenKind expected) {
-
-    if (nextIs(expected)) {
-
-        Token* nextToken = lookahead;
-        lookahead = getToken(ch);
-
-        // if a non-empty error token
-        if ((lookahead->getKind() == T_ERROR) &&
-            (lookahead->getLexeme().length())) {
-            delete nextToken;
-            return nullptr;
-        }
-        return nextToken;
-
-    } else {
-
-        std::cerr << "Unexpected token: " << expected << '\n';
-        return nullptr;
-    }
 }
 
 // <equation> => <term> { <add-op> <term> }
@@ -361,18 +265,4 @@ Node* Parser::parenExp(char*& ch, FF_List synchset) {
     }
 
     return temp;
-}
-
-char* stripWS(char* input) {
-    unsigned int i, j;
-    char* output = input;
-    for (i = 0, j = 0; i < strlen(input); i++, j++) {
-        if (ASCII[(int)input[i]]) {
-            output[j] = input[i];
-        } else {
-            j--;
-        }
-    }
-    output[j] = 0;
-    return output;
 }

@@ -1,12 +1,12 @@
 # This input file is for the 605.615 Compiler Design with LLVM course 
-# Homework Assignment 5
+# Homework Assignment 4
 
-A0 = 8 *- 2
-B0 = 8 -* 2
-C0 = 8 +- 2
-D0 = 8 /* 2
-E0 = 8 -/ 2
-F0 = 8 /+ 2
+A0 = 1 *- 2
+B0 = 4 -* 2
+C0 = 0 +- 2
+D0 = 4 /* 2
+E0 = 4 -/ 2
+F0 = 4 /+ 2
 
 A1 = 8 *- 2
 B1 = 8 -* 2
