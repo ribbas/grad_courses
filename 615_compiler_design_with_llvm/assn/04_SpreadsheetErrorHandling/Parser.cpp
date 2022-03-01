@@ -23,13 +23,13 @@
 using namespace std;
 
 Token* Parser::lookahead = nullptr;
-unsigned int Parser::charLen;
+unsigned int Parser::cursor;
 std::string Parser::equationName = "";
 
 void Parser::parseEquation(char*& ch, SS_Cell* cell) {
 
     // strip all whitespace from equation
-    charLen = 0;
+    cursor = 0;
     ch = stripWS(ch);
     equationName = ch;
     cell->setEquation(equationName);

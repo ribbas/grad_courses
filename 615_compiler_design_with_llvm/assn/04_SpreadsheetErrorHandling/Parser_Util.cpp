@@ -1,18 +1,9 @@
 #include "Parser.h"
 
 #include <cstring>
-#include <sstream>
 
-void Parser::errorMessage(char* ch, std::string error, bool showInput) {
-
-    // if (showInput) {
-    //     std::cout << '\t' << equationName << '\n' << '\t';
-    //     for (unsigned int i = 0; i < charLen; i++) {
-    //         std::cout << ' ';
-    //     }
-    //     std::cout << '^' << '\n';
-    // }
-    std::cout << error << '\n';
+void Parser::updateCursor() {
+    cursor += lookahead->getLexeme().length();
 }
 
 // scanto(synchset) throws away tokens until
@@ -23,24 +14,24 @@ void Parser::scanTo(char*& ch, FF_List synchset) {
 
         TokenKind kind = lookahead->getKind();
 
-        ostringstream oss;
-
-        oss << "\t" << equationName << '\n' << '\t';
-        for (unsigned int i = 0; i < charLen; i++) {
-            oss << ' ';
+        std::cerr << '\t' << equationName << "\n\t";
+        for (unsigned int i = 0; i < cursor; i++) {
+            std::cerr << ' ';
         }
-        oss << '^' << '\n';
+        std::cerr << '^' << '\n';
 
-        oss << "Panic Mode: Deleting token " << kind;
+        std::cerr << "Panic Mode: Deleting token " << kind;
         if (kind == ID || kind == NUM) {
-            oss << ' ' << lookahead->getLexeme();
+            std::cerr << ' ' << lookahead->getLexeme() << '\n';
         }
-        oss << '\n';
+        std::cerr << '\n';
 
-        errorMessage(ch, oss.str(), true);
-
+        if (kind == T_EOF) {
+            return;
+        }
         delete lookahead;
         lookahead = getToken(ch);
+        updateCursor();
     }
 }
 
@@ -52,12 +43,12 @@ void Parser::checkInput(char*& ch, FF_List firstset, FF_List synchset) {
     TokenKind kind = lookahead->getKind();
     if (!firstset.contains(kind)) {
 
-        ostringstream oss;
-        oss << "Error: Unrecognized token " << kind;
+        std::cerr << "Error: Unrecognized token A" << kind;
         if (kind == ID || kind == NUM) {
-            oss << ' ' << lookahead->getLexeme();
+            std::cerr << ' ' << lookahead->getLexeme();
         }
-        errorMessage(ch, oss.str());
+        std::cerr << '\n';
+
         scanTo(ch, (firstset + synchset));
     }
 }
@@ -66,14 +57,15 @@ void Parser::checkInput(char*& ch, FF_List firstset, FF_List synchset) {
 // matches the state of the parser at the end of a function.
 // If not, it produces an error message and calls scanto(synchset).
 void Parser::checkFollows(char*& ch, FF_List synchset) {
+
     TokenKind kind = lookahead->getKind();
     if (!synchset.contains(kind)) {
-        ostringstream oss;
-        oss << "Error: Unrecognized token " << kind;
+
+        std::cerr << "Error: Unrecognized token B" << kind;
         if (kind == ID || kind == NUM) {
-            oss << ' ' << lookahead->getLexeme();
+            std::cerr << ' ' << lookahead->getLexeme();
         }
-        errorMessage(ch, oss.str());
+        std::cerr << '\n';
 
         scanTo(ch, synchset);
     }
@@ -95,7 +87,7 @@ Token* Parser::match(char*& ch, TokenKind expected) {
 
         Token* nextToken = lookahead;
         lookahead = getToken(ch);
-        charLen += lookahead->getLexeme().length();
+        updateCursor();
 
         // if a non-empty error token
         if ((lookahead->getKind() == T_ERROR) &&

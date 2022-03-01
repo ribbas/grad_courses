@@ -174,7 +174,6 @@ Token* getToken(char*& ch) {
             // unsupported token - create an error token with the rest of the
             // equation as the lexeme
             default: {
-                lexeme = ch;
                 scanned = true;
                 break;
             }
