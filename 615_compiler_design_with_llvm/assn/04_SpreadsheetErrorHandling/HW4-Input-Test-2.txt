@@ -1,4 +1,11 @@
-A0 = 2)))
-B0 = 2(
-C0 = (2
-D0 = )2
+# This input file is for the 605.615 Compiler Design with LLVM course 
+# Homework Assignment 4
+# This input file initiates the parser's Panic Mode by chaining several
+# ID and NUM tokens or inputting invalid ID and NUM tokens
+
+A0 = 2A2A3
+B0 = A0A1A3
+C0 = B09
+D0 = b0
+E0 = E0
+F0 = (((((B0)))))

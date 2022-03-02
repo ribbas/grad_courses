@@ -1,5 +1,6 @@
 # This input file is for the 605.615 Compiler Design with LLVM course 
-# Homework Assignment 5
+# Homework Assignment 4
+# This input file was copied from the Homework Assignment 3
 
 A0 "Y ="
 B0 "aXX +

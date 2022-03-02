@@ -26,10 +26,16 @@ Token* Parser::lookahead = nullptr;
 unsigned int Parser::cursor;
 std::string Parser::equationName = "";
 
+int parsedLParen;
+int parsedRParen;
+
 void Parser::parseEquation(char*& ch, SS_Cell* cell) {
 
     // strip all whitespace from equation
     cursor = 0;
+    parsedLParen = 0;
+    parsedRParen = 0;
+
     ch = stripWS(ch);
     equationName = ch;
     cell->setEquation(equationName);
@@ -44,6 +50,12 @@ void Parser::parseEquation(char*& ch, SS_Cell* cell) {
 
     // start parsing equation
     Node* equationNode = equation(ch, FF_List::expFollows);
+
+    if (parsedLParen != parsedRParen) {
+        std::cerr << "Error: Unbalanced parentheses\n";
+        cell->setError(true);
+        return;
+    }
 
     if (!equationNode || equationNode->error) {
         cell->setError(true);
@@ -216,11 +228,9 @@ Node* Parser::factor(char*& ch, FF_List synchset) {
 // <paren-exp> => '(' <equation> ')'
 Node* Parser::parenExp(char*& ch, FF_List synchset) {
 
+    bool errorInChild = false;
     checkInput(ch, FF_List::parenExpFirsts, synchset);
     Node* node = new Node();
-    bool parsedLParen = false;
-    bool parsedRParen = false;
-    bool unbalancedParen = false;
 
     if (!synchset.contains(lookahead->getKind())) {
 
@@ -228,40 +238,47 @@ Node* Parser::parenExp(char*& ch, FF_List synchset) {
         if (nextIs(LPAREN)) {
 
             Token* lparen = match(ch, LPAREN);
+            parsedLParen++;
             if (lparen) {
 
                 node = equation(ch, (synchset + FF_List::expFollows));
+                if (!node) {
+                    errorInChild = true;
+                    delete node;
+                }
 
                 // if next token is ')'
                 if (nextIs(RPAREN)) {
+                    parsedRParen++;
 
                     Token* rparen = match(ch, RPAREN);
                     if (rparen) {
 
                         // if next token is ')' again
-                        if (nextIs(RPAREN)) {
-                            unbalancedParen = true;
+                        while (nextIs(RPAREN)) {
+                            rparen = match(ch, RPAREN);
+                            parsedRParen++;
                         }
                     }
 
                     delete rparen;
-                    parsedLParen = true;
-
-                } else {
-                    unbalancedParen = true;
                 }
             }
 
             delete lparen;
+        } else {
+            errorInChild = true;
         }
 
         checkFollows(ch, synchset);
     }
 
     // if next token is '('
-    if (unbalancedParen) {
-        node->error = true;
-        std::cerr << "Error: unbalanced parentheses\n";
+    if (errorInChild) {
+        if (node) {
+            node->error = true;
+            delete node;
+        }
     }
 
     return node;
