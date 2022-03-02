@@ -1,3 +1,13 @@
+/*
+ * test_log.cpp
+ *
+ * Sabbir Ahmed
+ * System Development in the Unix Environment (605.614)
+ *
+ * This file contains the driver for the test_log library
+ *
+ */
+
 #include "log_mgr.hpp"
 
 #include <stdlib.h>

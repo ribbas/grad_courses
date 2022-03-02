@@ -10,17 +10,21 @@ CXX ?= $(shell which c++)
 
 SUBDIRS := src
 
-.PHONY: default it install depend clean $(SUBDIRS)
+.PHONY: default it install depend clean
 default: it
 
-# target to propagate make through all the subdirectories
-$(SUBDIRS):
-	@echo "<<< $@ >>>"
-	@cd $@ && $(MAKE) --no-print-directory $(MAKECMDGOALS)
+# propagate make through all the subdirectories
+depend it install:
+	@for i in $(SUBDIRS); do \
+		echo "<< $$i >>"; \
+		cd $$i; \
+		$(MAKE) --no-print-directory $@; \
+	done
 
-# pass
-it install depend: $(SUBDIRS)
-
-# clean out library files and executables
-clean: $(SUBDIRS)
-	rm -f lib/* bin/*
+clean:
+	@rm -f lib/* bin/*
+	@for i in $(SUBDIRS); do \
+		echo "<< $$i >>"; \
+		cd $$i; \
+		$(MAKE) --no-print-directory $@; \
+	done

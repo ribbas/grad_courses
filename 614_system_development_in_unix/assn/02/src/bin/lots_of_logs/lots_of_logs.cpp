@@ -1,3 +1,13 @@
+/*
+ * lots_of_logs.cpp
+ *
+ * Sabbir Ahmed
+ * System Development in the Unix Environment (605.614)
+ *
+ * This file contains the driver for the lots_of_logs library
+ *
+ */
+
 #include "log_mgr.hpp"
 
 #include <stdlib.h>

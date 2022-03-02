@@ -10,6 +10,7 @@
 
 #include "log_mgr.hpp"
 
+#include <iostream>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -27,6 +28,8 @@ int main() {
         }
 
         close_logfile();
+    } else {
+        std::cout << "File failed to open\n";
     }
     exit(file_status);
 }
