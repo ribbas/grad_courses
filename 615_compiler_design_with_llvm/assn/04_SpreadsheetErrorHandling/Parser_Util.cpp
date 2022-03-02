@@ -2,10 +2,6 @@
 
 #include <cstring>
 
-void Parser::updateCursor() {
-    cursor += lookahead->getLexeme().length();
-}
-
 // scanto(synchset) throws away tokens until
 // a synchronizing token is found in the sync_set.
 void Parser::scanTo(char*& ch, FF_List synchset) {
@@ -96,6 +92,10 @@ Token* Parser::match(char*& ch, TokenKind expected) {
         std::cerr << "Unexpected token: " << expected << '\n';
         return nullptr;
     }
+}
+
+void Parser::updateCursor() {
+    cursor += lookahead->getLexeme().length();
 }
 
 char* Parser::stripWS(char* input) {

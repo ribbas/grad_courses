@@ -1,14 +1,18 @@
-# Week 5: Spreadsheet Recursive Descent Parser
+# Week 6: Spreadsheet Scanner Panic Mode
 
 ## Modifications for assignment
 
-The provided Skeleton-Spreadsheet-v2 was used as the outline for this assignment. Only the following files were modified to implement the program:
+The Spreadsheet Scanner Recursive Descent Parser from week 5 was used as the outline for this assignment. Only the following files were modified to implement the program:
 
-1. `HW2-Driver.cpp` was removed due to its lack of necessity for the assignment.
-2. `SS-Driver.cpp` was reformatted to remove unnecessary comments.
-3. `Scanner.h` and `Scanner.cpp` had attributes and methods added. Most of the additions were carried over from the Week 2 Assignment. Some attributes, such as `const char HW2_Index`, were removed after refactoring the methods that check for symbols. The `Token* getToken(char*& ch)` method was moved to `Parser` but implemented in this class. The method was modified to support additional symbols.
-4. `Parser.h` and `Parser.cpp` had all of its skeleton methods implemented. The attributes `Token* lookahead` and `bool invalidToken` were added to the class. `lookahead` is the current token that gets recursively parsed. `invalidToken` is set to true if an invalid token is found in the equation.
-5. `SS_Cell.cpp` had minor modifications where every instance of `delete expNode` were wrapped in conditionals to check the existence of nodes before deletion, i.e. `if (expNode)`. The file was also reformatted.
+1. `Scanner.cpp` was modified. Its `Token* getToken(char*& ch)` method had a test case added to handle the newly added `T_EOF` token kind. Its `void parseText(char*& ch, SS_Cell* cell)` method was also updated to retroactively remove the unnecessary restrictions for text cells to end with a double quote.
+2. `Token.h` and `Token.cpp` had minor modifications where the `T_EOF` token kind and its corresponding string stream were added.
+3. `Parser.h` and `Parser.cpp` had major modifications, where the panic mode helper methods were added to all of the symbol parsing methods. Those methods also had their signatures updated. Some static attributes were added as well, such as `unsigned int cursor` and `std::string equationName` which are used to locate the offending token. Other attributes are added to handle unbalanced parentheses.
+4. `Parser_Util.cpp` was added to maintain the increasing helper methods for the Parser class.
+5. `FF_List.h` and `FF_List.cpp` were added to hold first and follow sets for the tokens as well as provides methods to interact with them.
+
+## Test input files
+
+The same input file used for the week 5 assignment was copied over. Additionally, 3 test input files have also been included. Each of the input test files attempt to invoke the newly added Panic Mode and other existing error handlers.
 
 ## System Dependencies
 

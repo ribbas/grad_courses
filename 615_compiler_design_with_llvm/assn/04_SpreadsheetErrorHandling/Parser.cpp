@@ -25,9 +25,8 @@ using namespace std;
 Token* Parser::lookahead = nullptr;
 unsigned int Parser::cursor;
 std::string Parser::equationName = "";
-
-int parsedLParen;
-int parsedRParen;
+int Parser::parsedLParen;
+int Parser::parsedRParen;
 
 void Parser::parseEquation(char*& ch, SS_Cell* cell) {
 
@@ -202,7 +201,6 @@ Node* Parser::factor(char*& ch, FF_List synchset) {
 
     checkInput(ch, FF_List::factorFirsts, synchset);
     Node* node = nullptr;
-    bool errorInChild = false;
     if (!synchset.contains(lookahead->getKind())) {
 
         node = new Node();
@@ -212,7 +210,7 @@ Node* Parser::factor(char*& ch, FF_List synchset) {
 
             node = parenExp(ch, (synchset + FF_List::parenExpFollows));
             if (!node) {
-                errorInChild = true;
+                delete node;
             }
 
             // if next token is 'NUM' or 'ID'

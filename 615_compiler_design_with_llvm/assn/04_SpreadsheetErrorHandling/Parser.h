@@ -22,6 +22,8 @@ class Parser {
     static Token* lookahead;
     static unsigned int cursor;
     static std::string equationName;
+    static int parsedLParen;
+    static int parsedRParen;
 
 public:
     static void updateCursor();
