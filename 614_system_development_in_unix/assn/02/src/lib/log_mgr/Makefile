@@ -15,7 +15,7 @@ INC_DIR := ../../../include
 SRC := log_mgr.cpp
 
 # declare include headers as dependencies for the executable
-DEPS := $(INC_DIR)/$(SRC:%.cpp=%.hpp) depend_list
+DEPS := $(INC_DIR)/$(SRC:%.cpp=%.hpp)
 # construct library paths
 LIB = $(SRC:%.cpp=lib%.a)
 # construct objects
@@ -23,7 +23,7 @@ OBJ = $(SRC:.cpp=.o)
 
 .PHONY: it install depend clean
 
-it: $(LIB)
+it: $(LIB) depend
 $(LIB): $(OBJ)
 	ar cr $(LIB) $(OBJ)
 	cp $(LIB) $(LIB_DIR)

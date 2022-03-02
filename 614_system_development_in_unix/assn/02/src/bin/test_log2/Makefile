@@ -22,7 +22,7 @@ LIB_ARS = $(LIBS:%=$(LIB_DIR)/lib%.a)
 # construct library flags
 LD_FLAGS = -L$(LIB_DIR) $(LIBS:%=-l%)
 # declare include headers and libraries as dependencies for the executable
-DEP := $(INC_DIR)/$(LIBS).hpp $(LIB_ARS) depend_list
+DEP := $(INC_DIR)/$(LIBS).hpp $(LIB_ARS)
 
 # construct objects
 OBJ := $(SRC:%.cpp=%.o)
@@ -32,7 +32,7 @@ EXE := $(SRC:%.cpp=%)
 .PHONY: it install depend clean
 
 it: $(EXE)
-$(EXE): $(OBJ) $(DEP)
+$(EXE): $(OBJ) $(DEP) depend
 	$(CXX) -I$(INC_DIR) -g $(OBJ) $(LD_FLAGS) -o $(EXE)
 	chmod 755 $(EXE)
 
