@@ -22,15 +22,17 @@ if __name__ == "__main__":
         tarfile_name: str = ""
         # files to archive
         arch_files: list = None
+        # current directory
+        cur_dir: str = "homework2"
 
         # if user prompts for a binary release
         if sys.argv[-1] == "-b":
             confirm = input("Generate a binary release? [Y/n]: ")
             if confirm.lower() == "y":
                 host_name: str = input("Please enter a hostname: ")
-                tarfile_name: str = f"homework1_{host_name}.tar"
+                tarfile_name: str = f"{cur_dir}_{host_name}.tar"
 
-                arch_files = ["../homework2/bin"]
+                arch_files = [f"../{cur_dir}/bin"]
 
             else:
                 print("Binary release generation cancelled")
@@ -40,13 +42,13 @@ if __name__ == "__main__":
         elif sys.argv[-1] == "-s":
             confirm = input("Generate a source release? [Y/n]: ")
             if confirm.lower() == "y":
-                tarfile_name = "homework1.tar"
+                tarfile_name = f"{cur_dir}.tar"
 
                 # run `make clean`
                 make_clean_cmd: list = ["make", "clean"]
                 subprocess.run(make_clean_cmd)
 
-                arch_files = ["../homework2"]
+                arch_files = [f"../{cur_dir}"]
 
             else:
                 print("Source release generation cancelled")
