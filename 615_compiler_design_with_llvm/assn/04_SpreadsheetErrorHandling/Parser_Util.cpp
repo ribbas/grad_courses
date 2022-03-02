@@ -89,12 +89,6 @@ Token* Parser::match(char*& ch, TokenKind expected) {
         lookahead = getToken(ch);
         updateCursor();
 
-        // if a non-empty error token
-        if ((lookahead->getKind() == T_ERROR) &&
-            (lookahead->getLexeme().length())) {
-            delete nextToken;
-            return nullptr;
-        }
         return nextToken;
 
     } else {

@@ -1,11 +1,11 @@
 # This input file is for the 605.615 Compiler Design with LLVM course 
 # Homework Assignment 4
 # This input file initiates the parser's Panic Mode by chaining
-# ADD and MULT tokens
+# ADD and MULT tokens or inputting invalid operator tokens
 
 A0 = 1 *- 2
 B0 = 4 -* 2
 C0 = 0 +- 2
-D0 = 4 /* 2
+D0 = 4 /?_hahaha 2
 E0 = 2 ++++++++++++++++ 0
 F0 = 4 -+-/*-+-/*-+-/** 2
