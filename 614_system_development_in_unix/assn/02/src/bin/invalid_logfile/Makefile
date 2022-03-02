@@ -2,7 +2,7 @@
 # Sabbir Ahmed
 # System Development in the Unix Environment (605.614)
 #
-# Makefile for test_log
+# Makefile for invalid_logfile
 #
 
 # set the C++ compiler if unset

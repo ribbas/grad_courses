@@ -1,4 +1,5 @@
 #include "log_mgr.hpp"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>

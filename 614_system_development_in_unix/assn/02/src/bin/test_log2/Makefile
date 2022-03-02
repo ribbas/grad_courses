@@ -1,8 +1,9 @@
 # Makefile
 # Sabbir Ahmed
 # System Development in the Unix Environment (605.614)
-# 
+#
 # Makefile for test_log2
+#
 
 # set the C++ compiler if unset
 CXX ?= $(shell which c++)
@@ -13,7 +14,7 @@ INC_DIR := ../../../include
 BIN_DIR := ../../../bin
 
 # source file for executable
-SRC = test_log2.cpp
+SRC = $(shell basename $(CURDIR)).cpp
 
 # required libraries for executable
 LIBS = log_mgr

@@ -1,8 +1,9 @@
 # Makefile
 # Sabbir Ahmed
 # System Development in the Unix Environment (605.614)
-# 
+#
 # Makefile for lots_of_logs
+#
 
 # set the C++ compiler if unset
 CXX ?= $(shell which c++)
@@ -13,7 +14,7 @@ INC_DIR := ../../../include
 BIN_DIR := ../../../bin
 
 # source file for executable
-SRC = lots_of_logs.cpp
+SRC = $(shell basename $(CURDIR)).cpp
 
 # required libraries for executable
 LIBS = log_mgr

@@ -50,5 +50,6 @@ int set_logfile(const char* logfile_name) {
 }
 
 void close_logfile(void) {
+    printf("closed\n");
     close(fd);
 }

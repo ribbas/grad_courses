@@ -1,13 +1,14 @@
 # Makefile
 # Sabbir Ahmed
 # System Development in the Unix Environment (605.614)
-# 
+#
 # Makefile for src/bin
+#
 
 # set the C++ compiler if unset
 CXX ?= $(shell which c++)
 
-SUBDIRS := test_log test_log2 lots_of_logs
+SUBDIRS := test_log test_log2 lots_of_logs invalid_logfile
 
 .PHONY: it install depend clean $(SUBDIRS)
 

@@ -1,8 +1,9 @@
 # Makefile
 # Sabbir Ahmed
 # System Development in the Unix Environment (605.614)
-# 
-# Makefile for lib/arg
+#
+# Makefile for lib/log_mgr
+#
 
 # set the C++ compiler if unset
 CXX ?= $(shell which c++)
