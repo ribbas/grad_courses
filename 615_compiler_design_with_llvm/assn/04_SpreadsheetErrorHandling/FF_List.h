@@ -1,14 +1,8 @@
-// Original Grammar Rules                    |    Firsts      | Follows
-//  <$>       =>  <exp> <eof>                | <ID>, <NUM>, ( | <EOF>
-//  <exp>     => <term> {exp'}               | <ID>, <NUM>, ( | <EOF>, )
-//  {exp'}    => <+-op> <term> {exp'} | e    |    +, ', e     | <EOF>, )
-//  <+-op>  => '+' | '-'                     |    +, -        | <ID>, <NUM>, (
-//  <term>    =>  <fact> {term'}             | <ID>, <NUM>, ( | +, -, <EOF>, )
-//  {term'}   =>  <*-op> <fact> {term'} | e  |    *, /, e     | +, -, <EOF>, )
-//  <*-op> =>  '*' | '/'                     |    *, /        | <ID>, <NUM>, (
-//  <fact>    =>  <ID> | <NUM> | <paren-exp> | <ID>, <NUM>, ( | *,  /, +, -,
-//                                                              <EOF>, )
-//  <paren-exp> => '(' <exp> ')'
+// Parser_Util.h
+// Sabbir Ahmed
+// 3/2/2022
+//
+// Declaration of the FF_List class
 //
 
 #ifndef FF_LIST_H
@@ -42,14 +36,8 @@ public:
 
     FF_List();
     FF_List(SynchSet synchSet);
-    SynchSet getSynchSet();
     bool contains(TokenKind kind);
-
-    FF_List operator+(FF_List other) {
-        FF_List b(this->getSynchSet());
-        b.merge(other.getSynchSet());
-        return b;
-    }
+    FF_List operator+(FF_List other);
 };
 
 #endif

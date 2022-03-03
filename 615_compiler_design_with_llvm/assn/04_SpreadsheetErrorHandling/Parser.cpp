@@ -64,8 +64,8 @@ void Parser::parseEquation(char*& ch, SS_Cell* cell) {
     // set equation node to the current cell
     cell->setExpNode(equationNode);
 
-    // propagate equation throughout the table by updating their controllers
-    // and users
+    // propagate equation throughout the table by updating their
+    // controllers and users
     cell->identifyControllers(equationNode);
     cell->updateControllerUsers();
     cell->calculateExpression();
@@ -271,7 +271,6 @@ Node* Parser::parenExp(char*& ch, FF_List synchset) {
         checkFollows(ch, synchset);
     }
 
-    // if next token is '('
     if (errorInChild) {
         if (node) {
             node->error = true;

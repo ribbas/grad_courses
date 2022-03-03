@@ -1,3 +1,10 @@
+// Parser_Util.cpp
+// Sabbir Ahmed
+// 3/2/2022
+//
+// Additional methods for the Parser class
+//
+
 #include "Parser.h"
 
 #include <cstring>
@@ -94,10 +101,18 @@ Token* Parser::match(char*& ch, TokenKind expected) {
     }
 }
 
+/*
+ * Update cursor by adding to the length of the current token
+ */
 void Parser::updateCursor() {
     cursor += lookahead->getLexeme().length();
 }
 
+/*
+ * Strip all whitespace from the input char array. This method is
+ * intended to only be used to generate the name to be set by the
+ * expression cell via cell->setEquation(equationName)
+ */
 char* Parser::stripWS(char* input) {
     unsigned int i, j;
     char* output = input;
