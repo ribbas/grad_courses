@@ -5,12 +5,11 @@
 
 grammar Cminus;
 
-@parser::preinclude {#include "../Symtab.hpp"}
+@parser::preinclude {
+    #include "../Symtab.hpp"
+}
 @parser::members {
-	SymbolTable symtab;
-	void initSymtab() { SymbolTable symtab(); }
-	void add(std::string name, std::string type) { symtab.add(name, type); }
-	void dumpTable() { symtab.dump(); }
+    SymbolTable symtab;
 }
 
 // 1 or more letters
@@ -25,14 +24,17 @@ fragment DIGIT: [0-9];
 COMMENT: '/*' (.)*? '*/' -> skip;
 WS: [ \t\r\n]+ -> skip;
 
-program: declaration_list EOF { dumpTable(); };
+program: declaration_list EOF;
 declaration_list: declaration_list declaration | declaration;
 declaration: var_declaration | fun_declaration;
 var_declaration:
-	type_specifier ID ('[' NUM ']')? ';' {add($ID.text, $type_specifier.text);};
-type_specifier: 'int' | 'void';
+	type_specifier ID ('[' NUM ']')? ';' {symtab.define($ID.text, $type_specifier.text);};
+type_specifier:
+	'int' {symtab.define("int");}
+	| 'void' {symtab.define("void");};
 fun_declaration:
-	type_specifier ID '(' params ')' compound_statement {add($ID.text, $type_specifier.text);};
+	type_specifier ID '(' params ')' compound_statement {symtab.define($ID.text, $type_specifier.text);
+        };
 params: param_list | 'void';
 param_list: param_list ',' param | param;
 param: type_specifier ID ('[' ']')?;

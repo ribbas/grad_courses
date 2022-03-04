@@ -1,0 +1,6 @@
+<main:void>
+<z:int>
+<x:int>
+<y:int>
+<int:builtin>
+<void:builtin>

@@ -2,13 +2,14 @@
 #define SYMTAB_HPP
 
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <unordered_map>
 
 class Symbol { // A generic programming language symbol
 
     std::string name; // All symbols at least have a name
-    std::string type;
+    std::string type = "builtin";
 
 public:
     Symbol(std::string _name) {
@@ -20,66 +21,35 @@ public:
         type = _type;
     }
 
-    std::string getName() {
-        return name;
-    }
-
     std::string toString() {
         if (type.length()) {
-            return '<' + getName() + ":" + type + '>';
+            return '<' + name + ":" + type + '>';
         }
-        return getName();
+        return name;
     }
-};
-
-class VariableSymbol : public Symbol {
-public:
-    VariableSymbol(std::string name, std::string type) : Symbol(name, type) {}
-};
-
-class BuiltInTypeSymbol : public Symbol {
-public:
-    BuiltInTypeSymbol(std::string name) : Symbol(name) {}
 };
 
 class SymbolTable { // single-scope symtab
 private:
     std::unordered_map<std::string, Symbol*> symbols;
 
-    // protected:
-    //     void initTypeSystem() {
-    //         add(new BuiltInTypeSymbol("int"));
-    //     }
-
 public:
-    SymbolTable() {
-        // initTypeSystem();
-    }
+    SymbolTable() {}
 
-public:
-    void add(std::string symbolName) {
+    void define(std::string symbolName) {
         symbols[symbolName] = new Symbol(symbolName);
     }
 
-    void add(std::string symbolName, std::string symbolType) {
-        symbols[symbolName] = new VariableSymbol(symbolName, symbolType);
+    void define(std::string symbolName, std::string symbolType) {
+        symbols[symbolName] = new Symbol(symbolName, symbolType);
     }
 
-    void dump() {
+    std::string dump() {
+        std::stringstream oss;
         for (auto const& pair : symbols) {
-            std::cout << pair.second->toString() << "\n";
+            oss << pair.second->toString() << "\n";
         }
-    }
-
-    void add(Symbol* sym) {
-        symbols[sym->getName()] = sym;
-    }
-
-    std::string resolve(std::string name) {
-        std::cout << "resplving " << name << '\n';
-        // if (symbols[name]) {
-        //     return symbols[name]->toString();
-        // }
+        return oss.str();
     }
 };
 
