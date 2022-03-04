@@ -1,21 +1,23 @@
 #ifndef SYMTAB_HPP
 #define SYMTAB_HPP
 
+#include <iostream>
 #include <string>
 #include <unordered_map>
 
-class Symbol {        // A generic programming language symbol
+class Symbol { // A generic programming language symbol
+
     std::string name; // All symbols at least have a name
     std::string type;
 
 public:
-    Symbol(std::string name) {
-        name = name;
+    Symbol(std::string _name) {
+        name = _name;
     }
 
-    Symbol(std::string name, std::string type) {
-        name = name;
-        type = type;
+    Symbol(std::string _name, std::string _type) {
+        name = _name;
+        type = _type;
     }
 
     std::string getName() {
@@ -44,29 +46,41 @@ class SymbolTable { // single-scope symtab
 private:
     std::unordered_map<std::string, Symbol*> symbols;
 
-protected:
-    void initTypeSystem() {
-        define(new BuiltInTypeSymbol("int"));
-    }
+    // protected:
+    //     void initTypeSystem() {
+    //         add(new BuiltInTypeSymbol("int"));
+    //     }
 
 public:
     SymbolTable() {
-        initTypeSystem();
+        // initTypeSystem();
     }
 
-    // Satisfy Scope interface
 public:
-    void define(Symbol* sym) {
+    void add(std::string symbolName) {
+        symbols[symbolName] = new Symbol(symbolName);
+    }
+
+    void add(std::string symbolName, std::string symbolType) {
+        symbols[symbolName] = new VariableSymbol(symbolName, symbolType);
+    }
+
+    void dump() {
+        for (auto const& pair : symbols) {
+            std::cout << pair.second->toString() << "\n";
+        }
+    }
+
+    void add(Symbol* sym) {
         symbols[sym->getName()] = sym;
     }
 
-    Symbol* resolve(std::string name) {
-        return symbols[name];
+    std::string resolve(std::string name) {
+        std::cout << "resplving " << name << '\n';
+        // if (symbols[name]) {
+        //     return symbols[name]->toString();
+        // }
     }
-
-    // std::string toString() {
-    //     return symbols;
-    // }
 };
 
 #endif

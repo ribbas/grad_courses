@@ -35,6 +35,7 @@ $(GRAMMAR): dirs antlr4 $(SRC) $(OBJS)
 
 antlr4: $(GENERATED)/.generated;
  
+# cp Symtab.hpp $(GENERATED)
 $(GENERATED)/.generated: $(GRAMMAR).g4
 	$(ANTLR4) -Dlanguage=Cpp -visitor -o $(GENERATED) $(GRAMMAR).g4
 	@touch $(GENERATED)/.generated

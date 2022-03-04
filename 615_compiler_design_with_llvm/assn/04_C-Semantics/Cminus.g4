@@ -5,6 +5,14 @@
 
 grammar Cminus;
 
+@parser::preinclude {#include "../Symtab.hpp"}
+@parser::members {
+	SymbolTable symtab;
+	void initSymtab() { SymbolTable symtab(); }
+	void add(std::string name, std::string type) { symtab.add(name, type); }
+	void dumpTable() { symtab.dump(); }
+}
+
 // 1 or more letters
 ID: LETTER+;
 fragment LETTER: [A-Za-z];
@@ -17,13 +25,14 @@ fragment DIGIT: [0-9];
 COMMENT: '/*' (.)*? '*/' -> skip;
 WS: [ \t\r\n]+ -> skip;
 
-program: declaration_list EOF;
+program: declaration_list EOF { dumpTable(); };
 declaration_list: declaration_list declaration | declaration;
 declaration: var_declaration | fun_declaration;
-var_declaration: type_specifier ID ('[' NUM ']')? ';';
+var_declaration:
+	type_specifier ID ('[' NUM ']')? ';' {add($ID.text, $type_specifier.text);};
 type_specifier: 'int' | 'void';
 fun_declaration:
-	type_specifier ID '(' params ')' compound_statement;
+	type_specifier ID '(' params ')' compound_statement {add($ID.text, $type_specifier.text);};
 params: param_list | 'void';
 param_list: param_list ',' param | param;
 param: type_specifier ID ('[' ']')?;
@@ -40,7 +49,7 @@ expression_statement: expression? ';';
 selection_statement:
 	'if' '(' expression ')' statement ('else' statement)?;
 iteration_statement: 'while' '(' expression ')' statement;
-return_statement: 'return' (expression)? ';';
+return_statement: 'return' expression? ';';
 expression: var '=' expression | simple_expression;
 var: ID ('[' expression ']')?;
 simple_expression:
