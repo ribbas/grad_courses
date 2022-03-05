@@ -1,8 +1,13 @@
 # Makefile
+#
+# Targets were derived from https://rahul.gopinath.org/post/2018/09/07/antlr4-cpp-example/
+#
+# Modified by
 # Sabbir Ahmed
 # 2/28/22
 # Makefile for setting up and running ANTLR4 to generate the tree and
 # token files from the grammar file
+#
 
 OUTPUT=objects
 GENERATED=generated
@@ -46,8 +51,7 @@ $(GENERATED)/%.cpp: $(GENERATED)/.generated;
 
 dirs:; mkdir -p $(OUTPUT) $(GENERATED) 
 
-TEST:=$(shell find test -name '*.c')
-.PHONY: test
+TEST:=$(shell find testFiles -name '*.c')
 test:
 	@for i in $(TEST); do \
 		./$(GRAMMAR) $$i 2> $$i.Output ; \

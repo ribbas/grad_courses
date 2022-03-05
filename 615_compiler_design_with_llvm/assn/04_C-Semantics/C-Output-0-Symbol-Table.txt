@@ -1,11 +1,11 @@
-<name:z,type:int,var,narg:0>
-<name:main,type:void,func,narg:0>
-<name:b,type:int,var,narg:0>
-<name:a,type:int,var,narg:0>
-<name:test,type:int,func,narg:2>
-<name:output,type:void,func,narg:1>
-<name:x,type:int,var,narg:0>
-<name:input,type:int,func,narg:0>
-<name:y,type:int,var,narg:0>
-<name:void,type:builtin,var,narg:0>
-<name:int,type:builtin,var,narg:0>
+<name:z, type:int, var, narg:0>
+<name:main, type:void, func, narg:0>
+<name:b, type:int, var, narg:0>
+<name:a, type:int, var, narg:0>
+<name:test, type:int, func, narg:2>
+<name:output, type:void, func, narg:1>
+<name:x, type:int, var, narg:0>
+<name:input, type:int, func, narg:0>
+<name:y, type:int, var, narg:0>
+<name:void, type:builtin, var, narg:0>
+<name:int, type:builtin, var, narg:0>
