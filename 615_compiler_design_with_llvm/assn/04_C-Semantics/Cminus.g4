@@ -12,8 +12,9 @@ grammar Cminus;
     SymbolTable symtab;
 	bool mainDeclared = false;
 
-	bool declareFun(std::string funcName) {
+	bool declareFun(std::string funcName, std::string retType) {
 		if (!symtab.contains(funcName)) {
+			symtab.define(funcName, retType);
 			std::cout << "adding " << funcName << '\n';
 			return true;
 		} else {
@@ -28,13 +29,12 @@ grammar Cminus;
 		}
 	}
 
-	bool canDeclareFun(std::string funcName) {
+	bool canDeclareFun(std::string funcName, std::string retType) {
 		declareMain(funcName);
 		if (mainDeclared && !(funcName == "main")) {
 			return false;
 		} else {
-			symtab.define(funcName, "func");
-			return true;
+			return declareFun(funcName, retType);
 		}
 	}
 
@@ -56,13 +56,15 @@ program: declaration_list EOF;
 declaration_list: declaration_list declaration | declaration;
 declaration: var_declaration | fun_declaration;
 var_declaration:
-	type_specifier ID ('[' NUM ']')? ';' {symtab.define($ID.text, $type_specifier.text);};
+	type_specifier {$type_specifier.text == "int"}? ID (
+		'[' NUM ']'
+	)? ';' {symtab.define($ID.text, $type_specifier.text);};
 type_specifier:
 	'int' {symtab.define("int");}
 	| 'void' {symtab.define("void");};
 fun_declaration:
-	type_specifier ID {canDeclareFun($ID.text)}? '(' params ')' compound_statement {symtab.define($ID.text, $type_specifier.text);
-        };
+	type_specifier ID {canDeclareFun($ID.text, $type_specifier.text)}? '(' params ')'
+		compound_statement;
 params: param_list | 'void';
 param_list: param_list ',' param | param;
 param: type_specifier ID ('[' ']')?;
