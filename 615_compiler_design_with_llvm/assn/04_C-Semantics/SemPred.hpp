@@ -13,7 +13,7 @@ private:
 
     bool declareFunc(std::string funcName, std::string retType) {
         if (!symtab.contains(funcName)) {
-            symtab.define(funcName, retType);
+            symtab.define(funcName, retType, 0, true);
             curFuncName = funcName;
             curFuncType = retType;
             return true;
@@ -28,10 +28,26 @@ private:
         }
     }
 
+    int countParams(std::string paramList) {
+
+        int count = 1;
+        for (int i = 0; i < paramList.size(); i++) {
+            if (paramList[i] == ',') {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
 public:
     bool canReturn(std::string symbolName) {
-        symbolName = symbolName.substr(0, symbolName.length() - 2);
-        return (symtab.getType(symbolName) == "int");
+        std::string substr = symbolName.substr(0, symbolName.length() - 2);
+        if (symtab.isFunc(substr)) {
+            return (symtab.getType(substr) == "int");
+        } else {
+            return true;
+        }
     }
 
     bool isValidVarType(std::string typeName) {
@@ -55,19 +71,18 @@ public:
         }
     }
 
-    void setNumArgs(std::string paramList) {
-
-        int count = 1;
-        for (int i = 0; i < paramList.size(); i++) {
-            if (paramList[i] == ',') {
-                count++;
-            }
-        }
-        symtab.setNumArgs(curFuncName, count);
+    void setCurFuncName(std::string funcName) {
+        curFuncName = funcName;
     }
 
-    void addSymbol(std::string symbolName) {
-        symtab.define(symbolName);
+    void setNumArgs(std::string paramList) {
+
+        symtab.setNumArgs(curFuncName, countParams(paramList));
+    }
+
+    bool isValidNumArgs(std::string paramList) {
+
+        return (symtab.getNumArgs(curFuncName) == countParams(paramList));
     }
 
     void addSymbol(std::string symbolName, std::string symbolType) {

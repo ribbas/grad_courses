@@ -86,6 +86,7 @@ addop: '+' | '-';
 term: term mulop factor | factor;
 mulop: '*' | '/';
 factor: LPAREN expression RPAREN | var | call | NUM;
-call: ID LPAREN args RPAREN {semantics.checkSymbol($ID.text)}?;
-args: arg_list |;
+call:
+	ID {semantics.checkSymbol($ID.text)}? {semantics.setCurFuncName($ID.text);} LPAREN args RPAREN;
+args: arg_list {semantics.isValidNumArgs($arg_list.text)}? |;
 arg_list: arg_list COMMA expression | expression;

@@ -11,11 +11,26 @@ private:
     int numArgs = 0;
     std::string name;
     std::string type = "builtin";
+    bool isFunc = false;
 
 public:
     Symbol(std::string _name) : name(_name) {}
 
     Symbol(std::string _name, std::string _type) : name(_name), type(_type) {}
+
+    Symbol(std::string _name, std::string _type, bool _isFunc)
+        : name(_name), type(_type), isFunc(_isFunc) {}
+
+    Symbol(std::string _name, std::string _type, int _numArgs, bool _isFunc)
+        : name(_name), type(_type), numArgs(_numArgs), isFunc(_isFunc) {}
+
+    void setIsFunc(bool _isFunc) {
+        isFunc = _isFunc;
+    }
+
+    bool getIsFunc() {
+        return isFunc;
+    }
 
     void setNumArgs(int _numArgs) {
         numArgs = _numArgs;
@@ -25,9 +40,12 @@ public:
         return type;
     }
 
+    int getNumArgs() {
+        return numArgs;
+    }
+
     std::string toString() {
         if (type.length()) {
-            // std::cout << "args " << name << " " << numArgs << "\n";
             return '<' + name + ":" + type + '>';
         }
         return name;
@@ -45,8 +63,8 @@ public:
         define("void");
 
         // built-in functions
-        define("input", "int");
-        define("output", "void");
+        define("input", "int", 0, true);
+        define("output", "void", 1, true);
     }
 
     void setNumArgs(std::string symbolName, int numArgs) {
@@ -63,8 +81,22 @@ public:
         symbols[symbolName] = new Symbol(symbolName, symbolType);
     }
 
+    void define(std::string symbolName, std::string symbolType,
+                int symbolNumArgs, bool isFunc) {
+        symbols[symbolName] =
+            new Symbol(symbolName, symbolType, symbolNumArgs, isFunc);
+    }
+
     bool contains(std::string symbolName) {
         return symbols.find(symbolName) != symbols.end();
+    }
+
+    bool isFunc(std::string symbolName) {
+        if (contains(symbolName)) {
+            return symbols[symbolName]->getIsFunc();
+        } else {
+            return false;
+        }
     }
 
     std::string getType(std::string symbolName) {
@@ -72,6 +104,14 @@ public:
             return symbols[symbolName]->getType();
         } else {
             return "";
+        }
+    }
+
+    int getNumArgs(std::string symbolName) {
+        if (contains(symbolName)) {
+            return symbols[symbolName]->getNumArgs();
+        } else {
+            return 0;
         }
     }
 
