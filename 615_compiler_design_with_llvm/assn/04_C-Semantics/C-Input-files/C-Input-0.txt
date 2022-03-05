@@ -1,18 +1,10 @@
 /* A program to test functions and expressions.  */
 
-void test(void)
-{
-  int A;
-  A = (B = (C = 0) + 1) - 1;
-  return;
-}
-
 void main(void)
 { int x; int y; int z;
   x = input();
   y = input();
   z = input();
   output((x-4)+(y*z));
-  lol();
   return;
 }

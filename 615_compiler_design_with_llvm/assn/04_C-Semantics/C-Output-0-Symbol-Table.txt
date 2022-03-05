@@ -1,8 +1,8 @@
-<x:int>
 <z:int>
 <main:void>
-<test:void>
 <y:int>
-<A:int>
 <int:builtin>
 <void:builtin>
+<output:void>
+<x:int>
+<input:int>

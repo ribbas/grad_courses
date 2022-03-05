@@ -33,7 +33,10 @@ private:
     std::unordered_map<std::string, Symbol*> symbols;
 
 public:
-    SymbolTable() {}
+    SymbolTable() {
+        define("input", "int");
+        define("output", "void");
+    }
 
     void define(std::string symbolName) {
         symbols[symbolName] = new Symbol(symbolName);

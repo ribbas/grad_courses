@@ -57,7 +57,7 @@ return_statement:
 	'return' ';'
 	| 'return' expression ';' {semantics.checkReturnType($expression.text)}?;
 expression: var '=' expression | simple_expression;
-var: {semantics.checkSymbol($ID.text)}? ID ('[' expression ']')?;
+var: ID ('[' expression ']')? {semantics.checkSymbol($ID.text)}?;
 simple_expression:
 	additive_expression (relop additive_expression)?;
 relop: '<=' | '<' | '>' | '>=' | '==' | '!=';
@@ -66,6 +66,6 @@ addop: '+' | '-';
 term: term mulop factor | factor;
 mulop: '*' | '/';
 factor: '(' expression ')' | var | call | NUM;
-call: {semantics.checkSymbol($ID.text)}? ID '(' args ')';
+call: ID '(' args ')' {semantics.checkSymbol($ID.text)}?;
 args: arg_list |;
 arg_list: arg_list ',' expression | expression;
