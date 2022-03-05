@@ -1,5 +1,10 @@
 /* A program to test functions and expressions.  */
 
+void test(void)
+{
+  A = (B = (C = 0) + 1) – 1;
+}
+
 void main(void)
 { int x; int y; int z;
   x = input();

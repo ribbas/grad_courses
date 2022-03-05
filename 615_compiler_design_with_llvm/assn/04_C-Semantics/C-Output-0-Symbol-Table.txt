@@ -1,6 +1,4 @@
-<z:int>
 <main:void>
-<y:int>
 <int:builtin>
 <void:builtin>
 <output:void>

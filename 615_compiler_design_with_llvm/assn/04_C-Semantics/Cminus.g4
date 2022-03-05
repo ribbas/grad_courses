@@ -21,7 +21,7 @@ NUM: DIGIT+;
 fragment DIGIT: [0-9];
 
 // comment and whitespace tokens get skipped
-COMMENT: '/*' (.)*? '*/' -> skip;
+COMMENT: ('/*' (.)*? '*/' | '//' ~( '\r' | '\n')*) -> skip;
 WS: [ \t\r\n]+ -> skip;
 
 program: declaration_list EOF;
@@ -31,9 +31,7 @@ var_declaration:
 	type_specifier {$type_specifier.text == "int"}? ID (
 		'[' NUM ']'
 	)? ';' {semantics.addSymbol($ID.text, $type_specifier.text);};
-type_specifier:
-	'int' {semantics.addSymbol("int");}
-	| 'void' {semantics.addSymbol("void");};
+type_specifier: 'int' | 'void';
 fun_declaration:
 	type_specifier ID {semantics.canDeclareFunc($ID.text, $type_specifier.text)}? '(' params ')'
 		compound_statement;
@@ -56,7 +54,7 @@ iteration_statement: 'while' '(' expression ')' statement;
 return_statement:
 	'return' ';'
 	| 'return' expression ';' {semantics.checkReturnType($expression.text)}?;
-expression: var '=' expression | simple_expression;
+expression: var '=' simple_expression | simple_expression;
 var: ID ('[' expression ']')? {semantics.checkSymbol($ID.text)}?;
 simple_expression:
 	additive_expression (relop additive_expression)?;

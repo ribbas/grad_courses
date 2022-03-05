@@ -35,7 +35,6 @@ $(GRAMMAR): dirs antlr4 $(SRC) $(OBJS)
 
 antlr4: $(GENERATED)/.generated;
  
-# cp Symtab.hpp $(GENERATED)
 $(GENERATED)/.generated: $(GRAMMAR).g4
 	$(ANTLR4) -Dlanguage=Cpp -visitor -o $(GENERATED) $(GRAMMAR).g4
 	@touch $(GENERATED)/.generated
@@ -46,6 +45,9 @@ $(OUTPUT)/%.o : $(GENERATED)/%.cpp
 $(GENERATED)/%.cpp: $(GENERATED)/.generated;
 
 dirs:; mkdir -p $(OUTPUT) $(GENERATED) 
+
+# test:
+
 
 clean:
 	@rm -rf $(OUTPUT) $(GENERATED)

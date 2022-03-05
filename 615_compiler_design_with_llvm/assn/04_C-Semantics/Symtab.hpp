@@ -34,6 +34,11 @@ private:
 
 public:
     SymbolTable() {
+        // built-in types
+        define("int");
+        define("void");
+
+        // built-in functions
         define("input", "int");
         define("output", "void");
     }
