@@ -1,15 +1,15 @@
 /* Pg. 494 Functions not declared void must return values. Functions declared void must not return values. */
 
-void func1(void) {
+void funca(void) {
     return 9;
 }
 
-int func2(void) {
+int funcb(void) {
     
 }
 
 void main(void)
 {
-    func1();
-    func2();
+    funca();
+    funcb();
 }

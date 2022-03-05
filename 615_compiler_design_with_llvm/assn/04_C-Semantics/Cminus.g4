@@ -43,18 +43,19 @@ declaration_list: declaration_list declaration | declaration;
 declaration: var_declaration | fun_declaration;
 var_declaration:
 	type_specifier ID (LBRACKET NUM RBRACKET)? SEMICOLON {semantics.isValidVarType($type_specifier.text)
-		}? {semantics.addSymbol($ID.text, $type_specifier.text);
-		};
+		}? {semantics.addSymbol($ID.text, $type_specifier.text);};
 type_specifier: INT | VOID;
 fun_declaration:
 	type_specifier ID {semantics.canDeclareFunc($ID.text, $type_specifier.text)}? LPAREN params
 		RPAREN compound_statement;
-params: param_list | VOID;
+params:
+	param_list {semantics.setNumArgs($param_list.text);}
+	| VOID;
 param_list: param_list COMMA param | param;
 param:
 	type_specifier {semantics.isValidVarType($type_specifier.text)}? ID (
 		LBRACKET RBRACKET
-	)?;
+	)? {semantics.addSymbol($ID.text, $type_specifier.text);};
 compound_statement: '{' local_declarations statement_list '}';
 local_declarations: local_declarations var_declaration |;
 statement_list: statement_list statement |;
@@ -72,7 +73,9 @@ iteration_statement:
 return_statement:
 	RETURN SEMICOLON {semantics.checkReturnType()}?
 	| RETURN simple_expression SEMICOLON {semantics.checkReturnType($simple_expression.text)}?;
-expression: var '=' simple_expression | simple_expression;
+expression:
+	var '=' simple_expression {semantics.canReturn($simple_expression.text)}?
+	| simple_expression;
 var:
 	ID (LBRACKET expression RBRACKET)? {semantics.checkSymbol($ID.text)}?;
 simple_expression:

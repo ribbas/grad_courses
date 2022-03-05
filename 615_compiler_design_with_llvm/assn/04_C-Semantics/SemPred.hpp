@@ -7,12 +7,14 @@
 class SemanticPredicate {
 private:
     bool mainDeclared = false;
+    std::string curFuncName = "";
     std::string curFuncType = "";
     SymbolTable symtab;
 
     bool declareFunc(std::string funcName, std::string retType) {
         if (!symtab.contains(funcName)) {
             symtab.define(funcName, retType);
+            curFuncName = funcName;
             curFuncType = retType;
             return true;
         } else {
@@ -27,6 +29,11 @@ private:
     }
 
 public:
+    bool canReturn(std::string symbolName) {
+        symbolName = symbolName.substr(0, symbolName.length() - 2);
+        return (symtab.getType(symbolName) == "int");
+    }
+
     bool isValidVarType(std::string typeName) {
         return (typeName == "int");
     }
@@ -40,13 +47,23 @@ public:
     }
 
     bool checkReturnType(std::string stmt) {
-        std::cout << stmt << '\n';
         if (((curFuncType == "void") && !stmt.empty()) ||
             ((curFuncType == "int") && stmt.empty())) {
             return false;
         } else {
             return true;
         }
+    }
+
+    void setNumArgs(std::string paramList) {
+
+        int count = 1;
+        for (int i = 0; i < paramList.size(); i++) {
+            if (paramList[i] == ',') {
+                count++;
+            }
+        }
+        symtab.setNumArgs(curFuncName, count);
     }
 
     void addSymbol(std::string symbolName) {
@@ -57,10 +74,6 @@ public:
         symtab.define(symbolName, symbolType);
     }
 
-    std::string dump() {
-        return symtab.dump();
-    }
-
     bool canDeclareFunc(std::string funcName, std::string retType) {
         declareMain(funcName);
         if (mainDeclared && !(funcName == "main")) {
@@ -68,6 +81,10 @@ public:
         } else {
             return declareFunc(funcName, retType);
         }
+    }
+
+    std::string dump() {
+        return symtab.dump();
     }
 };
 

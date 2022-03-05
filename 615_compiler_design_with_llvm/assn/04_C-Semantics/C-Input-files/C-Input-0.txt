@@ -1,27 +1,7 @@
 /* A program to test functions and expressions.  */
 
-int testi(void)
-{
-  int a;
-  return a;
-}
-
-int testii(void)
-{
-  int b;
-  return;
-}
-
-void testv(void)
-{
-  int c;
+int test(int a, int b) {
   return c;
-}
-
-void testvv(void)
-{
-  int c;
-  return;
 }
 
 void main(void)
