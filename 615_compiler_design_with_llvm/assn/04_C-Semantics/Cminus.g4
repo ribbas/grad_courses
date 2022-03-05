@@ -6,38 +6,10 @@
 grammar Cminus;
 
 @parser::preinclude {
-    #include "../Symtab.hpp"
+#include "../SemPred.hpp"
 }
 @parser::members {
-    SymbolTable symtab;
-	bool mainDeclared = false;
-
-	bool declareFun(std::string funcName, std::string retType) {
-		if (!symtab.contains(funcName)) {
-			symtab.define(funcName, retType);
-			std::cout << "adding " << funcName << '\n';
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	void declareMain(std::string funcName) {
-		if (funcName == "main") {
-			std::cout << "declaring main\n";
-			mainDeclared = true;
-		}
-	}
-
-	bool canDeclareFun(std::string funcName, std::string retType) {
-		declareMain(funcName);
-		if (mainDeclared && !(funcName == "main")) {
-			return false;
-		} else {
-			return declareFun(funcName, retType);
-		}
-	}
-
+SemanticPredicate semantics;
 }
 
 // 1 or more letters
@@ -58,12 +30,12 @@ declaration: var_declaration | fun_declaration;
 var_declaration:
 	type_specifier {$type_specifier.text == "int"}? ID (
 		'[' NUM ']'
-	)? ';' {symtab.define($ID.text, $type_specifier.text);};
+	)? ';' {semantics.symtab.define($ID.text, $type_specifier.text);};
 type_specifier:
-	'int' {symtab.define("int");}
-	| 'void' {symtab.define("void");};
+	'int' {semantics.symtab.define("int");}
+	| 'void' {semantics.symtab.define("void");};
 fun_declaration:
-	type_specifier ID {canDeclareFun($ID.text, $type_specifier.text)}? '(' params ')'
+	type_specifier ID {semantics.canDeclareFun($ID.text, $type_specifier.text)}? '(' params ')'
 		compound_statement;
 params: param_list | 'void';
 param_list: param_list ',' param | param;

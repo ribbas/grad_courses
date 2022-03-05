@@ -1,6 +1,5 @@
 #include "CminusLexer.h"
 #include "CminusParser.h"
-#include "Symtab.hpp"
 
 #include "antlr4-runtime.h"
 
@@ -30,7 +29,7 @@ int main(int argc, char* argv[]) {
 
     std::ofstream fd;
     fd.open("C-Output-0-Symbol-Table.txt");
-    fd << parser.symtab.dump();
+    fd << parser.semantics.dump();
     fd.close();
 
     return 0;
