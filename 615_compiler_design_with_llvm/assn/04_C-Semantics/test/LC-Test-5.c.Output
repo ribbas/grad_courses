@@ -1,0 +1,4 @@
+line 5:10 mismatched input '=' expecting {';', '['}
+line 7:4 missing '}' at 'int'
+line 11:14 token recognition error at: '&'
+line 11:15 token recognition error at: '&'

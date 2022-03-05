@@ -4,9 +4,9 @@ void main(void)
 {
     int x;
     int y;
+    int a;
     x = 1;
     y = 2;
-    int a;
     if (y >= x >= 1) {
         a = x + y;
     }

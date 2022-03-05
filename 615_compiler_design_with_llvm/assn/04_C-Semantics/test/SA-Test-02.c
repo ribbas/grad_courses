@@ -2,8 +2,11 @@
 
 void func(int x)
 {
-    x = x + 1;
-    return x;
+    int A;
+    int B;
+    int C;
+    A = (B = (C = 0) + 1) - 1;
+    return;
 }
 
 void main(void)

@@ -50,8 +50,7 @@ TEST:=$(shell find test -name '*.c')
 .PHONY: test
 test:
 	@for i in $(TEST); do \
-		echo "<< $$i >>"; \
-		./$(GRAMMAR) $$i; \
+		./$(GRAMMAR) $$i 2> $$i.Output ; \
 	done
 
 clean:

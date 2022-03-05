@@ -1,0 +1,4 @@
+line 11:16 rule call failed predicate: semantics.checkSymbol($ID.text)?
+line 11:18 mismatched input ',' expecting ')'
+line 11:20 mismatched input ',' expecting ';'
+line 11:25 extraneous input ')' expecting ';'

@@ -1,8 +1,5 @@
-<a:int>
 <main:void>
 <output:void>
-<x:int>
 <input:int>
-<y:int>
 <void:builtin>
 <int:builtin>

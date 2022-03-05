@@ -1,0 +1,1 @@
+line 5:0 rule return_statement failed predicate: semantics.checkReturnType()?

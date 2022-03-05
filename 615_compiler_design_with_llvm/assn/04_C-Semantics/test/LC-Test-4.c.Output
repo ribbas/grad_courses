@@ -1,0 +1,7 @@
+line 5:9 mismatched input ',' expecting {';', '['}
+line 5:12 no viable alternative at input ','
+line 5:15 no viable alternative at input ','
+line 5:19 no viable alternative at input '='
+line 5:23 mismatched input ',' expecting ';'
+line 5:27 mismatched input ',' expecting ';'
+line 5:31 mismatched input ',' expecting ';'

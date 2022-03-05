@@ -1,0 +1,3 @@
+line 12:10 mismatched input '=' expecting ')'
+line 12:13 mismatched input ')' expecting ';'
+line 14:6 mismatched input 'else' expecting '}'
