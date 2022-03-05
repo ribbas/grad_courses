@@ -2,6 +2,8 @@
 
 void test(void)
 {
+  int A;
+  A = (B = (C = 0) + 1) - 1;
   return;
 }
 
@@ -11,5 +13,6 @@ void main(void)
   y = input();
   z = input();
   output((x-4)+(y*z));
+  lol();
   return;
 }

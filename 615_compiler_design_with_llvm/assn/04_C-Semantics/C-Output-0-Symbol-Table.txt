@@ -3,5 +3,6 @@
 <main:void>
 <test:void>
 <y:int>
+<A:int>
 <int:builtin>
 <void:builtin>

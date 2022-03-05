@@ -27,6 +27,10 @@ private:
     }
 
 public:
+    bool checkSymbol(std::string stmt) {
+        return symtab.contains(stmt);
+    }
+
     bool checkReturnType(std::string stmt) {
         // std::cout << stmt << "\n";
         if ((curFuncType == "void") && !stmt.empty()) {

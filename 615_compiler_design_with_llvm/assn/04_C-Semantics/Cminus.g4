@@ -54,10 +54,10 @@ selection_statement:
 	'if' '(' expression ')' statement ('else' statement)?;
 iteration_statement: 'while' '(' expression ')' statement;
 return_statement:
-	'return;'
+	'return' ';'
 	| 'return' expression ';' {semantics.checkReturnType($expression.text)}?;
 expression: var '=' expression | simple_expression;
-var: ID ('[' expression ']')?;
+var: {semantics.checkSymbol($ID.text)}? ID ('[' expression ']')?;
 simple_expression:
 	additive_expression (relop additive_expression)?;
 relop: '<=' | '<' | '>' | '>=' | '==' | '!=';
@@ -66,6 +66,6 @@ addop: '+' | '-';
 term: term mulop factor | factor;
 mulop: '*' | '/';
 factor: '(' expression ')' | var | call | NUM;
-call: ID '(' args ')';
+call: {semantics.checkSymbol($ID.text)}? ID '(' args ')';
 args: arg_list |;
 arg_list: arg_list ',' expression | expression;
