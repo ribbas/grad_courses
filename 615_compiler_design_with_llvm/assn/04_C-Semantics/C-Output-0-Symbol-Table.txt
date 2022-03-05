@@ -1,6 +1,7 @@
 <x:int>
 <z:int>
 <main:void>
+<test:void>
 <y:int>
 <int:builtin>
 <void:builtin>

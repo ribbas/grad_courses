@@ -30,12 +30,12 @@ declaration: var_declaration | fun_declaration;
 var_declaration:
 	type_specifier {$type_specifier.text == "int"}? ID (
 		'[' NUM ']'
-	)? ';' {semantics.symtab.define($ID.text, $type_specifier.text);};
+	)? ';' {semantics.addSymbol($ID.text, $type_specifier.text);};
 type_specifier:
-	'int' {semantics.symtab.define("int");}
-	| 'void' {semantics.symtab.define("void");};
+	'int' {semantics.addSymbol("int");}
+	| 'void' {semantics.addSymbol("void");};
 fun_declaration:
-	type_specifier ID {semantics.canDeclareFun($ID.text, $type_specifier.text)}? '(' params ')'
+	type_specifier ID {semantics.canDeclareFunc($ID.text, $type_specifier.text)}? '(' params ')'
 		compound_statement;
 params: param_list | 'void';
 param_list: param_list ',' param | param;
@@ -53,7 +53,9 @@ expression_statement: expression? ';';
 selection_statement:
 	'if' '(' expression ')' statement ('else' statement)?;
 iteration_statement: 'while' '(' expression ')' statement;
-return_statement: 'return' expression? ';';
+return_statement:
+	'return;'
+	| 'return' expression ';' {semantics.checkReturnType($expression.text)}?;
 expression: var '=' expression | simple_expression;
 var: ID ('[' expression ']')?;
 simple_expression:

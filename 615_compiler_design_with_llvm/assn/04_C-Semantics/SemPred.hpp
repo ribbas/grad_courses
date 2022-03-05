@@ -5,18 +5,15 @@
 #include <iostream>
 
 class SemanticPredicate {
+private:
     bool mainDeclared = false;
-
-public:
+    std::string curFuncType = "";
     SymbolTable symtab;
 
-    std::string dump() {
-        return symtab.dump();
-    }
-
-    bool declareFun(std::string funcName, std::string retType) {
+    bool declareFunc(std::string funcName, std::string retType) {
         if (!symtab.contains(funcName)) {
             symtab.define(funcName, retType);
+            curFuncType = retType;
             return true;
         } else {
             return false;
@@ -29,12 +26,34 @@ public:
         }
     }
 
-    bool canDeclareFun(std::string funcName, std::string retType) {
+public:
+    bool checkReturnType(std::string stmt) {
+        // std::cout << stmt << "\n";
+        if ((curFuncType == "void") && !stmt.empty()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    void addSymbol(std::string symbolName) {
+        symtab.define(symbolName);
+    }
+
+    void addSymbol(std::string symbolName, std::string symbolType) {
+        symtab.define(symbolName, symbolType);
+    }
+
+    std::string dump() {
+        return symtab.dump();
+    }
+
+    bool canDeclareFunc(std::string funcName, std::string retType) {
         declareMain(funcName);
         if (mainDeclared && !(funcName == "main")) {
             return false;
         } else {
-            return declareFun(funcName, retType);
+            return declareFunc(funcName, retType);
         }
     }
 };
