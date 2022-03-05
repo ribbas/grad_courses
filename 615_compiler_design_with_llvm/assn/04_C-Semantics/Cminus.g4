@@ -1,6 +1,6 @@
 /* Cminus.g4 */
 /* Sabbir Ahmed */
-/* 2/15/22 */
+/* 3/4/22 */
 /* BNF grammar implementation for C-Minus BNF syntax outlined by Louden */
 
 grammar Cminus;
@@ -10,6 +10,34 @@ grammar Cminus;
 }
 @parser::members {
     SymbolTable symtab;
+	bool mainDeclared = false;
+
+	bool declareFun(std::string funcName) {
+		if (!symtab.contains(funcName)) {
+			std::cout << "adding " << funcName << '\n';
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	void declareMain(std::string funcName) {
+		if (funcName == "main") {
+			std::cout << "declaring main\n";
+			mainDeclared = true;
+		}
+	}
+
+	bool canDeclareFun(std::string funcName) {
+		declareMain(funcName);
+		if (mainDeclared && !(funcName == "main")) {
+			return false;
+		} else {
+			symtab.define(funcName, "func");
+			return true;
+		}
+	}
+
 }
 
 // 1 or more letters
@@ -33,7 +61,7 @@ type_specifier:
 	'int' {symtab.define("int");}
 	| 'void' {symtab.define("void");};
 fun_declaration:
-	type_specifier ID '(' params ')' compound_statement {symtab.define($ID.text, $type_specifier.text);
+	type_specifier ID {canDeclareFun($ID.text)}? '(' params ')' compound_statement {symtab.define($ID.text, $type_specifier.text);
         };
 params: param_list | 'void';
 param_list: param_list ',' param | param;

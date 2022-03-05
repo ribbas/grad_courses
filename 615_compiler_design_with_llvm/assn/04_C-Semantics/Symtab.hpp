@@ -1,14 +1,13 @@
 #ifndef SYMTAB_HPP
 #define SYMTAB_HPP
 
-#include <iostream>
 #include <sstream>
 #include <string>
 #include <unordered_map>
 
-class Symbol { // A generic programming language symbol
+class Symbol {
 
-    std::string name; // All symbols at least have a name
+    std::string name;
     std::string type = "builtin";
 
 public:
@@ -29,7 +28,7 @@ public:
     }
 };
 
-class SymbolTable { // single-scope symtab
+class SymbolTable {
 private:
     std::unordered_map<std::string, Symbol*> symbols;
 
@@ -42,6 +41,10 @@ public:
 
     void define(std::string symbolName, std::string symbolType) {
         symbols[symbolName] = new Symbol(symbolName, symbolType);
+    }
+
+    bool contains(std::string symbolName) {
+        return symbols.find(symbolName) != symbols.end();
     }
 
     std::string dump() {
