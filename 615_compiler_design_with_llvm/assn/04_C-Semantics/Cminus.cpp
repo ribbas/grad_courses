@@ -1,6 +1,5 @@
 #include "CminusLexer.h"
 #include "CminusParser.h"
-
 #include "antlr4-runtime.h"
 
 #include <fstream>
@@ -18,10 +17,10 @@ int main(int argc, char* argv[]) {
     antlr4::CommonTokenStream tokens(&lexer);
     CminusParser parser(&tokens);
 
-    tokens.fill();
-    for (auto token : tokens.getTokens()) {
-        std::cout << token->toString() << std::endl;
-    }
+    // tokens.fill();
+    // for (auto token : tokens.getTokens()) {
+    //     std::cout << token->toString() << std::endl;
+    // }
 
     // antlr4::tree::ParseTree* tree = parser.program();
     // std::cout << tree->toStringTree() << std::endl;

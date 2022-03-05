@@ -21,23 +21,25 @@ NUM: DIGIT+;
 fragment DIGIT: [0-9];
 
 // comment and whitespace tokens get skipped
-COMMENT: ('/*' (.)*? '*/' | '//' ~( '\r' | '\n')*) -> skip;
+COMMENT: ('/*' (.)*? '*/' | '//' ~('\r' | '\n')*) -> skip;
 WS: [ \t\r\n]+ -> skip;
 
 program: declaration_list EOF;
 declaration_list: declaration_list declaration | declaration;
 declaration: var_declaration | fun_declaration;
 var_declaration:
-	type_specifier {$type_specifier.text == "int"}? ID (
-		'[' NUM ']'
-	)? ';' {semantics.addSymbol($ID.text, $type_specifier.text);};
+	type_specifier ID ('[' NUM ']')? ';' {semantics.isValidVarType($type_specifier.text)}? {semantics.addSymbol($ID.text, $type_specifier.text);
+		};
 type_specifier: 'int' | 'void';
 fun_declaration:
 	type_specifier ID {semantics.canDeclareFunc($ID.text, $type_specifier.text)}? '(' params ')'
 		compound_statement;
 params: param_list | 'void';
 param_list: param_list ',' param | param;
-param: type_specifier ID ('[' ']')?;
+param:
+	type_specifier {semantics.isValidVarType($type_specifier.text)}? ID (
+		'[' ']'
+	)?;
 compound_statement: '{' local_declarations statement_list '}';
 local_declarations: local_declarations var_declaration |;
 statement_list: statement_list statement |;
@@ -49,11 +51,12 @@ statement:
 	| return_statement;
 expression_statement: expression? ';';
 selection_statement:
-	'if' '(' expression ')' statement ('else' statement)?;
-iteration_statement: 'while' '(' expression ')' statement;
+	'if' '(' simple_expression ')' statement ('else' statement)?;
+iteration_statement:
+	'while' '(' simple_expression ')' statement;
 return_statement:
 	'return' ';'
-	| 'return' expression ';' {semantics.checkReturnType($expression.text)}?;
+	| 'return' simple_expression ';' {semantics.checkReturnType($simple_expression.text)}?;
 expression: var '=' simple_expression | simple_expression;
 var: ID ('[' expression ']')? {semantics.checkSymbol($ID.text)}?;
 simple_expression:

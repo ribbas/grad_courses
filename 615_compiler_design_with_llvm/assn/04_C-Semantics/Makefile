@@ -30,7 +30,7 @@ GSOURCES=$(addsuffix .cpp,$(addprefix $(GENERATED)/$(GRAMMAR),$(ANTLRGEN)))
 all: $(GRAMMAR)
 
 $(GRAMMAR): dirs antlr4 $(SRC) $(OBJS)
-	$(CXX) $(CXXARGS) $(SRC)  -o $(OUTPUT)/$(GRAMMAR).o 
+	$(CXX) $(CXXARGS) $(SRC) -o $(OUTPUT)/$(GRAMMAR).o 
 	$(CXX) $(LDARGS) $(OUTPUT)/$(GRAMMAR).o $(OBJS) $(LIBS) -o $(GRAMMAR)
 
 antlr4: $(GENERATED)/.generated;
@@ -46,8 +46,13 @@ $(GENERATED)/%.cpp: $(GENERATED)/.generated;
 
 dirs:; mkdir -p $(OUTPUT) $(GENERATED) 
 
-# test:
-
+TEST:=$(shell find test -name '*.c')
+.PHONY: test
+test:
+	@for i in $(TEST); do \
+		echo "<< $$i >>"; \
+		./$(GRAMMAR) $$i; \
+	done
 
 clean:
 	@rm -rf $(OUTPUT) $(GENERATED)

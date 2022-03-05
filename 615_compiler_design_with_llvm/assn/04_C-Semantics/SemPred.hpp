@@ -27,6 +27,10 @@ private:
     }
 
 public:
+    bool isValidVarType(std::string typeName) {
+        return typeName == "int";
+    }
+
     bool checkSymbol(std::string stmt) {
         return symtab.contains(stmt);
     }
