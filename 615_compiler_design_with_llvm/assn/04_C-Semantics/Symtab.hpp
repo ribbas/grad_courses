@@ -46,7 +46,9 @@ public:
 
     std::string toString() {
         if (type.length()) {
-            return '<' + name + ":" + type + '>';
+            return "<name:" + name + ", type:" + type + ", " +
+                   (isFunc ? "func" : "var") +
+                   ", narg:" + std::to_string(numArgs) + '>';
         }
         return name;
     }

@@ -4,7 +4,7 @@
 # Makefile for setting up and running ANTLR4 to generate the tree and
 # token files from the grammar file
 
-OUTPUT=output
+OUTPUT=objects
 GENERATED=generated
 
 CXX=$(shell which c++)
