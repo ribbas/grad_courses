@@ -28,16 +28,21 @@ private:
 
 public:
     bool isValidVarType(std::string typeName) {
-        return typeName == "int";
+        return (typeName == "int");
     }
 
     bool checkSymbol(std::string stmt) {
         return symtab.contains(stmt);
     }
 
+    bool checkReturnType() {
+        return (curFuncType != "int");
+    }
+
     bool checkReturnType(std::string stmt) {
-        // std::cout << stmt << "\n";
-        if ((curFuncType == "void") && !stmt.empty()) {
+        std::cout << stmt << '\n';
+        if (((curFuncType == "void") && !stmt.empty()) ||
+            ((curFuncType == "int") && stmt.empty())) {
             return false;
         } else {
             return true;

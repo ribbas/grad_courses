@@ -12,6 +12,20 @@ grammar Cminus;
 SemanticPredicate semantics;
 }
 
+IF: 'if';
+ELSE: 'else';
+WHILE: 'while';
+RETURN: 'return';
+INT: 'int';
+VOID: 'void';
+
+COMMA: ',';
+SEMICOLON: ';';
+LBRACKET: '[';
+RBRACKET: ']';
+LPAREN: '(';
+RPAREN: ')';
+
 // 1 or more letters
 ID: LETTER+;
 fragment LETTER: [A-Za-z];
@@ -28,17 +42,18 @@ program: declaration_list EOF;
 declaration_list: declaration_list declaration | declaration;
 declaration: var_declaration | fun_declaration;
 var_declaration:
-	type_specifier ID ('[' NUM ']')? ';' {semantics.isValidVarType($type_specifier.text)}? {semantics.addSymbol($ID.text, $type_specifier.text);
+	type_specifier ID (LBRACKET NUM RBRACKET)? SEMICOLON {semantics.isValidVarType($type_specifier.text)
+		}? {semantics.addSymbol($ID.text, $type_specifier.text);
 		};
-type_specifier: 'int' | 'void';
+type_specifier: INT | VOID;
 fun_declaration:
-	type_specifier ID {semantics.canDeclareFunc($ID.text, $type_specifier.text)}? '(' params ')'
-		compound_statement;
-params: param_list | 'void';
-param_list: param_list ',' param | param;
+	type_specifier ID {semantics.canDeclareFunc($ID.text, $type_specifier.text)}? LPAREN params
+		RPAREN compound_statement;
+params: param_list | VOID;
+param_list: param_list COMMA param | param;
 param:
 	type_specifier {semantics.isValidVarType($type_specifier.text)}? ID (
-		'[' ']'
+		LBRACKET RBRACKET
 	)?;
 compound_statement: '{' local_declarations statement_list '}';
 local_declarations: local_declarations var_declaration |;
@@ -49,16 +64,17 @@ statement:
 	| selection_statement
 	| iteration_statement
 	| return_statement;
-expression_statement: expression? ';';
+expression_statement: expression? SEMICOLON;
 selection_statement:
-	'if' '(' simple_expression ')' statement ('else' statement)?;
+	IF LPAREN simple_expression RPAREN statement (ELSE statement)?;
 iteration_statement:
-	'while' '(' simple_expression ')' statement;
+	WHILE LPAREN simple_expression RPAREN statement;
 return_statement:
-	'return' ';'
-	| 'return' simple_expression ';' {semantics.checkReturnType($simple_expression.text)}?;
+	RETURN SEMICOLON {semantics.checkReturnType()}?
+	| RETURN simple_expression SEMICOLON {semantics.checkReturnType($simple_expression.text)}?;
 expression: var '=' simple_expression | simple_expression;
-var: ID ('[' expression ']')? {semantics.checkSymbol($ID.text)}?;
+var:
+	ID (LBRACKET expression RBRACKET)? {semantics.checkSymbol($ID.text)}?;
 simple_expression:
 	additive_expression (relop additive_expression)?;
 relop: '<=' | '<' | '>' | '>=' | '==' | '!=';
@@ -66,7 +82,7 @@ additive_expression: additive_expression addop term | term;
 addop: '+' | '-';
 term: term mulop factor | factor;
 mulop: '*' | '/';
-factor: '(' expression ')' | var | call | NUM;
-call: ID '(' args ')' {semantics.checkSymbol($ID.text)}?;
+factor: LPAREN expression RPAREN | var | call | NUM;
+call: ID LPAREN args RPAREN {semantics.checkSymbol($ID.text)}?;
 args: arg_list |;
-arg_list: arg_list ',' expression | expression;
+arg_list: arg_list COMMA expression | expression;
