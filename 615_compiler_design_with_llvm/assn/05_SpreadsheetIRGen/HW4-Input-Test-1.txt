@@ -1,0 +1,18 @@
+# This input file is for the 605.615 Compiler Design with LLVM course 
+# Homework Assignment 4
+# This input file initiates the parser's Panic Mode and tests for
+# unbalanced parentheses
+
+A0 = (1+1)1
+B0 = 1(1+1)
+C0 = ((1+1)
+D0 = (1+1))
+E0 = ((1+1))
+F0 = ()
+
+A1 = 2)
+B1 = 2(
+C1 = (2
+D1 = )2
+E1 = (1+)1)
+F1 = (((((((1+1)))))))

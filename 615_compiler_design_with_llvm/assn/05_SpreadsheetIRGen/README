@@ -1,0 +1,34 @@
+# Week 6: Spreadsheet Scanner Panic Mode
+
+## Modifications for assignment
+
+The Spreadsheet Scanner Recursive Descent Parser from week 5 was used as the outline for this assignment. Only the following files were modified to implement the program:
+
+1. `Scanner.cpp` was modified. Its `Token* getToken(char*& ch)` method had a test case added to handle the newly added `T_EOF` token kind. Its `void parseText(char*& ch, SS_Cell* cell)` method was also updated to retroactively remove the unnecessary restrictions for text cells to end with a double quote.
+
+2. `Token.h` and `Token.cpp` had minor modifications where the `T_EOF` token kind and its corresponding string stream were added.
+
+3. `Parser.h` and `Parser.cpp` had major modifications, where the panic mode helper methods were added to all of the expression token parsing methods. The panic mode methods (`void scanTo(char*& ch, FF_List synchset)`, `void checkInput(char*& ch, FF_List firstset, FF_List synchset)` and `void checkFollows(char*& ch, FF_List synchset)`) were extracted from the slides and modified to work with the Parser class. The expression token parsing methods also had their signatures updated. Some static attributes were added as well, such as `unsigned int cursor` and `std::string equationName` which are used to locate the offending token during a panic mode. Other attributes are added to handle unbalanced parentheses.
+
+4. `Parser_Util.cpp` was added to maintain the increasing helper methods for the Parser class.
+
+5. `FF_List.h` and `FF_List.cpp` were added to hold first and follow sets for the tokens as well as provides methods to interact with them.
+
+## Test input files
+
+The same input file used for the week 5 assignment was copied over. Additionally, 3 test input files have also been included. Each of the input test files attempt to invoke the newly added Panic Mode and other existing error handlers.
+
+## System Dependencies
+
+The attached CMakeLists.txt was used to compile the assignment files. The following are the version numbers of the tools used:
+
+| Tool    | Version |
+| ------- | ------- |
+| Clang++ | 13.0.0  |
+| CMake   | 3.22.2  |
+
+The target machine used was an Ubuntu 20.04 64-bit virtual machine. The Linux kernel version is 5.13.0-28-generic. The following output is generated from running the command `uname -orm`:
+
+```
+5.13.0-28-generic x86_64 GNU/Linux
+```
