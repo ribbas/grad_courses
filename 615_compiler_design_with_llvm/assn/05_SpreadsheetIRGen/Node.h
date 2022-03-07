@@ -11,37 +11,37 @@
 #define NODE_H
 
 #include "Token.h"
+#include "llvm/ADT/APFloat.h"
+
 
 class SS_Cell;
 class TableOfCells;
 
-
 class Node {
 public:
-	Node() {}
-	virtual ~Node();
+  Node() {}
+  virtual ~Node();
 
-	int value = 0;
-	bool error = false;
+  int value = 0;
+  bool error = false;
 
-	Node* left = 0;
-	Token* tok = 0;
-	Node* right = 0;
+  Node *left = 0;
+  Token *tok = 0;
+  Node *right = 0;
 
-	// add all the IDs to the Controllers list
-	void walkTreeAddIDs(SS_Cell* cell);
+  // add all the IDs to the Controllers list
+  void walkTreeAddIDs(SS_Cell *cell);
 
-	// calculate value
-	void walkTreeCalculateValue(SS_Cell* cell);
+  // calculate value
+  void walkTreeCalculateValue(SS_Cell *cell);
 
-	// display attributes
-	void walkTreePrintAttributes(ostream& os, int indentation = 0);
-	friend ostream& operator<<(ostream& os, Node& n);
-	friend ostream& operator<<(ostream& os, Node* n);
+  // display attributes
+  void walkTreePrintAttributes(ostream &os, int indentation = 0);
+  friend ostream &operator<<(ostream &os, Node &n);
+  friend ostream &operator<<(ostream &os, Node *n);
 
 private:
-	void walkTreeCalculateValue(TableOfCells* TOC);
+  void walkTreeCalculateValue(TableOfCells *TOC);
 };
 
 #endif // NODE_H
-
