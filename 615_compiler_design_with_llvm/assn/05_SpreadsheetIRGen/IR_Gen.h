@@ -2,6 +2,7 @@
 #define IR_GEN_H
 
 #include "llvm/ADT/APFloat.h"
+#include "llvm/ADT/APInt.h"
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/IR/BasicBlock.h"
 #include "llvm/IR/Constants.h"
@@ -13,8 +14,8 @@
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Verifier.h"
 
-extern std::unique_ptr<llvm::LLVMContext> TheContext;
-extern std::unique_ptr<llvm::IRBuilder<>> Builder;
+extern std::unique_ptr<llvm::LLVMContext> llvmContext;
+extern std::unique_ptr<llvm::IRBuilder<>> irBuilder;
 extern std::string lol;
 
 #endif

@@ -14,6 +14,7 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include "IR_Gen.h"
 #include "Token.h"
 
 class SS_Cell;
@@ -41,6 +42,14 @@ public:
     void walkTreePrintAttributes(ostream& os, int indentation = 0);
     friend ostream& operator<<(ostream& os, Node& n);
     friend ostream& operator<<(ostream& os, Node* n);
+
+    llvm::Value* codeGen() {
+        if (tok->getKind() == NUM) {
+            double val = std::stof(tok->getLexeme());
+            return llvm::ConstantFP::get(*llvmContext, llvm::APFloat(val));
+        }
+        return nullptr;
+    }
 
 private:
     void walkTreeCalculateValue(TableOfCells* TOC);

@@ -53,97 +53,47 @@ class SS_Cell {
     std::unique_ptr<llvm::Module> module;
     std::map<std::string, llvm::Value*> NamedValues;
 
-    // llvm::Value* codeGen() {
-    //     return nullptr;
-    // }
-
 public:
     SS_Cell();
     ~SS_Cell();
 
-    TableOfCells* getTOC() {
-        return SS_Cell::TOC;
-    }
-    string getID() {
-        return id;
-    }
-    CellArrayColumn getCellArrayColumn() {
-        return (CellArrayColumn)col;
-    }
-    char getColChar() {
-        return (char)('A' + col);
-    }
-    int getCol() {
-        return col;
-    }
-    int getRow() {
-        return row;
-    }
+    TableOfCells* getTOC();
+    string getID();
+    CellArrayColumn getCellArrayColumn();
+    char getColChar();
+    int getCol();
+    int getRow();
 
     void setTXTCell(const string txt);
     void setNUMCell(const int num, int sign = 1);
-    void setNUMCell(const string num, int sign = 1);
+    void setNUMCell(const string num);
     void clearCell();
 
-    void setExpNode(Node* node) {
+    void setExpNode(Node* node);
 
-        if (id.length()) {
-            std::cout << "making " << (id + "_module") << lol << '\n';
-            module = std::make_unique<llvm::Module>(id, *TheContext);
-        }
-        expNode = node;
-    }
-    Node* getExpNode() {
-        return expNode;
-    }
+    Node* getExpNode();
 
-    void setKind(CellKind k) {
-        kind = k;
-    }
-    CellKind getKind() {
-        return kind;
-    }
+    void setKind(CellKind k);
+    CellKind getKind();
 
-    void setStatusAction(CellStatusAction s) {
-        state = s;
-    }
-    CellStatusAction getStatusAction() {
-        return state;
-    }
+    void setStatusAction(CellStatusAction s);
+    CellStatusAction getStatusAction();
 
-    void setError(bool t) {
-        error = t;
-    }
-    bool getError() {
-        return error;
-    }
+    void setError(bool t);
+    bool getError();
 
-    void setValue(int v) {
-        value = v;
-    }
-    int getValue() {
-        return value;
-    }
+    void setValue(int v);
+    int getValue();
 
     void setDisplay(int val);
     void setDisplay(string d);
-    string getDisplay() {
-        return display;
-    }
+    string getDisplay();
 
-    void setEquation(string eq) {
-        equation = eq;
-    }
-    string getEquation() {
-        return equation;
-    }
+    void setEquation(string eq);
+    string getEquation();
 
-    void addUser(const int row, const int col) {
-        users.addID(row, col);
-    }
-    void dropUser(const int row, const int col) {
-        users.dropID(row, col);
-    }
+    void addUser(const int row, const int col);
+    void dropUser(const int row, const int col);
 
     void calculateExpression(SS_Cell* root = 0, bool err = false);
 

@@ -218,12 +218,14 @@ void parseNumber(char*& ch, SS_Cell* cell) {
 
             // if trailing chars are non-numeric and non-whitespace
             if (ASCII[(int)*ch]) {
+
                 // label cell as an error cell
                 cell->setError(true);
                 return;
 
                 // if whitespace is found after the value was scanned
             } else {
+
                 // any chars, numeric or not, after this results in a parse
                 // error
                 scannedValue = true;

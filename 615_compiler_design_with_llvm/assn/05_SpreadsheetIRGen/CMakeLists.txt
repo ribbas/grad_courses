@@ -19,6 +19,7 @@ target_sources(${CMAKE_PROJECT_NAME} PUBLIC
     Parser_Util.cpp
     Scanner.cpp
     SS_Cell.cpp
+    SS_TOC.cpp
     SS-Driver.cpp
     SS_Scanner_Support.cpp
 )

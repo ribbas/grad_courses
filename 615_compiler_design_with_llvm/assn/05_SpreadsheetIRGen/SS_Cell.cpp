@@ -20,6 +20,9 @@ TableOfCells* SS_Cell::TOC = 0;
 
 string itos(int value);
 
+SS_Cell::SS_Cell()
+    : id(""), kind(BLANK), error(false), display("    "), value(0) {}
+
 SS_Cell::~SS_Cell() {
     if (expNode) {
         delete expNode;
@@ -29,25 +32,68 @@ SS_Cell::~SS_Cell() {
     users.clear();
 }
 
-// Table of Cells constructor
-// sets ID for each cell
-TableOfCells::TableOfCells() {
+TableOfCells* SS_Cell::getTOC() {
+    return SS_Cell::TOC;
+}
+string SS_Cell::getID() {
+    return id;
+}
+CellArrayColumn SS_Cell::getCellArrayColumn() {
+    return (CellArrayColumn)col;
+}
+char SS_Cell::getColChar() {
+    return (char)('A' + col);
+}
+int SS_Cell::getCol() {
+    return col;
+}
+int SS_Cell::getRow() {
+    return row;
+}
 
-    if (!SS_Cell::TOC) {
-        SS_Cell::TOC = this;
+void SS_Cell::setExpNode(Node* node) {
+
+    if (id.length()) {
+        std::cout << "making " << (id + "_module") << lol << '\n';
+        module = std::make_unique<llvm::Module>(id, *llvmContext);
     }
+    expNode = node;
+}
 
-    for (int i = 0; i < 10; ++i) {
-        for (int j = 0; j < 6; ++j) {
-            cell[i][j].setID(i, j);
-        }
-    }
+Node* SS_Cell::getExpNode() {
+    return expNode;
+}
 
-    badCell.id = "XX";
-    badCell.row = -1;
-    badCell.col = -1;
-    badCell.error = true;
-    badCell.kind = DEAD;
+void SS_Cell::setKind(CellKind k) {
+    kind = k;
+}
+
+CellKind SS_Cell::getKind() {
+    return kind;
+}
+
+void SS_Cell::setStatusAction(CellStatusAction s) {
+    state = s;
+}
+
+CellStatusAction SS_Cell::getStatusAction() {
+    return state;
+}
+
+void SS_Cell::setError(bool t) {
+    error = t;
+}
+
+bool SS_Cell::getError() {
+    return error;
+}
+
+void SS_Cell::setValue(int v) {
+    value = v;
+}
+
+int SS_Cell::getValue() {
+    return value;
 }
 
 // Cell set ID
@@ -59,33 +105,6 @@ void SS_Cell::setID(int i, int j) {
     id = name;
     col = j;
     row = i;
-}
-
-SS_Cell* TableOfCells::getCell(const string id) {
-    if (id.length() != 2) {
-        return &badCell;
-    }
-    int row = (int)id[1] - (int)'0';
-    int col = (int)id[0] - (int)'A';
-    return getCell(col, row);
-}
-
-SS_Cell* TableOfCells::getCell(CellArrayColumn ac, int row) {
-    int col = (int)ac;
-    return getCell(col, row);
-}
-
-SS_Cell* TableOfCells::getCell(char ch, int row) {
-    int col = (int)ch - (int)'A';
-    return getCell(col, row);
-}
-
-SS_Cell* TableOfCells::getCell(int col, int row) {
-    if (row < 0 || row > 9)
-        return &badCell;
-    if (col < 0 || col > 5)
-        return &badCell;
-    return &cell[row][col];
 }
 
 void SS_Cell::setDisplay(int val) {
@@ -108,7 +127,28 @@ void SS_Cell::setDisplay(string d) {
         display = d.substr(0, 7);
 }
 
+string SS_Cell::getDisplay() {
+    return display;
+}
+
+void SS_Cell::setEquation(string eq) {
+    equation = eq;
+}
+
+string SS_Cell::getEquation() {
+    return equation;
+}
+
+void SS_Cell::addUser(const int row, const int col) {
+    users.addID(row, col);
+}
+
+void SS_Cell::dropUser(const int row, const int col) {
+    users.dropID(row, col);
+}
+
 void SS_Cell::calculateExpression(SS_Cell* root, bool err) {
+
     // this set of tests prevent an infinite loop of users
     if (err && error)
         return;                // this prevents the infinite loop
@@ -146,39 +186,12 @@ void SS_Cell::calculateExpression(SS_Cell* root, bool err) {
     calculateUserExpressions(root, err);
 }
 
-void TableOfCells::printTable(ostream& os) {
-    const char tab = '\t'; // assumed to be 8 spaces
-    const char dash[] = "-------+";
-    os << tab;
-    os << "|   A" << tab << "|   B" << tab;
-    os << "|   C" << tab << "|   D" << tab;
-    os << "|   E" << tab << "|   F" << tab;
-    os << "|" << endl;
-    for (int i = 0; i < 10; ++i) {
-        os << ' ' << dash << dash << dash << dash << dash << dash << dash
-           << endl;
-        os << "    " << i << tab << '|';
-        for (int j = 0; j < 6; ++j) {
-            os << cell[i][j].display;
-            if (cell[i][j].display.size() < 7)
-                os << tab;
-            os << '|';
-        }
-        os << endl;
-    }
-    os << ' ' << dash << dash << dash << dash << dash << dash << dash << endl;
-    os << endl;
-}
-
 // int to string
 string itos(int value) {
     ostringstream oss;
     oss << value;
     return oss.str();
 }
-
-SS_Cell::SS_Cell()
-    : id(""), kind(BLANK), error(false), display("    "), value(0) {}
 
 void SS_Cell::setTXTCell(const string txt) {
     kind = TEXT;
@@ -195,21 +208,21 @@ void SS_Cell::setNUMCell(const int num, int sign) {
     kind = NUMBER;
     value = num * sign;
     error = false;
-    setDisplay(value);
+    setDisplay(num);
     if (expNode) {
         delete expNode;
         expNode = nullptr;
     }
 }
 
-void SS_Cell::setNUMCell(const string num, int sign) {
+void SS_Cell::setNUMCell(const string num) {
     kind = NUMBER;
     if (num == "") {
         value = 0;
         error = true;
         setDisplay("ERROR");
     } else {
-        value = stoi(num) * sign;
+        value = stoi(num);
         error = false;
         setDisplay(value);
     }
