@@ -32,12 +32,16 @@ SS_Cell::~SS_Cell() {
 // Table of Cells constructor
 // sets ID for each cell
 TableOfCells::TableOfCells() {
-    if (!SS_Cell::TOC)
-        SS_Cell::TOC = this;
 
-    for (int i = 0; i < 10; ++i)
-        for (int j = 0; j < 6; ++j)
+    if (!SS_Cell::TOC) {
+        SS_Cell::TOC = this;
+    }
+
+    for (int i = 0; i < 10; ++i) {
+        for (int j = 0; j < 6; ++j) {
             cell[i][j].setID(i, j);
+        }
+    }
 
     badCell.id = "XX";
     badCell.row = -1;
@@ -58,8 +62,9 @@ void SS_Cell::setID(int i, int j) {
 }
 
 SS_Cell* TableOfCells::getCell(const string id) {
-    if (id.length() != 2)
+    if (id.length() != 2) {
         return &badCell;
+    }
     int row = (int)id[1] - (int)'0';
     int col = (int)id[0] - (int)'A';
     return getCell(col, row);
@@ -76,9 +81,9 @@ SS_Cell* TableOfCells::getCell(char ch, int row) {
 }
 
 SS_Cell* TableOfCells::getCell(int col, int row) {
-    if (row < 0 or row > 9)
+    if (row < 0 || row > 9)
         return &badCell;
-    if (col < 0 or col > 5)
+    if (col < 0 || col > 5)
         return &badCell;
     return &cell[row][col];
 }
@@ -105,9 +110,9 @@ void SS_Cell::setDisplay(string d) {
 
 void SS_Cell::calculateExpression(SS_Cell* root, bool err) {
     // this set of tests prevent an infinite loop of users
-    if (err and error)
-        return;                 // this prevents the infinite loop
-    if (err and root != this) { // everything in loop is set to error
+    if (err && error)
+        return;                // this prevents the infinite loop
+    if (err && root != this) { // everything in loop is set to error
         err = true;
         error = true;
         setDisplay("ERROR");
@@ -121,10 +126,11 @@ void SS_Cell::calculateExpression(SS_Cell* root, bool err) {
         calculateUserExpressions(root, err);
         return;
     }
-    if (!root)
+    if (!root) {
         root = this; // first time through
+    }
 
-    if (kind != EXPRESSION or expNode == 0) {
+    if (kind != EXPRESSION || expNode == 0) {
         value = 0;
         error = true;
         setDisplay("ERROR");
@@ -226,7 +232,7 @@ void SS_Cell::clearCell() {
 
 void SS_Cell::identifyControllers(Node* node) {
     newControllers.clear();
-    // walk AST and add all IDs in AST to list
+    // walk AST && add all IDs in AST to list
     node->walkTreeAddIDs(this);
 }
 
