@@ -53,9 +53,9 @@ public:
                     double val = std::stoi(tok->getLexeme());
                     std::cout << val << " here\n";
                     llvm::Value* v1 = llvm::ConstantInt::get(
-                        *llvmContext, llvm::APInt(64, left->value));
-                    llvm::Value* v2 = llvm::ConstantInt::get(
-                        *llvmContext, llvm::APInt(64, 2));
+                        *irContext, llvm::APInt(64, left->value));
+                    llvm::Value* v2 =
+                        llvm::ConstantInt::get(*irContext, llvm::APInt(64, 2));
                     return irBuilder->CreateAdd(v1, v2, "addtmp");
                 }
 

@@ -10,12 +10,12 @@
 #include <string>
 
 // open a new context and module
-std::unique_ptr<llvm::LLVMContext> llvmContext =
+std::unique_ptr<llvm::LLVMContext> irContext =
     std::make_unique<llvm::LLVMContext>();
 
 // create a new builder for the module
 std::unique_ptr<llvm::IRBuilder<>> irBuilder =
-    std::make_unique<llvm::IRBuilder<>>(*llvmContext);
+    std::make_unique<llvm::IRBuilder<>>(*irContext);
 
 int main(int argc, const char* argv[]) {
 

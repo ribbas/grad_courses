@@ -55,7 +55,7 @@ void SS_Cell::setExpNode(Node* node) {
 
     if (id.length()) {
         std::cout << "making " << (id + "_module") << '\n';
-        module = std::make_unique<llvm::Module>((id + "_module"), *llvmContext);
+        module = std::make_unique<llvm::Module>((id + "_module"), *irContext);
     }
     expNode = node;
 }
@@ -285,8 +285,6 @@ void SS_Cell::printCellAttributes(ostream& os) {
     else
         os << "    value = " << value << ": display = " << display << ":"
            << endl;
-    // TBD? ... if you modify the SS_Cell class for HW3
-    // put any additional cell attributes here
 
     os << "    users list = " << users << endl;
     os << "    controllers list = " << controllers << endl;
