@@ -51,7 +51,7 @@ class SS_Cell {
     Node* expNode = 0;
 
     std::unique_ptr<llvm::Module> module;
-    std::map<std::string, llvm::Value*> NamedValues;
+    std::map<std::string, llvm::Value*> namedValues;
 
 public:
     SS_Cell();

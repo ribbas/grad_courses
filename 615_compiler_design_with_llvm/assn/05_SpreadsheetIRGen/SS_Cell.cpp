@@ -54,7 +54,7 @@ int SS_Cell::getRow() {
 void SS_Cell::setExpNode(Node* node) {
 
     if (id.length()) {
-        std::cout << "making " << (id + "_module") << '\n';
+        // std::cout << "making " << (id + "_module") << '\n';
         module = std::make_unique<llvm::Module>((id + "_module"), *irContext);
     }
     expNode = node;
@@ -179,17 +179,15 @@ void SS_Cell::calculateExpression(SS_Cell* root, bool err) {
     }
 
     expNode->walkTreeCalculateValue(this);
-    std::cout << "ID should be " << id << '\n';
-    expNode->walkCodeGen(this);
 
-    // auto rhs = llvm::ConstantInt::get(*llvmContext, llvm::APInt(32, 2));
-    // irBuilder->CreateAdd(rhs, rhs, "addtmp");
-    module->print(llvm::errs(), nullptr);
     // move value to cell
     value = expNode->value;
     error = expNode->error;
     setDisplay(value);
     calculateUserExpressions(root, err);
+
+    expNode->walkCodeGen(this);
+    module->print(llvm::errs(), nullptr);
 }
 
 // int to string

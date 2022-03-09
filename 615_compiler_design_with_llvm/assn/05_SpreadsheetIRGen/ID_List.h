@@ -26,7 +26,6 @@ public:
     ID_List() {}
     ~ID_List() {}
 
-    int size();
     std::vector<std::string> getList();
 
     ID_List& operator=(const ID_List& rtlst) = default;

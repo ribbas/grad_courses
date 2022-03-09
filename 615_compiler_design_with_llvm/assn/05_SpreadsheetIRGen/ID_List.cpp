@@ -97,16 +97,3 @@ std::vector<std::string> ID_List::getList() {
     }
     return lst;
 }
-
-int ID_List::size() {
-    int _size = 0;
-    for (int r = 0; r < 10; ++r) {
-        unsigned char row = list[r];
-        for (int col = 0; col < 6; ++col) {
-            if (row & addMask[col]) {
-                _size++;
-            }
-        }
-    }
-    return _size;
-}
