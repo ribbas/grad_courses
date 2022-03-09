@@ -96,6 +96,7 @@ public:
     void dropUser(const int row, const int col);
 
     void calculateExpression(SS_Cell* root = 0, bool err = false);
+    void generateIR();
 
     void identifyControllers(Node* node);
     void updateControllerUsers();
@@ -118,6 +119,7 @@ public:
     ~TableOfCells() {}
 
     void printAllCells(ostream& os);
+    void generateIR();
 
     void printTable(ostream& os);
 

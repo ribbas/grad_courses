@@ -39,7 +39,7 @@ public:
 
     // calculate value
     void walkTreeCalculateValue(SS_Cell* cell);
-    void walkCodeGen(SS_Cell* cell);
+    llvm::Value* codeGen(SS_Cell* cell);
 
     // display attributes
     void walkTreePrintAttributes(ostream& os, int indentation = 0);

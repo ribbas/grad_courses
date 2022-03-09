@@ -120,6 +120,14 @@ void TableOfCells::printAllCells(ostream& os) {
     return;
 }
 
+void TableOfCells::generateIR() {
+    for (int i = 0; i < 10; ++i)
+        for (int j = 0; j < 6; ++j) {
+            cell[i][j].generateIR();
+        }
+    return;
+}
+
 // print explaination of how to call Spreadsheet.exe
 void printUsage(const string name) {
     const char tab = '\t';

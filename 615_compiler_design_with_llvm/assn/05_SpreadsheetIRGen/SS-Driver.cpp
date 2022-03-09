@@ -63,6 +63,7 @@ int main(int argc, const char* argv[]) {
             break;
     }
 
+    symTab.generateIR();
     symTab.printTable(ofs);
     symTab.printAllCells(ofs);
     ofs.close();
