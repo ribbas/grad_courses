@@ -8,8 +8,9 @@
 #ifndef ID_LIST_H
 #define ID_LIST_H
 
-#include <ostream>
+#include <iostream>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -24,7 +25,10 @@ class ID_List {
 public:
     ID_List() {}
     ~ID_List() {}
+
     int size();
+    std::vector<std::string> getList();
+
     ID_List& operator=(const ID_List& rtlst) = default;
 
     void clear();

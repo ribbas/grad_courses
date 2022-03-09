@@ -184,7 +184,7 @@ void SS_Cell::calculateExpression(SS_Cell* root, bool err) {
 
     // auto rhs = llvm::ConstantInt::get(*llvmContext, llvm::APInt(32, 2));
     // irBuilder->CreateAdd(rhs, rhs, "addtmp");
-    // module->print(llvm::errs(), nullptr);
+    module->print(llvm::errs(), nullptr);
     // move value to cell
     value = expNode->value;
     error = expNode->error;

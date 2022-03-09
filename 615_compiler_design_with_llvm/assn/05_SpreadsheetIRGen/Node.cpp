@@ -35,7 +35,7 @@ void Node::walkTreeCalculateValue(SS_Cell* cell) {
 }
 
 void Node::walkCodeGen(SS_Cell* cell) {
-    if (cell->id.length()) {
+    if (!cell->module->getFunction(cell->id + "_exp")) {
         vector<llvm::Type*> argList(cell->controllers.size(),
                                     llvm::Type::getInt32Ty(*irContext));
         llvm::FunctionType* FT = llvm::FunctionType::get(
@@ -43,6 +43,16 @@ void Node::walkCodeGen(SS_Cell* cell) {
         llvm::Function* Func =
             llvm::Function::Create(FT, llvm::Function::ExternalLinkage,
                                    (cell->id + "_exp"), cell->module.get());
+
+        std::vector<std::string> args = cell->controllers.getList();
+
+        // Set names for all arguments.
+        unsigned Idx = 0;
+        for (auto& Arg : Func->args()) {
+            // std::cout << "item: " << args[Idx++] << '\n';
+            Arg.setName(args[Idx++]);
+        }
+
         llvm::BasicBlock* BB =
             llvm::BasicBlock::Create(*irContext, "Entry", Func);
         irBuilder->SetInsertPoint(BB);
@@ -76,7 +86,7 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
 
     llvm::Value* lhs = nullptr;
     llvm::Value* rhs = nullptr;
-    llvm::Value* exp = nullptr;
+    // llvm::Value* lhs = nullptr;
 
     switch (tok->getKind()) {
         case ID: {
@@ -88,7 +98,7 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
             return;
         }
         case NUM: {
-            exp = llvm::ConstantInt::get(*irContext,
+            lhs = llvm::ConstantInt::get(*irContext,
                                          llvm::APInt(32, tok->getValue()));
             break;
         }
@@ -102,7 +112,7 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
             lhs = llvm::ConstantInt::get(*irContext,
                                          llvm::APInt(32, left->value));
             rhs = llvm::ConstantInt::get(*irContext, llvm::APInt(32, 10));
-            exp = irBuilder->CreateAdd(lhs, rhs, "addtmp");
+            lhs = irBuilder->CreateAdd(lhs, rhs, "addtmp");
 
             break;
         }
@@ -115,7 +125,7 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
             lhs = llvm::ConstantInt::get(*irContext,
                                          llvm::APInt(32, left->value));
             rhs = llvm::ConstantInt::get(*irContext, llvm::APInt(32, 10));
-            exp = irBuilder->CreateSub(lhs, rhs, "subtmp");
+            lhs = irBuilder->CreateSub(lhs, rhs, "subtmp");
 
             break;
         }
@@ -128,7 +138,7 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
             lhs = llvm::ConstantInt::get(*irContext,
                                          llvm::APInt(32, left->value));
             rhs = llvm::ConstantInt::get(*irContext, llvm::APInt(32, 10));
-            exp = irBuilder->CreateMul(lhs, rhs, "multmp");
+            lhs = irBuilder->CreateMul(lhs, rhs, "multmp");
 
             break;
         }
@@ -148,7 +158,8 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
         }
     }
 
-    exp->print(llvm::errs());
+    irBuilder->CreateRet(lhs);
+    lhs->print(llvm::errs());
 
     // if (cell->module) {
     //     cell->module->print(llvm::errs(), nullptr);
