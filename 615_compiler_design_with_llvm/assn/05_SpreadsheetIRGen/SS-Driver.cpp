@@ -17,9 +17,8 @@ std::unique_ptr<llvm::LLVMContext> llvmContext =
 std::unique_ptr<llvm::IRBuilder<>> irBuilder =
     std::make_unique<llvm::IRBuilder<>>(*llvmContext);
 
-std::string lol = "hehe";
-
 int main(int argc, const char* argv[]) {
+
     cout << "Welcome to mySpreadsheet" << endl << endl;
     string pathName = argv[0];
     size_t pos = pathName.find_last_of("\\/");

@@ -16,6 +16,5 @@
 
 extern std::unique_ptr<llvm::LLVMContext> llvmContext;
 extern std::unique_ptr<llvm::IRBuilder<>> irBuilder;
-extern std::string lol;
 
 #endif

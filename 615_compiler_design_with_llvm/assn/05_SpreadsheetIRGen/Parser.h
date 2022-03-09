@@ -19,6 +19,7 @@ using namespace std;
 Token* getToken(char*& ch); // in Scanner.cpp
 
 class Parser {
+    static SS_Cell* cell;
     static Token* lookahead;
     static unsigned int cursor;
     static std::string equationName;

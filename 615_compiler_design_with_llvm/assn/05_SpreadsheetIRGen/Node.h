@@ -16,6 +16,7 @@
 
 #include "IR_Gen.h"
 #include "Token.h"
+#include <iostream>
 
 class SS_Cell;
 class TableOfCells;
@@ -37,6 +38,7 @@ public:
 
     // calculate value
     void walkTreeCalculateValue(SS_Cell* cell);
+    void walkCodeGen(SS_Cell* cell);
 
     // display attributes
     void walkTreePrintAttributes(ostream& os, int indentation = 0);
@@ -44,15 +46,35 @@ public:
     friend ostream& operator<<(ostream& os, Node* n);
 
     llvm::Value* codeGen() {
-        if (tok->getKind() == NUM) {
-            double val = std::stof(tok->getLexeme());
-            return llvm::ConstantFP::get(*llvmContext, llvm::APFloat(val));
+
+        if (tok) {
+            switch (tok->getKind()) {
+                case NUM: {
+                    double val = std::stoi(tok->getLexeme());
+                    std::cout << val << " here\n";
+                    llvm::Value* v1 = llvm::ConstantInt::get(
+                        *llvmContext, llvm::APInt(64, left->value));
+                    llvm::Value* v2 = llvm::ConstantInt::get(
+                        *llvmContext, llvm::APInt(64, 2));
+                    return irBuilder->CreateAdd(v1, v2, "addtmp");
+                }
+
+                case ID: {
+
+                    std::cout << "not doing anything yet\n";
+                    return nullptr;
+                }
+
+                default: {
+                    return nullptr;
+                }
+            };
         }
-        return nullptr;
     }
 
 private:
     void walkTreeCalculateValue(TableOfCells* TOC);
+    void walkCodeGen(TableOfCells* TOC, SS_Cell* cell);
 };
 
 #endif // NODE_H

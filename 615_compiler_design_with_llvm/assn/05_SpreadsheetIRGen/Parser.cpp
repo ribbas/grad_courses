@@ -27,13 +27,15 @@ unsigned int Parser::cursor;
 std::string Parser::equationName = "";
 int Parser::parsedLParen;
 int Parser::parsedRParen;
+SS_Cell* Parser::cell;
 
-void Parser::parseEquation(char*& ch, SS_Cell* cell) {
+void Parser::parseEquation(char*& ch, SS_Cell* _cell) {
 
     // strip all whitespace from equation
     cursor = 0;
     parsedLParen = 0;
     parsedRParen = 0;
+    cell = _cell;
 
     ch = stripWS(ch);
     equationName = ch;
@@ -85,6 +87,7 @@ Node* Parser::equation(char*& ch, FF_List synchset) {
         if (!node) {
             errorInChild = true;
         }
+
         // if next token is '+' or '-'
         while (nextIs(ADD) || nextIs(SUB)) {
 

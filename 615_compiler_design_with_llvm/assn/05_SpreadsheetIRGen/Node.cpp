@@ -34,6 +34,128 @@ void Node::walkTreeCalculateValue(SS_Cell* cell) {
     walkTreeCalculateValue(cell->getTOC());
 }
 
+void Node::walkCodeGen(SS_Cell* cell) {
+    if (cell->id.length()) {
+        vector<llvm::Type*> argList(1, llvm::Type::getInt32Ty(*llvmContext));
+        llvm::FunctionType* FT = llvm::FunctionType::get(
+            llvm::Type::getInt32Ty(*llvmContext), argList, false);
+        llvm::Function* Func =
+            llvm::Function::Create(FT, llvm::Function::ExternalLinkage,
+                                   (cell->id + "_exp"), cell->module.get());
+    }
+    walkCodeGen(cell->getTOC(), cell);
+}
+
+void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
+
+    std::cout << "walking\n";
+
+    // check if this has children
+    if (left) {
+        left->walkCodeGen(TOC, cell);
+        if (left->error) {
+            return;
+        }
+    }
+
+    if (right) {
+        right->walkCodeGen(TOC, cell);
+        if (right->error) {
+            return;
+        }
+    }
+
+    if (!tok) {
+        return;
+    }
+
+    // SS_Cell* cell;
+    bool errVal;
+
+    llvm::Value* lhs = nullptr;
+    llvm::Value* rhs = nullptr;
+    llvm::Value* exp = nullptr;
+
+    switch (tok->getKind()) {
+        case ID: {
+            // cell = TOC->getCell(tok->getLexeme());
+            // errVal = cell->getError();
+            // if (errVal) {
+            //     return;
+            // }
+            return;
+        }
+        case NUM: {
+            lhs = llvm::ConstantInt::get(*llvmContext,
+                                         llvm::APInt(32, tok->getValue()));
+            break;
+        }
+
+        case ADD: {
+
+            if (!left || !right) {
+                break;
+            }
+
+            lhs = llvm::ConstantInt::get(*llvmContext,
+                                         llvm::APInt(32, left->value));
+            rhs = llvm::ConstantInt::get(*llvmContext, llvm::APInt(32, 10));
+            exp = irBuilder->CreateAdd(lhs, rhs, "addtmp");
+
+            break;
+        }
+        case SUB: {
+            if (!left || !right) {
+                std::cout << "left or right broken\n";
+                break;
+            }
+
+            lhs = llvm::ConstantInt::get(*llvmContext,
+                                         llvm::APInt(32, left->value));
+            rhs = llvm::ConstantInt::get(*llvmContext, llvm::APInt(32, 10));
+            exp = irBuilder->CreateSub(lhs, rhs, "subtmp");
+
+            break;
+        }
+        case MULT: {
+            if (!left || !right) {
+                std::cout << "left or right broken\n";
+                break;
+            }
+
+            lhs = llvm::ConstantInt::get(*llvmContext,
+                                         llvm::APInt(32, left->value));
+            rhs = llvm::ConstantInt::get(*llvmContext, llvm::APInt(32, 10));
+            exp = irBuilder->CreateMul(lhs, rhs, "multmp");
+
+            break;
+        }
+        case DIV: // integer division
+        {
+            if (!left || !right) {
+                std::cout << "left or right broken\n";
+                break;
+            }
+            // value = left->value / right->value;
+            break;
+        }
+        default: {
+            // error = true;
+            // value = 0;
+            break;
+        }
+    }
+
+    exp->print(llvm::errs());
+
+    // if (cell->module) {
+    //     cell->module->print(llvm::errs(), nullptr);
+    // }
+    // std::cout << '\n';
+
+    return;
+}
+
 void Node::walkTreeCalculateValue(TableOfCells* TOC) {
     // check if this has children
     if (left) {
@@ -77,13 +199,17 @@ void Node::walkTreeCalculateValue(TableOfCells* TOC) {
             error = tok->getError();
             return;
         }
+
         case ADD: {
+
             if (!left || !right) {
                 error = true;
                 value = 0;
                 return;
             }
+
             value = left->value + right->value;
+
             return;
         }
         case SUB: {
@@ -92,6 +218,7 @@ void Node::walkTreeCalculateValue(TableOfCells* TOC) {
                 value = 0;
                 return;
             }
+
             value = left->value - right->value;
             return;
         }
@@ -101,7 +228,9 @@ void Node::walkTreeCalculateValue(TableOfCells* TOC) {
                 value = 0;
                 return;
             }
+
             value = left->value * right->value;
+
             return;
         }
         case DIV: // integer division
