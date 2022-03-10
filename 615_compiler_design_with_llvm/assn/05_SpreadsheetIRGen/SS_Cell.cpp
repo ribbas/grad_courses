@@ -28,6 +28,7 @@ SS_Cell::~SS_Cell() {
         delete expNode;
         expNode = nullptr;
     }
+    namedValues.clear();
     controllers.clear();
     users.clear();
 }
@@ -52,10 +53,6 @@ int SS_Cell::getRow() {
 }
 
 void SS_Cell::setExpNode(Node* node) {
-
-    if (id.length()) {
-        module = std::make_unique<llvm::Module>((id + "_module"), *irContext);
-    }
     expNode = node;
 }
 
@@ -149,7 +146,6 @@ void SS_Cell::dropUser(const int row, const int col) {
 void SS_Cell::generateIR() {
     if (expNode) {
         irBuilder->CreateRet(expNode->codeGen(this));
-        module->print(llvm::errs(), nullptr);
     }
 }
 
@@ -292,6 +288,13 @@ void SS_Cell::printCellAttributes(ostream& os) {
     if (expNode) {
         os << "    AST: of (( " << equation << " ))" << endl;
         expNode->walkTreePrintAttributes(os);
+
+        os << "    IR:" << endl;
+        std::string str;
+        llvm::raw_string_ostream output(str);
+        module->print(output, nullptr);
+
+        os << output.str();
     }
     return;
 }

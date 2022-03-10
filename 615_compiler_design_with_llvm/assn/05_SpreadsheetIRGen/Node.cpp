@@ -35,31 +35,43 @@ void Node::walkTreeCalculateValue(SS_Cell* cell) {
 }
 
 llvm::Value* Node::codeGen(SS_Cell* cell) {
+
     std::string expName = cell->id + "_exp";
-    if (!cell->module->getFunction(expName)) {
-        std::vector<std::string> args = cell->controllers.getList();
-        vector<llvm::Type*> argList(args.size(),
-                                    llvm::Type::getInt32Ty(*irContext));
-        llvm::FunctionType* funcType = llvm::FunctionType::get(
-            llvm::Type::getInt32Ty(*irContext), argList, false);
-        llvm::Function* func =
-            llvm::Function::Create(funcType, llvm::Function::ExternalLinkage,
-                                   expName, cell->module.get());
-
-        // Set names for all arguments.
-        unsigned Idx = 0;
-        std::string namedArg = "";
-        for (auto& Arg : func->args()) {
-            namedArg = args[Idx++];
-            Arg.setName(namedArg);
-            cell->namedValues[namedArg] = &Arg;
-        }
-
-        llvm::BasicBlock* BB =
-            llvm::BasicBlock::Create(*irContext, "Entry", func);
-        irBuilder->SetInsertPoint(BB);
+    std::string moduleName = cell->id + "_module";
+    if (cell->id.length() && !cell->module) {
+        cell->module = std::make_unique<llvm::Module>(moduleName, *irContext);
     }
 
+    std::vector<std::string> args = cell->controllers.getList();
+    vector<llvm::Type*> argList(args.size(),
+                                llvm::Type::getInt32Ty(*irContext));
+    llvm::FunctionType* funcType = nullptr;
+    llvm::Function* func = nullptr;
+    std::cout << "genning\n";
+    if (cell->module->getFunction(expName)) {
+        std::cout << "erasing 222\n";
+        argList.clear();
+        func->eraseFromParent();
+    }
+    // std::vector<std::string> args = cell->controllers.getList();
+    // argList(args.size(),
+    //                             llvm::Type::getInt32Ty(*irContext));
+    funcType = llvm::FunctionType::get(llvm::Type::getInt32Ty(*irContext),
+                                       argList, false);
+    func = llvm::Function::Create(funcType, llvm::Function::ExternalLinkage,
+                                  expName, cell->module.get());
+
+    // Set names for all arguments.
+    unsigned Idx = 0;
+    std::string namedArg = "";
+    for (auto& Arg : func->args()) {
+        namedArg = args[Idx++];
+        Arg.setName(namedArg);
+        cell->namedValues[namedArg] = &Arg;
+    }
+
+    llvm::BasicBlock* BB = llvm::BasicBlock::Create(*irContext, "Entry", func);
+    irBuilder->SetInsertPoint(BB);
     walkCodeGen(cell->getTOC(), cell);
 
     return irValue;

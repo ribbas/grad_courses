@@ -1,12 +1,12 @@
 # This input file is for the 605.615 Compiler Design with LLVM course 
-# Homework Assignment 4
+# Homework Assignment 5
 # This input file was copied from the Homework Assignment 3
 
 A0 "Y ="
 B0 "aXX +
 C0 "bX + C"
 D0 "="
-E0 = 1 + 2 * 2
+E0 = B3*B2*B2 + B4*B2 + B5
 
 A1 "Y ="
 B1 "(aX+B)"
