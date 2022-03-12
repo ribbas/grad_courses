@@ -1,0 +1,3 @@
+line 5:10 mismatched input '=' expecting {';', '['}
+line 7:4 missing '}' at 'int'
+line 9:14 token recognition error at: '%'

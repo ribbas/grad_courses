@@ -1,0 +1,1 @@
+line 8:11 rule fun_declaration failed predicate: semantics.canDeclareFunc($ID.text, $type_specifier.text)?

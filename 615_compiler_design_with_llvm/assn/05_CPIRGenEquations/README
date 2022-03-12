@@ -1,0 +1,17 @@
+# Week 8: Compiler Project C- Semantic Analysis
+
+The ANTLR4 tool was installed and ran using the instructions in the official documentations, https://github.com/antlr/antlr4/blob/master/doc/getting-started.md.
+
+The tool and its dependencies were installed on the system using `apt`.
+
+The generated files, including the visitor and listener files, are moved to `generated` and the object files in `objects`.
+
+The provided Makefile compiles the main C++ script and links with the runtime library to generate the executable `Cminus`. The symbol table is implemented in the `Symtab.hpp` classes. The semantic predicates are defined in the `SemPred.hpp` classes. These class methods are injected throughout the grammar file to enforce the semantic predicates dictated in Appendix A. The symbols are added and checked by the predicate methods as necessary. The symbol table gets dumped after execution of the main script.
+
+## System
+
+The target machine used was an Ubuntu 20.04 64-bit virtual machine. The Linux kernel version is 5.13.0-30-generic. The following output is generated from running the command `uname -orm`:
+
+```
+5.13.0-30-generic x86_64 GNU/Linux
+```

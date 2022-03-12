@@ -1,0 +1,1 @@
+line 12:4 rule var failed predicate: semantics.checkSymbol($ID.text)?
