@@ -66,7 +66,8 @@ int main(int argc, const char* argv[]) {
     symTab.generateIR();
     symTab.printTable(ofs);
     symTab.printAllCells(ofs);
-    ofs.close();
     llvm::llvm_shutdown();
+    ofs.close();
+
     return 0;
 }

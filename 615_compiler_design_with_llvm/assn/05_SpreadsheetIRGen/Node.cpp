@@ -38,7 +38,7 @@ llvm::Value* Node::codeGen(SS_Cell* cell) {
 
     std::string expName = cell->id + "_exp";
     std::string moduleName = cell->id + "_module";
-    if (cell->id.length() && !cell->module) {
+    if (!cell->module) {
         cell->module = std::make_unique<llvm::Module>(moduleName, *irContext);
     }
 
@@ -53,9 +53,6 @@ llvm::Value* Node::codeGen(SS_Cell* cell) {
         argList.clear();
         func->eraseFromParent();
     }
-    // std::vector<std::string> args = cell->controllers.getList();
-    // argList(args.size(),
-    //                             llvm::Type::getInt32Ty(*irContext));
     funcType = llvm::FunctionType::get(llvm::Type::getInt32Ty(*irContext),
                                        argList, false);
     func = llvm::Function::Create(funcType, llvm::Function::ExternalLinkage,

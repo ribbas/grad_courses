@@ -2,9 +2,7 @@
 // Allyn Shell
 // Feb 2018
 // Modified by:
-// TBD ... This is to be filled in for HW3 if you make changes
 // Modified date:
-// TBD ... This is to be filled in for HW3
 
 #include "SS_Cell.h"
 #include "Node.h"
@@ -21,10 +19,13 @@ TableOfCells* SS_Cell::TOC = 0;
 string itos(int value);
 
 SS_Cell::SS_Cell()
-    : id(""), kind(BLANK), error(false), display("    "), value(0) {}
+    : id(""), kind(BLANK), error(false), display("    "), value(0),
+      module(nullptr) {}
 
 SS_Cell::~SS_Cell() {
     if (expNode) {
+        module->getFunction(id + "_exp")->eraseFromParent();
+        module = nullptr;
         delete expNode;
         expNode = nullptr;
     }
