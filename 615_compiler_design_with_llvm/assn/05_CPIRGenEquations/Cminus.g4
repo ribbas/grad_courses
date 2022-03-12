@@ -1,12 +1,17 @@
 /* Cminus.g4 */
 /* Sabbir Ahmed */
-/* 3/4/22 */
+/* 3/12/22 */
 /* BNF grammar implementation for C-Minus BNF syntax outlined by Louden */
 
 grammar Cminus;
 
+@parser::visitorpreinclude {
+#include "../../SemPred.hpp"
+#include "../../IR_Gen.hpp"
+}
+
 @parser::preinclude {
-#include "../SemPred.hpp"
+#include "../../SemPred.hpp"
 }
 @parser::members {
 SemanticPredicate semantics;
