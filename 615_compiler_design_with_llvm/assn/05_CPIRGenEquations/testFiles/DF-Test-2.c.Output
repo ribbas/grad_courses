@@ -1,3 +1,0 @@
-line 5:29 rule call failed predicate: semantics.checkSymbol($ID.text)?
-line 5:30 mismatched input ')' expecting {'(', ID, NUM}
-line 8:30 rule fun_declaration failed predicate: semantics.canDeclareFunc($ID.text, $type_specifier.text)?

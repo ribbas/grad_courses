@@ -1,2 +1,0 @@
-line 13:0 rule return_statement failed predicate: semantics.checkReturnType()?
-line 19:0 rule return_statement failed predicate: semantics.checkReturnType($simple_expression.text)?

@@ -1,2 +1,0 @@
-line 6:0 rule var_declaration failed predicate: semantics.isValidVarType($type_specifier.text)
-		?

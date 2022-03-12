@@ -1,4 +1,0 @@
-line 7:10 mismatched input '=' expecting {';', '['}
-line 9:10 extraneous input 'int' expecting {'(', ID, NUM}
-line 9:16 no viable alternative at input '='
-line 9:21 mismatched input ')' expecting '}'
