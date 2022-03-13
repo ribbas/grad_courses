@@ -6,12 +6,12 @@
 grammar Cminus;
 
 @parser::visitorpreinclude {
-#include "../../SemPred.hpp"
-#include "../../IR_Gen.hpp"
+#include "SemPred.hpp"
+#include "IR_Gen.hpp"
 }
 
 @parser::preinclude {
-#include "../../SemPred.hpp"
+#include "SemPred.hpp"
 }
 @parser::members {
 SemanticPredicate semantics;

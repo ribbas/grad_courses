@@ -1,9 +1,5 @@
 /* A program to test functions and expressions.  */
 
-int test(int a, int b) {
-  return a;
-}
-
 void main(void)
 { int x; int y; int z;
   x = input();
