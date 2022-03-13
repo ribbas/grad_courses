@@ -50,7 +50,7 @@ class SS_Cell {
     string equation;
     Node* expNode = 0;
 
-    llvm::Module* module;
+    std::unique_ptr<llvm::Module> module;
     std::map<std::string, llvm::Value*> namedValues;
 
 public:

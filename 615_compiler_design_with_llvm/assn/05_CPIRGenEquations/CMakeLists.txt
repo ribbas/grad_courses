@@ -44,6 +44,12 @@ foreach(GENFILE ${ANTLR_GEN_FILE_NAMES})
         endforeach()
 
         break()
+
+    # else()
+    #     execute_process(
+    #         COMMAND ${ANTLR4} -Dlanguage=Cpp -o "${GENERATED}" ${CMAKE_SOURCE_DIR}/${CMAKE_PROJECT_NAME}.g4
+    #     )
+
     endif()
 endforeach()
 unset(GEN CACHE)
@@ -55,8 +61,8 @@ target_sources(${CMAKE_PROJECT_NAME} PUBLIC
     ${CMAKE_PROJECT_NAME}.cpp
     ${CMAKE_PROJECT_NAME}Lexer.cpp
     ${CMAKE_PROJECT_NAME}Parser.cpp
-    ${CMAKE_PROJECT_NAME}Listener.cpp
-    ${CMAKE_PROJECT_NAME}Visitor.cpp
+    ${CMAKE_PROJECT_NAME}BaseListener.cpp
+    ${CMAKE_PROJECT_NAME}BaseVisitor.cpp
 )
 set_source_files_properties(${ANTLR4_GEN_FILES} PROPERTIES GENERATED TRUE)
 

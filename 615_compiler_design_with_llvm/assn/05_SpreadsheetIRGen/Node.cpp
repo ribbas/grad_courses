@@ -39,12 +39,12 @@ llvm::Value* Node::codeGen(SS_Cell* cell) {
     std::string expName = cell->id + "_exp";
     std::string moduleName = cell->id + "_module";
     if (!cell->module) {
-        cell->module = new llvm::Module(moduleName, *irContext);
+        cell->module = std::make_unique<llvm::Module>(moduleName, *irContext);
     }
 
     std::vector<std::string> args = cell->controllers.getList();
-    vector<llvm::Type*> argList(args.size(),
-                                llvm::Type::getInt32Ty(*irContext));
+    std::vector<llvm::Type*> argList(args.size(),
+                                     llvm::Type::getInt32Ty(*irContext));
     llvm::FunctionType* funcType = nullptr;
     llvm::Function* func = nullptr;
     std::cout << "genning\n";
@@ -56,7 +56,7 @@ llvm::Value* Node::codeGen(SS_Cell* cell) {
     funcType = llvm::FunctionType::get(llvm::Type::getInt32Ty(*irContext),
                                        argList, false);
     func = llvm::Function::Create(funcType, llvm::Function::ExternalLinkage,
-                                  expName, cell->module);
+                                  expName, cell->module.get());
 
     // Set names for all arguments.
     unsigned Idx = 0;

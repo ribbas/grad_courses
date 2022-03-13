@@ -26,8 +26,6 @@ SS_Cell::~SS_Cell() {
     if (expNode) {
         module->getFunction(id + "_exp")->eraseFromParent();
         module->dropAllReferences();
-        delete module;
-        module = nullptr;
         delete expNode;
         expNode = nullptr;
     }

@@ -3,7 +3,4 @@
 // /home/ribbas/grad_courses/615_compiler_design_with_llvm/assn/05_CPIRGenEquations/Cminus.g4
 // by ANTLR 4.9
 
-#include "IR_Gen.h"
-#include "SemPred.h"
-
 #include "CminusVisitor.h"

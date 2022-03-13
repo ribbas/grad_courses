@@ -5,18 +5,6 @@
 
 grammar Cminus;
 
-@parser::visitorpreinclude {
-#include "SemPred.h"
-#include "IR_Gen.h"
-}
-
-@parser::preinclude {
-#include "SemPred.h"
-}
-@parser::members {
-SemanticPredicate semantics;
-}
-
 IF: 'if';
 ELSE: 'else';
 WHILE: 'while';
@@ -47,8 +35,9 @@ program: declaration_list EOF;
 declaration_list: declaration_list declaration | declaration;
 declaration: var_declaration | fun_declaration;
 var_declaration:
-	type_specifier ID (LBRACKET NUM RBRACKET)? SEMICOLON {semantics.isValidVarType($type_specifier.text)
-		}? {semantics.addSymbol($ID.text, $type_specifier.text);};
+	type_specifier ID (LBRACKET NUM RBRACKET)? SEMICOLON {
+		semantics.isValidVarType($type_specifier.text)}? {
+			semantics.addSymbol($ID.text, $type_specifier.text);};
 type_specifier: INT | VOID;
 fun_declaration:
 	type_specifier ID {semantics.canDeclareFunc($ID.text, $type_specifier.text)}? LPAREN params
