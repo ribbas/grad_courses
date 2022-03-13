@@ -1,5 +1,5 @@
-#ifndef SYMTAB_HPP
-#define SYMTAB_HPP
+#ifndef SYMTAB_H
+#define SYMTAB_H
 
 #include <iostream>
 #include <sstream>

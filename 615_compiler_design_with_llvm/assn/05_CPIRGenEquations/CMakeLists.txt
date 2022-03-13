@@ -23,12 +23,13 @@ set(ANTLR_GEN_FILE_NAMES
     ${CMAKE_PROJECT_NAME}Listener
     ${CMAKE_PROJECT_NAME}Visitor
 )
-option(generate "generate" OFF)
+
+option(GEN "GEN" OFF)
 foreach(GENFILE ${ANTLR_GEN_FILE_NAMES})
 
     if (NOT(EXISTS "${CMAKE_SOURCE_DIR}/${GENFILE}.h"
         AND EXISTS "${CMAKE_SOURCE_DIR}/${GENFILE}.cpp")
-        OR ${generate})
+        OR ${GEN})
 
         execute_process(COMMAND mkdir -p ${GENERATED})
         execute_process(
@@ -45,6 +46,7 @@ foreach(GENFILE ${ANTLR_GEN_FILE_NAMES})
         break()
     endif()
 endforeach()
+unset(GEN CACHE)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I ${ANTLR4_INCLUDES}")
 
