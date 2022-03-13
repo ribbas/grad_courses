@@ -23,11 +23,12 @@ set(ANTLR_GEN_FILE_NAMES
     ${CMAKE_PROJECT_NAME}Listener
     ${CMAKE_PROJECT_NAME}Visitor
 )
-
+option(generate "generate" OFF)
 foreach(GENFILE ${ANTLR_GEN_FILE_NAMES})
 
     if (NOT(EXISTS "${CMAKE_SOURCE_DIR}/${GENFILE}.h"
-        AND EXISTS "${CMAKE_SOURCE_DIR}/${GENFILE}.cpp"))
+        AND EXISTS "${CMAKE_SOURCE_DIR}/${GENFILE}.cpp")
+        OR ${generate})
 
         execute_process(COMMAND mkdir -p ${GENERATED})
         execute_process(

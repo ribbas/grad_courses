@@ -4,8 +4,8 @@
 #pragma once
 
 
-#include "SemPred.hpp"
-#include "IR_Gen.hpp"
+#include "SemPred.h"
+#include "IR_Gen.h"
 
 
 #include "antlr4-runtime.h"

@@ -1,6 +1,6 @@
 #include "CminusLexer.h"
 #include "CminusParser.h"
-#include "IR_Gen.hpp"
+#include "IR_Gen.h"
 #include "antlr4-runtime.h"
 
 #include <fstream>

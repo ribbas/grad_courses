@@ -4,7 +4,7 @@
 #pragma once
 
 
-#include "SemPred.hpp"
+#include "SemPred.h"
 
 
 #include "antlr4-runtime.h"
