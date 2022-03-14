@@ -33,7 +33,27 @@ private:
     std::map<std::string, llvm::Value*> namedValues;
 
 public:
-    CminusBaseVisitor() {}
+    CminusBaseVisitor() {
+        llvm::FunctionType* inputFuncType =
+            llvm::FunctionType::get(llvm::Type::getInt32Ty(*irContext), false);
+        llvm::Function* inputFunc = llvm::Function::Create(
+            inputFuncType, llvm::Function::ExternalLinkage, "input",
+            module.get());
+        llvm::BasicBlock* inputBB =
+            llvm::BasicBlock::Create(*irContext, "Entry", inputFunc);
+        irBuilder->SetInsertPoint(inputBB);
+
+        std::vector<llvm::Type*> argList =
+            std::vector<llvm::Type*>(1, llvm::Type::getInt32Ty(*irContext));
+        llvm::FunctionType* outputFuncType = llvm::FunctionType::get(
+            llvm::Type::getVoidTy(*irContext), argList, false);
+        llvm::Function* outputFunc = llvm::Function::Create(
+            outputFuncType, llvm::Function::ExternalLinkage, "output",
+            module.get());
+        llvm::BasicBlock* outputBB =
+            llvm::BasicBlock::Create(*irContext, "Entry", outputFunc);
+        irBuilder->SetInsertPoint(outputBB);
+    }
 
     void printModule() {
         module->print(llvm::errs(), nullptr);
