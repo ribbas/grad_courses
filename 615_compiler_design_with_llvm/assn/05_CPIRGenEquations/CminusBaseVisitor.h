@@ -7,6 +7,7 @@
 
 #include "CminusVisitor.h"
 #include "antlr4-runtime.h"
+#include <map>
 #include <vector>
 
 /**
@@ -26,6 +27,7 @@ class CminusBaseVisitor : public CminusVisitor {
 
     std::unique_ptr<llvm::Module> module =
         std::make_unique<llvm::Module>("moduleName", *irContext);
+    std::map<std::string, llvm::Value*> namedValues;
 
 public:
     virtual antlrcpp::Any
@@ -40,6 +42,7 @@ public:
 
     virtual antlrcpp::Any
     visitDeclaration(CminusParser::DeclarationContext* ctx) override {
+
         if (ctx->fun_declaration()) {
 
             std::string paramList = ctx->fun_declaration()->params()->getText();
@@ -50,9 +53,6 @@ public:
                 }
             }
 
-            std::vector<llvm::Type*> argList;
-            llvm::FunctionType* funcType;
-
             llvm::Type* retType = nullptr;
             if (ctx->fun_declaration()->type_specifier()->getText() == "void") {
                 retType = llvm::Type::getVoidTy(*irContext);
@@ -60,25 +60,22 @@ public:
                 retType = llvm::Type::getInt32Ty(*irContext);
             }
 
-            if (count == 1 &&
-                ctx->fun_declaration()->params()->getText() == "void") {
-                std::cout << "should be main\n";
+            llvm::FunctionType* funcType = nullptr;
+            std::vector<std::string> argNames;
+            if (count == 1 && paramList == "void") {
                 funcType = llvm::FunctionType::get(retType, false);
             } else {
-                std::cout << "wtfS\n";
-                argList = std::vector<llvm::Type*>(
+                std::vector<llvm::Type*> argList = std::vector<llvm::Type*>(
                     count, llvm::Type::getInt32Ty(*irContext));
                 funcType = llvm::FunctionType::get(retType, argList, false);
-            }
 
-            // // Set names for all arguments.
-            // unsigned Idx = 0;
-            // std::string namedArg = "";
-            // for (auto& Arg : func->args()) {
-            //     namedArg = args[Idx++];
-            //     Arg.setName(namedArg);
-            //     cell->namedValues[namedArg] = &Arg;
-            // }
+                for (auto& i :
+                     ctx->fun_declaration()->params()->param_list()->children) {
+                    if (i->getText() != ",") {
+                        argNames.push_back(i->getText().substr(3));
+                    }
+                }
+            }
 
             llvm::Function* func = llvm::Function::Create(
                 funcType, llvm::Function::ExternalLinkage,
@@ -86,8 +83,17 @@ public:
             llvm::BasicBlock* BB =
                 llvm::BasicBlock::Create(*irContext, "Entry", func);
             irBuilder->SetInsertPoint(BB);
-            module->print(llvm::errs(), nullptr);
+
+            // Set names for all arguments.
+            unsigned Idx = 0;
+            std::string namedArg = "";
+            for (auto& Arg : func->args()) {
+                namedArg = argNames[Idx++];
+                Arg.setName(namedArg);
+                namedValues[namedArg] = &Arg;
+            }
         }
+        module->print(llvm::errs(), nullptr);
         return visitChildren(ctx);
     }
 
