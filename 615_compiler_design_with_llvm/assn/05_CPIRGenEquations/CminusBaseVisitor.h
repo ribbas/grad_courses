@@ -17,6 +17,9 @@
  */
 class CminusBaseVisitor : public CminusVisitor {
 
+private:
+    std::string currentFuncName = "";
+
     // open a new context and module
     std::unique_ptr<llvm::LLVMContext> irContext =
         std::make_unique<llvm::LLVMContext>();
@@ -30,6 +33,12 @@ class CminusBaseVisitor : public CminusVisitor {
     std::map<std::string, llvm::Value*> namedValues;
 
 public:
+    CminusBaseVisitor() {}
+
+    void printModule() {
+        module->print(llvm::errs(), nullptr);
+    }
+
     virtual antlrcpp::Any
     visitProgram(CminusParser::ProgramContext* ctx) override {
         return visitChildren(ctx);
@@ -45,6 +54,7 @@ public:
 
         if (ctx->fun_declaration()) {
 
+            currentFuncName = ctx->fun_declaration()->ID()->getText();
             std::string paramList = ctx->fun_declaration()->params()->getText();
             int count = 1;
             for (int i = 0; i < paramList.size(); i++) {
@@ -78,8 +88,8 @@ public:
             }
 
             llvm::Function* func = llvm::Function::Create(
-                funcType, llvm::Function::ExternalLinkage,
-                ctx->fun_declaration()->ID()->getText(), module.get());
+                funcType, llvm::Function::ExternalLinkage, currentFuncName,
+                module.get());
             llvm::BasicBlock* BB =
                 llvm::BasicBlock::Create(*irContext, "Entry", func);
             irBuilder->SetInsertPoint(BB);
@@ -87,14 +97,16 @@ public:
             // Set names for all arguments.
             unsigned Idx = 0;
             std::string namedArg = "";
-            for (auto& Arg : func->args()) {
+            for (llvm::Argument& Arg : func->args()) {
                 namedArg = argNames[Idx++];
                 Arg.setName(namedArg);
                 namedValues[namedArg] = &Arg;
             }
         }
-        module->print(llvm::errs(), nullptr);
-        return visitChildren(ctx);
+
+        auto lol = visitChildren(ctx);
+        std::cout << "DONOENODNSNDSND\n";
+        return lol;
     }
 
     virtual antlrcpp::Any
@@ -170,6 +182,27 @@ public:
 
     virtual antlrcpp::Any
     visitExpression(CminusParser::ExpressionContext* ctx) override {
+        std::cout << "here|" << ctx->getText() << "\n";
+        if (ctx->var()) {
+            std::cout << currentFuncName << "|" << ctx->var()->getText()
+                      << "\n";
+        }
+        if (ctx->simple_expression()) {
+            for (CminusParser::Additive_expressionContext* i :
+                 ctx->simple_expression()->additive_expression()) {
+                if (CminusParser::CallContext* callCtx =
+                        i->term()->factor()->call()) {
+                    std::cout << "call|" << callCtx->getText() << "\n";
+                } else {
+
+                    if (i->term() || i->additive_expression()) {
+                        std::cout << "term|" << i->term()->getText() << "\n";
+                    }
+
+                    std::cout << "exp|" << i->getText() << "\n";
+                }
+            }
+        }
         return visitChildren(ctx);
     }
 

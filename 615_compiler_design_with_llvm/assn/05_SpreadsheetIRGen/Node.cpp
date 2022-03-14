@@ -61,7 +61,7 @@ llvm::Value* Node::codeGen(SS_Cell* cell) {
     // Set names for all arguments.
     unsigned Idx = 0;
     std::string namedArg = "";
-    for (auto& Arg : func->args()) {
+    for (llvm::Argument& Arg : func->args()) {
         namedArg = args[Idx++];
         Arg.setName(namedArg);
         cell->namedValues[namedArg] = &Arg;

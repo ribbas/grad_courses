@@ -21,8 +21,11 @@ int main(int argc, char* argv[]) {
     CminusParser parser(&tokens);
 
     antlr4::tree::ParseTree* tree = parser.program();
-    auto lol = CminusBaseVisitor().visit(tree);
-    std::cout << tree->toStringTree() << std::endl;
+    // auto visitor = CminusBaseVisitor().visit(tree);
+    auto visitor = CminusBaseVisitor();
+    visitor.visit(tree);
+    visitor.printModule();
+    // std::cout << tree->toStringTree() << std::endl;
     std::ofstream fd;
     fd.open("C-Output-0-Symbol-Table.txt");
     fd << parser.semantics.dump();
