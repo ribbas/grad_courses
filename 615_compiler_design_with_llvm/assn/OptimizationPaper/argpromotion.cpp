@@ -1,13 +1,17 @@
 
-int callee(const int& X) {
-    return X + 1;
+
+int callee(int& x) {
+    return x; // load
+}
+
+int caller() {
+    int T; // on stack
+    T = 2; // store
+    return callee(T);
 }
 
 int main() {
 
-    if (callee(4) == 5) {
-        return 0;
-    } else {
-        return -1;
-    }
+    caller();
+    return 0;
 }

@@ -1,24 +1,21 @@
 # Makefile
 # Sabbir Ahmed
-# System Development in the Unix Environment (605.614)
-#
-# Root Makefile for the project
 #
 
 # set the C++ compiler if unset
 CXX = $(shell which clang++)
 
-.PHONY: argpromotion loop-unswitch clean
+.PHONY: argpromotion simple-loop-unswitch clean
 
-all: argpromotion loop-unswitch
+opts: argpromotion simple-loop-unswitch
 
 argpromotion:
-	@clang++ -O0 -emit-llvm -S -c $@.cpp
-	@opt -$@ $@.ll -S -o $@-before.ll
+	@clang++ -S -emit-llvm -O -Xclang -disable-llvm-passes $@.cpp
+	@opt -passes='mem2reg' $@.ll -S -o $@-after.ll
 
-loop-unswitch:
-	@clang -O0 -emit-llvm -S -c $@.c
-	@opt -enable-new-pm=0 -$@ $@.ll -S -o $@-before.ll
+simple-loop-unswitch:
+	@clang -S -emit-llvm -O -Xclang -disable-llvm-passes $@.c
+	@opt -passes='licm,$@<nontrivial>' $@.ll -S -o $@-after.ll
 
 clean:
 	@rm *.ll *.bc
