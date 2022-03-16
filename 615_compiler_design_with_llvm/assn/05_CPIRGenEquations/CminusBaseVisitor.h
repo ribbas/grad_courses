@@ -31,6 +31,7 @@ private:
     std::unique_ptr<llvm::Module> module =
         std::make_unique<llvm::Module>("moduleName", *irContext);
     std::map<std::string, llvm::Value*> namedValues;
+    std::vector<CminusParser::Additive_expressionContext*> factors;
 
 public:
     CminusBaseVisitor() {
@@ -126,6 +127,12 @@ public:
 
         auto lol = visitChildren(ctx);
         std::cout << "DONOENODNSNDSND\n";
+
+        for (auto& i : factors) {
+            std::cout << "ayo " << i->getText() << "\n";
+        }
+        factors.clear();
+
         return lol;
     }
 
@@ -202,27 +209,92 @@ public:
 
     virtual antlrcpp::Any
     visitExpression(CminusParser::ExpressionContext* ctx) override {
-        std::cout << "here|" << ctx->getText() << "\n";
-        if (ctx->var()) {
-            std::cout << currentFuncName << "|" << ctx->var()->getText()
-                      << "\n";
-        }
+        std::cout << currentFuncName << "|" << ctx->getText() << "\n";
         if (ctx->simple_expression()) {
-            for (CminusParser::Additive_expressionContext* i :
-                 ctx->simple_expression()->additive_expression()) {
-                if (CminusParser::CallContext* callCtx =
-                        i->term()->factor()->call()) {
-                    std::cout << "call|" << callCtx->getText() << "\n";
-                } else {
 
-                    if (i->term() || i->additive_expression()) {
-                        std::cout << "term|" << i->term()->getText() << "\n";
+            for (CminusParser::Additive_expressionContext* addExprCtx :
+                 ctx->simple_expression()->additive_expression()) {
+
+                if (CminusParser::CallContext* callCtx =
+                        addExprCtx->term()->factor()->call()) {
+
+                    if (callCtx->args()->arg_list()) {
+                        std::cout << "args|" << callCtx->args()->getText()
+                                  << "\n";
                     }
 
-                    std::cout << "exp|" << i->getText() << "\n";
+                    llvm::Function* calleeFunc =
+                        module->getFunction(callCtx->ID()->getText());
+                    if (!calleeFunc) {
+
+                        std::cout << "failed call|" << callCtx->ID()->getText()
+                                  << "\n";
+
+                    } else {
+
+                        if (calleeFunc->getReturnType()->isVoidTy()) {
+
+                            irBuilder->CreateCall(calleeFunc);
+
+                        } else {
+
+                            if (ctx->var()) {
+                                // std::cout << "var|"
+                                //           << ctx->var()->ID()->getText()
+                                //           << "\n";
+
+                                std::vector<llvm::Value*> ArgsV;
+                                irBuilder->CreateCall(
+                                    calleeFunc, ArgsV,
+                                    ctx->var()->ID()->getText());
+                            }
+                        }
+                    }
+
+                } else {
+
+                    // for (auto& i : addExprCtx->children) {
+                    //     std::cout << "ayo "
+                    //               <<
+                    //               dynamic_cast<antlr4::tree::ParseTree*>(i)
+                    //               << "\n";
+                    // }
+
+                    factors.push_back(addExprCtx);
+
+                    std::cout << "what am I doing "
+                              << addExprCtx->term()->getText() << '\n';
+
+                    // if (addExprCtx->additive_expression() &&
+                    //     addExprCtx->term()) {
+                    //     std::cout << "maybe this one\n";
+                    // }
+
+                    // if (addExprCtx->term()) {
+                    //     std::cout << "term|" << addExprCtx->term()->getText()
+                    //               << "\n";
+                    // }
+                    // CminusParser::TermContext* termCur = addExprCtx->term();
+                    // while (termCur) {
+                    //     std::cout << "term|" << termCur->getText() << "\n";
+                    //     termCur = termCur->term();
+                    // }
+
+                    // CminusParser::Additive_expressionContext* addExprCur =
+                    //     addExprCtx->additive_expression();
+                    // while (addExprCur) {
+                    //     std::cout << "additive_expression|"
+                    //               << addExprCur->getText() << "\n";
+                    //     addExprCur = addExprCur->additive_expression();
+                    // }
+
+                    // std::cout << "exp|" << addExprCtx->getText() << "\n";
                 }
+                std::cout << "\n";
+                return visitAdditive_expression(addExprCtx);
             }
         }
+        std::cout << "didn't escape\n";
         return visitChildren(ctx);
     }
 
