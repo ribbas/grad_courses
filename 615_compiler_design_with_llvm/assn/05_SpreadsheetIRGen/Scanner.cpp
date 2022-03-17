@@ -39,7 +39,7 @@ void scanLine(char* line, TableOfCells& symTab) {
                 cell->clearCell();
                 // replace the Node with an empty Node to clear controllers and
                 // users
-                cell->identifyControllers(new Node());
+                cell->identifyControllers(nullptr);
                 cell->updateControllerUsers();
             } else {
                 cell->clearCell();

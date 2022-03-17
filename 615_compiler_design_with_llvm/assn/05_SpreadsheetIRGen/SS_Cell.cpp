@@ -249,8 +249,10 @@ void SS_Cell::clearCell() {
 
 void SS_Cell::identifyControllers(Node* node) {
     newControllers.clear();
-    // walk AST && add all IDs in AST to list
-    node->walkTreeAddIDs(this);
+    if (node) {
+        // walk AST && add all IDs in AST to list
+        node->walkTreeAddIDs(this);
+    }
 }
 
 void SS_Cell::updateControllerUsers() {
