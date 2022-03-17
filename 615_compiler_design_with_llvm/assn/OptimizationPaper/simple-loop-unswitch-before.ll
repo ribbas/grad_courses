@@ -17,7 +17,7 @@ define dso_local i32 @main() #0 {
   store i32 0, i32* %3, align 4, !tbaa !3
   br label %6
 
-6:                                                ; preds = %19, %0
+6:                                                ; preds = %18, %0
   %7 = load i32, i32* %3, align 4, !tbaa !3
   %8 = icmp slt i32 %7, 10
   br i1 %8, label %11, label %9
@@ -25,33 +25,32 @@ define dso_local i32 @main() #0 {
 9:                                                ; preds = %6
   %10 = bitcast i32* %3 to i8*
   call void @llvm.lifetime.end.p0i8(i64 4, i8* %10) #2
-  br label %22
+  br label %21
 
 11:                                               ; preds = %6
   %12 = load i32, i32* %2, align 4, !tbaa !3
   %13 = add nsw i32 %12, 1
   store i32 %13, i32* %2, align 4, !tbaa !3
   %14 = load i32, i32* %3, align 4, !tbaa !3
-  %15 = load i32, i32* %2, align 4, !tbaa !3
-  %16 = icmp eq i32 %14, %15
-  br i1 %16, label %17, label %18
+  %15 = icmp eq i32 %14, 5
+  br i1 %15, label %16, label %17
 
-17:                                               ; preds = %11
+16:                                               ; preds = %11
   store i32 0, i32* %2, align 4, !tbaa !3
+  br label %17
+
+17:                                               ; preds = %16, %11
   br label %18
 
-18:                                               ; preds = %17, %11
-  br label %19
-
-19:                                               ; preds = %18
-  %20 = load i32, i32* %3, align 4, !tbaa !3
-  %21 = add nsw i32 %20, 1
-  store i32 %21, i32* %3, align 4, !tbaa !3
+18:                                               ; preds = %17
+  %19 = load i32, i32* %3, align 4, !tbaa !3
+  %20 = add nsw i32 %19, 1
+  store i32 %20, i32* %3, align 4, !tbaa !3
   br label %6, !llvm.loop !7
 
-22:                                               ; preds = %9
-  %23 = bitcast i32* %2 to i8*
-  call void @llvm.lifetime.end.p0i8(i64 4, i8* %23) #2
+21:                                               ; preds = %9
+  %22 = bitcast i32* %2 to i8*
+  call void @llvm.lifetime.end.p0i8(i64 4, i8* %22) #2
   ret i32 0
 }
 

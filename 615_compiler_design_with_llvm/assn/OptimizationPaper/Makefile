@@ -1,21 +1,19 @@
+#
 # Makefile
 # Sabbir Ahmed
 #
 
-# set the C++ compiler if unset
-CXX = $(shell which clang++)
+# set the C compiler to clang
+CC := $(shell which clang)
+CC_FLAGS = -S -emit-llvm -O -Xclang -disable-llvm-passes
 
-.PHONY: argpromotion simple-loop-unswitch clean
+.PHONY: argpromotion simple-loop-unswitch
+all: argpromotion simple-loop-unswitch
 
-opts: argpromotion simple-loop-unswitch
-
-# @clang++ -S -emit-llvm -O -Xclang -disable-llvm-passes $@.cpp
-# @clang -emit-llvm -O0 -Xclang -disable-llvm-passes -c $@.c
-# @llvm-dis $@.bc -o $@-before.ll
 argpromotion:
-	@clang -S -emit-llvm -O -Xclang -disable-llvm-passes $@.c -o $@-before.ll
-	@opt -passes='$@,mem2reg' $@-before.ll -S -o $@-after.ll
+	@$(CC) $(CC_FLAGS) $@.c -o $@-before.ll
+	@opt -passes='$@,instcombine,function-attrs,mem2reg' $@-before.ll -S -o $@-after.ll
 
 simple-loop-unswitch:
-	@clang -S -emit-llvm -O -Xclang -disable-llvm-passes $@.c -o $@-before.ll
-	@opt -passes='licm,$@<nontrivial>' $@-before.ll -S -o $@-after.ll
+	@$(CC) $(CC_FLAGS) $@.c -o $@-before.ll
+	@opt -passes='$@,licm' $@-before.ll -S -o $@-after.ll

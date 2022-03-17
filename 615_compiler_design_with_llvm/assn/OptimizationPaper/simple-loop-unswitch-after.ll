@@ -36,7 +36,7 @@ define dso_local i32 @main() #0 {
 
 12:                                               ; preds = %6
   %13 = add nsw i32 %7, 1
-  %14 = icmp eq i32 %8, %13
+  %14 = icmp eq i32 %8, 5
   br i1 %14, label %15, label %16
 
 15:                                               ; preds = %12
