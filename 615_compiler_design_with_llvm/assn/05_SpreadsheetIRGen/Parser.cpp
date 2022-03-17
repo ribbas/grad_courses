@@ -31,6 +31,10 @@ SS_Cell* Parser::cell;
 
 void Parser::parseEquation(char*& ch, SS_Cell* _cell) {
 
+    if (_cell->getExpNode()) {
+        _cell->clearCell();
+    }
+
     // strip all whitespace from equation
     cursor = 0;
     parsedLParen = 0;
@@ -46,6 +50,7 @@ void Parser::parseEquation(char*& ch, SS_Cell* _cell) {
 
     if (lookahead->getKind() == T_ERROR) {
         cell->setError(true);
+        delete lookahead;
         return;
     }
 
@@ -71,6 +76,7 @@ void Parser::parseEquation(char*& ch, SS_Cell* _cell) {
     cell->identifyControllers(equationNode);
     cell->updateControllerUsers();
     cell->calculateExpression();
+    delete lookahead;
 
     return;
 }
@@ -206,8 +212,6 @@ Node* Parser::factor(char*& ch, FF_List synchset) {
     Node* node = nullptr;
     if (!synchset.contains(lookahead->getKind())) {
 
-        node = new Node();
-
         // if next token is '(' or ')'
         if (nextIs(LPAREN) || nextIs(RPAREN)) {
 
@@ -219,6 +223,7 @@ Node* Parser::factor(char*& ch, FF_List synchset) {
             // if next token is 'NUM' or 'ID'
         } else if (nextIs(NUM) || nextIs(ID)) {
 
+            node = new Node();
             node->tok = match(ch, lookahead->getKind());
         }
         checkFollows(ch, synchset);
@@ -231,7 +236,7 @@ Node* Parser::parenExp(char*& ch, FF_List synchset) {
 
     bool errorInChild = false;
     checkInput(ch, FF_List::parenExpFirsts, synchset);
-    Node* node = new Node();
+    Node* node = nullptr;
 
     if (!synchset.contains(lookahead->getKind())) {
 
