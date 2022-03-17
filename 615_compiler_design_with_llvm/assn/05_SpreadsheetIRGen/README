@@ -2,6 +2,26 @@
 
 ## Modifications for assignment
 
+Almost all of the files underwent some modification for this assignment.
+
+1. `Scanner.cpp` had some minor modifications in `Token* getToken(char*& ch)` and `void scanLine(char* line, TableOfCells& symTab)` to catch previously uncaught memory leaks. Those leaks were fixed in conjunction with minor updates in `Parser.cpp` and `SS_Cell.cpp`, where unused instances of Node objects were replaced with null pointers or had their scopes lowered.
+
+2. Implementation of the `TableOfCells` class was moved to `SS_TOC.cpp` to account for the increasing volume of code.
+
+3. `std::vector<std::string> getList()` was added to the `ID_List` class to save the items in `controller` for LLVM IR generation.
+
+4. `IR_Gen.h` was added to include all the LLVM files necessary for the IR generation as well as to instantiate the global LLVM objects.
+
+5. The member attributes `std::unique_ptr<llvm::Module> module` and `std::map<std::string, llvm::Value*> namedValues` were added to the `SS_cell` class. The member method `void generateIR()` was added to verify that a node was of an expression type before attempting to generate IR for it.
+
+6. `Node.cpp` had major modifications. The member attribute `llvm::Value* irValue` and member methods `llvm::Value* codeGen(SS_Cell* cell)` and `void walkCodeGen(TableOfCells* TOC, SS_Cell* cell)` were added.
+
+   1. `llvm::Value* irValue` acts as a cursor where attributes are added to it using the `module` of the controlling `SS_Cell` object.
+   2. `llvm::Value* codeGen(SS_Cell* cell)` provides a public interface to generate the IR for an expression `SS_Cell`. This method is only invoked when the cell attributes are printed to the output file. Expression cells in the `TableOfCells` also have their generated IR dumped to the output file. The method generates the IR of a function prototype that maps to the equation, with the referenced cells in the expression being mapped to the function arguments.
+      E.g. `E0 = E1 + E2` gets translated to: `define i32 @E0_exp(int32 %E1, int32 %E2)`.
+      An empty `llvm::BasicBlock*` is also added to the function.
+   3. `void walkCodeGen(TableOfCells* TOC, SS_Cell* cell)` constructs the IR for the equation node. The recursive approach in the function is identical to `void Node::walkTreeCalculateValue(TableOfCells* TOC)` where the left and right subtrees get their IR generated and added to `irValue`. The function returns to `llvm::Value* codeGen(SS_Cell* cell)` where the final version of `irValue` is added to the global `llvm::IRBuilder` as a return instruction.
+
 ## Test input files
 
 ## System Dependencies
@@ -10,7 +30,7 @@ The attached CMakeLists.txt was used to compile the assignment files. The follow
 
 | Tool    | Version |
 | ------- | ------- |
-| Clang++ | 13.0.0  |
+| Clang++ | 13.0.1  |
 | CMake   | 3.22.2  |
 
 The target machine used was an Ubuntu 20.04 64-bit virtual machine. The Linux kernel version is 5.13.0-30-generic. The following output is generated from running the command `uname -orm`:

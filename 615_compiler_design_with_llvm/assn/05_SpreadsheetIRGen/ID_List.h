@@ -21,6 +21,7 @@ class ID_List {
     // each of low order 6 bits in a byte represents a column
     // each byte represents a row
     unsigned char list[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    std::vector<std::string> idVec;
 
 public:
     ID_List() {}

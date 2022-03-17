@@ -23,16 +23,16 @@ class TableOfCells;
 
 class Node {
 public:
-    Node() {}
+    Node();
     virtual ~Node();
 
-    int value = 0;
-    bool error = false;
+    int value;
+    bool error;
 
-    Node* left = 0;
-    Token* tok = 0;
-    Node* right = 0;
-    llvm::Value* irValue = nullptr;
+    Node* left;
+    Token* tok;
+    Node* right;
+    llvm::Value* irValue;
 
     // add all the IDs to the Controllers list
     void walkTreeAddIDs(SS_Cell* cell);

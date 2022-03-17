@@ -146,7 +146,7 @@ void SS_Cell::dropUser(const int row, const int col) {
 
 void SS_Cell::generateIR() {
     if (expNode) {
-        irBuilder->CreateRet(expNode->codeGen(this));
+        expNode->codeGen(this);
     }
 }
 
@@ -258,15 +258,21 @@ void SS_Cell::identifyControllers(Node* node) {
 void SS_Cell::updateControllerUsers() {
     // row, col identify *this
     ID_List dropCont = controllers - newControllers;
-    for (int r = 0; r < 10; ++r)
-        for (int c = 0; c < 6; ++c)
-            if (dropCont.contains(r, c))
+    for (int r = 0; r < 10; ++r) {
+        for (int c = 0; c < 6; ++c) {
+            if (dropCont.contains(r, c)) {
                 SS_Cell::TOC->getCell(c, r)->dropUser(row, col);
+            }
+        }
+    }
     ID_List addCont = newControllers - controllers;
-    for (int r = 0; r < 10; ++r)
-        for (int c = 0; c < 6; ++c)
-            if (addCont.contains(r, c))
+    for (int r = 0; r < 10; ++r) {
+        for (int c = 0; c < 6; ++c) {
+            if (addCont.contains(r, c)) {
                 SS_Cell::TOC->getCell(c, r)->addUser(row, col);
+            }
+        }
+    }
     controllers = newControllers;
 }
 
@@ -280,15 +286,17 @@ void SS_Cell::calculateUserExpressions(SS_Cell* root, bool err) {
 void SS_Cell::printCellAttributes(ostream& os) {
     os << id << ": col = " << col << "; row = " << row << ": kind = " << kind
        << ": " << endl;
-    if (error)
+    if (error) {
         os << "    error = true; display = " << display << ":" << endl;
-    else
+    } else {
         os << "    value = " << value << ": display = " << display << ":"
            << endl;
-
+    }
     os << "    users list = " << users << endl;
     os << "    controllers list = " << controllers << endl;
+
     if (expNode) {
+
         os << "    AST: of (( " << equation << " ))" << endl;
         expNode->walkTreePrintAttributes(os);
 
@@ -299,6 +307,7 @@ void SS_Cell::printCellAttributes(ostream& os) {
 
         os << output.str();
     }
+
     return;
 }
 

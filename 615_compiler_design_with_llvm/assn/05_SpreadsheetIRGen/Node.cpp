@@ -12,6 +12,10 @@
 #include <iostream>
 using namespace std;
 
+Node::Node()
+    : value(0), error(false), left(nullptr), tok(nullptr), right(nullptr),
+      irValue(nullptr) {}
+
 Node::~Node() {
     delete left;
     delete tok;
@@ -45,24 +49,16 @@ llvm::Value* Node::codeGen(SS_Cell* cell) {
     std::vector<std::string> args = cell->controllers.getList();
     std::vector<llvm::Type*> argList(args.size(),
                                      llvm::Type::getInt32Ty(*irContext));
-    llvm::FunctionType* funcType = nullptr;
-    llvm::Function* func = nullptr;
-    std::cout << "genning\n";
-    if (cell->module->getFunction(expName)) {
-        std::cout << "erasing 222\n";
-        argList.clear();
-        func->eraseFromParent();
-    }
-    funcType = llvm::FunctionType::get(llvm::Type::getInt32Ty(*irContext),
-                                       argList, false);
-    func = llvm::Function::Create(funcType, llvm::Function::ExternalLinkage,
-                                  expName, cell->module.get());
+    llvm::FunctionType* funcType = llvm::FunctionType::get(
+        llvm::Type::getInt32Ty(*irContext), argList, false);
+    llvm::Function* func = llvm::Function::Create(
+        funcType, llvm::Function::ExternalLinkage, expName, cell->module.get());
 
     // Set names for all arguments.
-    unsigned Idx = 0;
+    unsigned argIx = 0;
     std::string namedArg = "";
     for (llvm::Argument& Arg : func->args()) {
-        namedArg = args[Idx++];
+        namedArg = args[argIx++];
         Arg.setName(namedArg);
         cell->namedValues[namedArg] = &Arg;
     }
@@ -70,7 +66,7 @@ llvm::Value* Node::codeGen(SS_Cell* cell) {
     llvm::BasicBlock* BB = llvm::BasicBlock::Create(*irContext, "Entry", func);
     irBuilder->SetInsertPoint(BB);
     walkCodeGen(cell->getTOC(), cell);
-
+    irBuilder->CreateRet(irValue);
     return irValue;
 }
 

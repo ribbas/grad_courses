@@ -48,7 +48,7 @@ class SS_Cell {
 
     // expression root
     string equation;
-    Node* expNode = 0;
+    Node* expNode = nullptr;
 
     std::unique_ptr<llvm::Module> module;
     std::map<std::string, llvm::Value*> namedValues;

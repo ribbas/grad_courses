@@ -84,16 +84,17 @@ ostream& operator<<(ostream& os, const ID_List& lst) {
 }
 
 std::vector<std::string> ID_List::getList() {
-    std::vector<std::string> lst;
-    for (int r = 0; r < 10; ++r) {
-        unsigned char row = list[r];
-        for (int col = 0; col < 6; ++col) {
-            if (row & addMask[col]) {
-                std::string item(1, (char)('A' + col));
-                item += std::to_string(r);
-                lst.push_back(item);
+    if (!idVec.size()) {
+        for (int r = 0; r < 10; ++r) {
+            unsigned char row = list[r];
+            for (int col = 0; col < 6; ++col) {
+                if (row & addMask[col]) {
+                    std::string item(1, (char)('A' + col));
+                    item += std::to_string(r);
+                    idVec.push_back(item);
+                }
             }
         }
     }
-    return lst;
+    return idVec;
 }

@@ -63,9 +63,15 @@ int main(int argc, const char* argv[]) {
             break;
     }
 
+    // generate IR for all the valid expression cells
     symTab.generateIR();
     symTab.printTable(ofs);
+
+    // print cell attributes to stdout and to file
+    symTab.printAllCells(cout);
     symTab.printAllCells(ofs);
+
+    // invoke destructors for global LLVM objects
     llvm::llvm_shutdown();
     ofs.close();
 
