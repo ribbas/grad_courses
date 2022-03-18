@@ -4,6 +4,9 @@
 #pragma once
 
 
+#include "SemPred.h"
+
+
 #include "antlr4-runtime.h"
 #include "CminusParser.h"
 
@@ -16,14 +19,19 @@
 class  CminusVisitor : public antlr4::tree::AbstractParseTreeVisitor {
 public:
 
+  SemanticPredicate semantics;
+
+
   /**
    * Visit parse trees produced by CminusParser.
    */
     virtual antlrcpp::Any visitProgram(CminusParser::ProgramContext *context) = 0;
 
-    virtual antlrcpp::Any visitVar_decleration(CminusParser::Var_declerationContext *context) = 0;
+    virtual antlrcpp::Any visitVar_declaration(CminusParser::Var_declarationContext *context) = 0;
 
-    virtual antlrcpp::Any visitFun_decleration(CminusParser::Fun_declerationContext *context) = 0;
+    virtual antlrcpp::Any visitFun_declaration(CminusParser::Fun_declarationContext *context) = 0;
+
+    virtual antlrcpp::Any visitFun_type_specifier(CminusParser::Fun_type_specifierContext *context) = 0;
 
     virtual antlrcpp::Any visitParam(CminusParser::ParamContext *context) = 0;
 
@@ -52,6 +60,12 @@ public:
     virtual antlrcpp::Any visitMult_exp(CminusParser::Mult_expContext *context) = 0;
 
     virtual antlrcpp::Any visitRelational_exp(CminusParser::Relational_expContext *context) = 0;
+
+    virtual antlrcpp::Any visitAddop(CminusParser::AddopContext *context) = 0;
+
+    virtual antlrcpp::Any visitMultop(CminusParser::MultopContext *context) = 0;
+
+    virtual antlrcpp::Any visitRelop(CminusParser::RelopContext *context) = 0;
 
 
 };

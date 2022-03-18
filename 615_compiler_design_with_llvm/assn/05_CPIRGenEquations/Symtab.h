@@ -14,10 +14,6 @@ private:
     bool isFunc = false;
 
 public:
-    Symbol(std::string _name) : name(_name) {}
-
-    Symbol(std::string _name, std::string _type) : name(_name), type(_type) {}
-
     Symbol(std::string _name, std::string _type, bool _isFunc)
         : name(_name), type(_type), isFunc(_isFunc) {}
 
@@ -60,13 +56,18 @@ private:
 
 public:
     SymbolTable() {
+
         // built-in types
-        define("int");
-        define("void");
+        define("int", "builtin");
+        define("void", "builtin");
 
         // built-in functions
-        define("input", "int", 0, true);
-        define("output", "void", 1, true);
+        define("input", "int", 0);
+        define("output", "void", 1);
+    }
+
+    ~SymbolTable() {
+        symbols.clear();
     }
 
     void setNumArgs(std::string symbolName, int numArgs) {
@@ -75,18 +76,14 @@ public:
         }
     }
 
-    void define(std::string symbolName) {
-        symbols[symbolName] = new Symbol(symbolName);
-    }
-
     void define(std::string symbolName, std::string symbolType) {
-        symbols[symbolName] = new Symbol(symbolName, symbolType);
+        symbols[symbolName] = new Symbol(symbolName, symbolType, false);
     }
 
     void define(std::string symbolName, std::string symbolType,
-                int symbolNumArgs, bool isFunc) {
+                int symbolNumArgs) {
         symbols[symbolName] =
-            new Symbol(symbolName, symbolType, symbolNumArgs, isFunc);
+            new Symbol(symbolName, symbolType, symbolNumArgs, true);
     }
 
     bool contains(std::string symbolName) {

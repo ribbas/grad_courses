@@ -13,7 +13,7 @@ private:
 
     bool declareFunc(std::string funcName, std::string retType) {
         if (!symtab.contains(funcName)) {
-            symtab.define(funcName, retType, 0, true);
+            symtab.define(funcName, retType, 0);
             curFuncName = funcName;
             curFuncType = retType;
             return true;
@@ -87,6 +87,11 @@ public:
 
     void addSymbol(std::string symbolName, std::string symbolType) {
         symtab.define(symbolName, symbolType);
+    }
+
+    void addSymbol(std::string symbolName, std::string symbolType,
+                   int numArgs) {
+        symtab.define(symbolName, symbolType, numArgs);
     }
 
     bool canDeclareFunc(std::string funcName, std::string retType) {

@@ -19,11 +19,14 @@ public:
   virtual void enterProgram(CminusParser::ProgramContext * /*ctx*/) override { }
   virtual void exitProgram(CminusParser::ProgramContext * /*ctx*/) override { }
 
-  virtual void enterVar_decleration(CminusParser::Var_declerationContext * /*ctx*/) override { }
-  virtual void exitVar_decleration(CminusParser::Var_declerationContext * /*ctx*/) override { }
+  virtual void enterVar_declaration(CminusParser::Var_declarationContext * /*ctx*/) override { }
+  virtual void exitVar_declaration(CminusParser::Var_declarationContext * /*ctx*/) override { }
 
-  virtual void enterFun_decleration(CminusParser::Fun_declerationContext * /*ctx*/) override { }
-  virtual void exitFun_decleration(CminusParser::Fun_declerationContext * /*ctx*/) override { }
+  virtual void enterFun_declaration(CminusParser::Fun_declarationContext * /*ctx*/) override { }
+  virtual void exitFun_declaration(CminusParser::Fun_declarationContext * /*ctx*/) override { }
+
+  virtual void enterFun_type_specifier(CminusParser::Fun_type_specifierContext * /*ctx*/) override { }
+  virtual void exitFun_type_specifier(CminusParser::Fun_type_specifierContext * /*ctx*/) override { }
 
   virtual void enterParam(CminusParser::ParamContext * /*ctx*/) override { }
   virtual void exitParam(CminusParser::ParamContext * /*ctx*/) override { }
@@ -66,6 +69,15 @@ public:
 
   virtual void enterRelational_exp(CminusParser::Relational_expContext * /*ctx*/) override { }
   virtual void exitRelational_exp(CminusParser::Relational_expContext * /*ctx*/) override { }
+
+  virtual void enterAddop(CminusParser::AddopContext * /*ctx*/) override { }
+  virtual void exitAddop(CminusParser::AddopContext * /*ctx*/) override { }
+
+  virtual void enterMultop(CminusParser::MultopContext * /*ctx*/) override { }
+  virtual void exitMultop(CminusParser::MultopContext * /*ctx*/) override { }
+
+  virtual void enterRelop(CminusParser::RelopContext * /*ctx*/) override { }
+  virtual void exitRelop(CminusParser::RelopContext * /*ctx*/) override { }
 
 
   virtual void enterEveryRule(antlr4::ParserRuleContext * /*ctx*/) override { }

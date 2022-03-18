@@ -17,11 +17,14 @@ public:
   virtual void enterProgram(CminusParser::ProgramContext *ctx) = 0;
   virtual void exitProgram(CminusParser::ProgramContext *ctx) = 0;
 
-  virtual void enterVar_decleration(CminusParser::Var_declerationContext *ctx) = 0;
-  virtual void exitVar_decleration(CminusParser::Var_declerationContext *ctx) = 0;
+  virtual void enterVar_declaration(CminusParser::Var_declarationContext *ctx) = 0;
+  virtual void exitVar_declaration(CminusParser::Var_declarationContext *ctx) = 0;
 
-  virtual void enterFun_decleration(CminusParser::Fun_declerationContext *ctx) = 0;
-  virtual void exitFun_decleration(CminusParser::Fun_declerationContext *ctx) = 0;
+  virtual void enterFun_declaration(CminusParser::Fun_declarationContext *ctx) = 0;
+  virtual void exitFun_declaration(CminusParser::Fun_declarationContext *ctx) = 0;
+
+  virtual void enterFun_type_specifier(CminusParser::Fun_type_specifierContext *ctx) = 0;
+  virtual void exitFun_type_specifier(CminusParser::Fun_type_specifierContext *ctx) = 0;
 
   virtual void enterParam(CminusParser::ParamContext *ctx) = 0;
   virtual void exitParam(CminusParser::ParamContext *ctx) = 0;
@@ -64,6 +67,15 @@ public:
 
   virtual void enterRelational_exp(CminusParser::Relational_expContext *ctx) = 0;
   virtual void exitRelational_exp(CminusParser::Relational_expContext *ctx) = 0;
+
+  virtual void enterAddop(CminusParser::AddopContext *ctx) = 0;
+  virtual void exitAddop(CminusParser::AddopContext *ctx) = 0;
+
+  virtual void enterMultop(CminusParser::MultopContext *ctx) = 0;
+  virtual void exitMultop(CminusParser::MultopContext *ctx) = 0;
+
+  virtual void enterRelop(CminusParser::RelopContext *ctx) = 0;
+  virtual void exitRelop(CminusParser::RelopContext *ctx) = 0;
 
 
 };
