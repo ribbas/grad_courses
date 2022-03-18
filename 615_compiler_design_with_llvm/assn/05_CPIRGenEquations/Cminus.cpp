@@ -24,11 +24,11 @@ int main(int argc, char* argv[]) {
     // auto visitor = CminusBaseVisitor().visit(tree);
     auto visitor = CminusBaseVisitor();
     visitor.visit(tree);
-    // visitor.printModule();
+    visitor.printModule();
     // std::cout << tree->toStringTree() << std::endl;
     std::ofstream fd;
     fd.open("C-Output-0-Symbol-Table.txt");
-    fd << visitor.semantics.dump();
+    std::cout << visitor.semantics.dump();
     fd.close();
 
     return 0;
