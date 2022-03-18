@@ -15,6 +15,10 @@
  */
 class CminusBaseVisitor : public CminusVisitor {
 private:
+    std::string assignmentVar = "";
+    llvm::Value* assignmentAlloca = nullptr;
+    std::map<std::string, llvm::Value*> namedAllocas;
+
     // open a new context and module
     std::unique_ptr<llvm::LLVMContext> irContext =
         std::make_unique<llvm::LLVMContext>();
@@ -62,11 +66,14 @@ public:
     virtual antlrcpp::Any
     visitVar_declaration(CminusParser::Var_declarationContext* ctx) override {
         semantics.addSymbol(ctx->ID()->getText(), "int");
+        namedAllocas[ctx->ID()->getText()] = irBuilder->CreateAlloca(
+            llvm::Type::getInt32Ty(*irContext), nullptr, ctx->ID()->getText());
         return visitChildren(ctx);
     }
 
     virtual antlrcpp::Any
     visitFun_declaration(CminusParser::Fun_declarationContext* ctx) override {
+
         std::string funcIdStr = ctx->ID()->getText();
         std::string funcTypeStr = ctx->fun_type_specifier()->getText();
         int funcNumArgs = ctx->param().size();
@@ -100,17 +107,17 @@ public:
             llvm::Function* func = llvm::Function::Create(
                 funcType, llvm::Function::ExternalLinkage, funcIdStr,
                 module.get());
-            llvm::BasicBlock* BB =
+            llvm::BasicBlock* basicBlock =
                 llvm::BasicBlock::Create(*irContext, "Entry", func);
-            irBuilder->SetInsertPoint(BB);
+            irBuilder->SetInsertPoint(basicBlock);
 
             // Set names for all arguments.
             unsigned argIdx = 0;
             std::string namedArg = "";
-            for (llvm::Argument& Arg : func->args()) {
+            for (llvm::Argument& arg : func->args()) {
                 namedArg = argNames[argIdx++];
-                Arg.setName(namedArg);
-                namedValues[namedArg] = &Arg;
+                arg.setName(namedArg);
+                namedValues[namedArg] = &arg;
             }
 
         } else {
@@ -137,6 +144,18 @@ public:
 
     virtual antlrcpp::Any
     visitStatement(CminusParser::StatementContext* ctx) override {
+
+        if (ctx->assignment_stmt()) {
+
+            std::cout << "exp " << ctx->assignment_stmt()->ID()->getText();
+            assignmentVar = ctx->assignment_stmt()->ID()->getText();
+            std::cout << "=" << ctx->assignment_stmt()->exp().front()->getText()
+                      << "\n";
+        }
+        // for (auto& i : ctx->exp()) {
+        //     std::cout << "exp " << i->getText() << "\n";
+        // }
+
         return visitChildren(ctx);
     }
 
@@ -152,6 +171,7 @@ public:
 
     virtual antlrcpp::Any
     visitAssignment_stmt(CminusParser::Assignment_stmtContext* ctx) override {
+
         return visitChildren(ctx);
     }
 
@@ -191,6 +211,20 @@ public:
 
     virtual antlrcpp::Any
     visitCall_exp(CminusParser::Call_expContext* ctx) override {
+
+        std::cout << "call " << ctx->getText() << '\n';
+        llvm::Function* calleeFunc = module->getFunction(ctx->ID()->getText());
+        if (calleeFunc->getReturnType()->isVoidTy()) {
+
+            irBuilder->CreateCall(calleeFunc);
+            std::cout << "created call\n";
+
+        } else {
+            std::vector<llvm::Value*> ArgsV;
+            llvm::Value* callValue = irBuilder->CreateCall(calleeFunc, ArgsV);
+            irBuilder->CreateStore(callValue, namedAllocas[assignmentVar],
+                                   false);
+        }
         return visitChildren(ctx);
     }
 
