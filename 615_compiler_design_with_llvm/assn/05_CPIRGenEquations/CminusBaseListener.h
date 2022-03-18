@@ -49,6 +49,9 @@ public:
   virtual void enterReturn_stmt(CminusParser::Return_stmtContext * /*ctx*/) override { }
   virtual void exitReturn_stmt(CminusParser::Return_stmtContext * /*ctx*/) override { }
 
+  virtual void enterReturn_value(CminusParser::Return_valueContext * /*ctx*/) override { }
+  virtual void exitReturn_value(CminusParser::Return_valueContext * /*ctx*/) override { }
+
   virtual void enterAdd_exp(CminusParser::Add_expContext * /*ctx*/) override { }
   virtual void exitAdd_exp(CminusParser::Add_expContext * /*ctx*/) override { }
 

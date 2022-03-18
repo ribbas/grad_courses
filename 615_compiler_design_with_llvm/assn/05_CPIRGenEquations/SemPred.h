@@ -41,6 +41,10 @@ private:
     }
 
 public:
+    bool canReturn() {
+        return (curFuncType == "int");
+    }
+
     bool canReturn(std::string symbolName) {
         std::string substr = symbolName.substr(0, symbolName.length() - 2);
         if (symtab.isFunc(substr)) {
@@ -73,6 +77,10 @@ public:
 
     void setCurFuncName(std::string funcName) {
         curFuncName = funcName;
+    }
+
+    std::string getCurFuncName() {
+        return curFuncName;
     }
 
     void setNumArgs(std::string paramList) {

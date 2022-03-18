@@ -23,8 +23,8 @@ public:
     RuleProgram = 0, RuleVar_declaration = 1, RuleFun_declaration = 2, RuleFun_type_specifier = 3, 
     RuleParam = 4, RuleCompound_stmt = 5, RuleStatement = 6, RuleSelection_stmt = 7, 
     RuleIteration_stmt = 8, RuleAssignment_stmt = 9, RuleReturn_stmt = 10, 
-    RuleExp = 11, RuleRelational_exp = 12, RuleAddop = 13, RuleMultop = 14, 
-    RuleRelop = 15
+    RuleReturn_value = 11, RuleExp = 12, RuleRelational_exp = 13, RuleAddop = 14, 
+    RuleMultop = 15, RuleRelop = 16
   };
 
   explicit CminusParser(antlr4::TokenStream *input);
@@ -48,6 +48,7 @@ public:
   class Iteration_stmtContext;
   class Assignment_stmtContext;
   class Return_stmtContext;
+  class Return_valueContext;
   class ExpContext;
   class Relational_expContext;
   class AddopContext;
@@ -241,6 +242,21 @@ public:
     Return_stmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *RETURN();
+    Return_valueContext *return_value();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Return_stmtContext* return_stmt();
+
+  class  Return_valueContext : public antlr4::ParserRuleContext {
+  public:
+    Return_valueContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
     ExpContext *exp();
     Relational_expContext *relational_exp();
 
@@ -251,7 +267,7 @@ public:
    
   };
 
-  Return_stmtContext* return_stmt();
+  Return_valueContext* return_value();
 
   class  ExpContext : public antlr4::ParserRuleContext {
   public:

@@ -54,7 +54,8 @@ selection_stmt:
 iteration_stmt: WHILE '(' (exp | relational_exp) ')' statement;
 assignment_stmt:
 	ID ('[' exp ']')? '=' (exp | relational_exp) ';';
-return_stmt: RETURN (exp | relational_exp)? ';';
+return_stmt: RETURN return_value? ';';
+return_value: exp | relational_exp;
 exp:
 	exp multop exp						# mult_exp
 	| exp addop exp						# add_exp

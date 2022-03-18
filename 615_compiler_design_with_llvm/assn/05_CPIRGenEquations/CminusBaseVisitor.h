@@ -28,9 +28,16 @@ public:
 
     virtual antlrcpp::Any
     visitFun_declaration(CminusParser::Fun_declarationContext* ctx) override {
-        semantics.addSymbol(ctx->ID()->getText(),
-                            ctx->fun_type_specifier()->getText(),
-                            ctx->param().size());
+        if (semantics.canDeclareFunc(ctx->ID()->getText(),
+                                     ctx->fun_type_specifier()->getText())) {
+            semantics.addSymbol(ctx->ID()->getText(),
+                                ctx->fun_type_specifier()->getText(),
+                                ctx->param().size());
+        } else {
+            fprintf(stderr, "Cannot declare function: \"%s %s(int * %lu)\"\n",
+                    ctx->fun_type_specifier()->getText().c_str(),
+                    ctx->ID()->getText().c_str(), ctx->param().size());
+        }
         return visitChildren(ctx);
     }
 
@@ -70,6 +77,25 @@ public:
 
     virtual antlrcpp::Any
     visitReturn_stmt(CminusParser::Return_stmtContext* ctx) override {
+        if (ctx->return_value()) {
+            if (!semantics.canReturn()) {
+                fprintf(stderr,
+                        "Function \"%s\" of void type cannot return \"%s\"\n",
+                        semantics.getCurFuncName().c_str(),
+                        ctx->return_value()->getText().c_str());
+            }
+        } else {
+            if (semantics.canReturn()) {
+                fprintf(stderr,
+                        "Function \"%s\" of int type must return a value\n",
+                        semantics.getCurFuncName().c_str());
+            }
+        }
+        return visitChildren(ctx);
+    }
+
+    virtual antlrcpp::Any
+    visitReturn_value(CminusParser::Return_valueContext* ctx) override {
         return visitChildren(ctx);
     }
 
