@@ -213,7 +213,8 @@ public:
 
                     std::cout << "ret is val\n";
                     irBuilder->CreateRet(irBuilder->CreateLoad(
-                        retAlloca, "ltmp_" + retValueStr));
+                        llvm::Type::getInt32Ty(*irContext), retAlloca,
+                        "ltmp_" + retValueStr));
 
                 } else {
 
@@ -239,9 +240,9 @@ public:
 
                 irBuilder->CreateRetVoid();
                 std::cout << "should be returning nothing\n";
-                return visitChildren(ctx);
             }
         }
+        return visitChildren(ctx);
     }
 
     // virtual antlrcpp::Any

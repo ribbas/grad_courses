@@ -8,7 +8,6 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <strstream>
 
 #include "IR_Gen.h"
 
