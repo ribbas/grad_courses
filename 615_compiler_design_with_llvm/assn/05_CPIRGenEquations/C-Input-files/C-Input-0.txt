@@ -1,7 +1,11 @@
 /* A program to test functions and expressions.  */
 
-void test(int a, int b, int c) {
+void testv(int a, int b, int c) {
   return;
+}
+
+int testi(int a, int b, int c) {
+  return a;
 }
 
 void main(void) {int x; int y; int z;

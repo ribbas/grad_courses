@@ -14,32 +14,28 @@
  * available methods.
  */
 class CminusBaseVisitor : public CminusVisitor {
+
 private:
     std::string assignmentVar = "";
-    llvm::Value* assignmentAlloca = nullptr;
     std::map<std::string, llvm::Value*> namedAllocas;
 
-    // open a new context and module
-    std::unique_ptr<llvm::LLVMContext> irContext =
-        std::make_unique<llvm::LLVMContext>();
+    std::vector<llvm::Value*> opands;
 
-    // create a new builder for the module
-    std::unique_ptr<llvm::IRBuilder<>> irBuilder =
-        std::make_unique<llvm::IRBuilder<>>(*irContext);
-
-    std::unique_ptr<llvm::Module> module =
-        std::make_unique<llvm::Module>("moduleName", *irContext);
-    std::map<std::string, llvm::Value*> namedValues;
+    std::unique_ptr<llvm::Module> module = nullptr;
 
 public:
-    CminusBaseVisitor() {
+    CminusBaseVisitor(std::string fileName) {
+
+        opands.reserve(2);
+        module = std::make_unique<llvm::Module>(fileName, *irContext);
+
         llvm::FunctionType* inputFuncType =
             llvm::FunctionType::get(llvm::Type::getInt32Ty(*irContext), false);
         llvm::Function* inputFunc = llvm::Function::Create(
             inputFuncType, llvm::Function::ExternalLinkage, "input",
             module.get());
-        llvm::BasicBlock* inputBB = llvm::BasicBlock::Create(
-            *irContext, "<builtin IO functionality>", inputFunc);
+        llvm::BasicBlock* inputBB =
+            llvm::BasicBlock::Create(*irContext, "Entry", inputFunc);
         irBuilder->SetInsertPoint(inputBB);
 
         std::vector<llvm::Type*> argList =
@@ -49,8 +45,8 @@ public:
         llvm::Function* outputFunc = llvm::Function::Create(
             outputFuncType, llvm::Function::ExternalLinkage, "output",
             module.get());
-        llvm::BasicBlock* outputBB = llvm::BasicBlock::Create(
-            *irContext, "<builtin IO functionality>", outputFunc);
+        llvm::BasicBlock* outputBB =
+            llvm::BasicBlock::Create(*irContext, "Entry", outputFunc);
         irBuilder->SetInsertPoint(outputBB);
     }
 
@@ -76,6 +72,7 @@ public:
 
         std::string funcIdStr = ctx->ID()->getText();
         std::string funcTypeStr = ctx->fun_type_specifier()->getText();
+
         int funcNumArgs = ctx->param().size();
         if (semantics.canDeclareFunc(funcIdStr, funcTypeStr)) {
             semantics.addSymbol(funcIdStr, funcTypeStr, funcNumArgs);
@@ -85,7 +82,6 @@ public:
             if (funcTypeStr == "void") {
                 retType = llvm::Type::getVoidTy(*irContext);
             } else {
-                // if function returns int
                 retType = llvm::Type::getInt32Ty(*irContext);
             }
 
@@ -113,13 +109,22 @@ public:
 
             // Set names for all arguments.
             unsigned argIdx = 0;
+            // std::map<std::string, llvm::Value*> namedValues;
             std::string namedArg = "";
             for (llvm::Argument& arg : func->args()) {
                 namedArg = argNames[argIdx++];
+                semantics.addSymbol(namedArg, "int");
                 arg.setName(namedArg);
-                namedValues[namedArg] = &arg;
+                namedAllocas[namedArg] =
+                    irBuilder->CreateAlloca(llvm::Type::getInt32Ty(*irContext));
+
+                // namedValues[namedArg] = &arg;
             }
 
+            for (llvm::Argument& arg : func->args()) {
+                irBuilder->CreateStore(&arg, namedAllocas[arg.getName().str()],
+                                       false);
+            }
         } else {
             fprintf(stderr, "Cannot declare function: \"%s %s(int * %lu)\"\n",
                     ctx->fun_type_specifier()->getText().c_str(),
@@ -147,15 +152,10 @@ public:
 
         if (ctx->assignment_stmt()) {
 
-            std::cout << "exp " << ctx->assignment_stmt()->ID()->getText();
             assignmentVar = ctx->assignment_stmt()->ID()->getText();
-            std::cout << "=" << ctx->assignment_stmt()->exp().front()->getText()
-                      << "\n";
+        } else if (ctx->exp()) {
+            std::cout << "expsdsd " << ctx->exp()->getText() << "\n";
         }
-        // for (auto& i : ctx->exp()) {
-        //     std::cout << "exp " << i->getText() << "\n";
-        // }
-
         return visitChildren(ctx);
     }
 
@@ -177,14 +177,24 @@ public:
 
     virtual antlrcpp::Any
     visitReturn_stmt(CminusParser::Return_stmtContext* ctx) override {
-        if (ctx->return_value() && !semantics.canReturn()) {
-            fprintf(stderr,
-                    "Function \"%s\" of void type cannot return \"%s\"\n",
-                    semantics.getCurFuncName().c_str(),
-                    ctx->return_value()->getText().c_str());
-        } else if (!ctx->return_value() && semantics.canReturn()) {
-            fprintf(stderr, "Function \"%s\" of int type must return a value\n",
-                    semantics.getCurFuncName().c_str());
+        if (ctx->return_value()) {
+            if (!semantics.canReturn()) {
+                fprintf(stderr,
+                        "Function \"%s\" of type 'void' cannot return \"%s\"\n",
+                        semantics.getCurFuncName().c_str(),
+                        ctx->return_value()->getText().c_str());
+                return nullptr;
+            } else {
+                std::cout << "should be returning "
+                          << ctx->return_value()->getText() << '\n';
+            }
+        } else if (!ctx->return_value()) {
+            if (semantics.canReturn()) {
+                fprintf(stderr,
+                        "Function \"%s\" of type 'int' must return a value\n",
+                        semantics.getCurFuncName().c_str());
+                return nullptr;
+            }
         }
         return visitChildren(ctx);
     }
@@ -196,7 +206,15 @@ public:
 
     virtual antlrcpp::Any
     visitAdd_exp(CminusParser::Add_expContext* ctx) override {
-        return visitChildren(ctx);
+        std::cout << "adding " << ctx->getText() << "\n";
+        auto lol = visitChildren(ctx);
+        // std::cout << "done adding " << ctx->getText() << "\n";
+        // for (llvm::Value*& i : opands) {
+        //     std::cout << "add opands " << i << '\n';
+        // }
+        // irBuilder->CreateAdd(opands.front(), opands.back());
+        opands.clear();
+        return lol;
     }
 
     virtual antlrcpp::Any
@@ -206,6 +224,9 @@ public:
 
     virtual antlrcpp::Any
     visitNum_exp(CminusParser::Num_expContext* ctx) override {
+        std::cout << "num " << ctx->getText() << "\n";
+        opands.push_back(llvm::ConstantInt::get(
+            llvm::Type::getInt32Ty(*irContext), std::stoi(ctx->getText())));
         return visitChildren(ctx);
     }
 
@@ -230,12 +251,22 @@ public:
 
     virtual antlrcpp::Any
     visitVal_exp(CminusParser::Val_expContext* ctx) override {
+        std::cout << "value " << ctx->getText() << "\n";
+        opands.push_back(irBuilder->CreateLoad(namedAllocas[ctx->getText()]));
         return visitChildren(ctx);
     }
 
     virtual antlrcpp::Any
     visitMult_exp(CminusParser::Mult_expContext* ctx) override {
-        return visitChildren(ctx);
+        std::cout << "multing " << ctx->getText() << "\n";
+        auto lol = visitChildren(ctx);
+        // std::cout << "done multing " << ctx->getText() << "\n";
+        // for (llvm::Value*& i : opands) {
+        //     std::cout << "mult opands " << i << '\n';
+        // }
+        // irBuilder->CreateMul(opands.front(), opands.back());
+        // opands.clear();
+        return lol;
     }
 
     virtual antlrcpp::Any
