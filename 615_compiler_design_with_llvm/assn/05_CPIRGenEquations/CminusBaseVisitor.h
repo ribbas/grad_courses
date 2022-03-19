@@ -18,6 +18,7 @@ class CminusBaseVisitor : public CminusVisitor {
 private:
     std::string assignmentVar = "";
     std::map<std::string, llvm::Value*> namedAllocas;
+    std::map<std::string, llvm::Value*> namedStores;
 
     std::vector<llvm::Value*> opands;
 
@@ -107,29 +108,35 @@ public:
                 llvm::BasicBlock::Create(*irContext, "Entry", func);
             irBuilder->SetInsertPoint(basicBlock);
 
-            // Set names for all arguments.
+            // set names for all arguments
             unsigned argIdx = 0;
-            // std::map<std::string, llvm::Value*> namedValues;
             std::string namedArg = "";
             for (llvm::Argument& arg : func->args()) {
+
                 namedArg = argNames[argIdx++];
                 semantics.addSymbol(namedArg, "int");
                 arg.setName(namedArg);
+
+                // create alloca for all parameter values
                 namedAllocas[namedArg] =
-                    irBuilder->CreateAlloca(llvm::Type::getInt32Ty(*irContext));
-
-                // namedValues[namedArg] = &arg;
+                    irBuilder->CreateAlloca(llvm::Type::getInt32Ty(*irContext),
+                                            nullptr, "atmp_" + namedArg);
             }
 
+            // create store for all parameter values
             for (llvm::Argument& arg : func->args()) {
-                irBuilder->CreateStore(&arg, namedAllocas[arg.getName().str()],
-                                       false);
+                namedStores[arg.getName().str()] = irBuilder->CreateStore(
+                    &arg, namedAllocas[arg.getName().str()], false);
             }
+            argNames.clear();
+
         } else {
+
             fprintf(stderr, "Cannot declare function: \"%s %s(int * %lu)\"\n",
                     ctx->fun_type_specifier()->getText().c_str(),
                     ctx->ID()->getText().c_str(), ctx->param().size());
         }
+
         return visitChildren(ctx);
     }
 
@@ -177,26 +184,54 @@ public:
 
     virtual antlrcpp::Any
     visitReturn_stmt(CminusParser::Return_stmtContext* ctx) override {
+
+        // if return value exists
         if (ctx->return_value()) {
+
+            std::string retValueStr = ctx->return_value()->getText();
+
+            // if function is void
             if (!semantics.canReturn()) {
+
                 fprintf(stderr,
                         "Function \"%s\" of type 'void' cannot return \"%s\"\n",
                         semantics.getCurFuncName().c_str(),
-                        ctx->return_value()->getText().c_str());
+                        retValueStr.c_str());
                 return nullptr;
+
             } else {
-                std::cout << "should be returning "
-                          << ctx->return_value()->getText() << '\n';
+
+                antlrcpp::Any retVal = visitChildren(ctx);
+                llvm::Value* retAlloca = namedAllocas[retValueStr];
+                if (retAlloca) {
+                    std::cout << "ret is val\n";
+                    irBuilder->CreateRet(irBuilder->CreateLoad(
+                        retAlloca, "ltmp_" + retValueStr));
+                } else {
+                    irBuilder->CreateRet(llvm::ConstantInt::get(
+                        llvm::Type::getInt32Ty(*irContext),
+                        std::stoi(retValueStr)));
+                    std::cout << "ret is num\n";
+                }
+                return retVal;
             }
+
         } else if (!ctx->return_value()) {
+
             if (semantics.canReturn()) {
+
                 fprintf(stderr,
                         "Function \"%s\" of type 'int' must return a value\n",
                         semantics.getCurFuncName().c_str());
                 return nullptr;
+
+            } else {
+
+                irBuilder->CreateRetVoid();
+                std::cout << "should be returning nothing\n";
+                return visitChildren(ctx);
             }
         }
-        return visitChildren(ctx);
     }
 
     virtual antlrcpp::Any
@@ -243,8 +278,8 @@ public:
         } else {
             std::vector<llvm::Value*> ArgsV;
             llvm::Value* callValue = irBuilder->CreateCall(calleeFunc, ArgsV);
-            irBuilder->CreateStore(callValue, namedAllocas[assignmentVar],
-                                   false);
+            namedStores[assignmentVar] = irBuilder->CreateStore(
+                callValue, namedAllocas[assignmentVar], false);
         }
         return visitChildren(ctx);
     }
@@ -252,7 +287,7 @@ public:
     virtual antlrcpp::Any
     visitVal_exp(CminusParser::Val_expContext* ctx) override {
         std::cout << "value " << ctx->getText() << "\n";
-        opands.push_back(irBuilder->CreateLoad(namedAllocas[ctx->getText()]));
+        // opands.push_back(irBuilder->CreateLoad(namedAllocas[ctx->getText()]));
         return visitChildren(ctx);
     }
 
