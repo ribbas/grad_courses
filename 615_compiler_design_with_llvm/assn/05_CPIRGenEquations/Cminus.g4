@@ -5,8 +5,10 @@
 grammar Cminus;
 
 @parser::visitorpreinclude {
+#include "IR_Gen.h"
 #include "SemPred.h"
 }
+
 @parser::visitordeclarations {
 SemanticPredicate semantics;
 }
@@ -19,6 +21,10 @@ WHILE: 'while';
 RETURN: 'return';
 INT: 'int';
 VOID: 'void';
+ADD: '+';
+SUB: '-';
+MULT: '*';
+DIV: '/';
 
 // 1 or more letters
 ID: LETTER+;
@@ -52,10 +58,8 @@ statement:
 selection_stmt:
 	IF '(' (exp | relational_exp) ')' statement (ELSE statement)?;
 iteration_stmt: WHILE '(' (exp | relational_exp) ')' statement;
-assignment_stmt:
-	ID ('[' exp ']')? '=' (exp | relational_exp) ';';
-return_stmt: RETURN return_value? ';';
-return_value: exp | relational_exp;
+assignment_stmt: ID ('[' exp ']')? '=' exp ';';
+return_stmt: RETURN exp? ';';
 exp:
 	exp multop exp						# mult_exp
 	| exp addop exp						# add_exp
@@ -64,6 +68,6 @@ exp:
 	| ID '(' (exp (',' exp)*)? ')'		# call_exp
 	| NUM								# num_exp;
 relational_exp: exp relop exp;
-addop: '+' | '-';
-multop: '*' | '/';
+addop: ADD | SUB;
+multop: MULT | DIV;
 relop: '<=' | '<' | '>' | '>=' | '==' | '!=';

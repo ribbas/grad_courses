@@ -55,9 +55,6 @@ public:
     visitReturn_stmt(CminusParser::Return_stmtContext* context) = 0;
 
     virtual antlrcpp::Any
-    visitReturn_value(CminusParser::Return_valueContext* context) = 0;
-
-    virtual antlrcpp::Any
     visitAdd_exp(CminusParser::Add_expContext* context) = 0;
 
     virtual antlrcpp::Any

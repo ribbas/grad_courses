@@ -6,6 +6,7 @@
 #pragma once
 
 #include "CminusVisitor.h"
+#include "IR_Gen.h"
 #include "antlr4-runtime.h"
 
 /**
@@ -160,9 +161,12 @@ public:
         if (ctx->assignment_stmt()) {
 
             assignmentVar = ctx->assignment_stmt()->ID()->getText();
+
         } else if (ctx->exp()) {
+
             std::cout << "expsdsd " << ctx->exp()->getText() << "\n";
         }
+
         return visitChildren(ctx);
     }
 
@@ -186,9 +190,9 @@ public:
     visitReturn_stmt(CminusParser::Return_stmtContext* ctx) override {
 
         // if return value exists
-        if (ctx->return_value()) {
+        if (ctx->exp()) {
 
-            std::string retValueStr = ctx->return_value()->getText();
+            std::string retValueStr = ctx->exp()->getText();
 
             // if function is void
             if (!semantics.canReturn()) {
@@ -203,20 +207,25 @@ public:
 
                 antlrcpp::Any retVal = visitChildren(ctx);
                 llvm::Value* retAlloca = namedAllocas[retValueStr];
+
                 if (retAlloca) {
+
                     std::cout << "ret is val\n";
                     irBuilder->CreateRet(irBuilder->CreateLoad(
                         retAlloca, "ltmp_" + retValueStr));
+
                 } else {
+
                     irBuilder->CreateRet(llvm::ConstantInt::get(
                         llvm::Type::getInt32Ty(*irContext),
                         std::stoi(retValueStr)));
                     std::cout << "ret is num\n";
                 }
+
                 return retVal;
             }
 
-        } else if (!ctx->return_value()) {
+        } else if (!ctx->exp()) {
 
             if (semantics.canReturn()) {
 
@@ -234,10 +243,10 @@ public:
         }
     }
 
-    virtual antlrcpp::Any
-    visitReturn_value(CminusParser::Return_valueContext* ctx) override {
-        return visitChildren(ctx);
-    }
+    // virtual antlrcpp::Any
+    // visitReturn_value(CminusParser::Return_valueContext* ctx) override {
+    //     return visitChildren(ctx);
+    // }
 
     virtual antlrcpp::Any
     visitAdd_exp(CminusParser::Add_expContext* ctx) override {
