@@ -64,8 +64,9 @@ public:
     virtual antlrcpp::Any
     visitVar_declaration(CminusParser::Var_declarationContext* ctx) override {
         semantics.addSymbol(ctx->ID()->getText(), "int");
-        namedAllocas[ctx->ID()->getText()] = irBuilder->CreateAlloca(
-            llvm::Type::getInt32Ty(*irContext), nullptr, ctx->ID()->getText());
+        namedAllocas[ctx->ID()->getText()] =
+            irBuilder->CreateAlloca(llvm::Type::getInt32Ty(*irContext), nullptr,
+                                    "atmp_" + ctx->ID()->getText());
         return visitChildren(ctx);
     }
 
@@ -286,7 +287,8 @@ public:
 
         } else {
             std::vector<llvm::Value*> ArgsV;
-            llvm::Value* callValue = irBuilder->CreateCall(calleeFunc, ArgsV);
+            llvm::Value* callValue =
+                irBuilder->CreateCall(calleeFunc, ArgsV, assignmentVar);
             namedStores[assignmentVar] = irBuilder->CreateStore(
                 callValue, namedAllocas[assignmentVar], false);
         }
