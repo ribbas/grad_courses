@@ -54,9 +54,9 @@ public:
         RuleAssignment_stmt = 9,
         RuleReturn_stmt = 10,
         RuleExp = 11,
-        RuleRelational_exp = 12,
-        RuleAddop = 13,
-        RuleMultop = 14,
+        RuleAddop = 12,
+        RuleMultop = 13,
+        RuleRelational_exp = 14,
         RuleRelop = 15
     };
 
@@ -85,9 +85,9 @@ public:
     class Assignment_stmtContext;
     class Return_stmtContext;
     class ExpContext;
-    class Relational_expContext;
     class AddopContext;
     class MultopContext;
+    class Relational_expContext;
     class RelopContext;
 
     class ProgramContext : public antlr4::ParserRuleContext {
@@ -423,26 +423,6 @@ public:
 
     ExpContext* exp();
     ExpContext* exp(int precedence);
-    class Relational_expContext : public antlr4::ParserRuleContext {
-    public:
-        Relational_expContext(antlr4::ParserRuleContext* parent,
-                              size_t invokingState);
-        virtual size_t getRuleIndex() const override;
-        std::vector<ExpContext*> exp();
-        ExpContext* exp(size_t i);
-        RelopContext* relop();
-
-        virtual void
-        enterRule(antlr4::tree::ParseTreeListener* listener) override;
-        virtual void
-        exitRule(antlr4::tree::ParseTreeListener* listener) override;
-
-        virtual antlrcpp::Any
-        accept(antlr4::tree::ParseTreeVisitor* visitor) override;
-    };
-
-    Relational_expContext* relational_exp();
-
     class AddopContext : public antlr4::ParserRuleContext {
     public:
         AddopContext(antlr4::ParserRuleContext* parent, size_t invokingState);
@@ -478,6 +458,26 @@ public:
     };
 
     MultopContext* multop();
+
+    class Relational_expContext : public antlr4::ParserRuleContext {
+    public:
+        Relational_expContext(antlr4::ParserRuleContext* parent,
+                              size_t invokingState);
+        virtual size_t getRuleIndex() const override;
+        std::vector<ExpContext*> exp();
+        ExpContext* exp(size_t i);
+        RelopContext* relop();
+
+        virtual void
+        enterRule(antlr4::tree::ParseTreeListener* listener) override;
+        virtual void
+        exitRule(antlr4::tree::ParseTreeListener* listener) override;
+
+        virtual antlrcpp::Any
+        accept(antlr4::tree::ParseTreeVisitor* visitor) override;
+    };
+
+    Relational_expContext* relational_exp();
 
     class RelopContext : public antlr4::ParserRuleContext {
     public:

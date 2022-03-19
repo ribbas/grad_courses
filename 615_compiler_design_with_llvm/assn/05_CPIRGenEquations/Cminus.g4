@@ -67,7 +67,7 @@ exp:
 	| ID ('[' exp ']')?					# val_exp
 	| ID '(' (exp (',' exp)*)? ')'		# call_exp
 	| NUM								# num_exp;
-relational_exp: exp relop exp;
 addop: ADD | SUB;
 multop: MULT | DIV;
+relational_exp: exp relop exp;
 relop: '<=' | '<' | '>' | '>=' | '==' | '!=';

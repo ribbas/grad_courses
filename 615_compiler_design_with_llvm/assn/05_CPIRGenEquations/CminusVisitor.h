@@ -72,12 +72,12 @@ public:
     virtual antlrcpp::Any
     visitMult_exp(CminusParser::Mult_expContext* context) = 0;
 
-    virtual antlrcpp::Any
-    visitRelational_exp(CminusParser::Relational_expContext* context) = 0;
-
     virtual antlrcpp::Any visitAddop(CminusParser::AddopContext* context) = 0;
 
     virtual antlrcpp::Any visitMultop(CminusParser::MultopContext* context) = 0;
+
+    virtual antlrcpp::Any
+    visitRelational_exp(CminusParser::Relational_expContext* context) = 0;
 
     virtual antlrcpp::Any visitRelop(CminusParser::RelopContext* context) = 0;
 };

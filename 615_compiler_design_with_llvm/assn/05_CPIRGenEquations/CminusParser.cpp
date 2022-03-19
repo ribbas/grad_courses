@@ -1608,82 +1608,6 @@ CminusParser::ExpContext* CminusParser::exp(int precedence) {
     return _localctx;
 }
 
-//----------------- Relational_expContext
-//------------------------------------------------------------------
-
-CminusParser::Relational_expContext::Relational_expContext(
-    ParserRuleContext* parent, size_t invokingState)
-    : ParserRuleContext(parent, invokingState) {}
-
-std::vector<CminusParser::ExpContext*>
-CminusParser::Relational_expContext::exp() {
-    return getRuleContexts<CminusParser::ExpContext>();
-}
-
-CminusParser::ExpContext* CminusParser::Relational_expContext::exp(size_t i) {
-    return getRuleContext<CminusParser::ExpContext>(i);
-}
-
-CminusParser::RelopContext* CminusParser::Relational_expContext::relop() {
-    return getRuleContext<CminusParser::RelopContext>(0);
-}
-
-size_t CminusParser::Relational_expContext::getRuleIndex() const {
-    return CminusParser::RuleRelational_exp;
-}
-
-void CminusParser::Relational_expContext::enterRule(
-    tree::ParseTreeListener* listener) {
-    auto parserListener = dynamic_cast<CminusListener*>(listener);
-    if (parserListener != nullptr)
-        parserListener->enterRelational_exp(this);
-}
-
-void CminusParser::Relational_expContext::exitRule(
-    tree::ParseTreeListener* listener) {
-    auto parserListener = dynamic_cast<CminusListener*>(listener);
-    if (parserListener != nullptr)
-        parserListener->exitRelational_exp(this);
-}
-
-antlrcpp::Any
-CminusParser::Relational_expContext::accept(tree::ParseTreeVisitor* visitor) {
-    if (auto parserVisitor = dynamic_cast<CminusVisitor*>(visitor))
-        return parserVisitor->visitRelational_exp(this);
-    else
-        return visitor->visitChildren(this);
-}
-
-CminusParser::Relational_expContext* CminusParser::relational_exp() {
-    Relational_expContext* _localctx =
-        _tracker.createInstance<Relational_expContext>(_ctx, getState());
-    enterRule(_localctx, 24, CminusParser::RuleRelational_exp);
-
-#if __cplusplus > 201703L
-    auto onExit = finally([=, this] {
-#else
-    auto onExit = finally([=] {
-#endif
-        exitRule();
-    });
-    try {
-        enterOuterAlt(_localctx, 1);
-        setState(182);
-        exp(0);
-        setState(183);
-        relop();
-        setState(184);
-        exp(0);
-
-    } catch (RecognitionException& e) {
-        _errHandler->reportError(this, e);
-        _localctx->exception = std::current_exception();
-        _errHandler->recover(this, _localctx->exception);
-    }
-
-    return _localctx;
-}
-
 //----------------- AddopContext
 //------------------------------------------------------------------
 
@@ -1726,7 +1650,7 @@ CminusParser::AddopContext::accept(tree::ParseTreeVisitor* visitor) {
 CminusParser::AddopContext* CminusParser::addop() {
     AddopContext* _localctx =
         _tracker.createInstance<AddopContext>(_ctx, getState());
-    enterRule(_localctx, 26, CminusParser::RuleAddop);
+    enterRule(_localctx, 24, CminusParser::RuleAddop);
     size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -1738,7 +1662,7 @@ CminusParser::AddopContext* CminusParser::addop() {
     });
     try {
         enterOuterAlt(_localctx, 1);
-        setState(186);
+        setState(182);
         _la = _input->LA(1);
         if (!(_la == CminusParser::ADD
 
@@ -1800,7 +1724,7 @@ CminusParser::MultopContext::accept(tree::ParseTreeVisitor* visitor) {
 CminusParser::MultopContext* CminusParser::multop() {
     MultopContext* _localctx =
         _tracker.createInstance<MultopContext>(_ctx, getState());
-    enterRule(_localctx, 28, CminusParser::RuleMultop);
+    enterRule(_localctx, 26, CminusParser::RuleMultop);
     size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -1812,7 +1736,7 @@ CminusParser::MultopContext* CminusParser::multop() {
     });
     try {
         enterOuterAlt(_localctx, 1);
-        setState(188);
+        setState(184);
         _la = _input->LA(1);
         if (!(_la == CminusParser::MULT
 
@@ -1822,6 +1746,82 @@ CminusParser::MultopContext* CminusParser::multop() {
             _errHandler->reportMatch(this);
             consume();
         }
+
+    } catch (RecognitionException& e) {
+        _errHandler->reportError(this, e);
+        _localctx->exception = std::current_exception();
+        _errHandler->recover(this, _localctx->exception);
+    }
+
+    return _localctx;
+}
+
+//----------------- Relational_expContext
+//------------------------------------------------------------------
+
+CminusParser::Relational_expContext::Relational_expContext(
+    ParserRuleContext* parent, size_t invokingState)
+    : ParserRuleContext(parent, invokingState) {}
+
+std::vector<CminusParser::ExpContext*>
+CminusParser::Relational_expContext::exp() {
+    return getRuleContexts<CminusParser::ExpContext>();
+}
+
+CminusParser::ExpContext* CminusParser::Relational_expContext::exp(size_t i) {
+    return getRuleContext<CminusParser::ExpContext>(i);
+}
+
+CminusParser::RelopContext* CminusParser::Relational_expContext::relop() {
+    return getRuleContext<CminusParser::RelopContext>(0);
+}
+
+size_t CminusParser::Relational_expContext::getRuleIndex() const {
+    return CminusParser::RuleRelational_exp;
+}
+
+void CminusParser::Relational_expContext::enterRule(
+    tree::ParseTreeListener* listener) {
+    auto parserListener = dynamic_cast<CminusListener*>(listener);
+    if (parserListener != nullptr)
+        parserListener->enterRelational_exp(this);
+}
+
+void CminusParser::Relational_expContext::exitRule(
+    tree::ParseTreeListener* listener) {
+    auto parserListener = dynamic_cast<CminusListener*>(listener);
+    if (parserListener != nullptr)
+        parserListener->exitRelational_exp(this);
+}
+
+antlrcpp::Any
+CminusParser::Relational_expContext::accept(tree::ParseTreeVisitor* visitor) {
+    if (auto parserVisitor = dynamic_cast<CminusVisitor*>(visitor))
+        return parserVisitor->visitRelational_exp(this);
+    else
+        return visitor->visitChildren(this);
+}
+
+CminusParser::Relational_expContext* CminusParser::relational_exp() {
+    Relational_expContext* _localctx =
+        _tracker.createInstance<Relational_expContext>(_ctx, getState());
+    enterRule(_localctx, 28, CminusParser::RuleRelational_exp);
+
+#if __cplusplus > 201703L
+    auto onExit = finally([=, this] {
+#else
+    auto onExit = finally([=] {
+#endif
+        exitRule();
+    });
+    try {
+        enterOuterAlt(_localctx, 1);
+        setState(186);
+        exp(0);
+        setState(187);
+        relop();
+        setState(188);
+        exp(0);
 
     } catch (RecognitionException& e) {
         _errHandler->reportError(this, e);
@@ -1942,8 +1942,8 @@ std::vector<std::string> CminusParser::_ruleNames = {
     "statement",       "selection_stmt",
     "iteration_stmt",  "assignment_stmt",
     "return_stmt",     "exp",
-    "relational_exp",  "addop",
-    "multop",          "relop"};
+    "addop",           "multop",
+    "relational_exp",  "relop"};
 
 std::vector<std::string> CminusParser::_literalNames = {
     "",       "'['",  "']'",  "';'",    "'('",     "','",      "')'",
@@ -2021,7 +2021,7 @@ CminusParser::Initializer::Initializer() {
         0xd,  0x3,    0xd,    0x3,    0xd,    0x3,    0xd,    0x3,    0xd,
         0x3,  0xd,    0x7,    0xd,    0xb4,   0xa,    0xd,    0xc,    0xd,
         0xe,  0xd,    0xb7,   0xb,    0xd,    0x3,    0xe,    0x3,    0xe,
-        0x3,  0xe,    0x3,    0xe,    0x3,    0xf,    0x3,    0xf,    0x3,
+        0x3,  0xf,    0x3,    0xf,    0x3,    0x10,   0x3,    0x10,   0x3,
         0x10, 0x3,    0x10,   0x3,    0x11,   0x3,    0x11,   0x3,    0x11,
         0x2,  0x3,    0x18,   0x12,   0x2,    0x4,    0x6,    0x8,    0xa,
         0xc,  0xe,    0x10,   0x12,   0x14,   0x16,   0x18,   0x1a,   0x1c,
@@ -2036,7 +2036,7 @@ CminusParser::Initializer::Initializer() {
         0x3,  0x2,    0x2,    0x2,    0x14,   0x7b,   0x3,    0x2,    0x2,
         0x2,  0x16,   0x86,   0x3,    0x2,    0x2,    0x2,    0x18,   0xa9,
         0x3,  0x2,    0x2,    0x2,    0x1a,   0xb8,   0x3,    0x2,    0x2,
-        0x2,  0x1c,   0xbc,   0x3,    0x2,    0x2,    0x2,    0x1e,   0xbe,
+        0x2,  0x1c,   0xba,   0x3,    0x2,    0x2,    0x2,    0x1e,   0xbc,
         0x3,  0x2,    0x2,    0x2,    0x20,   0xc0,   0x3,    0x2,    0x2,
         0x2,  0x22,   0x25,   0x5,    0x4,    0x3,    0x2,    0x23,   0x25,
         0x5,  0x6,    0x4,    0x2,    0x24,   0x22,   0x3,    0x2,    0x2,
@@ -2095,7 +2095,7 @@ CminusParser::Initializer::Initializer() {
         0x2,  0x65,   0xf,    0x3,    0x2,    0x2,    0x2,    0x66,   0x67,
         0x7,  0x12,   0x2,    0x2,    0x67,   0x6a,   0x7,    0x6,    0x2,
         0x2,  0x68,   0x6b,   0x5,    0x18,   0xd,    0x2,    0x69,   0x6b,
-        0x5,  0x1a,   0xe,    0x2,    0x6a,   0x68,   0x3,    0x2,    0x2,
+        0x5,  0x1e,   0x10,   0x2,    0x6a,   0x68,   0x3,    0x2,    0x2,
         0x2,  0x6a,   0x69,   0x3,    0x2,    0x2,    0x2,    0x6b,   0x6c,
         0x3,  0x2,    0x2,    0x2,    0x6c,   0x6d,   0x7,    0x8,    0x2,
         0x2,  0x6d,   0x70,   0x5,    0xe,    0x8,    0x2,    0x6e,   0x6f,
@@ -2104,7 +2104,7 @@ CminusParser::Initializer::Initializer() {
         0x3,  0x2,    0x2,    0x2,    0x71,   0x11,   0x3,    0x2,    0x2,
         0x2,  0x72,   0x73,   0x7,    0x14,   0x2,    0x2,    0x73,   0x76,
         0x7,  0x6,    0x2,    0x2,    0x74,   0x77,   0x5,    0x18,   0xd,
-        0x2,  0x75,   0x77,   0x5,    0x1a,   0xe,    0x2,    0x76,   0x74,
+        0x2,  0x75,   0x77,   0x5,    0x1e,   0x10,   0x2,    0x76,   0x74,
         0x3,  0x2,    0x2,    0x2,    0x76,   0x75,   0x3,    0x2,    0x2,
         0x2,  0x77,   0x78,   0x3,    0x2,    0x2,    0x2,    0x78,   0x79,
         0x7,  0x8,    0x2,    0x2,    0x79,   0x7a,   0x5,    0xe,    0x8,
@@ -2123,7 +2123,7 @@ CminusParser::Initializer::Initializer() {
         0x2,  0x8a,   0x8b,   0x7,    0x5,    0x2,    0x2,    0x8b,   0x17,
         0x3,  0x2,    0x2,    0x2,    0x8c,   0x8d,   0x8,    0xd,    0x1,
         0x2,  0x8d,   0x90,   0x7,    0x6,    0x2,    0x2,    0x8e,   0x91,
-        0x5,  0x18,   0xd,    0x2,    0x8f,   0x91,   0x5,    0x1a,   0xe,
+        0x5,  0x18,   0xd,    0x2,    0x8f,   0x91,   0x5,    0x1e,   0x10,
         0x2,  0x90,   0x8e,   0x3,    0x2,    0x2,    0x2,    0x90,   0x8f,
         0x3,  0x2,    0x2,    0x2,    0x91,   0x92,   0x3,    0x2,    0x2,
         0x2,  0x92,   0x93,   0x7,    0x8,    0x2,    0x2,    0x93,   0xaa,
@@ -2147,21 +2147,21 @@ CminusParser::Initializer::Initializer() {
         0x2,  0xa9,   0x94,   0x3,    0x2,    0x2,    0x2,    0xa9,   0x9b,
         0x3,  0x2,    0x2,    0x2,    0xa9,   0xa8,   0x3,    0x2,    0x2,
         0x2,  0xaa,   0xb5,   0x3,    0x2,    0x2,    0x2,    0xab,   0xac,
-        0xc,  0x8,    0x2,    0x2,    0xac,   0xad,   0x5,    0x1e,   0x10,
+        0xc,  0x8,    0x2,    0x2,    0xac,   0xad,   0x5,    0x1c,   0xf,
         0x2,  0xad,   0xae,   0x5,    0x18,   0xd,    0x9,    0xae,   0xb4,
         0x3,  0x2,    0x2,    0x2,    0xaf,   0xb0,   0xc,    0x7,    0x2,
-        0x2,  0xb0,   0xb1,   0x5,    0x1c,   0xf,    0x2,    0xb1,   0xb2,
+        0x2,  0xb0,   0xb1,   0x5,    0x1a,   0xe,    0x2,    0xb1,   0xb2,
         0x5,  0x18,   0xd,    0x8,    0xb2,   0xb4,   0x3,    0x2,    0x2,
         0x2,  0xb3,   0xab,   0x3,    0x2,    0x2,    0x2,    0xb3,   0xaf,
         0x3,  0x2,    0x2,    0x2,    0xb4,   0xb7,   0x3,    0x2,    0x2,
         0x2,  0xb5,   0xb3,   0x3,    0x2,    0x2,    0x2,    0xb5,   0xb6,
         0x3,  0x2,    0x2,    0x2,    0xb6,   0x19,   0x3,    0x2,    0x2,
         0x2,  0xb7,   0xb5,   0x3,    0x2,    0x2,    0x2,    0xb8,   0xb9,
-        0x5,  0x18,   0xd,    0x2,    0xb9,   0xba,   0x5,    0x20,   0x11,
-        0x2,  0xba,   0xbb,   0x5,    0x18,   0xd,    0x2,    0xbb,   0x1b,
-        0x3,  0x2,    0x2,    0x2,    0xbc,   0xbd,   0x9,    0x3,    0x2,
-        0x2,  0xbd,   0x1d,   0x3,    0x2,    0x2,    0x2,    0xbe,   0xbf,
-        0x9,  0x4,    0x2,    0x2,    0xbf,   0x1f,   0x3,    0x2,    0x2,
+        0x9,  0x3,    0x2,    0x2,    0xb9,   0x1b,   0x3,    0x2,    0x2,
+        0x2,  0xba,   0xbb,   0x9,    0x4,    0x2,    0x2,    0xbb,   0x1d,
+        0x3,  0x2,    0x2,    0x2,    0xbc,   0xbd,   0x5,    0x18,   0xd,
+        0x2,  0xbd,   0xbe,   0x5,    0x20,   0x11,   0x2,    0xbe,   0xbf,
+        0x5,  0x18,   0xd,    0x2,    0xbf,   0x1f,   0x3,    0x2,    0x2,
         0x2,  0xc0,   0xc1,   0x9,    0x5,    0x2,    0x2,    0xc1,   0x21,
         0x3,  0x2,    0x2,    0x2,    0x17,   0x24,   0x26,   0x2f,   0x3b,
         0x3f, 0x4a,   0x50,   0x56,   0x64,   0x6a,   0x70,   0x76,   0x80,

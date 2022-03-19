@@ -92,17 +92,17 @@ public:
     virtual void exitMult_exp(CminusParser::Mult_expContext* /*ctx*/) override {
     }
 
-    virtual void
-    enterRelational_exp(CminusParser::Relational_expContext* /*ctx*/) override {
-    }
-    virtual void
-    exitRelational_exp(CminusParser::Relational_expContext* /*ctx*/) override {}
-
     virtual void enterAddop(CminusParser::AddopContext* /*ctx*/) override {}
     virtual void exitAddop(CminusParser::AddopContext* /*ctx*/) override {}
 
     virtual void enterMultop(CminusParser::MultopContext* /*ctx*/) override {}
     virtual void exitMultop(CminusParser::MultopContext* /*ctx*/) override {}
+
+    virtual void
+    enterRelational_exp(CminusParser::Relational_expContext* /*ctx*/) override {
+    }
+    virtual void
+    exitRelational_exp(CminusParser::Relational_expContext* /*ctx*/) override {}
 
     virtual void enterRelop(CminusParser::RelopContext* /*ctx*/) override {}
     virtual void exitRelop(CminusParser::RelopContext* /*ctx*/) override {}

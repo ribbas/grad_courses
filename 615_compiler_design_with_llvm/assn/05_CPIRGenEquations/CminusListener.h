@@ -78,16 +78,16 @@ public:
     virtual void enterMult_exp(CminusParser::Mult_expContext* ctx) = 0;
     virtual void exitMult_exp(CminusParser::Mult_expContext* ctx) = 0;
 
-    virtual void
-    enterRelational_exp(CminusParser::Relational_expContext* ctx) = 0;
-    virtual void
-    exitRelational_exp(CminusParser::Relational_expContext* ctx) = 0;
-
     virtual void enterAddop(CminusParser::AddopContext* ctx) = 0;
     virtual void exitAddop(CminusParser::AddopContext* ctx) = 0;
 
     virtual void enterMultop(CminusParser::MultopContext* ctx) = 0;
     virtual void exitMultop(CminusParser::MultopContext* ctx) = 0;
+
+    virtual void
+    enterRelational_exp(CminusParser::Relational_expContext* ctx) = 0;
+    virtual void
+    exitRelational_exp(CminusParser::Relational_expContext* ctx) = 0;
 
     virtual void enterRelop(CminusParser::RelopContext* ctx) = 0;
     virtual void exitRelop(CminusParser::RelopContext* ctx) = 0;

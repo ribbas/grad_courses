@@ -18,17 +18,20 @@ class CminusBaseVisitor : public CminusVisitor {
 
 private:
     std::string assignmentVar = "";
+    std::string curOpand = "";
+    bool exp = false;
     std::map<std::string, llvm::Value*> namedAllocas;
     std::map<std::string, llvm::Value*> namedStores;
+    std::map<std::string, llvm::Value*> namedLoads;
 
-    std::vector<llvm::Value*> opands;
+    // std::vector<llvm::Value*> opands;
 
     std::unique_ptr<llvm::Module> module = nullptr;
 
 public:
     CminusBaseVisitor(std::string fileName) {
 
-        opands.reserve(2);
+        // opands.reserve(2);
         module = std::make_unique<llvm::Module>(fileName, *irContext);
 
         llvm::FunctionType* inputFuncType =
@@ -190,6 +193,8 @@ public:
     virtual antlrcpp::Any
     visitReturn_stmt(CminusParser::Return_stmtContext* ctx) override {
 
+        exp = false;
+
         // if return value exists
         if (ctx->exp()) {
 
@@ -211,7 +216,6 @@ public:
 
                 if (retAlloca) {
 
-                    std::cout << "ret is val\n";
                     irBuilder->CreateRet(irBuilder->CreateLoad(
                         llvm::Type::getInt32Ty(*irContext), retAlloca,
                         "ltmp_" + retValueStr));
@@ -221,7 +225,6 @@ public:
                     irBuilder->CreateRet(llvm::ConstantInt::get(
                         llvm::Type::getInt32Ty(*irContext),
                         std::stoi(retValueStr)));
-                    std::cout << "ret is num\n";
                 }
 
                 return retVal;
@@ -239,28 +242,29 @@ public:
             } else {
 
                 irBuilder->CreateRetVoid();
-                std::cout << "should be returning nothing\n";
             }
         }
+
         return visitChildren(ctx);
     }
 
-    // virtual antlrcpp::Any
-    // visitReturn_value(CminusParser::Return_valueContext* ctx) override {
-    //     return visitChildren(ctx);
-    // }
-
     virtual antlrcpp::Any
     visitAdd_exp(CminusParser::Add_expContext* ctx) override {
-        std::cout << "adding " << ctx->getText() << "\n";
-        auto lol = visitChildren(ctx);
-        // std::cout << "done adding " << ctx->getText() << "\n";
-        // for (llvm::Value*& i : opands) {
-        //     std::cout << "add opands " << i << '\n';
-        // }
-        // irBuilder->CreateAdd(opands.front(), opands.back());
-        opands.clear();
-        return lol;
+        std::cout << "adding <" << ctx->exp().front()->getText() << "><"
+                  << ctx->addop()->getText() << "><"
+                  << ctx->exp().front()->getText() << ">\n";
+        exp = true;
+        auto expl = visitChildren(ctx);
+        if (namedLoads[ctx->exp().front()->getText()] &&
+            namedLoads[ctx->exp().back()->getText()]) {
+            std::cout << "loaded both\n";
+            irBuilder->CreateAdd(namedLoads[ctx->exp().front()->getText()],
+                                 namedLoads[ctx->exp().back()->getText()],
+                                 "atmp");
+        }
+        std::cout << "done adding " << ctx->getText() << curOpand << "\n";
+        curOpand = "";
+        return expl;
     }
 
     virtual antlrcpp::Any
@@ -271,8 +275,13 @@ public:
     virtual antlrcpp::Any
     visitNum_exp(CminusParser::Num_expContext* ctx) override {
         std::cout << "num " << ctx->getText() << "\n";
-        opands.push_back(llvm::ConstantInt::get(
-            llvm::Type::getInt32Ty(*irContext), std::stoi(ctx->getText())));
+        if (exp) {
+            curOpand += ctx->getText();
+            namedLoads[ctx->getText()] = llvm::ConstantInt::get(
+                llvm::Type::getInt32Ty(*irContext), std::stoi(ctx->getText()));
+            std::cout << "loaded\n";
+        }
+
         return visitChildren(ctx);
     }
 
@@ -284,7 +293,6 @@ public:
         if (calleeFunc->getReturnType()->isVoidTy()) {
 
             irBuilder->CreateCall(calleeFunc);
-            std::cout << "created call\n";
 
         } else {
             std::vector<llvm::Value*> ArgsV;
@@ -299,21 +307,33 @@ public:
     virtual antlrcpp::Any
     visitVal_exp(CminusParser::Val_expContext* ctx) override {
         std::cout << "value " << ctx->getText() << "\n";
-        // opands.push_back(irBuilder->CreateLoad(namedAllocas[ctx->getText()]));
+        if (exp) {
+            curOpand += ctx->getText();
+            namedLoads[ctx->getText()] = irBuilder->CreateLoad(
+                llvm::Type::getInt32Ty(*irContext),
+                namedAllocas[ctx->getText()], "ltmp_" + ctx->getText());
+            std::cout << "loaded\n";
+        }
         return visitChildren(ctx);
     }
 
     virtual antlrcpp::Any
     visitMult_exp(CminusParser::Mult_expContext* ctx) override {
-        std::cout << "multing " << ctx->getText() << "\n";
-        auto lol = visitChildren(ctx);
-        // std::cout << "done multing " << ctx->getText() << "\n";
-        // for (llvm::Value*& i : opands) {
-        //     std::cout << "mult opands " << i << '\n';
-        // }
-        // irBuilder->CreateMul(opands.front(), opands.back());
-        // opands.clear();
-        return lol;
+        std::cout << "multing <" << ctx->exp().front()->getText() << "><"
+                  << ctx->multop()->getText() << "><"
+                  << ctx->exp().front()->getText() << ">\n";
+        exp = true;
+        auto expl = visitChildren(ctx);
+        if (namedLoads[ctx->exp().front()->getText()] &&
+            namedLoads[ctx->exp().back()->getText()]) {
+            std::cout << "loaded both\n";
+            irBuilder->CreateMul(namedLoads[ctx->exp().front()->getText()],
+                                 namedLoads[ctx->exp().back()->getText()],
+                                 "mtmp");
+        }
+        std::cout << "done multing " << ctx->getText() << curOpand << "\n";
+        curOpand = "";
+        return expl;
     }
 
     virtual antlrcpp::Any
