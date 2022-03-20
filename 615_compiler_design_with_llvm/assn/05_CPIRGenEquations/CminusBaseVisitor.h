@@ -252,13 +252,19 @@ public:
                   << ctx->addop()->getText() << "><"
                   << ctx->exp().back()->getText() << ">\n";
         valIsOpand = true;
+        bool isAdd = ctx->addop()->ADD();
         auto expl = visitChildren(ctx);
 
         llvm::Value* right = opands.back();
         opands.pop_back();
         llvm::Value* left = opands.back();
         opands.pop_back();
-        llvm::Value* result = irBuilder->CreateAdd(left, right, "atmp");
+        llvm::Value* result = nullptr;
+        if (isAdd) {
+            result = irBuilder->CreateAdd(left, right, "atmp");
+        } else {
+            result = irBuilder->CreateSub(left, right, "stmp");
+        }
         opands.push_back(result);
 
         return expl;
@@ -271,13 +277,20 @@ public:
                   << ctx->multop()->getText() << "><"
                   << ctx->exp().back()->getText() << ">\n";
         valIsOpand = true;
+        bool isMult = ctx->multop()->MULT();
         auto expl = visitChildren(ctx);
 
         llvm::Value* right = opands.back();
         opands.pop_back();
         llvm::Value* left = opands.back();
         opands.pop_back();
-        llvm::Value* result = irBuilder->CreateMul(left, right, "mtmp");
+        llvm::Value* result = nullptr;
+
+        if (isMult) {
+            result = irBuilder->CreateMul(left, right, "mtmp");
+        } else {
+            result = irBuilder->CreateUDiv(left, right, "dtmp");
+        }
         opands.push_back(result);
 
         return expl;
