@@ -6,7 +6,7 @@
 #pragma once
 
 #include "IR_Gen.h"
-#include "SemPred.h"
+#include "Semantics.h"
 
 #include "CminusParser.h"
 #include "antlr4-runtime.h"
@@ -17,7 +17,7 @@
  */
 class CminusVisitor : public antlr4::tree::AbstractParseTreeVisitor {
 public:
-    SemanticPredicate semantics;
+    Semantics semantics;
 
     /**
      * Visit parse trees produced by CminusParser.

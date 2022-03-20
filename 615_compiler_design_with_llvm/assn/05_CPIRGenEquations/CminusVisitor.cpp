@@ -4,6 +4,6 @@
 // by ANTLR 4.9
 
 #include "IR_Gen.h"
-#include "SemPred.h"
+#include "Semantics.h"
 
 #include "CminusVisitor.h"

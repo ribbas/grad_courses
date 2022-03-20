@@ -6,11 +6,11 @@ grammar Cminus;
 
 @parser::visitorpreinclude {
 #include "IR_Gen.h"
-#include "SemPred.h"
+#include "Semantics.h"
 }
 
 @parser::visitordeclarations {
-SemanticPredicate semantics;
+Semantics semantics;
 }
 
 // Lexical Analyzer Rules

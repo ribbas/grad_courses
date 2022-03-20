@@ -21,8 +21,6 @@ private:
     std::vector<llvm::Value*> opands;
     bool valIsOpand = false;
     std::map<std::string, llvm::Value*> namedAllocas;
-    std::map<std::string, llvm::Value*> namedStores;
-    std::map<std::string, llvm::Value*> namedLoads;
 
     std::unique_ptr<llvm::Module> module = nullptr;
 
@@ -127,8 +125,8 @@ public:
 
             // create store for all parameter values
             for (llvm::Argument& arg : func->args()) {
-                namedStores[arg.getName().str()] = irBuilder->CreateStore(
-                    &arg, namedAllocas[arg.getName().str()], false);
+                irBuilder->CreateStore(&arg, namedAllocas[arg.getName().str()],
+                                       false);
             }
             argNames.clear();
 
@@ -293,22 +291,28 @@ public:
     virtual antlrcpp::Any
     visitVal_exp(CminusParser::Val_expContext* ctx) override {
 
-        if (valIsOpand) {
-            namedLoads[ctx->getText()] = irBuilder->CreateLoad(
-                llvm::Type::getInt32Ty(*irContext),
-                namedAllocas[ctx->getText()], "ltmp_" + ctx->getText());
-            opands.push_back(namedLoads[ctx->getText()]);
+        if (!semantics.checkSymbol(ctx->getText())) {
+            fprintf(stderr, "'%s' was not declared\n", ctx->getText().c_str());
+            return nullptr;
+        } else {
+
+            if (valIsOpand) {
+                llvm::Value* value = irBuilder->CreateLoad(
+                    llvm::Type::getInt32Ty(*irContext),
+                    namedAllocas[ctx->getText()], "ltmp_" + ctx->getText());
+                opands.push_back(value);
+            }
+            return visitChildren(ctx);
         }
-        return visitChildren(ctx);
     }
 
     virtual antlrcpp::Any
     visitNum_exp(CminusParser::Num_expContext* ctx) override {
 
         if (valIsOpand) {
-            namedLoads[ctx->getText()] = llvm::ConstantInt::get(
+            llvm::Value* value = llvm::ConstantInt::get(
                 llvm::Type::getInt32Ty(*irContext), std::stoi(ctx->getText()));
-            opands.push_back(namedLoads[ctx->getText()]);
+            opands.push_back(value);
         }
 
         return visitChildren(ctx);
@@ -319,6 +323,13 @@ public:
 
         llvm::Function* calleeFunc = module->getFunction(ctx->ID()->getText());
         std::vector<llvm::Value*> argsVector;
+
+        if (!semantics.isValidNumArgs(ctx->ID()->getText(),
+                                      ctx->exp().size())) {
+            fprintf(stderr, "Call to '%s' has invalid number of arguments\n",
+                    ctx->ID()->getText().c_str());
+            return nullptr;
+        }
 
         // if call has params
         for (auto& i : ctx->exp()) {
@@ -334,8 +345,8 @@ public:
         } else {
             llvm::Value* callValue =
                 irBuilder->CreateCall(calleeFunc, argsVector, assignmentVar);
-            namedStores[assignmentVar] = irBuilder->CreateStore(
-                callValue, namedAllocas[assignmentVar], false);
+            irBuilder->CreateStore(callValue, namedAllocas[assignmentVar],
+                                   false);
         }
         return nullptr;
     }

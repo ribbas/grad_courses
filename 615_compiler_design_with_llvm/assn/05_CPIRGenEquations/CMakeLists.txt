@@ -45,11 +45,6 @@ foreach(GENFILE ${ANTLR_GEN_FILE_NAMES})
 
         break()
 
-    # else()
-    #     execute_process(
-    #         COMMAND ${ANTLR4} -Dlanguage=Cpp -o "${GENERATED}" ${CMAKE_SOURCE_DIR}/${CMAKE_PROJECT_NAME}.g4
-    #     )
-
     endif()
 endforeach()
 unset(GEN CACHE)

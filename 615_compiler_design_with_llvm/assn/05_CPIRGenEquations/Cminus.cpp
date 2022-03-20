@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
     // std::cout << tree->toStringTree() << std::endl;
     std::ofstream fd;
     fd.open("C-Output-0-Symbol-Table.txt");
-    std::cout << visitor.semantics.dump();
+    fd << visitor.semantics.dump();
     fd.close();
     llvm::llvm_shutdown();
 
