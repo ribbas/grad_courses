@@ -17,9 +17,12 @@ int add(int* a, int* b) {
 
 int main() {
 
-    int a = 10;
-    int b = 20;
+    int a;
+    int b;
+    int c;
     // pass in references to the integers
-    int c = add(&a, &b);
-    return 0;
+    a = 1;
+    b = 2;
+    c = add(&a, &b);
+    return c;
 }

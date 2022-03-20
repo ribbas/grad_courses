@@ -11,9 +11,22 @@ define dso_local i32 @add(i32* nocapture readonly %0, i32* nocapture readonly %1
   ret i32 %5
 }
 
-; Function Attrs: mustprogress nofree norecurse nosync nounwind readnone uwtable willreturn
+; Function Attrs: mustprogress nofree nosync nounwind readonly uwtable willreturn
 define dso_local i32 @main() #1 {
-  ret i32 0
+  %1 = alloca i32, align 4
+  %2 = alloca i32, align 4
+  %3 = bitcast i32* %1 to i8*
+  call void @llvm.lifetime.start.p0i8(i64 4, i8* nonnull %3) #3
+  %4 = bitcast i32* %2 to i8*
+  call void @llvm.lifetime.start.p0i8(i64 4, i8* nonnull %4) #3
+  store i32 1, i32* %1, align 4, !tbaa !3
+  store i32 2, i32* %2, align 4, !tbaa !3
+  %5 = call i32 @add(i32* nonnull %1, i32* nonnull %2)
+  %6 = bitcast i32* %2 to i8*
+  call void @llvm.lifetime.end.p0i8(i64 4, i8* nonnull %6) #3
+  %7 = bitcast i32* %1 to i8*
+  call void @llvm.lifetime.end.p0i8(i64 4, i8* nonnull %7) #3
+  ret i32 %5
 }
 
 ; Function Attrs: argmemonly nofree nosync nounwind willreturn
@@ -23,8 +36,9 @@ declare void @llvm.lifetime.start.p0i8(i64 immarg, i8* nocapture) #2
 declare void @llvm.lifetime.end.p0i8(i64 immarg, i8* nocapture) #2
 
 attributes #0 = { mustprogress nofree norecurse nosync nounwind readonly uwtable willreturn "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #1 = { mustprogress nofree norecurse nosync nounwind readnone uwtable willreturn "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #1 = { mustprogress nofree nosync nounwind readonly uwtable willreturn "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #2 = { argmemonly nofree nosync nounwind willreturn }
+attributes #3 = { nounwind }
 
 !llvm.module.flags = !{!0, !1}
 !llvm.ident = !{!2}

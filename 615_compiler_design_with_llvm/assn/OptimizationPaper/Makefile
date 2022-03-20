@@ -12,7 +12,7 @@ all: argpromotion simple-loop-unswitch
 
 argpromotion:
 	@$(CC) $(CC_FLAGS) $@.c -o $@-before.ll
-	@opt -passes='$@,instcombine,function-attrs,mem2reg' $@-before.ll -S -o $@-after.ll
+	@opt -passes='$@,instcombine,function-attrs' $@-before.ll -S -o $@-after.ll
 
 simple-loop-unswitch:
 	@$(CC) $(CC_FLAGS) $@.c -o $@-before.ll

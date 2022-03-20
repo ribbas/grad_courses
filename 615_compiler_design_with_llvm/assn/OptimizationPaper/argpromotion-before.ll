@@ -26,21 +26,22 @@ define dso_local i32 @main() #0 {
   store i32 0, i32* %1, align 4
   %5 = bitcast i32* %2 to i8*
   call void @llvm.lifetime.start.p0i8(i64 4, i8* %5) #2
-  store i32 10, i32* %2, align 4, !tbaa !7
   %6 = bitcast i32* %3 to i8*
   call void @llvm.lifetime.start.p0i8(i64 4, i8* %6) #2
-  store i32 20, i32* %3, align 4, !tbaa !7
   %7 = bitcast i32* %4 to i8*
   call void @llvm.lifetime.start.p0i8(i64 4, i8* %7) #2
+  store i32 1, i32* %2, align 4, !tbaa !7
+  store i32 2, i32* %3, align 4, !tbaa !7
   %8 = call i32 @add(i32* %2, i32* %3)
   store i32 %8, i32* %4, align 4, !tbaa !7
-  %9 = bitcast i32* %4 to i8*
-  call void @llvm.lifetime.end.p0i8(i64 4, i8* %9) #2
-  %10 = bitcast i32* %3 to i8*
+  %9 = load i32, i32* %4, align 4, !tbaa !7
+  %10 = bitcast i32* %4 to i8*
   call void @llvm.lifetime.end.p0i8(i64 4, i8* %10) #2
-  %11 = bitcast i32* %2 to i8*
+  %11 = bitcast i32* %3 to i8*
   call void @llvm.lifetime.end.p0i8(i64 4, i8* %11) #2
-  ret i32 0
+  %12 = bitcast i32* %2 to i8*
+  call void @llvm.lifetime.end.p0i8(i64 4, i8* %12) #2
+  ret i32 %9
 }
 
 ; Function Attrs: argmemonly nofree nosync nounwind willreturn
