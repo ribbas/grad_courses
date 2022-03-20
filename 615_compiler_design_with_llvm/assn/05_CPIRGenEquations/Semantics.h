@@ -12,8 +12,8 @@ private:
     SymbolTable symtab;
 
     bool declareFunc(std::string funcName, std::string retType) {
-        if (!symtab.contains(funcName)) {
-            symtab.define(funcName, retType, 0);
+        if (!symtab.contains(funcName, "global")) {
+            symtab.defineFunc(funcName, retType, 0);
             curFuncName = funcName;
             curFuncType = retType;
             return true;
@@ -29,17 +29,17 @@ private:
     }
 
 public:
-    void addSymbol(std::string symbolName, std::string symbolType) {
-        symtab.define(symbolName, symbolType);
+    void addVarSymbol(std::string symbolName, std::string symbolType) {
+        symtab.defineVar(symbolName, symbolType, curFuncName);
     }
 
-    void addSymbol(std::string symbolName, std::string symbolType,
-                   int numArgs) {
-        symtab.define(symbolName, symbolType, numArgs);
+    void addFuncSymbol(std::string symbolName, std::string symbolType,
+                       int numArgs) {
+        symtab.defineFunc(symbolName, symbolType, numArgs);
     }
 
-    bool checkSymbol(std::string stmt) {
-        return symtab.contains(stmt);
+    bool checkSymbol(std::string symbolName) {
+        return symtab.contains(symbolName, curFuncName);
     }
 
     bool canReturn() {
@@ -56,7 +56,7 @@ public:
 
     bool isValidNumArgs(std::string funcName, int numParams) {
 
-        return (symtab.getNumArgs(funcName) == numParams);
+        return (symtab.getNumArgs(funcName, "global") == numParams);
     }
 
     bool canDeclareFunc(std::string funcName, std::string retType) {

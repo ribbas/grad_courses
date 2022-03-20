@@ -12,10 +12,15 @@ private:
     std::string name;
     std::string type = "builtin";
     bool isFunc = false;
+    std::string scope = "global";
 
 public:
     Symbol(std::string _name, std::string _type, bool _isFunc)
         : name(_name), type(_type), isFunc(_isFunc) {}
+
+    Symbol(std::string _name, std::string _type, std::string scope,
+           bool _isFunc)
+        : name(_name), type(_type), scope(scope), isFunc(_isFunc) {}
 
     Symbol(std::string _name, std::string _type, int _numArgs, bool _isFunc)
         : name(_name), type(_type), numArgs(_numArgs), isFunc(_isFunc) {}
@@ -40,11 +45,19 @@ public:
         return numArgs;
     }
 
+    void setScopeName(std::string scopeName) {
+        scope = scopeName;
+    }
+
+    std::string getScopeName() {
+        return scope;
+    }
+
     std::string toString() {
         if (type.length()) {
-            return "<name:" + name + ", type:" + type + ", " +
-                   (isFunc ? "func" : "var") +
-                   ", narg:" + std::to_string(numArgs) + '>';
+            return "<scope:" + scope + "><name:" + name + "><type:" + type +
+                   "><" + (isFunc ? "func" : "var") +
+                   "><narg:" + std::to_string(numArgs) + '>';
         }
         return name;
     }
@@ -58,57 +71,53 @@ public:
     SymbolTable() {
 
         // built-in types
-        define("int", "builtin");
-        define("void", "builtin");
+        defineVar("int", "builtin", "global");
+        defineVar("void", "builtin", "global");
 
         // built-in functions
-        define("input", "int", 0);
-        define("output", "void", 1);
+        defineFunc("input", "int", 0);
+        defineFunc("output", "void", 1);
     }
 
     ~SymbolTable() {
         symbols.clear();
     }
 
-    void setNumArgs(std::string symbolName, int numArgs) {
-        if (contains(symbolName)) {
-            symbols[symbolName]->setNumArgs(numArgs);
-        }
+    Symbol* get(std::string symbolName, std::string scopeName) {
+        return symbols[scopeName + symbolName];
     }
 
-    void define(std::string symbolName, std::string symbolType) {
-        symbols[symbolName] = new Symbol(symbolName, symbolType, false);
+    void set(std::string symbolName, std::string scopeName, Symbol* symbol) {
+        symbols[scopeName + symbolName] = symbol;
     }
 
-    void define(std::string symbolName, std::string symbolType,
-                int symbolNumArgs) {
-        symbols[symbolName] =
-            new Symbol(symbolName, symbolType, symbolNumArgs, true);
+    void defineVar(std::string symbolName, std::string symbolType,
+                   std::string scopeName) {
+        set(symbolName, scopeName,
+            new Symbol(symbolName, symbolType, scopeName, false));
     }
 
-    bool contains(std::string symbolName) {
-        return symbols.find(symbolName) != symbols.end();
+    void defineFunc(std::string symbolName, std::string symbolType,
+                    int symbolNumArgs) {
+        set(symbolName, "global",
+            new Symbol(symbolName, symbolType, symbolNumArgs, true));
     }
 
-    bool isFunc(std::string symbolName) {
-        if (contains(symbolName)) {
-            return symbols[symbolName]->getIsFunc();
-        } else {
-            return false;
-        }
+    bool contains(std::string symbolName, std::string scopeName) {
+        return symbols.find(scopeName + symbolName) != symbols.end();
     }
 
-    std::string getType(std::string symbolName) {
-        if (contains(symbolName)) {
-            return symbols[symbolName]->getType();
+    std::string getScope(std::string symbolName, std::string scopeName) {
+        if (contains(symbolName, scopeName)) {
+            return get(symbolName, scopeName)->getScopeName();
         } else {
             return "";
         }
     }
 
-    int getNumArgs(std::string symbolName) {
-        if (contains(symbolName)) {
-            return symbols[symbolName]->getNumArgs();
+    int getNumArgs(std::string symbolName, std::string scopeName) {
+        if (contains(symbolName, "global")) {
+            return get(symbolName, "global")->getNumArgs();
         } else {
             return 0;
         }

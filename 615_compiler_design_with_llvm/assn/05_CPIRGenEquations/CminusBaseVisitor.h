@@ -18,7 +18,7 @@ class CminusBaseVisitor : public CminusVisitor {
 
 private:
     std::string assignmentVar = "";
-    std::vector<llvm::Value*> opands;
+    std::vector<llvm::Value*> expStack;
     bool valIsOpand = false;
     std::map<std::string, llvm::Value*> namedAllocas;
 
@@ -61,7 +61,7 @@ public:
 
     virtual antlrcpp::Any
     visitVar_declaration(CminusParser::Var_declarationContext* ctx) override {
-        semantics.addSymbol(ctx->ID()->getText(), "int");
+        semantics.addVarSymbol(ctx->ID()->getText(), "int");
         namedAllocas[ctx->ID()->getText()] =
             irBuilder->CreateAlloca(llvm::Type::getInt32Ty(*irContext), nullptr,
                                     "atmp_" + ctx->ID()->getText());
@@ -76,7 +76,7 @@ public:
 
         int funcNumArgs = ctx->param().size();
         if (semantics.canDeclareFunc(funcIdStr, funcTypeStr)) {
-            semantics.addSymbol(funcIdStr, funcTypeStr, funcNumArgs);
+            semantics.addFuncSymbol(funcIdStr, funcTypeStr, funcNumArgs);
 
             llvm::Type* retType = nullptr;
             // check function return type
@@ -114,7 +114,7 @@ public:
             for (llvm::Argument& arg : func->args()) {
 
                 namedArg = argNames[argIdx++];
-                semantics.addSymbol(namedArg, "int");
+                semantics.addVarSymbol(namedArg, "int");
                 arg.setName(namedArg);
 
                 // create alloca for all parameter values
@@ -243,21 +243,22 @@ public:
 
         valIsOpand = true;
         bool isAdd = ctx->addop()->ADD();
-        auto expl = visitChildren(ctx);
+        antlrcpp::Any expression = visitChildren(ctx);
 
-        llvm::Value* right = opands.back();
-        opands.pop_back();
-        llvm::Value* left = opands.back();
-        opands.pop_back();
+        llvm::Value* right = expStack.back();
+        expStack.pop_back();
+        llvm::Value* left = expStack.back();
+        expStack.pop_back();
         llvm::Value* result = nullptr;
+
         if (isAdd) {
             result = irBuilder->CreateAdd(left, right, "atmp");
         } else {
             result = irBuilder->CreateSub(left, right, "stmp");
         }
-        opands.push_back(result);
+        expStack.push_back(result);
 
-        return expl;
+        return expression;
     }
 
     virtual antlrcpp::Any
@@ -265,12 +266,12 @@ public:
 
         valIsOpand = true;
         bool isMult = ctx->multop()->MULT();
-        auto expl = visitChildren(ctx);
+        antlrcpp::Any expression = visitChildren(ctx);
 
-        llvm::Value* right = opands.back();
-        opands.pop_back();
-        llvm::Value* left = opands.back();
-        opands.pop_back();
+        llvm::Value* right = expStack.back();
+        expStack.pop_back();
+        llvm::Value* left = expStack.back();
+        expStack.pop_back();
         llvm::Value* result = nullptr;
 
         if (isMult) {
@@ -278,9 +279,9 @@ public:
         } else {
             result = irBuilder->CreateUDiv(left, right, "dtmp");
         }
-        opands.push_back(result);
+        expStack.push_back(result);
 
-        return expl;
+        return expression;
     }
 
     virtual antlrcpp::Any
@@ -300,7 +301,7 @@ public:
                 llvm::Value* value = irBuilder->CreateLoad(
                     llvm::Type::getInt32Ty(*irContext),
                     namedAllocas[ctx->getText()], "ltmp_" + ctx->getText());
-                opands.push_back(value);
+                expStack.push_back(value);
             }
             return visitChildren(ctx);
         }
@@ -312,7 +313,7 @@ public:
         if (valIsOpand) {
             llvm::Value* value = llvm::ConstantInt::get(
                 llvm::Type::getInt32Ty(*irContext), std::stoi(ctx->getText()));
-            opands.push_back(value);
+            expStack.push_back(value);
         }
 
         return visitChildren(ctx);
@@ -334,8 +335,8 @@ public:
         // if call has params
         for (auto& i : ctx->exp()) {
             visit(i);
-            argsVector.push_back(opands.back());
-            opands.pop_back();
+            argsVector.push_back(expStack.back());
+            expStack.pop_back();
         }
 
         if (calleeFunc->getReturnType()->isVoidTy()) {
