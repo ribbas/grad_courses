@@ -8,7 +8,6 @@
 #include "CminusVisitor.h"
 #include "IR_Gen.h"
 #include "antlr4-runtime.h"
-#include <stack>
 
 /**
  * This class provides an empty implementation of CminusVisitor, which can be
@@ -163,10 +162,6 @@ public:
         if (ctx->assignment_stmt()) {
 
             assignmentVar = ctx->assignment_stmt()->ID()->getText();
-
-        } else if (ctx->exp()) {
-
-            std::cout << "expsdsd " << ctx->exp()->getText() << "\n";
         }
 
         return visitChildren(ctx);
@@ -248,9 +243,6 @@ public:
     virtual antlrcpp::Any
     visitAdd_exp(CminusParser::Add_expContext* ctx) override {
 
-        std::cout << "adding <" << ctx->exp().front()->getText() << "><"
-                  << ctx->addop()->getText() << "><"
-                  << ctx->exp().back()->getText() << ">\n";
         valIsOpand = true;
         bool isAdd = ctx->addop()->ADD();
         auto expl = visitChildren(ctx);
@@ -273,9 +265,6 @@ public:
     virtual antlrcpp::Any
     visitMult_exp(CminusParser::Mult_expContext* ctx) override {
 
-        std::cout << "multing <" << ctx->exp().front()->getText() << "><"
-                  << ctx->multop()->getText() << "><"
-                  << ctx->exp().back()->getText() << ">\n";
         valIsOpand = true;
         bool isMult = ctx->multop()->MULT();
         auto expl = visitChildren(ctx);
@@ -304,13 +293,11 @@ public:
     virtual antlrcpp::Any
     visitVal_exp(CminusParser::Val_expContext* ctx) override {
 
-        std::cout << "value " << ctx->getText();
         if (valIsOpand) {
             namedLoads[ctx->getText()] = irBuilder->CreateLoad(
                 llvm::Type::getInt32Ty(*irContext),
                 namedAllocas[ctx->getText()], "ltmp_" + ctx->getText());
             opands.push_back(namedLoads[ctx->getText()]);
-            std::cout << " loaded\n";
         }
         return visitChildren(ctx);
     }
@@ -318,12 +305,10 @@ public:
     virtual antlrcpp::Any
     visitNum_exp(CminusParser::Num_expContext* ctx) override {
 
-        std::cout << "num " << ctx->getText();
         if (valIsOpand) {
             namedLoads[ctx->getText()] = llvm::ConstantInt::get(
                 llvm::Type::getInt32Ty(*irContext), std::stoi(ctx->getText()));
             opands.push_back(namedLoads[ctx->getText()]);
-            std::cout << " loaded\n";
         }
 
         return visitChildren(ctx);
@@ -332,20 +317,27 @@ public:
     virtual antlrcpp::Any
     visitCall_exp(CminusParser::Call_expContext* ctx) override {
 
-        std::cout << "call " << ctx->getText() << '\n';
         llvm::Function* calleeFunc = module->getFunction(ctx->ID()->getText());
+        std::vector<llvm::Value*> argsVector;
+
+        // if call has params
+        for (auto& i : ctx->exp()) {
+            visit(i);
+            argsVector.push_back(opands.back());
+            opands.pop_back();
+        }
+
         if (calleeFunc->getReturnType()->isVoidTy()) {
 
-            irBuilder->CreateCall(calleeFunc);
+            irBuilder->CreateCall(calleeFunc, argsVector);
 
         } else {
-            std::vector<llvm::Value*> ArgsV;
             llvm::Value* callValue =
-                irBuilder->CreateCall(calleeFunc, ArgsV, assignmentVar);
+                irBuilder->CreateCall(calleeFunc, argsVector, assignmentVar);
             namedStores[assignmentVar] = irBuilder->CreateStore(
                 callValue, namedAllocas[assignmentVar], false);
         }
-        return visitChildren(ctx);
+        return nullptr;
     }
 
     virtual antlrcpp::Any
