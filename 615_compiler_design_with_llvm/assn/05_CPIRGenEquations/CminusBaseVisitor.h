@@ -19,11 +19,7 @@ class CminusBaseVisitor : public CminusVisitor {
 
 private:
     std::string assignmentVar = "";
-    std::string curOpand = "";
-    llvm::Value* lhs = nullptr;
-    llvm::Value* rhs = nullptr;
     std::vector<llvm::Value*> opands;
-    bool opandNum = true;
     bool valIsOpand = false;
     std::map<std::string, llvm::Value*> namedAllocas;
     std::map<std::string, llvm::Value*> namedStores;
@@ -265,21 +261,6 @@ public:
         llvm::Value* result = irBuilder->CreateAdd(left, right, "atmp");
         opands.push_back(result);
 
-        // if (namedLoads[ctx->exp().front()->getText()] &&
-        //     namedLoads[ctx->exp().back()->getText()]) {
-        //     std::cout << "loaded both\n";
-        //     irBuilder->CreateAdd(namedLoads[ctx->exp().front()->getText()],
-        //                          namedLoads[ctx->exp().back()->getText()],
-        //                          "atmp");
-        // }
-        // std::cout << "done adding " << ctx->getText() << "=" << curOpand
-        //           << "\n";
-        // curOpand = "";
-
-        for (llvm::Value*& i : opands) {
-            std::cout << "dumping opands " << i << "\n";
-        }
-
         return expl;
     }
 
@@ -298,22 +279,7 @@ public:
         opands.pop_back();
         llvm::Value* result = irBuilder->CreateMul(left, right, "mtmp");
         opands.push_back(result);
-        // opands.push_back("(" + left + "*" + right + ")");
 
-        // if (namedLoads[ctx->exp().front()->getText()] &&
-        //     namedLoads[ctx->exp().back()->getText()]) {
-        //     std::cout << "loaded both\n";
-        //     irBuilder->CreateMul(namedLoads[ctx->exp().front()->getText()],
-        //                          namedLoads[ctx->exp().back()->getText()],
-        //                          "mtmp");
-        // }
-        // std::cout << "done multing " << ctx->getText() << "=" << curOpand
-        //           << "\n";
-        // curOpand = "";
-
-        for (llvm::Value*& i : opands) {
-            std::cout << "dumping opands " << i << "\n";
-        }
         return expl;
     }
 
@@ -327,18 +293,11 @@ public:
 
         std::cout << "value " << ctx->getText();
         if (valIsOpand) {
-            if (opandNum) {
-                std::cout << " (opand 1)\n";
-            } else {
-                std::cout << " (opand 2)\n";
-            }
-            opandNum = !opandNum;
-            curOpand += ctx->getText();
             namedLoads[ctx->getText()] = irBuilder->CreateLoad(
                 llvm::Type::getInt32Ty(*irContext),
                 namedAllocas[ctx->getText()], "ltmp_" + ctx->getText());
             opands.push_back(namedLoads[ctx->getText()]);
-            std::cout << "loaded\n";
+            std::cout << " loaded\n";
         }
         return visitChildren(ctx);
     }
@@ -348,17 +307,10 @@ public:
 
         std::cout << "num " << ctx->getText();
         if (valIsOpand) {
-            if (opandNum) {
-                std::cout << " (opand 1)\n";
-            } else {
-                std::cout << " (opand 2)\n";
-            }
-            opandNum = !opandNum;
-            curOpand += ctx->getText();
             namedLoads[ctx->getText()] = llvm::ConstantInt::get(
                 llvm::Type::getInt32Ty(*irContext), std::stoi(ctx->getText()));
             opands.push_back(namedLoads[ctx->getText()]);
-            std::cout << "loaded\n";
+            std::cout << " loaded\n";
         }
 
         return visitChildren(ctx);
