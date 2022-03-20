@@ -8,6 +8,7 @@
 #include "CminusVisitor.h"
 #include "IR_Gen.h"
 #include "antlr4-runtime.h"
+#include <stack>
 
 /**
  * This class provides an empty implementation of CminusVisitor, which can be
@@ -19,19 +20,20 @@ class CminusBaseVisitor : public CminusVisitor {
 private:
     std::string assignmentVar = "";
     std::string curOpand = "";
-    bool exp = false;
+    llvm::Value* lhs = nullptr;
+    llvm::Value* rhs = nullptr;
+    std::vector<llvm::Value*> opands;
+    bool opandNum = true;
+    bool valIsOpand = false;
     std::map<std::string, llvm::Value*> namedAllocas;
     std::map<std::string, llvm::Value*> namedStores;
     std::map<std::string, llvm::Value*> namedLoads;
-
-    // std::vector<llvm::Value*> opands;
 
     std::unique_ptr<llvm::Module> module = nullptr;
 
 public:
     CminusBaseVisitor(std::string fileName) {
 
-        // opands.reserve(2);
         module = std::make_unique<llvm::Module>(fileName, *irContext);
 
         llvm::FunctionType* inputFuncType =
@@ -186,14 +188,13 @@ public:
 
     virtual antlrcpp::Any
     visitAssignment_stmt(CminusParser::Assignment_stmtContext* ctx) override {
-
         return visitChildren(ctx);
     }
 
     virtual antlrcpp::Any
     visitReturn_stmt(CminusParser::Return_stmtContext* ctx) override {
 
-        exp = false;
+        valIsOpand = false;
 
         // if return value exists
         if (ctx->exp()) {
@@ -250,20 +251,69 @@ public:
 
     virtual antlrcpp::Any
     visitAdd_exp(CminusParser::Add_expContext* ctx) override {
+
         std::cout << "adding <" << ctx->exp().front()->getText() << "><"
                   << ctx->addop()->getText() << "><"
-                  << ctx->exp().front()->getText() << ">\n";
-        exp = true;
+                  << ctx->exp().back()->getText() << ">\n";
+        valIsOpand = true;
         auto expl = visitChildren(ctx);
-        if (namedLoads[ctx->exp().front()->getText()] &&
-            namedLoads[ctx->exp().back()->getText()]) {
-            std::cout << "loaded both\n";
-            irBuilder->CreateAdd(namedLoads[ctx->exp().front()->getText()],
-                                 namedLoads[ctx->exp().back()->getText()],
-                                 "atmp");
+
+        llvm::Value* right = opands.back();
+        opands.pop_back();
+        llvm::Value* left = opands.back();
+        opands.pop_back();
+        llvm::Value* result = irBuilder->CreateAdd(left, right, "atmp");
+        opands.push_back(result);
+
+        // if (namedLoads[ctx->exp().front()->getText()] &&
+        //     namedLoads[ctx->exp().back()->getText()]) {
+        //     std::cout << "loaded both\n";
+        //     irBuilder->CreateAdd(namedLoads[ctx->exp().front()->getText()],
+        //                          namedLoads[ctx->exp().back()->getText()],
+        //                          "atmp");
+        // }
+        // std::cout << "done adding " << ctx->getText() << "=" << curOpand
+        //           << "\n";
+        // curOpand = "";
+
+        for (llvm::Value*& i : opands) {
+            std::cout << "dumping opands " << i << "\n";
         }
-        std::cout << "done adding " << ctx->getText() << curOpand << "\n";
-        curOpand = "";
+
+        return expl;
+    }
+
+    virtual antlrcpp::Any
+    visitMult_exp(CminusParser::Mult_expContext* ctx) override {
+
+        std::cout << "multing <" << ctx->exp().front()->getText() << "><"
+                  << ctx->multop()->getText() << "><"
+                  << ctx->exp().back()->getText() << ">\n";
+        valIsOpand = true;
+        auto expl = visitChildren(ctx);
+
+        llvm::Value* right = opands.back();
+        opands.pop_back();
+        llvm::Value* left = opands.back();
+        opands.pop_back();
+        llvm::Value* result = irBuilder->CreateMul(left, right, "mtmp");
+        opands.push_back(result);
+        // opands.push_back("(" + left + "*" + right + ")");
+
+        // if (namedLoads[ctx->exp().front()->getText()] &&
+        //     namedLoads[ctx->exp().back()->getText()]) {
+        //     std::cout << "loaded both\n";
+        //     irBuilder->CreateMul(namedLoads[ctx->exp().front()->getText()],
+        //                          namedLoads[ctx->exp().back()->getText()],
+        //                          "mtmp");
+        // }
+        // std::cout << "done multing " << ctx->getText() << "=" << curOpand
+        //           << "\n";
+        // curOpand = "";
+
+        for (llvm::Value*& i : opands) {
+            std::cout << "dumping opands " << i << "\n";
+        }
         return expl;
     }
 
@@ -273,12 +323,41 @@ public:
     }
 
     virtual antlrcpp::Any
+    visitVal_exp(CminusParser::Val_expContext* ctx) override {
+
+        std::cout << "value " << ctx->getText();
+        if (valIsOpand) {
+            if (opandNum) {
+                std::cout << " (opand 1)\n";
+            } else {
+                std::cout << " (opand 2)\n";
+            }
+            opandNum = !opandNum;
+            curOpand += ctx->getText();
+            namedLoads[ctx->getText()] = irBuilder->CreateLoad(
+                llvm::Type::getInt32Ty(*irContext),
+                namedAllocas[ctx->getText()], "ltmp_" + ctx->getText());
+            opands.push_back(namedLoads[ctx->getText()]);
+            std::cout << "loaded\n";
+        }
+        return visitChildren(ctx);
+    }
+
+    virtual antlrcpp::Any
     visitNum_exp(CminusParser::Num_expContext* ctx) override {
-        std::cout << "num " << ctx->getText() << "\n";
-        if (exp) {
+
+        std::cout << "num " << ctx->getText();
+        if (valIsOpand) {
+            if (opandNum) {
+                std::cout << " (opand 1)\n";
+            } else {
+                std::cout << " (opand 2)\n";
+            }
+            opandNum = !opandNum;
             curOpand += ctx->getText();
             namedLoads[ctx->getText()] = llvm::ConstantInt::get(
                 llvm::Type::getInt32Ty(*irContext), std::stoi(ctx->getText()));
+            opands.push_back(namedLoads[ctx->getText()]);
             std::cout << "loaded\n";
         }
 
@@ -302,38 +381,6 @@ public:
                 callValue, namedAllocas[assignmentVar], false);
         }
         return visitChildren(ctx);
-    }
-
-    virtual antlrcpp::Any
-    visitVal_exp(CminusParser::Val_expContext* ctx) override {
-        std::cout << "value " << ctx->getText() << "\n";
-        if (exp) {
-            curOpand += ctx->getText();
-            namedLoads[ctx->getText()] = irBuilder->CreateLoad(
-                llvm::Type::getInt32Ty(*irContext),
-                namedAllocas[ctx->getText()], "ltmp_" + ctx->getText());
-            std::cout << "loaded\n";
-        }
-        return visitChildren(ctx);
-    }
-
-    virtual antlrcpp::Any
-    visitMult_exp(CminusParser::Mult_expContext* ctx) override {
-        std::cout << "multing <" << ctx->exp().front()->getText() << "><"
-                  << ctx->multop()->getText() << "><"
-                  << ctx->exp().front()->getText() << ">\n";
-        exp = true;
-        auto expl = visitChildren(ctx);
-        if (namedLoads[ctx->exp().front()->getText()] &&
-            namedLoads[ctx->exp().back()->getText()]) {
-            std::cout << "loaded both\n";
-            irBuilder->CreateMul(namedLoads[ctx->exp().front()->getText()],
-                                 namedLoads[ctx->exp().back()->getText()],
-                                 "mtmp");
-        }
-        std::cout << "done multing " << ctx->getText() << curOpand << "\n";
-        curOpand = "";
-        return expl;
     }
 
     virtual antlrcpp::Any
