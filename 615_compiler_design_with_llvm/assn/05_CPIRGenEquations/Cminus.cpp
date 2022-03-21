@@ -3,14 +3,6 @@
 #include "CminusParser.h"
 #include "IR_Gen.h"
 
-#include "antlr4-runtime.h"
-
-#include <fstream>
-#include <iostream>
-#include <string>
-
-#include "IR_Gen.h"
-
 // open a new context and module
 std::unique_ptr<llvm::LLVMContext> irContext =
     std::make_unique<llvm::LLVMContext>();
@@ -38,7 +30,6 @@ int main(int argc, char* argv[]) {
     visitor.visit(tree);
     visitor.printModule();
 
-    // std::cout << tree->toStringTree() << std::endl;
     std::ofstream fd;
     fd.open("C-Output-0-Symbol-Table.txt");
     fd << visitor.semantics.dump();

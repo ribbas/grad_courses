@@ -20,8 +20,9 @@ private:
     std::string assignmentVar = "";
     std::vector<llvm::Value*> expStack;
     bool valIsOpand = false;
-    std::map<std::string, llvm::Value*> namedAllocas;
+    bool errorFound = false;
 
+    std::map<std::string, llvm::Value*> namedAllocas;
     std::unique_ptr<llvm::Module> module = nullptr;
 
 public:
@@ -51,7 +52,11 @@ public:
     }
 
     void printModule() {
-        module->print(llvm::errs(), nullptr);
+        if (!errorFound) {
+            module->print(llvm::errs(), nullptr);
+        }
+        expStack.clear();
+        namedAllocas.clear();
     }
 
     virtual antlrcpp::Any
@@ -132,7 +137,9 @@ public:
 
         } else {
 
-            fprintf(stderr, "Cannot declare function: \"%s %s(int * %lu)\"\n",
+            fprintf(stderr,
+                    "Line %lu: Cannot declare function: \"%s %s(int * %lu)\"\n",
+                    ctx->start->getLine(),
                     ctx->fun_type_specifier()->getText().c_str(),
                     ctx->ID()->getText().c_str(), ctx->param().size());
         }
@@ -160,6 +167,12 @@ public:
         if (ctx->assignment_stmt()) {
 
             assignmentVar = ctx->assignment_stmt()->ID()->getText();
+            if (!semantics.checkSymbol(assignmentVar)) {
+                fprintf(stderr, "Line: %lu: Variable '%s' was not declared\n",
+                        ctx->start->getLine(), assignmentVar.c_str());
+                errorFound = true;
+                return nullptr;
+            }
         }
 
         return visitChildren(ctx);
@@ -194,9 +207,12 @@ public:
             if (!semantics.canReturn()) {
 
                 fprintf(stderr,
-                        "Function \"%s\" of type 'void' cannot return \"%s\"\n",
+                        "Line %lu: Function \"%s\" of type 'void' cannot "
+                        "return \"%s\"\n",
+                        ctx->start->getLine(),
                         semantics.getCurFuncName().c_str(),
                         retValueStr.c_str());
+                errorFound = true;
                 return nullptr;
 
             } else {
@@ -225,8 +241,11 @@ public:
             if (semantics.canReturn()) {
 
                 fprintf(stderr,
-                        "Function \"%s\" of type 'int' must return a value\n",
+                        "Line %lu: Function \"%s\" of type 'int' must return a "
+                        "value\n",
+                        ctx->start->getLine(),
                         semantics.getCurFuncName().c_str());
+                errorFound = true;
                 return nullptr;
 
             } else {
@@ -293,7 +312,9 @@ public:
     visitVal_exp(CminusParser::Val_expContext* ctx) override {
 
         if (!semantics.checkSymbol(ctx->getText())) {
-            fprintf(stderr, "'%s' was not declared\n", ctx->getText().c_str());
+            fprintf(stderr, "Line %lu: Variable '%s' was not declared\n",
+                    ctx->start->getLine(), ctx->getText().c_str());
+            errorFound = true;
             return nullptr;
         } else {
 
@@ -327,8 +348,10 @@ public:
 
         if (!semantics.isValidNumArgs(ctx->ID()->getText(),
                                       ctx->exp().size())) {
-            fprintf(stderr, "Call to '%s' has invalid number of arguments\n",
-                    ctx->ID()->getText().c_str());
+            fprintf(stderr,
+                    "Line %lu: Call to '%s' has invalid number of arguments\n",
+                    ctx->start->getLine(), ctx->ID()->getText().c_str());
+            errorFound = true;
             return nullptr;
         }
 

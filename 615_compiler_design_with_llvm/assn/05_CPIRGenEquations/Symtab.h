@@ -2,17 +2,18 @@
 #define SYMTAB_H
 
 #include <iostream>
+#include <set>
 #include <sstream>
 #include <string>
 #include <unordered_map>
 
 class Symbol {
 private:
-    int numArgs = 0;
     std::string name;
     std::string type = "builtin";
-    bool isFunc = false;
     std::string scope = "global";
+    bool isFunc = false;
+    int numArgs = 0;
 
 public:
     Symbol(std::string _name, std::string _type, bool _isFunc)
@@ -55,8 +56,8 @@ public:
 
     std::string toString() {
         if (type.length()) {
-            return "<scope:" + scope + "><name:" + name + "><type:" + type +
-                   "><" + (isFunc ? "func" : "var") +
+            return "<name:" + name + "><type:" + type + "><" +
+                   (isFunc ? "func" : "var") +
                    "><narg:" + std::to_string(numArgs) + '>';
         }
         return name;
@@ -66,6 +67,16 @@ public:
 class SymbolTable {
 private:
     std::unordered_map<std::string, Symbol*> symbols;
+    std::set<std::string> scopeList = {"global"};
+
+    Symbol* get(std::string symbolName, std::string scopeName) {
+        return symbols[scopeName + symbolName];
+    }
+
+    void set(std::string symbolName, std::string scopeName, Symbol* symbol) {
+        scopeList.insert(scopeName);
+        symbols[scopeName + symbolName] = symbol;
+    }
 
 public:
     SymbolTable() {
@@ -81,14 +92,6 @@ public:
 
     ~SymbolTable() {
         symbols.clear();
-    }
-
-    Symbol* get(std::string symbolName, std::string scopeName) {
-        return symbols[scopeName + symbolName];
-    }
-
-    void set(std::string symbolName, std::string scopeName, Symbol* symbol) {
-        symbols[scopeName + symbolName] = symbol;
     }
 
     void defineVar(std::string symbolName, std::string symbolType,
@@ -124,9 +127,16 @@ public:
     }
 
     std::string dump() {
+
+        // a very inefficient way to dump the symtab with the scopes in order
         std::stringstream oss;
-        for (auto const& pair : symbols) {
-            oss << pair.second->toString() << "\n";
+        for (auto s = scopeList.begin(); s != scopeList.end(); ++s) {
+            oss << "<scope:" << *s << ">\n";
+            for (auto const& pair : symbols) {
+                if (pair.second->getScopeName() == *s) {
+                    oss << '\t' << pair.second->toString() << "\n";
+                }
+            }
         }
         return oss.str();
     }
