@@ -9,13 +9,20 @@
 
 int main() {
 
-    int j = 0;
-    for (int i = 0; i < 10; i++) {
-        j += 1;
+    int i = 0;
+    int j = 10;
+    int k = 0;
+    int l = 0;
+    while (i < 10) {
+
         // the optimization would switch the loop due to this conditional
-        if (i == 5) {
-            j = 0;
+        if (j == 10) {
+            k++;
+        } else {
+            l++;
         }
+        i++;
     }
-    return 0;
+
+    return k;
 }

@@ -8,52 +8,69 @@ define dso_local i32 @main() #0 {
   %1 = alloca i32, align 4
   %2 = alloca i32, align 4
   %3 = alloca i32, align 4
+  %4 = alloca i32, align 4
+  %5 = alloca i32, align 4
   store i32 0, i32* %1, align 4
-  %4 = bitcast i32* %2 to i8*
-  call void @llvm.lifetime.start.p0i8(i64 4, i8* %4) #2
+  %6 = bitcast i32* %2 to i8*
+  call void @llvm.lifetime.start.p0i8(i64 4, i8* %6) #2
   store i32 0, i32* %2, align 4, !tbaa !3
-  %5 = bitcast i32* %3 to i8*
-  call void @llvm.lifetime.start.p0i8(i64 4, i8* %5) #2
-  store i32 0, i32* %3, align 4, !tbaa !3
-  %.promoted = load i32, i32* %3, align 4, !tbaa !3
-  %.promoted1 = load i32, i32* %2, align 4, !tbaa !3
-  br label %6
+  %7 = bitcast i32* %3 to i8*
+  call void @llvm.lifetime.start.p0i8(i64 4, i8* %7) #2
+  store i32 10, i32* %3, align 4, !tbaa !3
+  %8 = bitcast i32* %4 to i8*
+  call void @llvm.lifetime.start.p0i8(i64 4, i8* %8) #2
+  store i32 0, i32* %4, align 4, !tbaa !3
+  %9 = bitcast i32* %5 to i8*
+  call void @llvm.lifetime.start.p0i8(i64 4, i8* %9) #2
+  store i32 0, i32* %5, align 4, !tbaa !3
+  %10 = load i32, i32* %3, align 4
+  %11 = icmp eq i32 %10, 10
+  %.promoted = load i32, i32* %2, align 4, !tbaa !3
+  %.promoted1 = load i32, i32* %5, align 4, !tbaa !3
+  %.promoted3 = load i32, i32* %4, align 4, !tbaa !3
+  br label %12
 
-6:                                                ; preds = %18, %0
-  %7 = phi i32 [ %17, %18 ], [ %.promoted1, %0 ]
-  %8 = phi i32 [ %19, %18 ], [ %.promoted, %0 ]
-  %9 = icmp slt i32 %8, 10
-  br i1 %9, label %12, label %10
+12:                                               ; preds = %22, %0
+  %13 = phi i32 [ %23, %22 ], [ %.promoted3, %0 ]
+  %14 = phi i32 [ %24, %22 ], [ %.promoted1, %0 ]
+  %15 = phi i32 [ %25, %22 ], [ %.promoted, %0 ]
+  %16 = icmp slt i32 %15, 10
+  br i1 %16, label %17, label %26
 
-10:                                               ; preds = %6
-  %.lcssa2 = phi i32 [ %7, %6 ]
-  %.lcssa = phi i32 [ %8, %6 ]
-  store i32 %.lcssa, i32* %3, align 4, !tbaa !3
-  store i32 %.lcssa2, i32* %2, align 4, !tbaa !3
-  %11 = bitcast i32* %3 to i8*
-  call void @llvm.lifetime.end.p0i8(i64 4, i8* %11) #2
-  br label %20
+17:                                               ; preds = %12
+  br i1 %11, label %18, label %20
 
-12:                                               ; preds = %6
-  %13 = add nsw i32 %7, 1
-  %14 = icmp eq i32 %8, 5
-  br i1 %14, label %15, label %16
+18:                                               ; preds = %17
+  %19 = add nsw i32 %13, 1
+  br label %22
 
-15:                                               ; preds = %12
-  br label %16
+20:                                               ; preds = %17
+  %21 = add nsw i32 %14, 1
+  br label %22
 
-16:                                               ; preds = %15, %12
-  %17 = phi i32 [ 0, %15 ], [ %13, %12 ]
-  br label %18
+22:                                               ; preds = %20, %18
+  %23 = phi i32 [ %13, %20 ], [ %19, %18 ]
+  %24 = phi i32 [ %21, %20 ], [ %14, %18 ]
+  %25 = add nsw i32 %15, 1
+  br label %12, !llvm.loop !7
 
-18:                                               ; preds = %16
-  %19 = add nsw i32 %8, 1
-  br label %6, !llvm.loop !7
-
-20:                                               ; preds = %10
-  %21 = bitcast i32* %2 to i8*
-  call void @llvm.lifetime.end.p0i8(i64 4, i8* %21) #2
-  ret i32 0
+26:                                               ; preds = %12
+  %.lcssa4 = phi i32 [ %13, %12 ]
+  %.lcssa2 = phi i32 [ %14, %12 ]
+  %.lcssa = phi i32 [ %15, %12 ]
+  store i32 %.lcssa, i32* %2, align 4, !tbaa !3
+  store i32 %.lcssa2, i32* %5, align 4, !tbaa !3
+  store i32 %.lcssa4, i32* %4, align 4, !tbaa !3
+  %27 = load i32, i32* %4, align 4, !tbaa !3
+  %28 = bitcast i32* %5 to i8*
+  call void @llvm.lifetime.end.p0i8(i64 4, i8* %28) #2
+  %29 = bitcast i32* %4 to i8*
+  call void @llvm.lifetime.end.p0i8(i64 4, i8* %29) #2
+  %30 = bitcast i32* %3 to i8*
+  call void @llvm.lifetime.end.p0i8(i64 4, i8* %30) #2
+  %31 = bitcast i32* %2 to i8*
+  call void @llvm.lifetime.end.p0i8(i64 4, i8* %31) #2
+  ret i32 %27
 }
 
 ; Function Attrs: argmemonly nofree nosync nounwind willreturn

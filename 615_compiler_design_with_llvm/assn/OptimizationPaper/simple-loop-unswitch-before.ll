@@ -8,50 +8,62 @@ define dso_local i32 @main() #0 {
   %1 = alloca i32, align 4
   %2 = alloca i32, align 4
   %3 = alloca i32, align 4
+  %4 = alloca i32, align 4
+  %5 = alloca i32, align 4
   store i32 0, i32* %1, align 4
-  %4 = bitcast i32* %2 to i8*
-  call void @llvm.lifetime.start.p0i8(i64 4, i8* %4) #2
+  %6 = bitcast i32* %2 to i8*
+  call void @llvm.lifetime.start.p0i8(i64 4, i8* %6) #2
   store i32 0, i32* %2, align 4, !tbaa !3
-  %5 = bitcast i32* %3 to i8*
-  call void @llvm.lifetime.start.p0i8(i64 4, i8* %5) #2
-  store i32 0, i32* %3, align 4, !tbaa !3
-  br label %6
+  %7 = bitcast i32* %3 to i8*
+  call void @llvm.lifetime.start.p0i8(i64 4, i8* %7) #2
+  store i32 10, i32* %3, align 4, !tbaa !3
+  %8 = bitcast i32* %4 to i8*
+  call void @llvm.lifetime.start.p0i8(i64 4, i8* %8) #2
+  store i32 0, i32* %4, align 4, !tbaa !3
+  %9 = bitcast i32* %5 to i8*
+  call void @llvm.lifetime.start.p0i8(i64 4, i8* %9) #2
+  store i32 0, i32* %5, align 4, !tbaa !3
+  br label %10
 
-6:                                                ; preds = %18, %0
-  %7 = load i32, i32* %3, align 4, !tbaa !3
-  %8 = icmp slt i32 %7, 10
-  br i1 %8, label %11, label %9
+10:                                               ; preds = %22, %0
+  %11 = load i32, i32* %2, align 4, !tbaa !3
+  %12 = icmp slt i32 %11, 10
+  br i1 %12, label %13, label %25
 
-9:                                                ; preds = %6
-  %10 = bitcast i32* %3 to i8*
-  call void @llvm.lifetime.end.p0i8(i64 4, i8* %10) #2
-  br label %21
-
-11:                                               ; preds = %6
-  %12 = load i32, i32* %2, align 4, !tbaa !3
-  %13 = add nsw i32 %12, 1
-  store i32 %13, i32* %2, align 4, !tbaa !3
+13:                                               ; preds = %10
   %14 = load i32, i32* %3, align 4, !tbaa !3
-  %15 = icmp eq i32 %14, 5
-  br i1 %15, label %16, label %17
+  %15 = icmp eq i32 %14, 10
+  br i1 %15, label %16, label %19
 
-16:                                               ; preds = %11
-  store i32 0, i32* %2, align 4, !tbaa !3
-  br label %17
+16:                                               ; preds = %13
+  %17 = load i32, i32* %4, align 4, !tbaa !3
+  %18 = add nsw i32 %17, 1
+  store i32 %18, i32* %4, align 4, !tbaa !3
+  br label %22
 
-17:                                               ; preds = %16, %11
-  br label %18
+19:                                               ; preds = %13
+  %20 = load i32, i32* %5, align 4, !tbaa !3
+  %21 = add nsw i32 %20, 1
+  store i32 %21, i32* %5, align 4, !tbaa !3
+  br label %22
 
-18:                                               ; preds = %17
-  %19 = load i32, i32* %3, align 4, !tbaa !3
-  %20 = add nsw i32 %19, 1
-  store i32 %20, i32* %3, align 4, !tbaa !3
-  br label %6, !llvm.loop !7
+22:                                               ; preds = %19, %16
+  %23 = load i32, i32* %2, align 4, !tbaa !3
+  %24 = add nsw i32 %23, 1
+  store i32 %24, i32* %2, align 4, !tbaa !3
+  br label %10, !llvm.loop !7
 
-21:                                               ; preds = %9
-  %22 = bitcast i32* %2 to i8*
-  call void @llvm.lifetime.end.p0i8(i64 4, i8* %22) #2
-  ret i32 0
+25:                                               ; preds = %10
+  %26 = load i32, i32* %4, align 4, !tbaa !3
+  %27 = bitcast i32* %5 to i8*
+  call void @llvm.lifetime.end.p0i8(i64 4, i8* %27) #2
+  %28 = bitcast i32* %4 to i8*
+  call void @llvm.lifetime.end.p0i8(i64 4, i8* %28) #2
+  %29 = bitcast i32* %3 to i8*
+  call void @llvm.lifetime.end.p0i8(i64 4, i8* %29) #2
+  %30 = bitcast i32* %2 to i8*
+  call void @llvm.lifetime.end.p0i8(i64 4, i8* %30) #2
+  ret i32 %26
 }
 
 ; Function Attrs: argmemonly nofree nosync nounwind willreturn
