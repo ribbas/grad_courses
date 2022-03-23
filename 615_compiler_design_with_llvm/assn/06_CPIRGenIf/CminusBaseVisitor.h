@@ -36,7 +36,7 @@ public:
             inputFuncType, llvm::Function::ExternalLinkage, "input",
             module.get());
         llvm::BasicBlock* inputBB =
-            llvm::BasicBlock::Create(*irContext, "Entry", inputFunc);
+            llvm::BasicBlock::Create(*irContext, "entry", inputFunc);
         irBuilder->SetInsertPoint(inputBB);
 
         std::vector<llvm::Type*> argList =
@@ -47,7 +47,7 @@ public:
             outputFuncType, llvm::Function::ExternalLinkage, "output",
             module.get());
         llvm::BasicBlock* outputBB =
-            llvm::BasicBlock::Create(*irContext, "Entry", outputFunc);
+            llvm::BasicBlock::Create(*irContext, "entry", outputFunc);
         irBuilder->SetInsertPoint(outputBB);
     }
 
@@ -116,7 +116,7 @@ public:
                 funcType, llvm::Function::ExternalLinkage, funcIdStr,
                 module.get());
             llvm::BasicBlock* basicBlock =
-                llvm::BasicBlock::Create(*irContext, "Entry", func);
+                llvm::BasicBlock::Create(*irContext, "entry", func);
             irBuilder->SetInsertPoint(basicBlock);
 
             // set names for all arguments
@@ -220,8 +220,6 @@ public:
         // if return value exists
         if (ctx->exp()) {
 
-            std::cout << "trying to return " << ctx->exp()->getText() << '\n';
-
             // if function is void
             if (!semantics.canReturn()) {
 
@@ -237,9 +235,6 @@ public:
             } else {
 
                 antlrcpp::Any retVal = visitChildren(ctx);
-                std::cout << "returned " << ctx->exp()->getText() << " "
-                          << expStack.back()->getName().str() << '\n';
-
                 irBuilder->CreateRet(expStack.back());
                 expStack.pop_back();
 
@@ -390,8 +385,10 @@ public:
 
         } else {
 
+            std::string callTmp =
+                (assignmentVar.length() ? assignmentVar : "ctmp");
             expStack.push_back(
-                irBuilder->CreateCall(calleeFunc, argsVector, assignmentVar));
+                irBuilder->CreateCall(calleeFunc, argsVector, callTmp));
         }
         return nullptr;
     }
