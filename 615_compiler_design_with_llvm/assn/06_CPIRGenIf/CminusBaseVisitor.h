@@ -220,8 +220,7 @@ public:
         // if return value exists
         if (ctx->exp()) {
 
-            std::string retValueStr = ctx->exp()->getText();
-            std::cout << "trying to return " << retValueStr << '\n';
+            std::cout << "trying to return " << ctx->exp()->getText() << '\n';
 
             // if function is void
             if (!semantics.canReturn()) {
@@ -231,42 +230,22 @@ public:
                         "return \"%s\"\n",
                         ctx->start->getLine(),
                         semantics.getCurFuncName().c_str(),
-                        retValueStr.c_str());
+                        ctx->exp()->getText().c_str());
                 errorFound = true;
                 return nullptr;
 
             } else {
 
                 antlrcpp::Any retVal = visitChildren(ctx);
-                llvm::Value* retAlloca = namedAllocas[retValueStr];
+                std::cout << "returned " << ctx->exp()->getText() << " "
+                          << expStack.back()->getName().str() << '\n';
 
-                if (retAlloca) {
-
-                    irBuilder->CreateRet(retAlloca);
-
-                    // irBuilder->CreateRet(irBuilder->CreateLoad(
-                    //     llvm::Type::getInt32Ty(*irContext), retAlloca,
-                    //     "ltmpdasdsa_" + retValueStr));
-
-                } else {
-
-                    std::cout << "returned " << retValueStr << " "
-                              << expStack.back()->getName().str() << '\n';
-
-                    irBuilder->CreateRet(expStack.back());
-
-                    // irBuilder->CreateRet(irBuilder->CreateLoad(
-                    //     llvm::Type::getInt32Ty(*irContext), expStack.back(),
-                    //     "ltmp_func"));
-                    expStack.pop_back();
-
-                    // irBuilder->CreateRet(llvm::ConstantInt::get(
-                    //     llvm::Type::getInt32Ty(*irContext),
-                    //     std::stoi(retValueStr)));
-                }
+                irBuilder->CreateRet(expStack.back());
+                expStack.pop_back();
 
                 return retVal;
             }
+
         } else if (!ctx->exp()) {
 
             if (semantics.canReturn()) {

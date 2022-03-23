@@ -16,6 +16,10 @@ int test(int a, int b, int c) {
   return 99;
 }
 
+void testv(int a, int b, int c) {
+  return;
+}
+
 void main(void) {
   int x; int y; int z;
   x = input();
