@@ -75,7 +75,7 @@ public:
         }
         namedAllocas[ctx->ID()->getText()] =
             irBuilder->CreateAlloca(llvm::Type::getInt32Ty(*irContext), nullptr,
-                                    "atmp_" + ctx->ID()->getText());
+                                    "tmp_" + ctx->ID()->getText());
         return visitChildren(ctx);
     }
 
@@ -131,7 +131,7 @@ public:
                 // create alloca for all parameter values
                 namedAllocas[namedArg] =
                     irBuilder->CreateAlloca(llvm::Type::getInt32Ty(*irContext),
-                                            nullptr, "atmp_" + namedArg);
+                                            nullptr, "tmp_" + namedArg);
             }
 
             // create store for all parameter values
@@ -169,24 +169,11 @@ public:
 
     virtual antlrcpp::Any
     visitStatement(CminusParser::StatementContext* ctx) override {
-
-        if (ctx->assignment_stmt()) {
-
-            assignmentVar = ctx->assignment_stmt()->ID()->getText();
-            if (!semantics.checkSymbol(assignmentVar)) {
-                fprintf(stderr, "Line: %lu: Variable '%s' was not declared\n",
-                        ctx->start->getLine(), assignmentVar.c_str());
-                errorFound = true;
-                return nullptr;
-            }
-        }
-
         return visitChildren(ctx);
     }
 
     virtual antlrcpp::Any
     visitSelection_stmt(CminusParser::Selection_stmtContext* ctx) override {
-        std::cout << "sel " << ctx->relational_exp()->getText() << '\n';
         return visitChildren(ctx);
     }
 
@@ -197,7 +184,32 @@ public:
 
     virtual antlrcpp::Any
     visitAssignment_stmt(CminusParser::Assignment_stmtContext* ctx) override {
-        return visitChildren(ctx);
+
+        assignmentVar = ctx->ID()->getText();
+        if (!semantics.checkSymbol(assignmentVar)) {
+
+            fprintf(stderr, "Line: %lu: Variable '%s' was not declared\n",
+                    ctx->start->getLine(), assignmentVar.c_str());
+            errorFound = true;
+            return nullptr;
+        }
+
+        if (ctx->ASN()) {
+
+            // if expression
+            for (auto& i : ctx->exp()) {
+                visit(i);
+
+                std::cout << "ASSIGNING " << assignmentVar << " -> "
+                          << i->getText() << "\n";
+
+                irBuilder->CreateStore(expStack.back(),
+                                       namedAllocas[assignmentVar], false);
+                expStack.pop_back();
+            }
+        }
+
+        return nullptr;
     }
 
     virtual antlrcpp::Any
@@ -267,6 +279,8 @@ public:
     virtual antlrcpp::Any
     visitAdd_exp(CminusParser::Add_expContext* ctx) override {
 
+        std::cout << "Add_exp " << ctx->getText() << '\n';
+
         valIsOpand = true;
         bool isAdd = ctx->addop()->ADD();
         antlrcpp::Any expression = visitChildren(ctx);
@@ -290,6 +304,7 @@ public:
     virtual antlrcpp::Any
     visitMult_exp(CminusParser::Mult_expContext* ctx) override {
 
+        std::cout << "Mult_exp " << ctx->getText() << '\n';
         valIsOpand = true;
         bool isMult = ctx->multop()->MULT();
         antlrcpp::Any expression = visitChildren(ctx);
@@ -312,17 +327,22 @@ public:
 
     virtual antlrcpp::Any
     visitParen_exp(CminusParser::Paren_expContext* ctx) override {
+
+        std::cout << "Paren_exp " << ctx->getText() << '\n';
         return visitChildren(ctx);
     }
 
     virtual antlrcpp::Any
     visitVal_exp(CminusParser::Val_expContext* ctx) override {
 
+        std::cout << "Val_exp " << ctx->getText() << '\n';
         if (!semantics.checkSymbol(ctx->getText())) {
+
             fprintf(stderr, "Line %lu: Variable '%s' was not declared\n",
                     ctx->start->getLine(), ctx->getText().c_str());
             errorFound = true;
             return nullptr;
+
         } else {
 
             if (valIsOpand) {
@@ -338,9 +358,10 @@ public:
     virtual antlrcpp::Any
     visitNum_exp(CminusParser::Num_expContext* ctx) override {
 
+        std::cout << "Num_exp " << ctx->getText() << '\n';
+        llvm::Value* value = llvm::ConstantInt::get(
+            llvm::Type::getInt32Ty(*irContext), std::stoi(ctx->getText()));
         if (valIsOpand) {
-            llvm::Value* value = llvm::ConstantInt::get(
-                llvm::Type::getInt32Ty(*irContext), std::stoi(ctx->getText()));
             expStack.push_back(value);
         }
 
@@ -349,6 +370,8 @@ public:
 
     virtual antlrcpp::Any
     visitCall_exp(CminusParser::Call_expContext* ctx) override {
+
+        std::cout << "Call_exp " << ctx->getText() << '\n';
 
         llvm::Function* calleeFunc = module->getFunction(ctx->ID()->getText());
         std::vector<llvm::Value*> argsVector;
@@ -363,7 +386,7 @@ public:
         }
 
         // if call has params
-        for (auto& i : ctx->exp()) {
+        for (CminusParser::ExpContext*& i : ctx->exp()) {
             visit(i);
             argsVector.push_back(expStack.back());
             expStack.pop_back();
@@ -374,16 +397,17 @@ public:
             irBuilder->CreateCall(calleeFunc, argsVector);
 
         } else {
-            llvm::Value* callValue =
-                irBuilder->CreateCall(calleeFunc, argsVector, assignmentVar);
-            irBuilder->CreateStore(callValue, namedAllocas[assignmentVar],
-                                   false);
+
+            expStack.push_back(
+                irBuilder->CreateCall(calleeFunc, argsVector, assignmentVar));
         }
         return nullptr;
     }
 
     virtual antlrcpp::Any
     visitRelational_exp(CminusParser::Relational_expContext* ctx) override {
+
+        std::cout << "Relational_exp " << ctx->getText() << '\n';
         return visitChildren(ctx);
     }
 

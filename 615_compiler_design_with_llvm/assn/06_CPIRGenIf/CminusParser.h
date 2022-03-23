@@ -12,17 +12,17 @@ public:
     enum {
         T__0 = 1,
         T__1 = 2,
-        T__2 = 3,
-        IF = 4,
-        ELSE = 5,
-        WHILE = 6,
-        RETURN = 7,
-        INT = 8,
-        VOID = 9,
-        ADD = 10,
-        SUB = 11,
-        MULT = 12,
-        DIV = 13,
+        IF = 3,
+        ELSE = 4,
+        WHILE = 5,
+        RETURN = 6,
+        INT = 7,
+        VOID = 8,
+        ADD = 9,
+        SUB = 10,
+        MULT = 11,
+        DIV = 12,
+        ASN = 13,
         LB = 14,
         RB = 15,
         LP = 16,
@@ -301,6 +301,7 @@ public:
                                size_t invokingState);
         virtual size_t getRuleIndex() const override;
         antlr4::tree::TerminalNode* ID();
+        antlr4::tree::TerminalNode* ASN();
         std::vector<ExpContext*> exp();
         ExpContext* exp(size_t i);
         antlr4::tree::TerminalNode* SEMICOLON();

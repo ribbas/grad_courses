@@ -29,7 +29,7 @@ private:
     }
 
 public:
-    void addVarSymbol(std::string symbolName, int size = 0) {
+    void addVarSymbol(std::string symbolName, int size = -1) {
         symtab.defineVar(symbolName, "int", curFuncName, size);
     }
 

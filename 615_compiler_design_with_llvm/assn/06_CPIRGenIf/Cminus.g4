@@ -29,6 +29,7 @@ ADD: '+';
 SUB: '-';
 MULT: '*';
 DIV: '/';
+ASN: '=';
 
 LB: '[';
 RB: ']';
@@ -77,7 +78,7 @@ statement:
 selection_stmt:
 	IF LP (exp | relational_exp) RP statement (ELSE statement)?;
 iteration_stmt: WHILE LP (exp | relational_exp) RP statement;
-assignment_stmt: ID (LB size = exp RB)? '=' exp SEMICOLON;
+assignment_stmt: ID (LB size = exp RB)? ASN exp SEMICOLON;
 return_stmt: RETURN exp? SEMICOLON;
 exp:
 	exp multop exp					# mult_exp

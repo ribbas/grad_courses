@@ -11,7 +11,7 @@ void testv(int a, int b, int c) {
 void main(void) {
   int x; int y; int z;
   x = input();
-  y = input();
+  y = 9 + x;
   z = input();
   output((x-4)+(y*z));
   return;
