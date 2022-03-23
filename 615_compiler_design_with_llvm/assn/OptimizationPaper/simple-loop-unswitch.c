@@ -7,10 +7,13 @@
  * 03/17/2022
  */
 
+#include <stdio.h>
+
 int main() {
 
     int i = 0;
-    int j = 10;
+    int j;
+    scanf("%d", &j);
     int k = 0;
     int l = 0;
     while (i < 10) {

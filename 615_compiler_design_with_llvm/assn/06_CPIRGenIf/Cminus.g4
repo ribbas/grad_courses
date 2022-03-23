@@ -21,12 +21,29 @@ IF: 'if';
 ELSE: 'else';
 WHILE: 'while';
 RETURN: 'return';
+
 INT: 'int';
 VOID: 'void';
+
 ADD: '+';
 SUB: '-';
 MULT: '*';
 DIV: '/';
+
+LB: '[';
+RB: ']';
+LP: '(';
+RP: ')';
+
+SEMICOLON: ';';
+COMMA: ',';
+
+LTE: '<=';
+LT: '<';
+GT: '>';
+GTE: '>=';
+EQ: '==';
+NEQ: '!=';
 
 // 1 or more letters
 ID: LETTER+;
@@ -43,11 +60,11 @@ WS: [ \t\r\n]+ -> skip;
 // Parser Rules
 
 program: (var_declaration | fun_declaration)+ EOF;
-var_declaration: INT ID ('[' NUM ']')? ';';
+var_declaration: INT ID (LB size = NUM RB)? SEMICOLON;
 fun_declaration:
-	fun_type_specifier ID '(' (param (',' param)* | VOID) ')' compound_stmt;
+	fun_type_specifier ID LP (param (COMMA param)* | VOID) RP compound_stmt;
 fun_type_specifier: INT | VOID;
-param: INT ID ('[' ']')?;
+param: INT ID (LB RB)?;
 compound_stmt: '{' var_declaration* statement* '}';
 statement:
 	compound_stmt
@@ -55,21 +72,21 @@ statement:
 	| iteration_stmt
 	| assignment_stmt
 	| return_stmt
-	| exp ';'
-	| ';';
+	| exp SEMICOLON
+	| SEMICOLON;
 selection_stmt:
-	IF '(' (exp | relational_exp) ')' statement (ELSE statement)?;
-iteration_stmt: WHILE '(' (exp | relational_exp) ')' statement;
-assignment_stmt: ID ('[' exp ']')? '=' exp ';';
-return_stmt: RETURN exp? ';';
+	IF LP (exp | relational_exp) RP statement (ELSE statement)?;
+iteration_stmt: WHILE LP (exp | relational_exp) RP statement;
+assignment_stmt: ID (LB size = exp RB)? '=' exp SEMICOLON;
+return_stmt: RETURN exp? SEMICOLON;
 exp:
-	exp multop exp						# mult_exp
-	| exp addop exp						# add_exp
-	| '(' (exp | relational_exp) ')'	# paren_exp
-	| ID ('[' exp ']')?					# val_exp
-	| ID '(' (exp (',' exp)*)? ')'		# call_exp
-	| NUM								# num_exp;
+	exp multop exp					# mult_exp
+	| exp addop exp					# add_exp
+	| LP (exp | relational_exp) RP	# paren_exp
+	| ID (LB size = exp RB)?		# val_exp
+	| ID LP (exp (COMMA exp)*)? RP	# call_exp
+	| NUM							# num_exp;
 addop: ADD | SUB;
 multop: MULT | DIV;
 relational_exp: exp relop exp;
-relop: '<=' | '<' | '>' | '>=' | '==' | '!=';
+relop: LTE | LT | GT | GTE | EQ | NEQ;

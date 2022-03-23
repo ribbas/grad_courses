@@ -7,7 +7,7 @@
 class Semantics {
 private:
     bool mainDeclared = false;
-    std::string curFuncName = "";
+    std::string curFuncName = "global";
     std::string curFuncType = "";
     SymbolTable symtab;
 
@@ -29,8 +29,8 @@ private:
     }
 
 public:
-    void addVarSymbol(std::string symbolName, std::string symbolType) {
-        symtab.defineVar(symbolName, symbolType, curFuncName);
+    void addVarSymbol(std::string symbolName, int size = 0) {
+        symtab.defineVar(symbolName, "int", curFuncName, size);
     }
 
     void addFuncSymbol(std::string symbolName, std::string symbolType,

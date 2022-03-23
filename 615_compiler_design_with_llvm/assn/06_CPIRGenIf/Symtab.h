@@ -14,14 +14,11 @@ private:
     std::string scope = "global";
     bool isFunc = false;
     int numArgs = 0;
+    int size = 0;
 
 public:
-    Symbol(std::string _name, std::string _type, bool _isFunc)
-        : name(_name), type(_type), isFunc(_isFunc) {}
-
-    Symbol(std::string _name, std::string _type, std::string scope,
-           bool _isFunc)
-        : name(_name), type(_type), scope(scope), isFunc(_isFunc) {}
+    Symbol(std::string _name, std::string _type, std::string scope, int _size)
+        : name(_name), type(_type), scope(scope), size(_size) {}
 
     Symbol(std::string _name, std::string _type, int _numArgs, bool _isFunc)
         : name(_name), type(_type), numArgs(_numArgs), isFunc(_isFunc) {}
@@ -57,8 +54,9 @@ public:
     std::string toString() {
         if (type.length()) {
             return "<name:" + name + "><type:" + type + "><" +
-                   (isFunc ? "func" : "var") +
-                   "><narg:" + std::to_string(numArgs) + '>';
+                   (isFunc ? ("func><narg:" + std::to_string(numArgs))
+                           : ("var><size:" + std::to_string(size))) +
+                   '>';
         }
         return name;
     }
@@ -82,8 +80,8 @@ public:
     SymbolTable() {
 
         // built-in types
-        defineVar("int", "builtin", "global");
-        defineVar("void", "builtin", "global");
+        defineVar("int", "builtin", "global", 0);
+        defineVar("void", "builtin", "global", 0);
 
         // built-in functions
         defineFunc("input", "int", 0);
@@ -95,9 +93,9 @@ public:
     }
 
     void defineVar(std::string symbolName, std::string symbolType,
-                   std::string scopeName) {
+                   std::string scopeName, int size) {
         set(symbolName, scopeName,
-            new Symbol(symbolName, symbolType, scopeName, false));
+            new Symbol(symbolName, symbolType, scopeName, size));
     }
 
     void defineFunc(std::string symbolName, std::string symbolType,
@@ -107,7 +105,12 @@ public:
     }
 
     bool contains(std::string symbolName, std::string scopeName) {
-        return symbols.find(scopeName + symbolName) != symbols.end();
+        if (symbols.find(scopeName + symbolName) == symbols.end()) {
+            if (symbols.find("global" + symbolName) == symbols.end()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     std::string getScope(std::string symbolName, std::string scopeName) {

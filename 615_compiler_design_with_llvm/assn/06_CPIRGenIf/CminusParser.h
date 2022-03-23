@@ -1,6 +1,6 @@
 
 // Generated from
-// /home/ribbas/grad_courses/615_compiler_design_with_llvm/assn/05_CPIRGenEquations/Cminus.g4
+// /home/ribbas/grad_courses/615_compiler_design_with_llvm/assn/06_CPIRGenIf/Cminus.g4
 // by ANTLR 4.9
 
 #pragma once
@@ -13,28 +13,28 @@ public:
         T__0 = 1,
         T__1 = 2,
         T__2 = 3,
-        T__3 = 4,
-        T__4 = 5,
-        T__5 = 6,
-        T__6 = 7,
-        T__7 = 8,
-        T__8 = 9,
-        T__9 = 10,
-        T__10 = 11,
-        T__11 = 12,
-        T__12 = 13,
-        T__13 = 14,
-        T__14 = 15,
-        IF = 16,
-        ELSE = 17,
-        WHILE = 18,
-        RETURN = 19,
-        INT = 20,
-        VOID = 21,
-        ADD = 22,
-        SUB = 23,
-        MULT = 24,
-        DIV = 25,
+        IF = 4,
+        ELSE = 5,
+        WHILE = 6,
+        RETURN = 7,
+        INT = 8,
+        VOID = 9,
+        ADD = 10,
+        SUB = 11,
+        MULT = 12,
+        DIV = 13,
+        LB = 14,
+        RB = 15,
+        LP = 16,
+        RP = 17,
+        SEMICOLON = 18,
+        COMMA = 19,
+        LTE = 20,
+        LT = 21,
+        GT = 22,
+        GTE = 23,
+        EQ = 24,
+        NEQ = 25,
         ID = 26,
         NUM = 27,
         COMMENT = 28,
@@ -113,11 +113,15 @@ public:
 
     class Var_declarationContext : public antlr4::ParserRuleContext {
     public:
+        antlr4::Token* size = nullptr;
         Var_declarationContext(antlr4::ParserRuleContext* parent,
                                size_t invokingState);
         virtual size_t getRuleIndex() const override;
         antlr4::tree::TerminalNode* INT();
         antlr4::tree::TerminalNode* ID();
+        antlr4::tree::TerminalNode* SEMICOLON();
+        antlr4::tree::TerminalNode* LB();
+        antlr4::tree::TerminalNode* RB();
         antlr4::tree::TerminalNode* NUM();
 
         virtual void
@@ -138,10 +142,14 @@ public:
         virtual size_t getRuleIndex() const override;
         Fun_type_specifierContext* fun_type_specifier();
         antlr4::tree::TerminalNode* ID();
+        antlr4::tree::TerminalNode* LP();
+        antlr4::tree::TerminalNode* RP();
         Compound_stmtContext* compound_stmt();
         std::vector<ParamContext*> param();
         ParamContext* param(size_t i);
         antlr4::tree::TerminalNode* VOID();
+        std::vector<antlr4::tree::TerminalNode*> COMMA();
+        antlr4::tree::TerminalNode* COMMA(size_t i);
 
         virtual void
         enterRule(antlr4::tree::ParseTreeListener* listener) override;
@@ -179,6 +187,8 @@ public:
         virtual size_t getRuleIndex() const override;
         antlr4::tree::TerminalNode* INT();
         antlr4::tree::TerminalNode* ID();
+        antlr4::tree::TerminalNode* LB();
+        antlr4::tree::TerminalNode* RB();
 
         virtual void
         enterRule(antlr4::tree::ParseTreeListener* listener) override;
@@ -223,6 +233,7 @@ public:
         Assignment_stmtContext* assignment_stmt();
         Return_stmtContext* return_stmt();
         ExpContext* exp();
+        antlr4::tree::TerminalNode* SEMICOLON();
 
         virtual void
         enterRule(antlr4::tree::ParseTreeListener* listener) override;
@@ -241,6 +252,8 @@ public:
                               size_t invokingState);
         virtual size_t getRuleIndex() const override;
         antlr4::tree::TerminalNode* IF();
+        antlr4::tree::TerminalNode* LP();
+        antlr4::tree::TerminalNode* RP();
         std::vector<StatementContext*> statement();
         StatementContext* statement(size_t i);
         ExpContext* exp();
@@ -264,6 +277,8 @@ public:
                               size_t invokingState);
         virtual size_t getRuleIndex() const override;
         antlr4::tree::TerminalNode* WHILE();
+        antlr4::tree::TerminalNode* LP();
+        antlr4::tree::TerminalNode* RP();
         StatementContext* statement();
         ExpContext* exp();
         Relational_expContext* relational_exp();
@@ -281,12 +296,16 @@ public:
 
     class Assignment_stmtContext : public antlr4::ParserRuleContext {
     public:
+        CminusParser::ExpContext* size = nullptr;
         Assignment_stmtContext(antlr4::ParserRuleContext* parent,
                                size_t invokingState);
         virtual size_t getRuleIndex() const override;
         antlr4::tree::TerminalNode* ID();
         std::vector<ExpContext*> exp();
         ExpContext* exp(size_t i);
+        antlr4::tree::TerminalNode* SEMICOLON();
+        antlr4::tree::TerminalNode* LB();
+        antlr4::tree::TerminalNode* RB();
 
         virtual void
         enterRule(antlr4::tree::ParseTreeListener* listener) override;
@@ -305,6 +324,7 @@ public:
                            size_t invokingState);
         virtual size_t getRuleIndex() const override;
         antlr4::tree::TerminalNode* RETURN();
+        antlr4::tree::TerminalNode* SEMICOLON();
         ExpContext* exp();
 
         virtual void
@@ -349,6 +369,8 @@ public:
     public:
         Paren_expContext(ExpContext* ctx);
 
+        antlr4::tree::TerminalNode* LP();
+        antlr4::tree::TerminalNode* RP();
         ExpContext* exp();
         Relational_expContext* relational_exp();
         virtual void
@@ -379,8 +401,12 @@ public:
         Call_expContext(ExpContext* ctx);
 
         antlr4::tree::TerminalNode* ID();
+        antlr4::tree::TerminalNode* LP();
+        antlr4::tree::TerminalNode* RP();
         std::vector<ExpContext*> exp();
         ExpContext* exp(size_t i);
+        std::vector<antlr4::tree::TerminalNode*> COMMA();
+        antlr4::tree::TerminalNode* COMMA(size_t i);
         virtual void
         enterRule(antlr4::tree::ParseTreeListener* listener) override;
         virtual void
@@ -394,7 +420,10 @@ public:
     public:
         Val_expContext(ExpContext* ctx);
 
+        CminusParser::ExpContext* size = nullptr;
         antlr4::tree::TerminalNode* ID();
+        antlr4::tree::TerminalNode* LB();
+        antlr4::tree::TerminalNode* RB();
         ExpContext* exp();
         virtual void
         enterRule(antlr4::tree::ParseTreeListener* listener) override;
@@ -483,6 +512,12 @@ public:
     public:
         RelopContext(antlr4::ParserRuleContext* parent, size_t invokingState);
         virtual size_t getRuleIndex() const override;
+        antlr4::tree::TerminalNode* LTE();
+        antlr4::tree::TerminalNode* LT();
+        antlr4::tree::TerminalNode* GT();
+        antlr4::tree::TerminalNode* GTE();
+        antlr4::tree::TerminalNode* EQ();
+        antlr4::tree::TerminalNode* NEQ();
 
         virtual void
         enterRule(antlr4::tree::ParseTreeListener* listener) override;

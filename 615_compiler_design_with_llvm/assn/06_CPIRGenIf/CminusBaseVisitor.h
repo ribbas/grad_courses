@@ -17,18 +17,18 @@
 class CminusBaseVisitor : public CminusVisitor {
 
 private:
-    std::string assignmentVar = "";
+    std::string assignmentVar;
     std::vector<llvm::Value*> expStack;
-    bool valIsOpand = false;
-    bool errorFound = false;
+    bool valIsOpand;
+    bool errorFound;
 
     std::map<std::string, llvm::Value*> namedAllocas;
-    std::unique_ptr<llvm::Module> module = nullptr;
+    std::unique_ptr<llvm::Module> module;
 
 public:
-    CminusBaseVisitor(std::string fileName) {
-
-        module = std::make_unique<llvm::Module>(fileName, *irContext);
+    CminusBaseVisitor(std::string fileName)
+        : assignmentVar(""), valIsOpand(false), errorFound(false),
+          module(std::make_unique<llvm::Module>(fileName, *irContext)) {
 
         llvm::FunctionType* inputFuncType =
             llvm::FunctionType::get(llvm::Type::getInt32Ty(*irContext), false);
@@ -66,7 +66,13 @@ public:
 
     virtual antlrcpp::Any
     visitVar_declaration(CminusParser::Var_declarationContext* ctx) override {
-        semantics.addVarSymbol(ctx->ID()->getText(), "int");
+        if (ctx->size) {
+            std::cout << ctx->getText() << " is an array\n";
+            semantics.addVarSymbol(ctx->ID()->getText(),
+                                   std::stoi(ctx->size->getText().c_str()));
+        } else {
+            semantics.addVarSymbol(ctx->ID()->getText());
+        }
         namedAllocas[ctx->ID()->getText()] =
             irBuilder->CreateAlloca(llvm::Type::getInt32Ty(*irContext), nullptr,
                                     "atmp_" + ctx->ID()->getText());
@@ -119,7 +125,7 @@ public:
             for (llvm::Argument& arg : func->args()) {
 
                 namedArg = argNames[argIdx++];
-                semantics.addVarSymbol(namedArg, "int");
+                semantics.addVarSymbol(namedArg);
                 arg.setName(namedArg);
 
                 // create alloca for all parameter values
@@ -180,6 +186,7 @@ public:
 
     virtual antlrcpp::Any
     visitSelection_stmt(CminusParser::Selection_stmtContext* ctx) override {
+        std::cout << "sel " << ctx->relational_exp()->getText() << '\n';
         return visitChildren(ctx);
     }
 
