@@ -221,6 +221,7 @@ public:
         if (ctx->exp()) {
 
             std::string retValueStr = ctx->exp()->getText();
+            std::cout << "trying to return " << retValueStr << '\n';
 
             // if function is void
             if (!semantics.canReturn()) {
@@ -241,20 +242,31 @@ public:
 
                 if (retAlloca) {
 
-                    irBuilder->CreateRet(irBuilder->CreateLoad(
-                        llvm::Type::getInt32Ty(*irContext), retAlloca,
-                        "ltmp_" + retValueStr));
+                    irBuilder->CreateRet(retAlloca);
+
+                    // irBuilder->CreateRet(irBuilder->CreateLoad(
+                    //     llvm::Type::getInt32Ty(*irContext), retAlloca,
+                    //     "ltmpdasdsa_" + retValueStr));
 
                 } else {
 
-                    irBuilder->CreateRet(llvm::ConstantInt::get(
-                        llvm::Type::getInt32Ty(*irContext),
-                        std::stoi(retValueStr)));
+                    std::cout << "returned " << retValueStr << " "
+                              << expStack.back()->getName().str() << '\n';
+
+                    irBuilder->CreateRet(expStack.back());
+
+                    // irBuilder->CreateRet(irBuilder->CreateLoad(
+                    //     llvm::Type::getInt32Ty(*irContext), expStack.back(),
+                    //     "ltmp_func"));
+                    expStack.pop_back();
+
+                    // irBuilder->CreateRet(llvm::ConstantInt::get(
+                    //     llvm::Type::getInt32Ty(*irContext),
+                    //     std::stoi(retValueStr)));
                 }
 
                 return retVal;
             }
-
         } else if (!ctx->exp()) {
 
             if (semantics.canReturn()) {
@@ -345,12 +357,12 @@ public:
 
         } else {
 
-            if (valIsOpand) {
-                llvm::Value* value = irBuilder->CreateLoad(
-                    llvm::Type::getInt32Ty(*irContext),
-                    namedAllocas[ctx->getText()], "ltmp_" + ctx->getText());
-                expStack.push_back(value);
-            }
+            // if (valIsOpand) {
+            llvm::Value* value = irBuilder->CreateLoad(
+                llvm::Type::getInt32Ty(*irContext),
+                namedAllocas[ctx->getText()], "ltmp_" + ctx->getText());
+            expStack.push_back(value);
+            // }
             return visitChildren(ctx);
         }
     }
@@ -361,9 +373,9 @@ public:
         std::cout << "Num_exp " << ctx->getText() << '\n';
         llvm::Value* value = llvm::ConstantInt::get(
             llvm::Type::getInt32Ty(*irContext), std::stoi(ctx->getText()));
-        if (valIsOpand) {
-            expStack.push_back(value);
-        }
+        // if (valIsOpand) {
+        expStack.push_back(value);
+        // }
 
         return visitChildren(ctx);
     }
@@ -392,6 +404,7 @@ public:
             expStack.pop_back();
         }
 
+        // if function is of type void and cannot return
         if (calleeFunc->getReturnType()->isVoidTy()) {
 
             irBuilder->CreateCall(calleeFunc, argsVector);

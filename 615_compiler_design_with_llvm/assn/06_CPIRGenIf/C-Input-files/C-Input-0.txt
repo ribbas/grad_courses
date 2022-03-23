@@ -1,17 +1,25 @@
 /* A program to test functions and expressions.  */
 
-int testi(int a, int b, int c) {
+int testtest(int a, int b, int c) {
+  return testtest(a, b, c);
+}
+
+int testa(int a, int b, int c) {
   return a;
 }
 
-void testv(int a, int b, int c) {
-  return;
+int testab(int a, int b, int c) {
+  return a + b;
+}
+
+int test(int a, int b, int c) {
+  return 99;
 }
 
 void main(void) {
   int x; int y; int z;
   x = input();
-  y = 9 + x;
+  y = input();
   z = input();
   output((x-4)+(y*z));
   return;
