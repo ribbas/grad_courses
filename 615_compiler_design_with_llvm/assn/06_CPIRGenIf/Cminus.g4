@@ -76,8 +76,10 @@ statement:
 	| exp SEMICOLON
 	| SEMICOLON;
 selection_stmt:
-	IF LP (exp | relational_exp) RP statement (ELSE statement)?;
-iteration_stmt: WHILE LP (exp | relational_exp) RP statement;
+	IF LP relational_exp RP then_cond = statement (
+		ELSE else_cond = statement
+	)?;
+iteration_stmt: WHILE LP relational_exp RP statement;
 assignment_stmt: ID (LB size = exp RB)? ASN exp SEMICOLON;
 return_stmt: RETURN exp? SEMICOLON;
 exp:
@@ -89,5 +91,5 @@ exp:
 	| NUM							# num_exp;
 addop: ADD | SUB;
 multop: MULT | DIV;
-relational_exp: exp relop exp;
+relational_exp: lhs = exp relop rhs = exp;
 relop: LTE | LT | GT | GTE | EQ | NEQ;

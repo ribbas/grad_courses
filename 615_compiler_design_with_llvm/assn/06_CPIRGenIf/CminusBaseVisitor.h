@@ -174,7 +174,93 @@ public:
 
     virtual antlrcpp::Any
     visitSelection_stmt(CminusParser::Selection_stmtContext* ctx) override {
-        return visitChildren(ctx);
+
+        for (auto& i : ctx->statement()) {
+            std::cout << "stmt " << i->getText() << '\n';
+        }
+        std::cout << ctx->then_cond->getText() << " if\n";
+        std::cout << ctx->else_cond->getText() << " else\n";
+
+        antlrcpp::Any ifExpression = visit(ctx->then_cond);
+
+        antlrcpp::Any relationalExpression = visit(ctx->relational_exp());
+
+        llvm::Function* func = irBuilder->GetInsertBlock()->getParent();
+        llvm::BasicBlock* ThenBB =
+            llvm::BasicBlock::Create(*irContext, "then", func);
+        llvm::BasicBlock* ElseBB = llvm::BasicBlock::Create(*irContext, "else");
+        llvm::BasicBlock* MergeBB =
+            llvm::BasicBlock::Create(*irContext, "ifcont");
+
+        irBuilder->CreateCondBr(expStack.back(), ThenBB, ElseBB);
+        expStack.pop_back();
+
+        // Emit then value.
+        irBuilder->SetInsertPoint(ThenBB);
+        irBuilder->CreateBr(MergeBB);
+        // Codegen of 'Then' can change the current block, update ThenBB for the
+        // PHI.
+        ThenBB = irBuilder->GetInsertBlock();
+
+        // Emit else block.
+        func->getBasicBlockList().push_back(ElseBB);
+        irBuilder->SetInsertPoint(ElseBB);
+
+        // Value* ElseV = Else->codegen();
+        // if (!ElseV)
+        //     return nullptr;
+
+        irBuilder->CreateBr(MergeBB);
+        // Codegen of 'Else' can change the current block, update ElseBB for the
+        // PHI.
+        ElseBB = irBuilder->GetInsertBlock();
+
+        // Emit merge block.
+        func->getBasicBlockList().push_back(MergeBB);
+        irBuilder->SetInsertPoint(MergeBB);
+        llvm::PHINode* PN =
+            irBuilder->CreatePHI(llvm::Type::getInt32Ty(*irContext), 2, "itmp");
+
+        antlrcpp::Any expdf = visit(ctx->then_cond);
+
+        // PN->addIncoming(ThenV, ThenBB);
+        // PN->addIncoming(ElseV, ElseBB);
+
+        return relationalExpression;
+    }
+
+    virtual antlrcpp::Any
+    visitRelational_exp(CminusParser::Relational_expContext* ctx) override {
+
+        // bool isAdd = ctx->addop()->ADD();
+
+        antlrcpp::Any expression = visitChildren(ctx);
+        llvm::Value* right = expStack.back();
+        expStack.pop_back();
+        llvm::Value* left = expStack.back();
+        expStack.pop_back();
+        llvm::Value* result = nullptr;
+
+        if (ctx->relop()->EQ()) {
+            result = irBuilder->CreateICmpEQ(left, right, "eq");
+        } else if (ctx->relop()->NEQ()) {
+            result = irBuilder->CreateICmpNE(left, right, "neq");
+        } else if (ctx->relop()->LT()) {
+            result = irBuilder->CreateICmpULT(left, right, "lt");
+        } else if (ctx->relop()->GT()) {
+            result = irBuilder->CreateICmpUGT(left, right, "gt");
+        }
+        expStack.push_back(result);
+
+        return expression;
+
+        // std::cout << "2cond lhs: " << ctx->lhs->getText()
+        //           << " 2cond rhs: " << ctx->rhs->getText() << '\n';
+
+        // // // Convert condition to a bool by comparing non-equal to 0.0.
+        // // CondV = Builder->CreateFCmpONE(
+        // //     CondV, ConstantFP::get(*TheContext, APFloat(0.0)), "ifcond");
+        // return visitChildren(ctx);
     }
 
     virtual antlrcpp::Any
@@ -200,8 +286,8 @@ public:
             for (auto& i : ctx->exp()) {
                 visit(i);
 
-                std::cout << "ASSIGNING " << assignmentVar << " -> "
-                          << i->getText() << "\n";
+                // std::cout << "ASSIGNING " << assignmentVar << " -> "
+                //           << i->getText() << "\n";
 
                 irBuilder->CreateStore(expStack.back(),
                                        namedAllocas[assignmentVar], false);
@@ -265,7 +351,7 @@ public:
     virtual antlrcpp::Any
     visitAdd_exp(CminusParser::Add_expContext* ctx) override {
 
-        std::cout << "Add_exp " << ctx->getText() << '\n';
+        // std::cout << "Add_exp " << ctx->getText() << '\n';
 
         valIsOpand = true;
         bool isAdd = ctx->addop()->ADD();
@@ -290,7 +376,7 @@ public:
     virtual antlrcpp::Any
     visitMult_exp(CminusParser::Mult_expContext* ctx) override {
 
-        std::cout << "Mult_exp " << ctx->getText() << '\n';
+        // std::cout << "Mult_exp " << ctx->getText() << '\n';
         valIsOpand = true;
         bool isMult = ctx->multop()->MULT();
         antlrcpp::Any expression = visitChildren(ctx);
@@ -314,14 +400,14 @@ public:
     virtual antlrcpp::Any
     visitParen_exp(CminusParser::Paren_expContext* ctx) override {
 
-        std::cout << "Paren_exp " << ctx->getText() << '\n';
+        // std::cout << "Paren_exp " << ctx->getText() << '\n';
         return visitChildren(ctx);
     }
 
     virtual antlrcpp::Any
     visitVal_exp(CminusParser::Val_expContext* ctx) override {
 
-        std::cout << "Val_exp " << ctx->getText() << '\n';
+        // std::cout << "Val_exp " << ctx->getText() << '\n';
         if (!semantics.checkSymbol(ctx->getText())) {
 
             fprintf(stderr, "Line %lu: Variable '%s' was not declared\n",
@@ -344,7 +430,7 @@ public:
     virtual antlrcpp::Any
     visitNum_exp(CminusParser::Num_expContext* ctx) override {
 
-        std::cout << "Num_exp " << ctx->getText() << '\n';
+        // std::cout << "Num_exp " << ctx->getText() << '\n';
         llvm::Value* value = llvm::ConstantInt::get(
             llvm::Type::getInt32Ty(*irContext), std::stoi(ctx->getText()));
         // if (valIsOpand) {
@@ -357,7 +443,7 @@ public:
     virtual antlrcpp::Any
     visitCall_exp(CminusParser::Call_expContext* ctx) override {
 
-        std::cout << "Call_exp " << ctx->getText() << '\n';
+        // std::cout << "Call_exp " << ctx->getText() << '\n';
 
         llvm::Function* calleeFunc = module->getFunction(ctx->ID()->getText());
         std::vector<llvm::Value*> argsVector;
@@ -390,14 +476,8 @@ public:
             expStack.push_back(
                 irBuilder->CreateCall(calleeFunc, argsVector, callTmp));
         }
+
         return nullptr;
-    }
-
-    virtual antlrcpp::Any
-    visitRelational_exp(CminusParser::Relational_expContext* ctx) override {
-
-        std::cout << "Relational_exp " << ctx->getText() << '\n';
-        return visitChildren(ctx);
     }
 
     virtual antlrcpp::Any visitAddop(CminusParser::AddopContext* ctx) override {

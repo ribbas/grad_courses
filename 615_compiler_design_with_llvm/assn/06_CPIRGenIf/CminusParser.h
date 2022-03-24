@@ -248,16 +248,17 @@ public:
 
     class Selection_stmtContext : public antlr4::ParserRuleContext {
     public:
+        CminusParser::StatementContext* then_cond = nullptr;
+        CminusParser::StatementContext* else_cond = nullptr;
         Selection_stmtContext(antlr4::ParserRuleContext* parent,
                               size_t invokingState);
         virtual size_t getRuleIndex() const override;
         antlr4::tree::TerminalNode* IF();
         antlr4::tree::TerminalNode* LP();
+        Relational_expContext* relational_exp();
         antlr4::tree::TerminalNode* RP();
         std::vector<StatementContext*> statement();
         StatementContext* statement(size_t i);
-        ExpContext* exp();
-        Relational_expContext* relational_exp();
         antlr4::tree::TerminalNode* ELSE();
 
         virtual void
@@ -278,10 +279,9 @@ public:
         virtual size_t getRuleIndex() const override;
         antlr4::tree::TerminalNode* WHILE();
         antlr4::tree::TerminalNode* LP();
+        Relational_expContext* relational_exp();
         antlr4::tree::TerminalNode* RP();
         StatementContext* statement();
-        ExpContext* exp();
-        Relational_expContext* relational_exp();
 
         virtual void
         enterRule(antlr4::tree::ParseTreeListener* listener) override;
@@ -491,12 +491,14 @@ public:
 
     class Relational_expContext : public antlr4::ParserRuleContext {
     public:
+        CminusParser::ExpContext* lhs = nullptr;
+        CminusParser::ExpContext* rhs = nullptr;
         Relational_expContext(antlr4::ParserRuleContext* parent,
                               size_t invokingState);
         virtual size_t getRuleIndex() const override;
+        RelopContext* relop();
         std::vector<ExpContext*> exp();
         ExpContext* exp(size_t i);
-        RelopContext* relop();
 
         virtual void
         enterRule(antlr4::tree::ParseTreeListener* listener) override;
