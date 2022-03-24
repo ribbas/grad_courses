@@ -33,6 +33,7 @@ public:
     Token* tok;
     Node* right;
     llvm::Value* irValue;
+    llvm::IntrusiveRefCntPtr<llvm::orc::ResourceTracker> RT;
 
     // add all the IDs to the Controllers list
     void walkTreeAddIDs(SS_Cell* cell);

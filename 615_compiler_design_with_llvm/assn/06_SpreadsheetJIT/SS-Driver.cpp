@@ -9,13 +9,9 @@
 #include <iostream>
 #include <string>
 
-// open a new context and module
-std::unique_ptr<llvm::LLVMContext> irContext =
-    std::make_unique<llvm::LLVMContext>();
-
-// create a new builder for the module
-std::unique_ptr<llvm::IRBuilder<>> irBuilder =
-    std::make_unique<llvm::IRBuilder<>>(*irContext);
+std::unique_ptr<llvm::LLVMContext> irContext;
+std::unique_ptr<llvm::IRBuilder<>> irBuilder;
+std::unique_ptr<llvm::orc::KaleidoscopeJIT> JIT;
 
 int main(int argc, const char* argv[]) {
 
@@ -62,6 +58,19 @@ int main(int argc, const char* argv[]) {
         if (cmd == QUIT)
             break;
     }
+
+    LLVMInitializeNativeTarget();
+    LLVMInitializeNativeAsmPrinter();
+    LLVMInitializeNativeAsmParser();
+
+    JIT = ExitOnErr(llvm::orc::KaleidoscopeJIT::Create());
+    // open a new context and module
+    irContext = std::make_unique<llvm::LLVMContext>();
+
+    // create a new builder for the module
+    irBuilder = std::make_unique<llvm::IRBuilder<>>(*irContext);
+
+    // InitializeModuleAndPassManager(nullptr);
 
     // generate IR for all the valid expression cells
     symTab.generateIR();

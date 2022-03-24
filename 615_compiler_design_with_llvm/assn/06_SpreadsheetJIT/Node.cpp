@@ -20,6 +20,7 @@ Node::~Node() {
     delete left;
     delete tok;
     delete right;
+    ExitOnErr(RT->remove());
 }
 
 void Node::walkTreeAddIDs(SS_Cell* cell) {
@@ -42,9 +43,22 @@ llvm::Value* Node::codeGen(SS_Cell* cell) {
 
     std::string expName = cell->id + "_exp";
     std::string moduleName = cell->id + "_module";
-    if (!cell->module) {
-        cell->module = std::make_unique<llvm::Module>(moduleName, *irContext);
-    }
+    // if (!cell->module) {
+
+    cell->module = std::make_unique<llvm::Module>(moduleName, *irContext);
+    RT = JIT->getMainJITDylib().createResourceTracker();
+
+    auto TSM = llvm::orc::ThreadSafeModule(std::move(cell->module),
+                                           std::move(irContext));
+    ExitOnErr(JIT->addModule(std::move(TSM), RT));
+
+    // open a new context and module
+    irContext = std::make_unique<llvm::LLVMContext>();
+
+    // create a new builder for the module
+    irBuilder = std::make_unique<llvm::IRBuilder<>>(*irContext);
+    cell->module = std::make_unique<llvm::Module>(moduleName, *irContext);
+    cell->module->setDataLayout(JIT->getDataLayout());
 
     std::vector<std::string> args = cell->controllers.getList();
     std::vector<llvm::Type*> argList(args.size(),
