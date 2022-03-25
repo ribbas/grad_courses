@@ -48,10 +48,16 @@ class SS_Cell {
 
     // expression root
     string equation;
-    Node* expNode = nullptr;
+    Node* expNode;
+
+    std::unique_ptr<llvm::LLVMContext> irContext;
+    std::unique_ptr<llvm::IRBuilder<>> irBuilder;
 
     std::unique_ptr<llvm::Module> module;
+    std::unique_ptr<llvm::orc::KaleidoscopeJIT> JIT;
     std::map<std::string, llvm::Value*> namedValues;
+
+    void initJIT();
 
 public:
     SS_Cell();

@@ -13,9 +13,6 @@
 #include "llvm/IR/Type.h"
 #include "llvm/Support/Error.h"
 
-extern std::unique_ptr<llvm::LLVMContext> irContext;
-extern std::unique_ptr<llvm::IRBuilder<>> irBuilder;
-extern std::unique_ptr<llvm::orc::KaleidoscopeJIT> JIT;
 static llvm::ExitOnError ExitOnErr;
 
 #endif

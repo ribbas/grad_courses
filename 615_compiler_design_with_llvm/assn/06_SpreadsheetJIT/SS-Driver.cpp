@@ -1,6 +1,11 @@
-// SS-Driver.cpp
-// Allyn Shell
-// July 2019
+/* SS-Driver.cpp
+ * Allyn Shell
+ *
+ * July 2019
+ * Modified by
+ * Sabbir Ahmed
+ * March 2022
+ */
 
 #include "SS_Cell.h"
 #include "Scanner.h"
@@ -8,10 +13,6 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-
-std::unique_ptr<llvm::LLVMContext> irContext;
-std::unique_ptr<llvm::IRBuilder<>> irBuilder;
-std::unique_ptr<llvm::orc::KaleidoscopeJIT> JIT;
 
 int main(int argc, const char* argv[]) {
 
@@ -55,22 +56,10 @@ int main(int argc, const char* argv[]) {
     while (true) {
         symTab.printTable(cout);
         command cmd = readCommandLine(symTab);
-        if (cmd == QUIT)
+        if (cmd == QUIT) {
             break;
+        }
     }
-
-    LLVMInitializeNativeTarget();
-    LLVMInitializeNativeAsmPrinter();
-    LLVMInitializeNativeAsmParser();
-
-    JIT = ExitOnErr(llvm::orc::KaleidoscopeJIT::Create());
-    // open a new context and module
-    irContext = std::make_unique<llvm::LLVMContext>();
-
-    // create a new builder for the module
-    irBuilder = std::make_unique<llvm::IRBuilder<>>(*irContext);
-
-    // InitializeModuleAndPassManager(nullptr);
 
     // generate IR for all the valid expression cells
     symTab.generateIR();
@@ -80,8 +69,6 @@ int main(int argc, const char* argv[]) {
     symTab.printAllCells(cout);
     symTab.printAllCells(ofs);
 
-    // invoke destructors for global LLVM objects
-    llvm::llvm_shutdown();
     ofs.close();
 
     return 0;
