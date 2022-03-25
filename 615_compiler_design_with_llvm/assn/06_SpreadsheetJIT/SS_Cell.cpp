@@ -20,7 +20,7 @@ string itos(int value);
 
 SS_Cell::SS_Cell()
     : id(""), kind(BLANK), error(false), display("    "), value(0),
-      expNode(nullptr), module(nullptr), JIT(nullptr) {}
+      expNode(nullptr), irStdout(irCode) {}
 
 SS_Cell::~SS_Cell() {
     if (expNode) {
@@ -30,20 +30,6 @@ SS_Cell::~SS_Cell() {
     namedValues.clear();
     controllers.clear();
     users.clear();
-    // invoke destructors for global LLVM objects
-    llvm::llvm_shutdown();
-}
-
-void SS_Cell::initJIT() {
-    JIT = ExitOnErr(llvm::orc::KaleidoscopeJIT::Create());
-
-    // open a new context and module
-    irContext = std::make_unique<llvm::LLVMContext>();
-
-    // create a new builder for the module
-    irBuilder = std::make_unique<llvm::IRBuilder<>>(*irContext);
-    module = std::make_unique<llvm::Module>(id + "_module", *irContext);
-    module->setDataLayout(JIT->getDataLayout());
 }
 
 TableOfCells* SS_Cell::getTOC() {
@@ -158,11 +144,8 @@ void SS_Cell::dropUser(const int row, const int col) {
 
 void SS_Cell::generateIR() {
     if (expNode) {
-        LLVMInitializeNativeTarget();
-        LLVMInitializeNativeAsmPrinter();
-        LLVMInitializeNativeAsmParser();
-        initJIT();
         expNode->codeGen(this);
+        module->print(irStdout, nullptr);
     }
 }
 
@@ -317,11 +300,7 @@ void SS_Cell::printCellAttributes(ostream& os) {
         expNode->walkTreePrintAttributes(os);
 
         os << "    IR:" << endl;
-        std::string str;
-        llvm::raw_string_ostream output(str);
-        module->print(output, nullptr);
-
-        os << output.str();
+        os << irStdout.str();
     }
 
     return;

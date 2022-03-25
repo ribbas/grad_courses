@@ -14,6 +14,13 @@
 #include <iostream>
 #include <string>
 
+std::unique_ptr<llvm::LLVMContext> irContext;
+std::unique_ptr<llvm::IRBuilder<>> irBuilder;
+
+std::unique_ptr<llvm::Module> module;
+std::unique_ptr<llvm::orc::KaleidoscopeJIT> JIT;
+std::map<std::string, llvm::Value*> namedValues;
+
 int main(int argc, const char* argv[]) {
 
     cout << "Welcome to mySpreadsheet" << endl << endl;
@@ -61,6 +68,11 @@ int main(int argc, const char* argv[]) {
         }
     }
 
+    LLVMInitializeNativeTarget();
+    LLVMInitializeNativeAsmPrinter();
+    LLVMInitializeNativeAsmParser();
+    initJIT();
+
     // generate IR for all the valid expression cells
     symTab.generateIR();
     symTab.printTable(ofs);
@@ -68,6 +80,9 @@ int main(int argc, const char* argv[]) {
     // print cell attributes to stdout and to file
     symTab.printAllCells(cout);
     symTab.printAllCells(ofs);
+
+    // invoke destructors for global LLVM objects
+    llvm::llvm_shutdown();
 
     ofs.close();
 

@@ -40,18 +40,18 @@ void Node::walkTreeCalculateValue(SS_Cell* cell) {
 
 llvm::Value* Node::codeGen(SS_Cell* cell) {
 
-    ExitOnErr(cell->JIT->addModule(llvm::orc::ThreadSafeModule(
-        std::move(cell->module), std::move(cell->irContext))));
-    cell->initJIT();
+    ExitOnErr(JIT->addModule(
+        llvm::orc::ThreadSafeModule(std::move(module), std::move(irContext))));
+    initJIT(cell->id);
 
     std::vector<std::string> args = cell->controllers.getList();
     std::vector<llvm::Type*> argList(args.size(),
-                                     llvm::Type::getInt32Ty(*cell->irContext));
+                                     llvm::Type::getInt32Ty(*irContext));
     llvm::FunctionType* funcType = llvm::FunctionType::get(
-        llvm::Type::getInt32Ty(*cell->irContext), argList, false);
+        llvm::Type::getInt32Ty(*irContext), argList, false);
     llvm::Function* func =
         llvm::Function::Create(funcType, llvm::Function::ExternalLinkage,
-                               cell->id + "_exp", cell->module.get());
+                               cell->id + "_exp", module.get());
 
     // Set names for all arguments.
     unsigned argIx = 0;
@@ -59,14 +59,13 @@ llvm::Value* Node::codeGen(SS_Cell* cell) {
     for (llvm::Argument& Arg : func->args()) {
         namedArg = args[argIx++];
         Arg.setName(namedArg);
-        cell->namedValues[namedArg] = &Arg;
+        namedValues[namedArg] = &Arg;
     }
 
-    llvm::BasicBlock* BB =
-        llvm::BasicBlock::Create(*cell->irContext, "entry", func);
-    cell->irBuilder->SetInsertPoint(BB);
+    llvm::BasicBlock* BB = llvm::BasicBlock::Create(*irContext, "entry", func);
+    irBuilder->SetInsertPoint(BB);
     walkCodeGen(cell->getTOC(), cell);
-    cell->irBuilder->CreateRet(irValue);
+    irBuilder->CreateRet(irValue);
 
     return irValue;
 }
@@ -102,11 +101,11 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
                 return;
             }
             std::string refCellName = tok->getLexeme();
-            irValue = cell->namedValues[refCellName];
+            irValue = namedValues[refCellName];
             return;
         }
         case NUM: {
-            irValue = llvm::ConstantInt::get(*cell->irContext,
+            irValue = llvm::ConstantInt::get(*irContext,
                                              llvm::APInt(32, tok->getValue()));
             return;
         }
@@ -117,8 +116,8 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
                 irValue = nullptr;
                 return;
             }
-            irValue = cell->irBuilder->CreateAdd(left->irValue, right->irValue,
-                                                 "addtmp");
+            irValue =
+                irBuilder->CreateAdd(left->irValue, right->irValue, "addtmp");
             return;
         }
         case SUB: {
@@ -126,8 +125,8 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
                 irValue = nullptr;
                 return;
             }
-            irValue = cell->irBuilder->CreateSub(left->irValue, right->irValue,
-                                                 "subtmp");
+            irValue =
+                irBuilder->CreateSub(left->irValue, right->irValue, "subtmp");
             return;
         }
         case MULT: {
@@ -135,8 +134,8 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
                 irValue = nullptr;
                 return;
             }
-            irValue = cell->irBuilder->CreateMul(left->irValue, right->irValue,
-                                                 "multmp");
+            irValue =
+                irBuilder->CreateMul(left->irValue, right->irValue, "multmp");
 
             return;
         }
@@ -146,8 +145,8 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
                 irValue = nullptr;
                 return;
             }
-            irValue = cell->irBuilder->CreateUDiv(left->irValue, right->irValue,
-                                                  "divtmp");
+            irValue =
+                irBuilder->CreateUDiv(left->irValue, right->irValue, "divtmp");
             return;
         }
         default: {

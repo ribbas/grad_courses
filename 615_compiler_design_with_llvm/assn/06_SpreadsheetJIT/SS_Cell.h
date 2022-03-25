@@ -50,14 +50,8 @@ class SS_Cell {
     string equation;
     Node* expNode;
 
-    std::unique_ptr<llvm::LLVMContext> irContext;
-    std::unique_ptr<llvm::IRBuilder<>> irBuilder;
-
-    std::unique_ptr<llvm::Module> module;
-    std::unique_ptr<llvm::orc::KaleidoscopeJIT> JIT;
-    std::map<std::string, llvm::Value*> namedValues;
-
-    void initJIT();
+    std::string irCode;
+    llvm::raw_string_ostream irStdout;
 
 public:
     SS_Cell();
