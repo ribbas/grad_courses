@@ -1,0 +1,45 @@
+\usepackage[margin=1.0in]{geometry}
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage{listings}
+\usepackage[toc,page]{appendix}
+\usepackage{xcolor}
+
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+
+\definecolor{cmt}{RGB}{44, 62, 80}
+\definecolor{kw}{RGB}{142, 68, 173}
+\definecolor{str}{RGB}{39, 174, 96}
+
+\lstdefinestyle{base}{
+    basicstyle=\ttfamily,
+    frame=bottomline,
+    framextopmargin=5pt,
+    numbers=left,
+    stringstyle=\color{str},
+    commentstyle=\color{cmt},
+    keywordstyle=\color{kw},
+    keywordstyle=\color{kw},
+    showspaces=false,
+    showstringspaces=false
+}
+
+\newif\ifcoloranglebrackets
+\coloranglebracketsfalse
+\newcommand\coloroncondition{\ifcoloranglebrackets\color{str}\fi}
+
+\lstdefinestyle{customC++}{
+    style=base,
+    language=c,
+    moredelim=**[directive][\coloranglebracketstrue]\#,
+    moredelim=**[s][\coloroncondition]<>,
+    deletekeywords={register}
+}
+
+\setlength{\parindent}{0em}
+\setlength{\parskip}{1em}
+
+\graphicspath{ {/home/sabbir/grad_courses/707_software_patterns/proj/final/statics/} }
