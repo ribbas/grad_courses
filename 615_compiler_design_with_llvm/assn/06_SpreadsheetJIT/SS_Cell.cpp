@@ -301,6 +301,7 @@ void SS_Cell::printCellAttributes(ostream& os) {
 
         os << "    IR:" << endl;
         os << irStdout.str();
+        irStdout.flush();
     }
 
     return;

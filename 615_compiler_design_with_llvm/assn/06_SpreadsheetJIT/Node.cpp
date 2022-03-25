@@ -40,7 +40,7 @@ void Node::walkTreeCalculateValue(SS_Cell* cell) {
 
 llvm::Value* Node::codeGen(SS_Cell* cell) {
 
-    ExitOnErr(JIT->addModule(
+    ExitOnErr(cellJIT->addModule(
         llvm::orc::ThreadSafeModule(std::move(module), std::move(irContext))));
     initJIT(cell->id);
 

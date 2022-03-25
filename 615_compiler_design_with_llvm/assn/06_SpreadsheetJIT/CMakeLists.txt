@@ -27,7 +27,18 @@ target_sources(${CMAKE_PROJECT_NAME} PUBLIC
 
 # Find the libraries that correspond to the LLVM components
 # that we wish to use
-llvm_map_components_to_libnames(llvm_libs support core irreader native orcjit)
+llvm_map_components_to_libnames(
+    llvm_libs
+    ${LLVM_TARGETS_TO_BUILD}
+    support
+    core
+    irreader
+    mc
+    mcparser
+    native
+    option
+    orcjit
+)
 
 # Link against LLVM libraries
 target_link_libraries(${CMAKE_PROJECT_NAME} ${llvm_libs})

@@ -18,7 +18,7 @@ std::unique_ptr<llvm::LLVMContext> irContext;
 std::unique_ptr<llvm::IRBuilder<>> irBuilder;
 
 std::unique_ptr<llvm::Module> module;
-std::unique_ptr<llvm::orc::KaleidoscopeJIT> JIT;
+std::unique_ptr<llvm::orc::JIT> cellJIT;
 std::map<std::string, llvm::Value*> namedValues;
 
 int main(int argc, const char* argv[]) {
@@ -72,6 +72,36 @@ int main(int argc, const char* argv[]) {
     LLVMInitializeNativeAsmPrinter();
     LLVMInitializeNativeAsmParser();
     initJIT();
+
+    // // Initialize the target registry etc.
+    // LLVMInitializeAllTargetInfos();
+    // LLVMInitializeAllTargets();
+    // LLVMInitializeAllTargetMCs();
+    // LLVMInitializeAllAsmParsers();
+    // LLVMInitializeAllAsmPrinters();
+
+    // std::string TargetTriple = llvm::sys::getDefaultTargetTriple();
+    // module->setTargetTriple(TargetTriple);
+
+    // std::string Error;
+    // auto Target = llvm::TargetRegistry::lookupTarget(TargetTriple, Error);
+
+    // // Print an error and exit if we couldn't find the requested target.
+    // // This generally occurs if we've forgotten to initialise the
+    // // TargetRegistry or we have a bogus target triple.
+    // if (!Target) {
+    //     llvm::errs() << Error;
+    //     return 1;
+    // }
+
+    // std::string CPU = "generic";
+    // std::string Features = "";
+
+    // llvm::TargetOptions opt;
+    // llvm::Optional<llvm::Reloc::Model> RM =
+    //     llvm::Optional<llvm::Reloc::Model>();
+    // auto TheTargetMachine =
+    //     Target->createTargetMachine(TargetTriple, CPU, Features, opt, RM);
 
     // generate IR for all the valid expression cells
     symTab.generateIR();

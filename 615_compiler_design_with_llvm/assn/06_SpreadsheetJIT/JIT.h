@@ -10,8 +10,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-#ifndef LLVM_EXECUTIONENGINE_ORC_KALEIDOSCOPEJIT_H
-#define LLVM_EXECUTIONENGINE_ORC_KALEIDOSCOPEJIT_H
+#ifndef LLVM_EXECUTIONENGINE_ORC_JIT_H
+#define LLVM_EXECUTIONENGINE_ORC_JIT_H
 
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ExecutionEngine/JITSymbol.h"
@@ -33,7 +33,7 @@
 namespace llvm {
 namespace orc {
 
-class KaleidoscopeJIT {
+class JIT {
 private:
     std::unique_ptr<ExecutionSession> ES;
 
@@ -46,8 +46,8 @@ private:
     JITDylib& MainJD;
 
 public:
-    KaleidoscopeJIT(std::unique_ptr<ExecutionSession> ES,
-                    JITTargetMachineBuilder JTMB, DataLayout DL)
+    JIT(std::unique_ptr<ExecutionSession> ES, JITTargetMachineBuilder JTMB,
+        DataLayout DL)
         : ES(std::move(ES)), DL(std::move(DL)), Mangle(*this->ES, this->DL),
           ObjectLayer(
               *this->ES,
@@ -55,21 +55,25 @@ public:
           CompileLayer(*this->ES, ObjectLayer,
                        std::make_unique<ConcurrentIRCompiler>(std::move(JTMB))),
           MainJD(this->ES->createBareJITDylib("<main>")) {
+
         MainJD.addGenerator(
             cantFail(DynamicLibrarySearchGenerator::GetForCurrentProcess(
                 DL.getGlobalPrefix())));
+
         if (JTMB.getTargetTriple().isOSBinFormatCOFF()) {
             ObjectLayer.setOverrideObjectFlagsWithResponsibilityFlags(true);
             ObjectLayer.setAutoClaimResponsibilityForObjectSymbols(true);
         }
     }
 
-    ~KaleidoscopeJIT() {
-        if (auto Err = ES->endSession())
+    ~JIT() {
+
+        if (auto Err = ES->endSession()) {
             ES->reportError(std::move(Err));
+        }
     }
 
-    static Expected<std::unique_ptr<KaleidoscopeJIT>> Create() {
+    static Expected<std::unique_ptr<JIT>> Create() {
         auto EPC = SelfExecutorProcessControl::Create();
         if (!EPC)
             return EPC.takeError();
@@ -83,8 +87,8 @@ public:
         if (!DL)
             return DL.takeError();
 
-        return std::make_unique<KaleidoscopeJIT>(std::move(ES), std::move(JTMB),
-                                                 std::move(*DL));
+        return std::make_unique<JIT>(std::move(ES), std::move(JTMB),
+                                     std::move(*DL));
     }
 
     const DataLayout& getDataLayout() const {
@@ -109,4 +113,4 @@ public:
 } // end namespace orc
 } // end namespace llvm
 
-#endif // LLVM_EXECUTIONENGINE_ORC_KALEIDOSCOPEJIT_H
+#endif // LLVM_EXECUTIONENGINE_ORC_JIT_H
