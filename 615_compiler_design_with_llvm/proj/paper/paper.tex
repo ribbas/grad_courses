@@ -8,18 +8,124 @@
 \begin{document}
 
 \maketitle
-% \tableofcontents
-% \newpage
 
-\section{Introduction} The
+% - The title of the optimization
+% - The full description of the title of the optimization
+% - The optimization's pass category
+% - An explanation of the optimization
+% - Your before and after code demonstrating the optimization
+% - Any diagrams that demonstrate the optimization
+% - A list of any Analysis Passes that must be run and available before the pass
+% - A list of the Analysis Passes that are invalidated
+% - A list of the Analysis Passes that are preserved
+% - A list of the references that you used
 
-\section{argpromotion}
+\section{Introduction} Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse maximus eu lorem interdum dignissim. Mauris imperdiet euismod nisl finibus fringilla. Curabitur sagittis nec ligula nec tempus. Phasellus quis fringilla massa. Aliquam malesuada libero at dolor rutrum consequat. Nulla efficitur dictum laoreet. Etiam feugiat turpis at condimentum euismod. Aliquam leo magna, egestas ac sagittis vel, fringilla at dui. Aliquam ut enim justo. Vestibulum et velit id leo tristique viverra. Integer sagittis placerat augue eget condimentum. Integer hendrerit ultricies dui. Aliquam tincidunt porttitor ornare. \cite{passes}
 
-\section{loop-unswitch}
+\section{\texttt{argpromotion}} The \texttt{argpromotion} pass implements the argument promotion optimization. This optimization is a transform pass that aims to convert function arguments that are passed "by reference" to "by value". \cite{argpromotion-src} This "argument promotion" is performed when the compiler determines the values passed do not have any store instructions performed on them. By converting the references, the pass optimizes away unnecessary instructions of storing the arguments into temporary registers.
 
-\begin{lstlisting}[caption=A typical method to run the user's model in the SST framework,style=customC++]
-sst run.py
+Consider the following listing:
+
+\begin{lstlisting}[caption=A method to return the sum of 2 integers,style=customC++]
+int add(int* a, int* b) {
+    return *a + *b;
+}
+
+void callAdd() {
+    int a = 1;
+    int b = 2;
+    int c = add(&a, &b);
+}
 \end{lstlisting}
+
+The \texttt{add} method expects references to 2 integers as its arguments. The method makes references to the variables to retrieve their values and compute the sum. This operation does not modify the variables. Therefore, the compiler can be expected to optimize the \texttt{add} method by converting its arguments to be passed by value. However, running clang without optimizations
+generate something similar to the following:
+
+\begin{lstlisting}[caption=\texttt{add} method compiled without optimizations,style=customC++]
+int add(int* a, int* b) {
+    int tmpa;
+    int tmpb;
+    tmpa = *a;  // store
+    tmpb = *b;  // store
+    int sum;
+    sum = tmpa + tmpb;  // load
+    return sum;
+}
+
+void callAdd() {
+    int a;
+    int b;
+    a = 1;
+    b = 2;
+    int c;
+    c = add(&a, &b);
+}
+\end{lstlisting}
+
+Whereas the compiler is expected to generate something similar to the following:
+
+\begin{lstlisting}[caption=Expected \texttt{add} method compiled with optimizations,style=customC++]
+int add(int a, int b) {
+    int sum;
+    sum = a + b;  // load
+    return sum;
+}
+
+void callAdd() {
+    int a;
+    int b;
+    a = 1;
+    b = 2;
+    int c;
+    c = add(a, b);
+}
+\end{lstlisting}
+
+For the optimization, the \texttt{argpromotion} pass must be able to perform the following tasks:
+\begin{enumerate}
+    \item change the prototype of the \texttt{add} method
+    \item update all the call sites according to the modified prototype
+    \item know the reference does not alias other pointers in the \texttt{add} method
+    \item know the loaded values remain unchanged from function entry to the load
+    \item know the reference is not being used to store
+\end{enumerate}
+
+The pass expects other transform passes to be ran in conjunction, including \texttt{instcombine} to combine redundant instructions and \texttt{function-attrs} to look for functions which do not access or only read non-local memory.\cite{passes}
+
+\section{\texttt{simple-loop-unswitch}} The \texttt{simple-loop-unswitch} pass performs the loop unswitch optimization. This optimization is a transform pass that aims to reduce branching inside of loops. A loop is "unswitched" when the conditionals inside get extracted outside the loop. The following listing demonstrates a simple loop unswitch:
+
+\noindent\begin{minipage}{.45\textwidth}
+    \begin{lstlisting}[caption=Before Unswitching,style=customC++]{Name}
+// lic stands for loop-invariant
+// code
+for (...) {
+    A
+    if (lic) {
+        B
+    }
+    C
+}
+    \end{lstlisting}
+\end{minipage}\hfill
+\begin{minipage}{.45\textwidth}
+    \begin{lstlisting}[caption=After Unswitching,style=customC++,firstnumber=1]{Name}
+if (lic) {
+    for (...) {
+        A; B; C
+    }
+} else {
+    for (...) {
+        A; C
+    }
+}
+    \end{lstlisting}
+\end{minipage}
+
+The loop ends up getting duplicated for every conditional branches with loop-invariant expressions or statements. This optimization allows for individual loops to be safely parallelized and hurter optimized. However, the optimization may on average double the amount of instructions written. \cite{loop-unswitch}
+
+LLVM provides options to determine the form of transformation for this optimization. The switch can be either trivial (when the condition can be unswitched without cloning any code from inside the loop) or non-trivial (requires code duplication). By default, the pass always does trivial, full-unswitching (when the branch or switch is completely moved from inside the loop to outside the loop) for the branches and switches. \cite{loop-unswitch-src}
+
+The pass expects the \texttt{licm} optimization to be ran before it to hoist invariant conditions out of the loop.
 
 \bibliographystyle{plain}
 \bibliography{ref}
