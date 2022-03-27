@@ -1,0 +1,16 @@
+# Homework Project #2
+# System Development in the Unix Environment (605.614)
+
+## Log file tests
+
+All the log file tests are located in `src/bin` and perform various tasks to test the `log_mgr` library functions. `test_log`, `test_log2` and `lots_of_logs` utilize the library functions to generate simple data to dump into log files. `invalid_logfile` also tests the library's ability to handle files that are inaccessible due to lack of permissions or other restrictions. The supplied empty log file `locked_file` is used to test the function. The file has its permissions set to read-only.
+
+## Makefile
+
+The Makefiles are written to run only with GNU make, as other versions of UNIX make such as SunOS make do not recognize several macros and operators. The GNU make is located in `/usr/gnu/bin`. Running the make binary from that path will ensure the correct compilation of the Makefiles. The path is updated so that the make binary in `/usr/gnu/bin` is placed before the one in `/usr/bin`. This is achieved by exporting the path with a command similar to the following: `export PATH="/usr/gnu/bin:$PATH"`. This configuration has been placed on my `.bash_profile` on the `dev4` server.
+
+Each of the Makefiles can be invoked from their corresponding directories. All the Makefiles in `bin/` are identical.
+
+## Python
+
+The script to create packages of the project files and binaries is written in Python 3. The default version of Python in the `dev4` server is Python 2.7, which has been deprecated years ago. This version will not compile the provided script due to its different syntax and libraries. Python 3 must be used to run the script by using the `python3` command in the server.
