@@ -11,6 +11,8 @@
 #ifndef THREAD_MGR_HPP
 #define THREAD_MGR_HPP
 
+#include <pthread.h>
+
 #define THD_OK 0
 #define THD_ERROR -1
 
