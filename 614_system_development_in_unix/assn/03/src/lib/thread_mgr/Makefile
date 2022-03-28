@@ -2,7 +2,7 @@
 # Sabbir Ahmed
 # System Development in the Unix Environment (605.614)
 #
-# Makefile for lib/log_mgr
+# Makefile for lib/thread_mgr
 #
 
 # set the C++ compiler if unset
@@ -13,7 +13,7 @@ LIB_DIR := ../../../lib
 INC_DIR := ../../../include
 
 # source file for library file
-SRC := log_mgr.cpp
+SRC := thread_mgr.cpp
 
 # declare include headers as dependencies for the executable
 DEPS := $(INC_DIR)/$(SRC:%.cpp=%.hpp)
@@ -24,7 +24,7 @@ OBJ = $(SRC:.cpp=.o)
 
 .PHONY: it install depend clean
 
-it: $(LIB) depend
+it: $(LIB)
 $(LIB): $(OBJ)
 	ar cr $(LIB) $(OBJ)
 	cp $(LIB) $(LIB_DIR)

@@ -24,7 +24,7 @@ OBJ = $(SRC:.cpp=.o)
 
 .PHONY: it install depend clean
 
-it: $(LIB) depend
+it: $(LIB)
 $(LIB): $(OBJ)
 	ar cr $(LIB) $(OBJ)
 	cp $(LIB) $(LIB_DIR)

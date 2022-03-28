@@ -12,6 +12,7 @@
 
 #include <cstring>
 #include <ctime>
+#include <errno.h>
 #include <fcntl.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -21,7 +22,7 @@
 const char* LOG_FILE = "logfile";
 
 // default (invalid) file descriptor value
-int FD = -1;
+int FD = 0;
 
 // default string names corresponding to the Levels enum
 const char* LEVEL_STR[] = {"INFO", "WARNING", "FATAL"};
@@ -64,6 +65,7 @@ int set_logfile(const char* logfile_name) {
 
     if ((FD = open(logfile_name, O_CREAT | O_APPEND | O_WRONLY, 0600)) < 0) {
 
+        // printf("%d", errno);
         // file failed to open
         return ERROR;
 

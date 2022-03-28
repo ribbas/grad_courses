@@ -1,16 +1,31 @@
-# Homework Project #2
+# Homework Project #3
+
 # System Development in the Unix Environment (605.614)
 
-## Log file tests
+Hierarchy, Makefiles, and Script (out of 15): 13
 
-All the log file tests are located in `src/bin` and perform various tasks to test the `log_mgr` library functions. `test_log`, `test_log2` and `lots_of_logs` utilize the library functions to generate simple data to dump into log files. `invalid_logfile` also tests the library's ability to handle files that are inaccessible due to lack of permissions or other restrictions. The supplied empty log file `locked_file` is used to test the function. The file has its permissions set to read-only.
+-Hierarchy, and Script are correct.
 
-## Makefile
+-(-1) depend_list is not included in the Makefile, so dependencies are lost
 
-The Makefiles are written to run only with GNU make, as other versions of UNIX make such as SunOS make do not recognize several macros and operators. The GNU make is located in `/usr/gnu/bin`. Running the make binary from that path will ensure the correct compilation of the Makefiles. The path is updated so that the make binary in `/usr/gnu/bin` is placed before the one in `/usr/bin`. This is achieved by exporting the path with a command similar to the following: `export PATH="/usr/gnu/bin:$PATH"`. This configuration has been placed on my `.bash_profile` on the `dev4` server.
+-(-1) Make “it” should not have a dependency on “depend”
 
-Each of the Makefiles can be invoked from their corresponding directories. All the Makefiles in `bin/` are identical.
+Correctness of Programs (out of 25): 25
 
-## Python
+-Program tests run correctly.
 
-The script to create packages of the project files and binaries is written in Python 3. The default version of Python in the `dev4` server is Python 2.7, which has been deprecated years ago. This version will not compile the provided script due to its different syntax and libraries. Python 3 must be used to run the script by using the `python3` command in the server.
+Correctness of Library (out of 60): 50
+
+-(-1) Follow the style guide for global variable naming. They should begin with a capital letter.
+
+-(-1) Your file descriptor (fd) needs to be initialized to a non-valid value (ex. -1).
+
+-(-1) Use perror/errno to print specific error returns from system calls.
+
+-Thanks for the README
+
+-(-1) log_event should call set_logfile to reduce duplication of code
+
+-(-1) set_logfile needs to close the file descriptor before overwriting with open
+
+-(-5) log_event calls open on each call to log_event. This will result in using a new file descriptor on each call without closing the previous. Open should only be called in the case there is not a currently open file or via set_logfile. By putting some debug in your code to print the file descriptor value, you will see that it eventually runs out of available ones for the process and if you use perror to print errors on open, it will tell you that it exceeded the number of available file descriptors. I was able to duplicate this problem by using lots_of_logs and increasing the number of log messages printed.
