@@ -61,25 +61,7 @@ class SS_Cell {
 
     std::string irCode;
     llvm::raw_string_ostream irStdout;
-
-    std::unique_ptr<llvm::LLVMContext> irContext;
-    std::unique_ptr<llvm::IRBuilder<>> irBuilder;
-
-    std::unique_ptr<llvm::Module> module;
-    std::unique_ptr<llvm::orc::JIT> cellJIT;
-    std::map<std::string, llvm::Value*> namedValues;
     std::vector<int> argVals;
-
-    void initJIT() {
-
-        // open a new context and module
-        irContext = std::make_unique<llvm::LLVMContext>();
-
-        // create a new builder for the module
-        irBuilder = std::make_unique<llvm::IRBuilder<>>(*irContext);
-        module = std::make_unique<llvm::Module>(id + "_module", *irContext);
-        module->setDataLayout(cellJIT->getDataLayout());
-    }
 
     void evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym);
 

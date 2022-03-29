@@ -143,13 +143,8 @@ void SS_Cell::dropUser(const int row, const int col) {
 }
 
 void SS_Cell::generateIR() {
-    if (expNode) {
-        LLVMInitializeNativeTarget();
-        LLVMInitializeNativeAsmPrinter();
-        LLVMInitializeNativeAsmParser();
 
-        cellJIT = ExitOnErr(llvm::orc::JIT::Create());
-        initJIT();
+    if (expNode) {
 
         expNode->codeGen(this);
         ExitOnErr(cellJIT->addModule(llvm::orc::ThreadSafeModule(
@@ -165,66 +160,63 @@ void SS_Cell::generateIR() {
 
 void SS_Cell::evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym) {
 
-    int funcPointer = 0;
     switch (argVals.size()) {
 
         case 0: {
-            funcPointer = ((int (*)())(intptr_t)exprSym->getAddress())();
+            value = ((int (*)())(intptr_t)exprSym->getAddress())();
             break;
         }
 
         case 1: {
-            funcPointer =
-                ((int (*)(int))(intptr_t)exprSym->getAddress())(argVals[0]);
+            value = ((int (*)(int))(intptr_t)exprSym->getAddress())(argVals[0]);
             break;
         }
 
         case 2: {
-            funcPointer = ((int (*)(int, int))(intptr_t)exprSym->getAddress())(
+            value = ((int (*)(int, int))(intptr_t)exprSym->getAddress())(
                 argVals[0], argVals[1]);
             break;
         }
 
         case 3: {
-            funcPointer =
-                ((int (*)(int, int, int))(intptr_t)exprSym->getAddress())(
-                    argVals[0], argVals[1], argVals[2]);
+            value = ((int (*)(int, int, int))(intptr_t)exprSym->getAddress())(
+                argVals[0], argVals[1], argVals[2]);
             break;
         }
 
         case 4: {
-            funcPointer =
+            value =
                 ((int (*)(int, int, int, int))(intptr_t)exprSym->getAddress())(
                     argVals[0], argVals[1], argVals[2], argVals[3]);
             break;
         }
 
         case 5: {
-            funcPointer = ((int (*)(int, int, int, int, int))(
-                               intptr_t)exprSym->getAddress())(
+            value = ((int (*)(int, int, int, int, int))(
+                         intptr_t)exprSym->getAddress())(
                 argVals[0], argVals[1], argVals[2], argVals[3], argVals[4]);
             break;
         }
 
         case 6: {
-            funcPointer = ((int (*)(int, int, int, int, int, int))(
-                               intptr_t)exprSym->getAddress())(
+            value = ((int (*)(int, int, int, int, int, int))(
+                         intptr_t)exprSym->getAddress())(
                 argVals[0], argVals[1], argVals[2], argVals[3], argVals[4],
                 argVals[5]);
             break;
         }
 
         case 7: {
-            funcPointer = ((int (*)(int, int, int, int, int, int, int))(
-                               intptr_t)exprSym->getAddress())(
+            value = ((int (*)(int, int, int, int, int, int, int))(
+                         intptr_t)exprSym->getAddress())(
                 argVals[0], argVals[1], argVals[2], argVals[3], argVals[4],
                 argVals[5], argVals[6]);
             break;
         }
 
         case 8: {
-            funcPointer = ((int (*)(int, int, int, int, int, int, int, int))(
-                               intptr_t)exprSym->getAddress())(
+            value = ((int (*)(int, int, int, int, int, int, int, int))(
+                         intptr_t)exprSym->getAddress())(
                 argVals[0], argVals[1], argVals[2], argVals[3], argVals[4],
                 argVals[5], argVals[6], argVals[7]);
             break;
@@ -236,7 +228,8 @@ void SS_Cell::evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym) {
             break;
         }
     }
-    fprintf(stderr, "Evaluated to %d\n", funcPointer);
+
+    fprintf(stderr, "Evaluated to %d\n", value);
 }
 
 void SS_Cell::calculateExpression(SS_Cell* root, bool err) {
