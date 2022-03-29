@@ -28,3 +28,4 @@ clean:
 		cd $$i; \
 		$(MAKE) --no-print-directory $@; \
 	done
+	rm -f logfile LOGnewlog LOGwarnlog

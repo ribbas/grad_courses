@@ -8,29 +8,27 @@
  *
  */
 
-#include "log_mgr.hpp"
+#include "thread_mgr.hpp"
 
+#include <iostream>
 #include <stdlib.h>
 #include <unistd.h>
 
+void* PrintHello(void* threadid) {
+    long tid;
+    tid = (long)threadid;
+    std::cout << "Hello World! Thread ID, " << tid << std::endl;
+    th_exit();
+    // return nullptr;
+}
+
 int main() {
-    int i;
-    float z = 0.5;
 
-    for (i = 0; i < 5; i++) {
-        log_event(INFO, "[%d]This is test %d for %f", getpid(), i, z);
-        z = z * 0.98;
-    }
-    set_logfile("LOGnewlog");
+    th_execute(PrintHello);
+    th_execute(PrintHello);
+    th_execute(PrintHello);
+    th_execute(PrintHello);
+    th_exit();
 
-    for (i = 0; i < 5; i++) {
-        log_event(FATAL, "[%d]%s %d for %f", getpid(), "THIS IS TEST", i, z);
-        z = z * 0.98;
-    }
-
-    set_logfile("LOGwarnlog");
-    for (i = 0; i < 5; i++)
-        log_event(WARNING, "[%d]%c%c%c%c", getpid(), 't', 'e', 's', 't');
-    close_logfile();
     exit(0);
 }

@@ -19,6 +19,9 @@
 typedef int ThreadHandles;
 typedef void* Funcptrs(void*);
 
+extern ThreadHandles THREAD_NUM;
+extern pthread_t THREADS[50];
+
 ThreadHandles th_execute(Funcptrs);
 
 int th_wait(ThreadHandles);
