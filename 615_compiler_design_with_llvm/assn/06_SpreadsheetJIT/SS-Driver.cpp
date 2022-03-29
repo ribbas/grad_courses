@@ -14,12 +14,12 @@
 #include <iostream>
 #include <string>
 
-std::unique_ptr<llvm::LLVMContext> irContext;
-std::unique_ptr<llvm::IRBuilder<>> irBuilder;
+// std::unique_ptr<llvm::LLVMContext> irContext;
+// std::unique_ptr<llvm::IRBuilder<>> irBuilder;
 
-std::unique_ptr<llvm::Module> module;
-std::unique_ptr<llvm::orc::JIT> cellJIT;
-std::map<std::string, llvm::Value*> namedValues;
+// std::unique_ptr<llvm::Module> module;
+// std::unique_ptr<llvm::orc::JIT> cellJIT;
+// std::map<std::string, llvm::Value*> namedValues;
 
 int main(int argc, const char* argv[]) {
 
@@ -68,10 +68,10 @@ int main(int argc, const char* argv[]) {
         }
     }
 
-    LLVMInitializeNativeTarget();
-    LLVMInitializeNativeAsmPrinter();
-    LLVMInitializeNativeAsmParser();
-    initJIT();
+    // LLVMInitializeNativeTarget();
+    // LLVMInitializeNativeAsmPrinter();
+    // LLVMInitializeNativeAsmParser();
+    // initJIT();
 
     // // Initialize the target registry etc.
     // LLVMInitializeAllTargetInfos();
