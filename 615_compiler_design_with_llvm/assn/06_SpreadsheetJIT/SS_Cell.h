@@ -12,8 +12,11 @@
 #include "ID_List.h"
 #include "IR_Gen.h"
 
+// #include <functional>
 #include <iostream>
 #include <string>
+
+// using std::placeholders::_1;
 
 class Node;
 
@@ -23,6 +26,12 @@ enum CellArrayColumn { A, B, C, D, E, F };
 enum CellStatusAction { EMPTY, CALC, READY, ERROR };
 
 class TableOfCells;
+
+// struct Functor {
+//     int init1(int, int);
+//     int init2(int, int, int);
+//     int init3(int, int, int, int);
+// };
 
 class SS_Cell {
     friend class Parser;
@@ -59,6 +68,7 @@ class SS_Cell {
     std::unique_ptr<llvm::Module> module;
     std::unique_ptr<llvm::orc::JIT> cellJIT;
     std::map<std::string, llvm::Value*> namedValues;
+    std::vector<int> argVals;
 
     void initJIT() {
 
@@ -70,6 +80,8 @@ class SS_Cell {
         module = std::make_unique<llvm::Module>(id + "_module", *irContext);
         module->setDataLayout(cellJIT->getDataLayout());
     }
+
+    void evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym);
 
 public:
     SS_Cell();

@@ -40,10 +40,6 @@ void Node::walkTreeCalculateValue(SS_Cell* cell) {
 
 void Node::codeGen(SS_Cell* cell) {
 
-    // ExitOnErr(cell->cellJIT->addModule(llvm::orc::ThreadSafeModule(
-    //     std::move(cell->module), std::move(cell->irContext))));
-    // cell->initJIT();
-
     std::vector<std::string> args = cell->controllers.getList();
     std::vector<llvm::Type*> argList(args.size(),
                                      llvm::Type::getInt32Ty(*cell->irContext));
@@ -58,6 +54,9 @@ void Node::codeGen(SS_Cell* cell) {
     std::string namedArg = "";
     for (llvm::Argument& arg : func->args()) {
         namedArg = args[argIx++];
+        std::cout << namedArg << "|" << cell->getTOC()->getCell(namedArg)->value
+                  << "\n";
+        cell->argVals.push_back(cell->getTOC()->getCell(namedArg)->value);
         arg.setName(namedArg);
         cell->namedValues[namedArg] = &arg;
     }
@@ -68,7 +67,6 @@ void Node::codeGen(SS_Cell* cell) {
     walkCodeGen(cell->getTOC(), cell);
     cell->irBuilder->CreateRet(irValue);
 
-    std::cout << "before\n";
     cell->module->print(cell->irStdout, nullptr);
 }
 

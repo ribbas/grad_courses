@@ -68,47 +68,12 @@ int main(int argc, const char* argv[]) {
         }
     }
 
-    // LLVMInitializeNativeTarget();
-    // LLVMInitializeNativeAsmPrinter();
-    // LLVMInitializeNativeAsmParser();
-    // initJIT();
-
-    // // Initialize the target registry etc.
-    // LLVMInitializeAllTargetInfos();
-    // LLVMInitializeAllTargets();
-    // LLVMInitializeAllTargetMCs();
-    // LLVMInitializeAllAsmParsers();
-    // LLVMInitializeAllAsmPrinters();
-
-    // std::string TargetTriple = llvm::sys::getDefaultTargetTriple();
-    // module->setTargetTriple(TargetTriple);
-
-    // std::string Error;
-    // auto Target = llvm::TargetRegistry::lookupTarget(TargetTriple, Error);
-
-    // // Print an error and exit if we couldn't find the requested target.
-    // // This generally occurs if we've forgotten to initialise the
-    // // TargetRegistry or we have a bogus target triple.
-    // if (!Target) {
-    //     llvm::errs() << Error;
-    //     return 1;
-    // }
-
-    // std::string CPU = "generic";
-    // std::string Features = "";
-
-    // llvm::TargetOptions opt;
-    // llvm::Optional<llvm::Reloc::Model> RM =
-    //     llvm::Optional<llvm::Reloc::Model>();
-    // auto TheTargetMachine =
-    //     Target->createTargetMachine(TargetTriple, CPU, Features, opt, RM);
-
     // generate IR for all the valid expression cells
     symTab.generateIR();
     symTab.printTable(ofs);
 
     // print cell attributes to stdout and to file
-    symTab.printAllCells(cout);
+    // symTab.printAllCells(cout);
     symTab.printAllCells(ofs);
 
     // invoke destructors for global LLVM objects

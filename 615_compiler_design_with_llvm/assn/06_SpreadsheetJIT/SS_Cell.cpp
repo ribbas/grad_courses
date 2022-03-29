@@ -154,26 +154,89 @@ void SS_Cell::generateIR() {
         expNode->codeGen(this);
         ExitOnErr(cellJIT->addModule(llvm::orc::ThreadSafeModule(
             std::move(module), std::move(irContext))));
-
-        // auto RT = cellJIT->getMainJITDylib().createResourceTracker();
-
-        // auto TSM = llvm::orc::ThreadSafeModule(std::move(module),
-        //                                        std::move(irContext));
-        // ExitOnErr(cellJIT->addModule(std::move(TSM), RT));
         initJIT();
 
-        // std::cout << cellJIT->
-
-        auto ExprSymbol = cellJIT->lookup(id + "_exp");
-        assert(ExprSymbol && "Function not found");
-        int (*FP)(int, int, int, int) =
-            (int (*)(int, int, int, int))(intptr_t)ExprSymbol->getAddress();
-        fprintf(stderr, "Evaluated to %d\n", FP(5, 2, 2, -10));
-
-        // ExitOnErr(RT->remove());
-
-        // module->print(irStdout, nullptr);
+        llvm::Expected<llvm::JITEvaluatedSymbol> exprSym =
+            cellJIT->lookup(id + "_exp");
+        assert(exprSym && "Function not found");
+        evaluate(std::move(exprSym));
     }
+}
+
+void SS_Cell::evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym) {
+
+    int funcPointer = 0;
+    switch (argVals.size()) {
+
+        case 0: {
+            funcPointer = ((int (*)())(intptr_t)exprSym->getAddress())();
+            break;
+        }
+
+        case 1: {
+            funcPointer =
+                ((int (*)(int))(intptr_t)exprSym->getAddress())(argVals[0]);
+            break;
+        }
+
+        case 2: {
+            funcPointer = ((int (*)(int, int))(intptr_t)exprSym->getAddress())(
+                argVals[0], argVals[1]);
+            break;
+        }
+
+        case 3: {
+            funcPointer =
+                ((int (*)(int, int, int))(intptr_t)exprSym->getAddress())(
+                    argVals[0], argVals[1], argVals[2]);
+            break;
+        }
+
+        case 4: {
+            funcPointer =
+                ((int (*)(int, int, int, int))(intptr_t)exprSym->getAddress())(
+                    argVals[0], argVals[1], argVals[2], argVals[3]);
+            break;
+        }
+
+        case 5: {
+            funcPointer = ((int (*)(int, int, int, int, int))(
+                               intptr_t)exprSym->getAddress())(
+                argVals[0], argVals[1], argVals[2], argVals[3], argVals[4]);
+            break;
+        }
+
+        case 6: {
+            funcPointer = ((int (*)(int, int, int, int, int, int))(
+                               intptr_t)exprSym->getAddress())(
+                argVals[0], argVals[1], argVals[2], argVals[3], argVals[4],
+                argVals[5]);
+            break;
+        }
+
+        case 7: {
+            funcPointer = ((int (*)(int, int, int, int, int, int, int))(
+                               intptr_t)exprSym->getAddress())(
+                argVals[0], argVals[1], argVals[2], argVals[3], argVals[4],
+                argVals[5], argVals[6]);
+            break;
+        }
+
+        case 8: {
+            funcPointer = ((int (*)(int, int, int, int, int, int, int, int))(
+                               intptr_t)exprSym->getAddress())(
+                argVals[0], argVals[1], argVals[2], argVals[3], argVals[4],
+                argVals[5], argVals[6], argVals[7]);
+            break;
+        }
+
+        default: {
+            fprintf(stderr, "Function exceeded maximum number of arguments "
+                            "allowed (8)\n");
+            break;
+        }
+    }
+    fprintf(stderr, "Evaluated to %d\n", funcPointer);
 }
 
 void SS_Cell::calculateExpression(SS_Cell* root, bool err) {
@@ -303,10 +366,13 @@ void SS_Cell::updateControllerUsers() {
 }
 
 void SS_Cell::calculateUserExpressions(SS_Cell* root, bool err) {
-    for (int r = 0; r < 10; ++r)
-        for (int c = 0; c < 6; ++c)
-            if (users.contains(r, c))
+    for (int r = 0; r < 10; ++r) {
+        for (int c = 0; c < 6; ++c) {
+            if (users.contains(r, c)) {
                 SS_Cell::TOC->getCell(c, r)->calculateExpression(root, err);
+            }
+        }
+    }
 }
 
 void SS_Cell::printCellAttributes(ostream& os) {
