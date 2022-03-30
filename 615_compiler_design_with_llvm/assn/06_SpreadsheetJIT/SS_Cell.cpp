@@ -141,7 +141,6 @@ void SS_Cell::dropUser(const int row, const int col) {
 
 void SS_Cell::generateIR() {
 
-    argVals.clear();
     namedValues.clear();
     irStdout.str().clear();
 
@@ -162,82 +161,8 @@ void SS_Cell::generateIR() {
         std::cerr << "Function not found\n";
     }
 
-    evaluate(std::move(exprSym));
+    expNode->evaluate(std::move(exprSym));
     initLLVMContext();
-}
-
-void SS_Cell::evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym) {
-
-    switch (argVals.size()) {
-
-        case 0: {
-            value = ((int (*)())(intptr_t)exprSym->getAddress())();
-            return;
-        }
-
-        case 1: {
-            value = ((int (*)(int))(intptr_t)exprSym->getAddress())(argVals[0]);
-            return;
-        }
-
-        case 2: {
-            value = ((int (*)(int, int))(intptr_t)exprSym->getAddress())(
-                argVals[0], argVals[1]);
-            return;
-        }
-
-        case 3: {
-            value = ((int (*)(int, int, int))(intptr_t)exprSym->getAddress())(
-                argVals[0], argVals[1], argVals[2]);
-            return;
-        }
-
-        case 4: {
-            value =
-                ((int (*)(int, int, int, int))(intptr_t)exprSym->getAddress())(
-                    argVals[0], argVals[1], argVals[2], argVals[3]);
-            return;
-        }
-
-        case 5: {
-            value = ((int (*)(int, int, int, int, int))(
-                         intptr_t)exprSym->getAddress())(
-                argVals[0], argVals[1], argVals[2], argVals[3], argVals[4]);
-            return;
-        }
-
-        case 6: {
-            value = ((int (*)(int, int, int, int, int, int))(
-                         intptr_t)exprSym->getAddress())(
-                argVals[0], argVals[1], argVals[2], argVals[3], argVals[4],
-                argVals[5]);
-            return;
-        }
-
-        case 7: {
-            value = ((int (*)(int, int, int, int, int, int, int))(
-                         intptr_t)exprSym->getAddress())(
-                argVals[0], argVals[1], argVals[2], argVals[3], argVals[4],
-                argVals[5], argVals[6]);
-            return;
-        }
-
-        case 8: {
-            value = ((int (*)(int, int, int, int, int, int, int, int))(
-                         intptr_t)exprSym->getAddress())(
-                argVals[0], argVals[1], argVals[2], argVals[3], argVals[4],
-                argVals[5], argVals[6], argVals[7]);
-            return;
-        }
-
-        default: {
-            value = 0;
-            error = true;
-            std::cerr << "Function exceeded maximum number of arguments "
-                         "allowed\n";
-            return;
-        }
-    }
 }
 
 void SS_Cell::calculateExpression(SS_Cell* root, bool err) {
@@ -268,7 +193,7 @@ void SS_Cell::calculateExpression(SS_Cell* root, bool err) {
         root = this; // first time through
     }
 
-    if (!expNode) {
+    if (kind != EXPRESSION || !expNode) {
         value = 0;
         error = true;
         setDisplay("ERROR");
@@ -278,7 +203,8 @@ void SS_Cell::calculateExpression(SS_Cell* root, bool err) {
 
     generateIR();
 
-    // move error value to cell
+    // move value to cell
+    value = expNode->value;
     error = expNode->error;
 
     setDisplay(value);

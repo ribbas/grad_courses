@@ -52,12 +52,9 @@ class SS_Cell {
 
     std::string irCode;
     llvm::raw_string_ostream irStdout;
-    std::vector<int> argVals;
     std::unique_ptr<llvm::Module> module;
     std::unique_ptr<JIT> cellJIT;
     std::map<std::string, llvm::Value*> namedValues;
-
-    void evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym);
 
 public:
     SS_Cell();

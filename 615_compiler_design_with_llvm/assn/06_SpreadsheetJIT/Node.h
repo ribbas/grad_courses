@@ -31,13 +31,16 @@ public:
     Node* left;
     Token* tok;
     Node* right;
+
     llvm::Value* irValue;
+    std::vector<int> argVals;
 
     // add all the IDs to the Controllers list
     void walkTreeAddIDs(SS_Cell* cell);
 
     // calculate value
     void codeGen(SS_Cell* cell);
+    void evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym);
 
     // display attributes
     void walkTreePrintAttributes(std::ostream& os, int indentation = 0);

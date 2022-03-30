@@ -2,7 +2,7 @@
 // Allyn Shell
 // July 2019
 // Modified by:
-// TBD ... This is to be filled in for HW3 if you make changes
+// Sabbir Ahmed
 // Modified date:
 // TBD ... This is to be filled in for HW3
 
@@ -34,6 +34,7 @@ void Node::walkTreeAddIDs(SS_Cell* cell) {
 
 void Node::codeGen(SS_Cell* cell) {
 
+    argVals.clear();
     std::vector<std::string> args = cell->controllers.getList();
     std::vector<llvm::Type*> funcArgs(args.size(),
                                       llvm::Type::getInt32Ty(*irContext));
@@ -48,7 +49,7 @@ void Node::codeGen(SS_Cell* cell) {
     std::string namedArg = "";
     for (llvm::Argument& arg : func->args()) {
         namedArg = args[argIx++];
-        cell->argVals.push_back(cell->getTOC()->getCell(namedArg)->value);
+        argVals.push_back(cell->getTOC()->getCell(namedArg)->value);
         arg.setName(namedArg);
         cell->namedValues[namedArg] = &arg;
     }
@@ -58,6 +59,80 @@ void Node::codeGen(SS_Cell* cell) {
     irBuilder->SetInsertPoint(basicBlock);
     walkCodeGen(cell->getTOC(), cell);
     irBuilder->CreateRet(irValue);
+}
+
+void Node::evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym) {
+
+    switch (argVals.size()) {
+
+        case 0: {
+            value = ((int (*)())(intptr_t)exprSym->getAddress())();
+            return;
+        }
+
+        case 1: {
+            value = ((int (*)(int))(intptr_t)exprSym->getAddress())(argVals[0]);
+            return;
+        }
+
+        case 2: {
+            value = ((int (*)(int, int))(intptr_t)exprSym->getAddress())(
+                argVals[0], argVals[1]);
+            return;
+        }
+
+        case 3: {
+            value = ((int (*)(int, int, int))(intptr_t)exprSym->getAddress())(
+                argVals[0], argVals[1], argVals[2]);
+            return;
+        }
+
+        case 4: {
+            value =
+                ((int (*)(int, int, int, int))(intptr_t)exprSym->getAddress())(
+                    argVals[0], argVals[1], argVals[2], argVals[3]);
+            return;
+        }
+
+        case 5: {
+            value = ((int (*)(int, int, int, int, int))(
+                         intptr_t)exprSym->getAddress())(
+                argVals[0], argVals[1], argVals[2], argVals[3], argVals[4]);
+            return;
+        }
+
+        case 6: {
+            value = ((int (*)(int, int, int, int, int, int))(
+                         intptr_t)exprSym->getAddress())(
+                argVals[0], argVals[1], argVals[2], argVals[3], argVals[4],
+                argVals[5]);
+            return;
+        }
+
+        case 7: {
+            value = ((int (*)(int, int, int, int, int, int, int))(
+                         intptr_t)exprSym->getAddress())(
+                argVals[0], argVals[1], argVals[2], argVals[3], argVals[4],
+                argVals[5], argVals[6]);
+            return;
+        }
+
+        case 8: {
+            value = ((int (*)(int, int, int, int, int, int, int, int))(
+                         intptr_t)exprSym->getAddress())(
+                argVals[0], argVals[1], argVals[2], argVals[3], argVals[4],
+                argVals[5], argVals[6], argVals[7]);
+            return;
+        }
+
+        default: {
+            value = 0;
+            error = true;
+            std::cerr << "Function exceeded maximum number of arguments "
+                         "allowed\n";
+            return;
+        }
+    }
 }
 
 void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
