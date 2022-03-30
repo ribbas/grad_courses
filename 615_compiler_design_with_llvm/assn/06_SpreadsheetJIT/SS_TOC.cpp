@@ -21,7 +21,7 @@ TableOfCells::TableOfCells() {
     badCell.kind = DEAD;
 }
 
-SS_Cell* TableOfCells::getCell(const string id) {
+SS_Cell* TableOfCells::getCell(const std::string id) {
     if (id.length() != 2) {
         return &badCell;
     }
@@ -50,17 +50,17 @@ SS_Cell* TableOfCells::getCell(int col, int row) {
     return &cell[row][col];
 }
 
-void TableOfCells::printTable(ostream& os) {
+void TableOfCells::printTable(std::ostream& os) {
     const char tab = '\t'; // assumed to be 8 spaces
     const char dash[] = "-------+";
     os << tab;
     os << "|   A" << tab << "|   B" << tab;
     os << "|   C" << tab << "|   D" << tab;
     os << "|   E" << tab << "|   F" << tab;
-    os << "|" << endl;
+    os << "|" << std::endl;
     for (int i = 0; i < 10; ++i) {
         os << ' ' << dash << dash << dash << dash << dash << dash << dash
-           << endl;
+           << std::endl;
         os << "    " << i << tab << '|';
         for (int j = 0; j < 6; ++j) {
             os << cell[i][j].display;
@@ -69,8 +69,9 @@ void TableOfCells::printTable(ostream& os) {
             }
             os << '|';
         }
-        os << endl;
+        os << std::endl;
     }
-    os << ' ' << dash << dash << dash << dash << dash << dash << dash << endl;
-    os << endl;
+    os << ' ' << dash << dash << dash << dash << dash << dash << dash
+       << std::endl;
+    os << std::endl;
 }

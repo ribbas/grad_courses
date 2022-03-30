@@ -14,9 +14,8 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include "IR_Gen.h"
+#include "LLVM_Util.h"
 #include "Token.h"
-#include <iostream>
 
 class SS_Cell;
 class TableOfCells;
@@ -41,9 +40,9 @@ public:
     void codeGen(SS_Cell* cell);
 
     // display attributes
-    void walkTreePrintAttributes(ostream& os, int indentation = 0);
-    friend ostream& operator<<(ostream& os, Node& n);
-    friend ostream& operator<<(ostream& os, Node* n);
+    void walkTreePrintAttributes(std::ostream& os, int indentation = 0);
+    friend std::ostream& operator<<(std::ostream& os, Node& n);
+    friend std::ostream& operator<<(std::ostream& os, Node* n);
 
 private:
     void walkCodeGen(TableOfCells* TOC, SS_Cell* cell);

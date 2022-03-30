@@ -1,20 +1,6 @@
-//===- KaleidoscopeJIT.h - A simple JIT for Kaleidoscope --------*- C++ -*-===//
-//
-// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
-// See https://llvm.org/LICENSE.txt for license information.
-// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-//
-//===----------------------------------------------------------------------===//
-//
-// Contains a simple JIT definition for use in the kaleidoscope tutorials.
-//
-//===----------------------------------------------------------------------===//
+#ifndef LLVM_UTIL_H
+#define LLVM_UTIL_H
 
-#ifndef LLVM_EXECUTIONENGINE_ORC_JIT_H
-#define LLVM_EXECUTIONENGINE_ORC_JIT_H
-
-#include "llvm/ADT/StringRef.h"
-#include "llvm/ExecutionEngine/JITSymbol.h"
 #include "llvm/ExecutionEngine/Orc/CompileUtils.h"
 #include "llvm/ExecutionEngine/Orc/Core.h"
 #include "llvm/ExecutionEngine/Orc/ExecutionUtils.h"
@@ -23,15 +9,34 @@
 #include "llvm/ExecutionEngine/Orc/JITTargetMachineBuilder.h"
 #include "llvm/ExecutionEngine/Orc/RTDyldObjectLinkingLayer.h"
 #include "llvm/ExecutionEngine/SectionMemoryManager.h"
+#include "llvm/IR/BasicBlock.h"
+#include "llvm/IR/Constants.h"
 #include "llvm/IR/DataLayout.h"
+#include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/LLVMContext.h"
-#include "llvm/Support/TargetSelect.h"
+#include "llvm/IR/Module.h"
+#include "llvm/IR/Type.h"
+#include "llvm/Support/raw_ostream.h"
 #include "llvm/Target/TargetMachine.h"
+#include "llvm/Target/TargetOptions.h"
 #include "llvm/Transforms/InstCombine/InstCombine.h"
-#include <memory>
 
-namespace llvm {
-namespace orc {
+using namespace llvm;
+using namespace llvm::orc;
+
+static ExitOnError ExitOnErr;
+
+extern std::unique_ptr<LLVMContext> irContext;
+extern std::unique_ptr<IRBuilder<>> irBuilder;
+
+inline void initLLVMContext() {
+
+    // open a new context and module
+    irContext = std::make_unique<LLVMContext>();
+
+    // create a new builder for the module
+    irBuilder = std::make_unique<IRBuilder<>>(*irContext);
+}
 
 class JIT {
 private:
@@ -68,12 +73,13 @@ public:
 
     ~JIT() {
 
-        if (auto Err = ES->endSession()) {
+        if (Error Err = ES->endSession()) {
             ES->reportError(std::move(Err));
         }
     }
 
     static Expected<std::unique_ptr<JIT>> Create() {
+
         auto EPC = SelfExecutorProcessControl::Create();
         if (!EPC) {
             return EPC.takeError();
@@ -85,8 +91,9 @@ public:
             ES->getExecutorProcessControl().getTargetTriple());
 
         auto DL = JTMB.getDefaultDataLayoutForTarget();
-        if (!DL)
+        if (!DL) {
             return DL.takeError();
+        }
 
         return std::make_unique<JIT>(std::move(ES), std::move(JTMB),
                                      std::move(*DL));
@@ -96,13 +103,8 @@ public:
         return DL;
     }
 
-    JITDylib& getMainJITDylib() {
-        return MainJD;
-    }
-
-    Error addModule(ThreadSafeModule TSM, ResourceTrackerSP RT = nullptr) {
-        if (!RT)
-            RT = MainJD.getDefaultResourceTracker();
+    Error addModule(ThreadSafeModule TSM) {
+        ResourceTrackerSP RT = MainJD.getDefaultResourceTracker();
         return CompileLayer.add(RT, std::move(TSM));
     }
 
@@ -111,7 +113,4 @@ public:
     }
 };
 
-} // end namespace orc
-} // end namespace llvm
-
-#endif // LLVM_EXECUTIONENGINE_ORC_JIT_H
+#endif // LLVM_UTIL_H

@@ -14,8 +14,6 @@
 #include "SS_Cell.h"
 #include "Token.h"
 
-using namespace std;
-
 Token* getToken(char*& ch); // in Scanner.cpp
 
 class Parser {

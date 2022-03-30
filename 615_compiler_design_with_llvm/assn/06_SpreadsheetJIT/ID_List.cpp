@@ -3,7 +3,7 @@
 // July 2019
 // the ID_List class provides list functions
 // addID, dropID, matchLists, diffList
-// inList, ostream << of List
+// inList, std::ostream << of List
 
 #include "ID_List.h"
 
@@ -16,7 +16,7 @@ void ID_List::clear() {
         list[i] = 0;
 }
 
-void ID_List::addID(const string id) {
+void ID_List::addID(const std::string id) {
     int row = (int)id[1] - (int)'0';
     int col = (int)id[0] - (int)'A';
     addID(row, col);
@@ -26,7 +26,7 @@ void ID_List::addID(const int row, const int col) {
     list[row] = list[row] | addMask[col];
 }
 
-void ID_List::dropID(const string id) {
+void ID_List::dropID(const std::string id) {
     int row = (int)id[1] - (int)'0';
     int col = (int)id[0] - (int)'A';
     dropID(row, col);
@@ -36,7 +36,7 @@ void ID_List::dropID(const int row, const int col) {
     list[row] = list[row] & dropMask[col];
 }
 
-bool ID_List::contains(const string id) {
+bool ID_List::contains(const std::string id) {
     int row = (int)id[1] - (int)'0';
     int col = (int)id[0] - (int)'A';
     return contains(row, col);
@@ -62,7 +62,7 @@ ID_List ID_List::operator-(const ID_List& rtlst) {
     return retList;
 }
 
-ostream& operator<<(ostream& os, const ID_List& lst) {
+std::ostream& operator<<(std::ostream& os, const ID_List& lst) {
     os << "{";
     bool empty = true;
     for (int r = 0; r < 10; ++r) {

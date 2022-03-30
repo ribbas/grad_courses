@@ -15,16 +15,14 @@
 #include <fstream>
 #include <string>
 
-using namespace std;
-
 enum command { CONTINUE, QUIT };
 enum lineKind { BLANKLINE, NOOPLINE, VALIDLINE, INVALIDLINE }; // line kind
 
 // These routines are in SS_Scanner_Support.cpp
-void readInputFile(ifstream& ifs, TableOfCells& symTab);
+void readInputFile(std::ifstream& ifs, TableOfCells& symTab);
 command readCommandLine(TableOfCells& symTab);
 void cellTests(TableOfCells& symTab);
-void printUsage(const string name);
+void printUsage(const std::string name);
 void printEntryOptions();
 
 lineKind getLineKind(char* line);

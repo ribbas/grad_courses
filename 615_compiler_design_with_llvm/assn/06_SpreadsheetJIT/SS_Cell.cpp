@@ -8,15 +8,12 @@
 #include "Node.h"
 #include "Token.h"
 
-#include <iostream>
 #include <sstream>
 #include <string>
 
-using namespace std;
-
 TableOfCells* SS_Cell::TOC = 0;
 
-string itos(int value);
+std::string itos(int value);
 
 SS_Cell::SS_Cell()
     : id(""), kind(BLANK), error(false), display("    "), value(0),
@@ -35,7 +32,7 @@ SS_Cell::~SS_Cell() {
 TableOfCells* SS_Cell::getTOC() {
     return SS_Cell::TOC;
 }
-string SS_Cell::getID() {
+std::string SS_Cell::getID() {
     return id;
 }
 CellArrayColumn SS_Cell::getCellArrayColumn() {
@@ -115,22 +112,22 @@ void SS_Cell::setDisplay(int val) {
         display = "*******";
 }
 
-void SS_Cell::setDisplay(string d) {
+void SS_Cell::setDisplay(std::string d) {
     if (d.size() < 8)
         display = d;
     else
         display = d.substr(0, 7);
 }
 
-string SS_Cell::getDisplay() {
+std::string SS_Cell::getDisplay() {
     return display;
 }
 
-void SS_Cell::setEquation(string eq) {
+void SS_Cell::setEquation(std::string eq) {
     equation = eq;
 }
 
-string SS_Cell::getEquation() {
+std::string SS_Cell::getEquation() {
     return equation;
 }
 
@@ -144,74 +141,69 @@ void SS_Cell::dropUser(const int row, const int col) {
 
 void SS_Cell::generateIR() {
 
-    if (expNode) {
+    argVals.clear();
+    namedValues.clear();
+    irStdout.str().clear();
 
-        argVals.clear();
-        namedValues.clear();
-        irStdout.str().clear();
+    cellJIT = ExitOnErr(JIT::Create());
+    module = std::make_unique<llvm::Module>(id + "_module", *irContext);
+    module->setDataLayout(cellJIT->getDataLayout());
 
-        cellJIT = ExitOnErr(llvm::orc::JIT::Create());
+    expNode->codeGen(this);
+    module->print(irStdout, nullptr);
 
-        module = std::make_unique<llvm::Module>(id + "_module", *irContext);
-        module->setDataLayout(cellJIT->getDataLayout());
-        expNode->codeGen(this);
-        module->print(irStdout, nullptr);
+    ExitOnErr(cellJIT->addModule(
+        llvm::orc::ThreadSafeModule(std::move(module), std::move(irContext))));
 
-        ExitOnErr(cellJIT->addModule(llvm::orc::ThreadSafeModule(
-            std::move(module), std::move(irContext))));
+    llvm::Expected<llvm::JITEvaluatedSymbol> exprSym =
+        cellJIT->lookup(id + "_exp");
 
-        llvm::Expected<llvm::JITEvaluatedSymbol> exprSym =
-            cellJIT->lookup(id + "_exp");
-
-        if (!exprSym) {
-            std::cerr << "Function not found\n";
-        }
-
-        evaluate(std::move(exprSym));
-        initLLVMContext();
+    if (!exprSym) {
+        std::cerr << "Function not found\n";
     }
+
+    evaluate(std::move(exprSym));
+    initLLVMContext();
 }
 
 void SS_Cell::evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym) {
-
-    error = false;
 
     switch (argVals.size()) {
 
         case 0: {
             value = ((int (*)())(intptr_t)exprSym->getAddress())();
-            break;
+            return;
         }
 
         case 1: {
             value = ((int (*)(int))(intptr_t)exprSym->getAddress())(argVals[0]);
-            break;
+            return;
         }
 
         case 2: {
             value = ((int (*)(int, int))(intptr_t)exprSym->getAddress())(
                 argVals[0], argVals[1]);
-            break;
+            return;
         }
 
         case 3: {
             value = ((int (*)(int, int, int))(intptr_t)exprSym->getAddress())(
                 argVals[0], argVals[1], argVals[2]);
-            break;
+            return;
         }
 
         case 4: {
             value =
                 ((int (*)(int, int, int, int))(intptr_t)exprSym->getAddress())(
                     argVals[0], argVals[1], argVals[2], argVals[3]);
-            break;
+            return;
         }
 
         case 5: {
             value = ((int (*)(int, int, int, int, int))(
                          intptr_t)exprSym->getAddress())(
                 argVals[0], argVals[1], argVals[2], argVals[3], argVals[4]);
-            break;
+            return;
         }
 
         case 6: {
@@ -219,7 +211,7 @@ void SS_Cell::evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym) {
                          intptr_t)exprSym->getAddress())(
                 argVals[0], argVals[1], argVals[2], argVals[3], argVals[4],
                 argVals[5]);
-            break;
+            return;
         }
 
         case 7: {
@@ -227,7 +219,7 @@ void SS_Cell::evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym) {
                          intptr_t)exprSym->getAddress())(
                 argVals[0], argVals[1], argVals[2], argVals[3], argVals[4],
                 argVals[5], argVals[6]);
-            break;
+            return;
         }
 
         case 8: {
@@ -235,28 +227,17 @@ void SS_Cell::evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym) {
                          intptr_t)exprSym->getAddress())(
                 argVals[0], argVals[1], argVals[2], argVals[3], argVals[4],
                 argVals[5], argVals[6], argVals[7]);
-            break;
-        }
-
-        case 9: {
-            value = ((int (*)(int, int, int, int, int, int, int, int, int))(
-                         intptr_t)exprSym->getAddress())(
-                argVals[0], argVals[1], argVals[2], argVals[3], argVals[4],
-                argVals[5], argVals[6], argVals[7], argVals[8]);
-            break;
+            return;
         }
 
         default: {
             value = 0;
             error = true;
-            fprintf(stderr,
-                    "Function exceeded maximum number of arguments "
-                    "allowed (%lu)\n",
-                    argVals.size());
+            std::cerr << "Function exceeded maximum number of arguments "
+                         "allowed\n";
+            return;
         }
     }
-
-    return;
 }
 
 void SS_Cell::calculateExpression(SS_Cell* root, bool err) {
@@ -266,6 +247,7 @@ void SS_Cell::calculateExpression(SS_Cell* root, bool err) {
     if (err && error) {
         return;
     }
+
     if (err && root != this) { // everything in loop is set to error
         err = true;
         error = true;
@@ -273,6 +255,7 @@ void SS_Cell::calculateExpression(SS_Cell* root, bool err) {
         calculateUserExpressions(root, err);
         return;
     }
+
     if (root == this) { // this identifies a loop
         err = true;
         error = true;
@@ -280,6 +263,7 @@ void SS_Cell::calculateExpression(SS_Cell* root, bool err) {
         calculateUserExpressions(root, err);
         return;
     }
+
     if (!root) {
         root = this; // first time through
     }
@@ -298,14 +282,14 @@ void SS_Cell::calculateExpression(SS_Cell* root, bool err) {
     calculateUserExpressions(root, err);
 }
 
-// int to string
-string itos(int value) {
-    ostringstream oss;
+// int to std::string
+std::string itos(int value) {
+    std::stringstream oss;
     oss << value;
     return oss.str();
 }
 
-void SS_Cell::setTXTCell(const string txt) {
+void SS_Cell::setTXTCell(const std::string txt) {
     kind = TEXT;
     value = 0;
     error = false;
@@ -327,7 +311,7 @@ void SS_Cell::setNUMCell(const int num, int sign) {
     }
 }
 
-void SS_Cell::setNUMCell(const string num) {
+void SS_Cell::setNUMCell(const std::string num) {
     kind = NUMBER;
     if (num == "") {
         value = 0;
@@ -394,24 +378,24 @@ void SS_Cell::calculateUserExpressions(SS_Cell* root, bool err) {
     }
 }
 
-void SS_Cell::printCellAttributes(ostream& os) {
+void SS_Cell::printCellAttributes(std::ostream& os) {
     os << id << ": col = " << col << "; row = " << row << ": kind = " << kind
-       << ": " << endl;
+       << ": " << std::endl;
     if (error) {
-        os << "    error = true; display = " << display << ":" << endl;
+        os << "    error = true; display = " << display << ":" << std::endl;
     } else {
         os << "    value = " << value << ": display = " << display << ":"
-           << endl;
+           << std::endl;
     }
-    os << "    users list = " << users << endl;
-    os << "    controllers list = " << controllers << endl;
+    os << "    users list = " << users << std::endl;
+    os << "    controllers list = " << controllers << std::endl;
 
     if (expNode) {
 
-        os << "    AST: of (( " << equation << " ))" << endl;
+        os << "    AST: of (( " << equation << " ))" << std::endl;
         expNode->walkTreePrintAttributes(os);
 
-        os << "    IR:" << endl;
+        os << "    IR:" << std::endl;
         os << irStdout.str();
         irStdout.flush();
     }
@@ -420,7 +404,7 @@ void SS_Cell::printCellAttributes(ostream& os) {
 }
 
 // enum CellKind {BLANK, TXT, NUM, EXP, ERROR}; // Cell kind
-ostream& operator<<(ostream& os, const SS_Cell& cell) {
+std::ostream& operator<<(std::ostream& os, const SS_Cell& cell) {
     if (cell.error) {
         os << "ERROR";
         return os;
@@ -445,6 +429,6 @@ ostream& operator<<(ostream& os, const SS_Cell& cell) {
     return os;
 }
 
-ostream& operator<<(ostream& os, const SS_Cell* cell) {
+std::ostream& operator<<(std::ostream& os, const SS_Cell* cell) {
     return os << *cell;
 }

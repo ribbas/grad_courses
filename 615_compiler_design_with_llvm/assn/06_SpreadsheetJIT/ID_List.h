@@ -12,8 +12,6 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 class ID_List {
     static const unsigned char addMask[6];  // value of bit to represent ID
     static const unsigned char dropMask[6]; // complement of addMask
@@ -33,13 +31,13 @@ public:
 
     void clear();
 
-    void addID(const string ID);
+    void addID(const std::string ID);
     void addID(const int row, const int col);
 
-    void dropID(const string ID);
+    void dropID(const std::string ID);
     void dropID(const int row, const int col);
 
-    bool contains(const string ID);
+    bool contains(const std::string ID);
     bool contains(const int row, const int col);
 
     // gives list of IDs that appear in both lists
@@ -48,7 +46,7 @@ public:
     // gives list of IDs that appear only in left list
     ID_List operator-(const ID_List& rtlst);
 
-    friend ostream& operator<<(ostream& os, const ID_List& lst);
+    friend std::ostream& operator<<(std::ostream& os, const ID_List& lst);
 };
 
 #endif // ID_LIST_H

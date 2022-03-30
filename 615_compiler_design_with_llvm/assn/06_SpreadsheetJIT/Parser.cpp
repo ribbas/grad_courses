@@ -18,10 +18,6 @@
 
 #include "Parser.h"
 
-#include <iostream>
-
-using namespace std;
-
 Token* Parser::lookahead = nullptr;
 unsigned int Parser::cursor;
 std::string Parser::equationName = "";

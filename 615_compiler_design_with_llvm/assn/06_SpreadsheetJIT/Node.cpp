@@ -9,8 +9,6 @@
 #include "Node.h"
 #include "ID_List.h"
 #include "SS_Cell.h"
-#include <iostream>
-using namespace std;
 
 Node::Node()
     : value(0), error(false), left(nullptr), tok(nullptr), right(nullptr),
@@ -37,10 +35,10 @@ void Node::walkTreeAddIDs(SS_Cell* cell) {
 void Node::codeGen(SS_Cell* cell) {
 
     std::vector<std::string> args = cell->controllers.getList();
-    std::vector<llvm::Type*> argList(args.size(),
-                                     llvm::Type::getInt32Ty(*irContext));
+    std::vector<llvm::Type*> funcArgs(args.size(),
+                                      llvm::Type::getInt32Ty(*irContext));
     llvm::FunctionType* funcType = llvm::FunctionType::get(
-        llvm::Type::getInt32Ty(*irContext), argList, false);
+        llvm::Type::getInt32Ty(*irContext), funcArgs, false);
     llvm::Function* func =
         llvm::Function::Create(funcType, llvm::Function::ExternalLinkage,
                                cell->id + "_exp", cell->module.get());
@@ -123,6 +121,7 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
                 irBuilder->CreateAdd(left->irValue, right->irValue, "addtmp");
             return;
         }
+
         case SUB: {
             if (!left || !right) {
                 irValue = nullptr;
@@ -133,6 +132,7 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
                 irBuilder->CreateSub(left->irValue, right->irValue, "subtmp");
             return;
         }
+
         case MULT: {
             if (!left || !right) {
                 irValue = nullptr;
@@ -144,8 +144,8 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
 
             return;
         }
-        case DIV: // integer division
-        {
+
+        case DIV: {
             if (!left || !right) {
                 irValue = nullptr;
                 error = true;
@@ -155,6 +155,7 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
                 irBuilder->CreateUDiv(left->irValue, right->irValue, "divtmp");
             return;
         }
+
         default: {
             irValue = nullptr;
             error = true;
@@ -163,7 +164,7 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
     }
 }
 
-void Node::walkTreePrintAttributes(ostream& os, int indentation) {
+void Node::walkTreePrintAttributes(std::ostream& os, int indentation) {
     int ind = indentation;
     char tab = '\t';
     os << tab;
@@ -171,7 +172,7 @@ void Node::walkTreePrintAttributes(ostream& os, int indentation) {
         os << "|" << tab;
         --ind;
     }
-    os << this << endl << flush;
+    os << this << std::endl << std::flush;
     ind = indentation + 1;
     if (left) {
         left->walkTreePrintAttributes(os, ind);
@@ -182,7 +183,7 @@ void Node::walkTreePrintAttributes(ostream& os, int indentation) {
     return;
 }
 
-ostream& operator<<(ostream& os, Node& n) {
+std::ostream& operator<<(std::ostream& os, Node& n) {
     if (n.tok) {
         if (n.tok->getKind() == ID) {
             os << "ID = " << n.tok->getLexeme() << "; ";
@@ -203,6 +204,6 @@ ostream& operator<<(ostream& os, Node& n) {
     return os;
 }
 
-ostream& operator<<(ostream& os, Node* n) {
+std::ostream& operator<<(std::ostream& os, Node* n) {
     return os << *n;
 }

@@ -11,10 +11,7 @@
 #include "SS_Cell.h"
 #include "Token.h"
 
-#include <iostream>
 #include <string>
-
-using namespace std;
 
 // this routine is called by readInputFile and
 // by readCommandLine, one line at a time.
@@ -87,7 +84,7 @@ void scanLine(char* line, TableOfCells& symTab) {
     }
 
     if (validLine == INVALIDLINE) {
-        cerr << "Error: Invalid cell: " << line << '\n';
+        std::cerr << "Error: Invalid cell: " << line << '\n';
     }
 
     return;
@@ -95,7 +92,7 @@ void scanLine(char* line, TableOfCells& symTab) {
 
 Token* getToken(char*& ch) {
 
-    string lexeme = "";
+    std::string lexeme = "";
     TokenKind kind = T_ERROR;
 
     bool scanned = false;
@@ -187,7 +184,7 @@ Token* getToken(char*& ch) {
 
 void parseText(char*& ch, SS_Cell* cell) {
 
-    string value = "";
+    std::string value = "";
     // move pointer of line past the first quote
     while (*ch != '"') {
         ch++;
@@ -205,7 +202,7 @@ void parseText(char*& ch, SS_Cell* cell) {
 
 void parseNumber(char*& ch, SS_Cell* cell) {
 
-    string value = "";
+    std::string value = "";
     value += *ch;
     bool scannedValue = false;
     while (*++ch) {

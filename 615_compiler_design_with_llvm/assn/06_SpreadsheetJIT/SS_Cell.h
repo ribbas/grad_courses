@@ -10,13 +10,10 @@
 #define SS_CELL_H_
 
 #include "ID_List.h"
-#include "IR_Gen.h"
+#include "LLVM_Util.h"
 
-// #include <functional>
 #include <iostream>
 #include <string>
-
-// using std::placeholders::_1;
 
 class Node;
 
@@ -27,12 +24,6 @@ enum CellStatusAction { EMPTY, CALC, READY, ERROR };
 
 class TableOfCells;
 
-// struct Functor {
-//     int init1(int, int);
-//     int init2(int, int, int);
-//     int init3(int, int, int, int);
-// };
-
 class SS_Cell {
     friend class Parser;
     friend class Node;
@@ -40,7 +31,7 @@ class SS_Cell {
 
     static TableOfCells* TOC;
 
-    string id;
+    std::string id;
     int col;
     int row;
 
@@ -48,7 +39,7 @@ class SS_Cell {
     CellStatusAction state;
     bool error;
 
-    string display;
+    std::string display;
     int value;
 
     ID_List users;
@@ -56,7 +47,7 @@ class SS_Cell {
     ID_List newControllers;
 
     // expression root
-    string equation;
+    std::string equation;
     Node* expNode;
 
     std::string irCode;
@@ -66,7 +57,7 @@ class SS_Cell {
     void evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym);
 
     std::unique_ptr<llvm::Module> module;
-    std::unique_ptr<llvm::orc::JIT> cellJIT;
+    std::unique_ptr<JIT> cellJIT;
     std::map<std::string, llvm::Value*> namedValues;
 
 public:
@@ -74,15 +65,15 @@ public:
     ~SS_Cell();
 
     TableOfCells* getTOC();
-    string getID();
+    std::string getID();
     CellArrayColumn getCellArrayColumn();
     char getColChar();
     int getCol();
     int getRow();
 
-    void setTXTCell(const string txt);
+    void setTXTCell(const std::string txt);
     void setNUMCell(const int num, int sign = 1);
-    void setNUMCell(const string num);
+    void setNUMCell(const std::string num);
     void clearCell();
 
     void setExpNode(Node* node);
@@ -102,11 +93,11 @@ public:
     int getValue();
 
     void setDisplay(int val);
-    void setDisplay(string d);
-    string getDisplay();
+    void setDisplay(std::string d);
+    std::string getDisplay();
 
-    void setEquation(string eq);
-    string getEquation();
+    void setEquation(std::string eq);
+    std::string getEquation();
 
     void addUser(const int row, const int col);
     void dropUser(const int row, const int col);
@@ -118,9 +109,9 @@ public:
     void updateControllerUsers();
     void calculateUserExpressions(SS_Cell* root = 0, bool err = false);
 
-    void printCellAttributes(ostream& os);
-    friend ostream& operator<<(ostream& os, const SS_Cell& c);
-    friend ostream& operator<<(ostream& os, const SS_Cell* c);
+    void printCellAttributes(std::ostream& os);
+    friend std::ostream& operator<<(std::ostream& os, const SS_Cell& c);
+    friend std::ostream& operator<<(std::ostream& os, const SS_Cell* c);
 
 private:
     void setID(int i, int j);
@@ -134,12 +125,10 @@ public:
     TableOfCells(); // initializes cell IDs
     ~TableOfCells() {}
 
-    void printAllCells(ostream& os);
-    void generateIR();
+    void printAllCells(std::ostream& os);
+    void printTable(std::ostream& os);
 
-    void printTable(ostream& os);
-
-    SS_Cell* getCell(string id);
+    SS_Cell* getCell(std::string id);
     SS_Cell* getCell(CellArrayColumn ac, int row);
     SS_Cell* getCell(char ch, int row);
     SS_Cell* getCell(int col, int row);

@@ -11,7 +11,7 @@ include_directories(${LLVM_INCLUDE_DIRS})
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
 add_definitions(${LLVM_DEFINITIONS_LIST})
 
-add_executable(${CMAKE_PROJECT_NAME} SS-Driver.cpp)
+add_executable(${CMAKE_PROJECT_NAME} SS_Driver.cpp)
 target_sources(${CMAKE_PROJECT_NAME} PUBLIC
     FF_List.cpp
     ID_List.cpp
@@ -21,7 +21,7 @@ target_sources(${CMAKE_PROJECT_NAME} PUBLIC
     Scanner.cpp
     SS_Cell.cpp
     SS_TOC.cpp
-    SS-Driver.cpp
+    SS_Driver.cpp
     SS_Scanner_Support.cpp
 )
 

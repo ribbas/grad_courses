@@ -7,6 +7,7 @@
  * March 2022
  */
 
+#include "LLVM_Util.h"
 #include "SS_Cell.h"
 #include "Scanner.h"
 #include <filesystem>
@@ -19,28 +20,28 @@ std::unique_ptr<llvm::IRBuilder<>> irBuilder;
 
 int main(int argc, const char* argv[]) {
 
-    std::cout << "Welcome to mySpreadsheet" << endl << endl;
-    string pathName = argv[0];
+    std::cout << "Welcome to mySpreadsheet" << std::endl << std::endl;
+    std::string pathName = argv[0];
     size_t pos = pathName.find_last_of("\\/");
-    string exeName = pathName.erase(0, pos + 1);
+    std::string exeName = pathName.erase(0, pos + 1);
     printUsage(exeName);
 
-    ifstream ifs;
+    std::ifstream ifs;
     if (argc == 2) {
         // open input file
         ifs.open(argv[1]);
         if (!ifs.is_open()) {
             std::cout << "ERROR: Input file " << argv[1] << " not found."
-                      << endl;
+                      << std::endl;
             return 1;
         }
     }
 
     // open output file
-    ofstream ofs("HW-out.txt");
+    std::ofstream ofs("HW-out.txt");
     if (!ofs.is_open()) {
         std::cout << "ERROR: Output file HW-out.txt could not be opened."
-                  << endl;
+                  << std::endl;
         if (ifs)
             ifs.close();
         return 1;
@@ -56,9 +57,9 @@ int main(int argc, const char* argv[]) {
 
     // fill in Spreadsheet from input file
     if (ifs.is_open()) {
-        std::cout << "*** " << argv[1] << " input ***" << endl;
+        std::cout << "*** " << argv[1] << " input ***" << std::endl;
         readInputFile(ifs, symTab);
-        std::cout << "*** End of file input ***" << endl << endl;
+        std::cout << "*** End of file input ***" << std::endl << std::endl;
         ifs.close();
     }
 
