@@ -47,16 +47,16 @@ void Node::codeGen(SS_Cell* cell) {
         llvm::Type::getInt32Ty(*irContext), argList, false);
     llvm::Function* func =
         llvm::Function::Create(funcType, llvm::Function::ExternalLinkage,
-                               cell->id + "_exp", module.get());
+                               cell->id + "_exp", cell->module.get());
 
-    // Set names for all arguments.
+    // set names for all arguments
     unsigned argIx = 0;
     std::string namedArg = "";
     for (llvm::Argument& arg : func->args()) {
         namedArg = args[argIx++];
         cell->argVals.push_back(cell->getTOC()->getCell(namedArg)->value);
         arg.setName(namedArg);
-        namedValues[namedArg] = &arg;
+        cell->namedValues[namedArg] = &arg;
     }
 
     llvm::BasicBlock* BB = llvm::BasicBlock::Create(*irContext, "entry", func);
@@ -64,7 +64,7 @@ void Node::codeGen(SS_Cell* cell) {
     walkCodeGen(cell->getTOC(), cell);
     irBuilder->CreateRet(irValue);
 
-    module->print(cell->irStdout, nullptr);
+    cell->module->print(cell->irStdout, nullptr);
 }
 
 void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
@@ -90,6 +90,7 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
     SS_Cell* refCell;
     bool errVal;
     switch (tok->getKind()) {
+
         case ID: {
             refCell = TOC->getCell(tok->getLexeme());
             errVal = refCell->getError();
@@ -98,10 +99,12 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
                 return;
             }
             std::string refCellName = tok->getLexeme();
-            irValue = namedValues[refCellName];
+            irValue = cell->namedValues[refCellName];
             return;
         }
+
         case NUM: {
+            std::cout << "value " << tok->getValue() << '\n';
             irValue = llvm::ConstantInt::get(*irContext,
                                              llvm::APInt(32, tok->getValue()));
             return;

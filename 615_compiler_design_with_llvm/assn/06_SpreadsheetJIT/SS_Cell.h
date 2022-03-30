@@ -65,6 +65,10 @@ class SS_Cell {
 
     void evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym);
 
+    std::unique_ptr<llvm::Module> module;
+    std::unique_ptr<llvm::orc::JIT> cellJIT;
+    std::map<std::string, llvm::Value*> namedValues;
+
 public:
     SS_Cell();
     ~SS_Cell();

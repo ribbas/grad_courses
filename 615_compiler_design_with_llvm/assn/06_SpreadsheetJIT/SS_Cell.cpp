@@ -146,15 +146,23 @@ void SS_Cell::generateIR() {
 
     if (expNode) {
 
+        cellJIT = ExitOnErr(llvm::orc::JIT::Create());
+
+        module = std::make_unique<llvm::Module>(id + "_module", *irContext);
+        module->setDataLayout(cellJIT->getDataLayout());
         expNode->codeGen(this);
         ExitOnErr(cellJIT->addModule(llvm::orc::ThreadSafeModule(
             std::move(module), std::move(irContext))));
-        initJIT();
 
         llvm::Expected<llvm::JITEvaluatedSymbol> exprSym =
             cellJIT->lookup(id + "_exp");
-        assert(exprSym && "Function not found");
+
+        if (!exprSym) {
+            std::cerr << "Function not found\n";
+        }
+
         evaluate(std::move(exprSym));
+        initJIT();
     }
 }
 
@@ -222,10 +230,19 @@ void SS_Cell::evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym) {
             break;
         }
 
-        default: {
-            fprintf(stderr, "Function exceeded maximum number of arguments "
-                            "allowed (8)\n");
+        case 9: {
+            value = ((int (*)(int, int, int, int, int, int, int, int, int))(
+                         intptr_t)exprSym->getAddress())(
+                argVals[0], argVals[1], argVals[2], argVals[3], argVals[4],
+                argVals[5], argVals[6], argVals[7], argVals[8]);
             break;
+        }
+
+        default: {
+            value = 0;
+            fprintf(stderr, "Function exceeded maximum number of arguments "
+                            "allowed (9)\n");
+            return;
         }
     }
 
@@ -264,6 +281,7 @@ void SS_Cell::calculateExpression(SS_Cell* root, bool err) {
     }
 
     expNode->walkTreeCalculateValue(this);
+    // generateIR();
 
     // move value to cell
     value = expNode->value;
