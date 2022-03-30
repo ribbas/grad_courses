@@ -53,12 +53,11 @@ class SS_Cell {
     std::string irCode;
     llvm::raw_string_ostream irStdout;
     std::vector<int> argVals;
-
-    void evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym);
-
     std::unique_ptr<llvm::Module> module;
     std::unique_ptr<JIT> cellJIT;
     std::map<std::string, llvm::Value*> namedValues;
+
+    void evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym);
 
 public:
     SS_Cell();
@@ -110,6 +109,7 @@ public:
     void calculateUserExpressions(SS_Cell* root = 0, bool err = false);
 
     void printCellAttributes(std::ostream& os);
+    void printCellIR(std::ostream& os);
     friend std::ostream& operator<<(std::ostream& os, const SS_Cell& c);
     friend std::ostream& operator<<(std::ostream& os, const SS_Cell* c);
 
@@ -126,6 +126,7 @@ public:
     ~TableOfCells() {}
 
     void printAllCells(std::ostream& os);
+    void printIR(std::ostream& os);
     void printTable(std::ostream& os);
 
     SS_Cell* getCell(std::string id);

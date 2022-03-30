@@ -118,6 +118,26 @@ void TableOfCells::printAllCells(std::ostream& os) {
     return;
 }
 
+void TableOfCells::printIR(std::ostream& os) {
+    os << std::endl;
+    os << "IR generated from cells:" << std::endl;
+    for (int i = 0; i < 10; ++i)
+        for (int j = 0; j < 6; ++j) {
+            if (cell[i][j].expNode) {
+                for (int j = 0; j < 80; j++) {
+                    os << "*";
+                }
+                os << std::endl;
+                cell[i][j].printCellIR(os);
+                for (int j = 0; j < 80; j++) {
+                    os << "*";
+                }
+                os << std::endl;
+            }
+        }
+    return;
+}
+
 // print explaination of how to call Spreadsheet.exe
 void printUsage(const std::string name) {
     const char tab = '\t';

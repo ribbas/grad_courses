@@ -74,7 +74,7 @@ int main(int argc, const char* argv[]) {
     symTab.printTable(ofs);
 
     // print cell attributes to file
-    symTab.printAllCells(ofs);
+    symTab.printIR(std::cout);
 
     // invoke destructors for global LLVM objects
     llvm::llvm_shutdown();

@@ -268,7 +268,7 @@ void SS_Cell::calculateExpression(SS_Cell* root, bool err) {
         root = this; // first time through
     }
 
-    if (kind != EXPRESSION || expNode == 0) {
+    if (!expNode) {
         value = 0;
         error = true;
         setDisplay("ERROR");
@@ -277,6 +277,9 @@ void SS_Cell::calculateExpression(SS_Cell* root, bool err) {
     }
 
     generateIR();
+
+    // move error value to cell
+    error = expNode->error;
 
     setDisplay(value);
     calculateUserExpressions(root, err);
@@ -394,11 +397,15 @@ void SS_Cell::printCellAttributes(std::ostream& os) {
 
         os << "    AST: of (( " << equation << " ))" << std::endl;
         expNode->walkTreePrintAttributes(os);
-
-        os << "    IR:" << std::endl;
-        os << irStdout.str();
-        irStdout.flush();
     }
+    return;
+}
+
+void SS_Cell::printCellIR(std::ostream& os) {
+
+    os << id << ": (( " << equation << " ))" << std::endl;
+    os << irStdout.str();
+    irStdout.flush();
 
     return;
 }

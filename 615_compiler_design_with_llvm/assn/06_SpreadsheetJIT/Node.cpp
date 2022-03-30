@@ -66,7 +66,6 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
         left->walkCodeGen(TOC, cell);
         if (left->error) {
             irValue = nullptr;
-            error = true;
             return;
         }
     }
@@ -75,14 +74,14 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
         right->walkCodeGen(TOC, cell);
         if (right->error) {
             irValue = nullptr;
-            error = true;
             return;
         }
     }
 
+    error = false;
     if (!tok) {
-        irValue = nullptr;
         error = true;
+        irValue = nullptr;
         return;
     }
 
@@ -95,7 +94,6 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
             errVal = refCell->getError();
             if (errVal) {
                 irValue = nullptr;
-                error = true;
                 return;
             }
 
@@ -114,7 +112,6 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
 
             if (!left || !right) {
                 irValue = nullptr;
-                error = true;
                 return;
             }
             irValue =
@@ -125,7 +122,6 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
         case SUB: {
             if (!left || !right) {
                 irValue = nullptr;
-                error = true;
                 return;
             }
             irValue =
@@ -136,7 +132,6 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
         case MULT: {
             if (!left || !right) {
                 irValue = nullptr;
-                error = true;
                 return;
             }
             irValue =
@@ -148,7 +143,6 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
         case DIV: {
             if (!left || !right) {
                 irValue = nullptr;
-                error = true;
                 return;
             }
             irValue =
@@ -158,7 +152,6 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
 
         default: {
             irValue = nullptr;
-            error = true;
             return;
         }
     }
@@ -186,6 +179,7 @@ void Node::walkTreePrintAttributes(std::ostream& os, int indentation) {
 std::ostream& operator<<(std::ostream& os, Node& n) {
     if (n.tok) {
         if (n.tok->getKind() == ID) {
+            std::cout << "ids are ";
             os << "ID = " << n.tok->getLexeme() << "; ";
         } else {
             os << n.tok->getKind() << ": ";
