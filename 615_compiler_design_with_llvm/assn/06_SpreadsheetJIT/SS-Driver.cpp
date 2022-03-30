@@ -19,7 +19,7 @@ std::unique_ptr<llvm::IRBuilder<>> irBuilder;
 
 int main(int argc, const char* argv[]) {
 
-    cout << "Welcome to mySpreadsheet" << endl << endl;
+    std::cout << "Welcome to mySpreadsheet" << endl << endl;
     string pathName = argv[0];
     size_t pos = pathName.find_last_of("\\/");
     string exeName = pathName.erase(0, pos + 1);
@@ -30,7 +30,8 @@ int main(int argc, const char* argv[]) {
         // open input file
         ifs.open(argv[1]);
         if (!ifs.is_open()) {
-            cout << "ERROR: Input file " << argv[1] << " not found." << endl;
+            std::cout << "ERROR: Input file " << argv[1] << " not found."
+                      << endl;
             return 1;
         }
     }
@@ -38,7 +39,8 @@ int main(int argc, const char* argv[]) {
     // open output file
     ofstream ofs("HW-out.txt");
     if (!ofs.is_open()) {
-        cout << "ERROR: Output file HW-out.txt could not be opened." << endl;
+        std::cout << "ERROR: Output file HW-out.txt could not be opened."
+                  << endl;
         if (ifs)
             ifs.close();
         return 1;
@@ -47,34 +49,30 @@ int main(int argc, const char* argv[]) {
     // open spreadsheet cell table
     TableOfCells symTab;
 
+    LLVMInitializeNativeTarget();
+    LLVMInitializeNativeAsmPrinter();
+    LLVMInitializeNativeAsmParser();
+    initLLVMContext();
+
     // fill in Spreadsheet from input file
     if (ifs.is_open()) {
-        cout << "*** " << argv[1] << " input ***" << endl;
+        std::cout << "*** " << argv[1] << " input ***" << endl;
         readInputFile(ifs, symTab);
-        cout << "*** End of file input ***" << endl << endl;
+        std::cout << "*** End of file input ***" << endl << endl;
         ifs.close();
     }
 
     // print output
     while (true) {
-        symTab.printTable(cout);
+        symTab.printTable(std::cout);
         command cmd = readCommandLine(symTab);
         if (cmd == QUIT) {
             break;
         }
     }
-
-    LLVMInitializeNativeTarget();
-    LLVMInitializeNativeAsmPrinter();
-    LLVMInitializeNativeAsmParser();
-    initJIT();
-
-    // generate IR for all the valid expression cells
-    symTab.generateIR();
     symTab.printTable(ofs);
 
-    // print cell attributes to stdout and to file
-    symTab.printAllCells(cout);
+    // print cell attributes to file
     symTab.printAllCells(ofs);
 
     // invoke destructors for global LLVM objects

@@ -146,11 +146,17 @@ void SS_Cell::generateIR() {
 
     if (expNode) {
 
+        argVals.clear();
+        namedValues.clear();
+        irStdout.str().clear();
+
         cellJIT = ExitOnErr(llvm::orc::JIT::Create());
 
         module = std::make_unique<llvm::Module>(id + "_module", *irContext);
         module->setDataLayout(cellJIT->getDataLayout());
         expNode->codeGen(this);
+        module->print(irStdout, nullptr);
+
         ExitOnErr(cellJIT->addModule(llvm::orc::ThreadSafeModule(
             std::move(module), std::move(irContext))));
 
@@ -162,11 +168,13 @@ void SS_Cell::generateIR() {
         }
 
         evaluate(std::move(exprSym));
-        initJIT();
+        initLLVMContext();
     }
 }
 
 void SS_Cell::evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym) {
+
+    error = false;
 
     switch (argVals.size()) {
 
@@ -240,20 +248,24 @@ void SS_Cell::evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym) {
 
         default: {
             value = 0;
-            fprintf(stderr, "Function exceeded maximum number of arguments "
-                            "allowed (9)\n");
-            return;
+            error = true;
+            fprintf(stderr,
+                    "Function exceeded maximum number of arguments "
+                    "allowed (%lu)\n",
+                    argVals.size());
         }
     }
 
-    fprintf(stderr, "Evaluated to %d\n", value);
+    return;
 }
 
 void SS_Cell::calculateExpression(SS_Cell* root, bool err) {
 
     // this set of tests prevent an infinite loop of users
-    if (err && error)
-        return;                // this prevents the infinite loop
+    // this prevents the infinite loop
+    if (err && error) {
+        return;
+    }
     if (err && root != this) { // everything in loop is set to error
         err = true;
         error = true;
@@ -280,12 +292,8 @@ void SS_Cell::calculateExpression(SS_Cell* root, bool err) {
         return;
     }
 
-    expNode->walkTreeCalculateValue(this);
-    // generateIR();
+    generateIR();
 
-    // move value to cell
-    value = expNode->value;
-    error = expNode->error;
     setDisplay(value);
     calculateUserExpressions(root, err);
 }

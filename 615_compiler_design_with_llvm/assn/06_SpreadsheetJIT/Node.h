@@ -38,7 +38,6 @@ public:
     void walkTreeAddIDs(SS_Cell* cell);
 
     // calculate value
-    void walkTreeCalculateValue(SS_Cell* cell);
     void codeGen(SS_Cell* cell);
 
     // display attributes
@@ -47,7 +46,6 @@ public:
     friend ostream& operator<<(ostream& os, Node* n);
 
 private:
-    void walkTreeCalculateValue(TableOfCells* TOC);
     void walkCodeGen(TableOfCells* TOC, SS_Cell* cell);
 };
 

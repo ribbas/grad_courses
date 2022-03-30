@@ -75,8 +75,9 @@ public:
 
     static Expected<std::unique_ptr<JIT>> Create() {
         auto EPC = SelfExecutorProcessControl::Create();
-        if (!EPC)
+        if (!EPC) {
             return EPC.takeError();
+        }
 
         auto ES = std::make_unique<ExecutionSession>(std::move(*EPC));
 

@@ -34,10 +34,6 @@ void Node::walkTreeAddIDs(SS_Cell* cell) {
     }
 }
 
-void Node::walkTreeCalculateValue(SS_Cell* cell) {
-    walkTreeCalculateValue(cell->getTOC());
-}
-
 void Node::codeGen(SS_Cell* cell) {
 
     std::vector<std::string> args = cell->controllers.getList();
@@ -59,12 +55,11 @@ void Node::codeGen(SS_Cell* cell) {
         cell->namedValues[namedArg] = &arg;
     }
 
-    llvm::BasicBlock* BB = llvm::BasicBlock::Create(*irContext, "entry", func);
-    irBuilder->SetInsertPoint(BB);
+    llvm::BasicBlock* basicBlock =
+        llvm::BasicBlock::Create(*irContext, "entry", func);
+    irBuilder->SetInsertPoint(basicBlock);
     walkCodeGen(cell->getTOC(), cell);
     irBuilder->CreateRet(irValue);
-
-    cell->module->print(cell->irStdout, nullptr);
 }
 
 void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
@@ -73,20 +68,26 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
         left->walkCodeGen(TOC, cell);
         if (left->error) {
             irValue = nullptr;
+            error = true;
             return;
         }
     }
+
     if (right) {
         right->walkCodeGen(TOC, cell);
         if (right->error) {
             irValue = nullptr;
+            error = true;
             return;
         }
     }
+
     if (!tok) {
         irValue = nullptr;
+        error = true;
         return;
     }
+
     SS_Cell* refCell;
     bool errVal;
     switch (tok->getKind()) {
@@ -96,15 +97,16 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
             errVal = refCell->getError();
             if (errVal) {
                 irValue = nullptr;
+                error = true;
                 return;
             }
+
             std::string refCellName = tok->getLexeme();
             irValue = cell->namedValues[refCellName];
             return;
         }
 
         case NUM: {
-            std::cout << "value " << tok->getValue() << '\n';
             irValue = llvm::ConstantInt::get(*irContext,
                                              llvm::APInt(32, tok->getValue()));
             return;
@@ -114,6 +116,7 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
 
             if (!left || !right) {
                 irValue = nullptr;
+                error = true;
                 return;
             }
             irValue =
@@ -123,6 +126,7 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
         case SUB: {
             if (!left || !right) {
                 irValue = nullptr;
+                error = true;
                 return;
             }
             irValue =
@@ -132,6 +136,7 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
         case MULT: {
             if (!left || !right) {
                 irValue = nullptr;
+                error = true;
                 return;
             }
             irValue =
@@ -143,6 +148,7 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
         {
             if (!left || !right) {
                 irValue = nullptr;
+                error = true;
                 return;
             }
             irValue =
@@ -151,101 +157,7 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
         }
         default: {
             irValue = nullptr;
-            return;
-        }
-    }
-}
-
-void Node::walkTreeCalculateValue(TableOfCells* TOC) {
-    // check if this has children
-    if (left) {
-        left->walkTreeCalculateValue(TOC);
-        if (left->error) {
             error = true;
-            value = 0;
-            return;
-        }
-    }
-    if (right) {
-        right->walkTreeCalculateValue(TOC);
-        if (right->error) {
-            error = true;
-            value = 0;
-            return;
-        }
-    }
-    error = false;
-    if (!tok) {
-        error = true;
-        value = 0;
-        return;
-    }
-    SS_Cell* cell;
-    bool errVal;
-    switch (tok->getKind()) {
-        case ID: {
-            cell = TOC->getCell(tok->getLexeme());
-            errVal = cell->getError();
-            if (errVal) {
-                error = true;
-                value = 0;
-                return;
-            }
-            value = cell->getValue();
-            return;
-        }
-        case NUM: {
-            value = tok->getValue();
-            error = tok->getError();
-            return;
-        }
-
-        case ADD: {
-
-            if (!left || !right) {
-                error = true;
-                value = 0;
-                return;
-            }
-
-            value = left->value + right->value;
-
-            return;
-        }
-        case SUB: {
-            if (!left || !right) {
-                error = true;
-                value = 0;
-                return;
-            }
-
-            value = left->value - right->value;
-            return;
-        }
-        case MULT: {
-            if (!left || !right) {
-                error = true;
-                value = 0;
-                return;
-            }
-
-            value = left->value * right->value;
-
-            return;
-        }
-        case DIV: // integer division
-        {
-            if (!left || !right) {
-                error = true;
-                value = 0;
-                return;
-            }
-            value = left->value / right->value;
-            return;
-        }
-        default: {
-            error = true;
-            value = 0;
             return;
         }
     }

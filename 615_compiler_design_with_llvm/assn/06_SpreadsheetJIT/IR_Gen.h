@@ -25,7 +25,7 @@ static llvm::ExitOnError ExitOnErr;
 extern std::unique_ptr<llvm::LLVMContext> irContext;
 extern std::unique_ptr<llvm::IRBuilder<>> irBuilder;
 
-inline void initJIT() {
+inline void initLLVMContext() {
 
     // open a new context and module
     irContext = std::make_unique<llvm::LLVMContext>();
