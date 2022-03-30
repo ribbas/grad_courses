@@ -2,6 +2,14 @@
 
 ## Modifications for assignment
 
+Major modifications to most of the source files were made to implement this assignment.
+
+1. `LLVM_Util.h` was added to include all the LLVM files necessary for the IR generation as well as to instantiate the global LLVM objects. The Kaleidoscope JIT example was extracted and used to implement the JIT class necessary for the project.
+
+2. Several methods were replaced in `Node`. The methods `void walkTreeCalculateValue(SS_Cell* cell)` and `void walkTreeCalculateValue(TableOfCells* TOC)` were removed and replaced by `void codeGen(SS_Cell* cell)` and `void walkCodeGen(TableOfCells* TOC, SS_Cell* cell)`. The former methods were used to traverse through the Node subtrees to compute the expression values based on their token kinds. With the JIT added to the project, the values are instead computed after the IR is compiled and ran. The JIT is maintained by the encompassing SS_Cell object, which calls the other new method in Node, `void evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym)`. This method assumes the IR has been fully generated. It uses the newly added member attribute `std::vector<int> argVals` that stores the values of the referenced cells as the values to be passed in to the function call. The method can call functions of 0 to 8 arguments and updates the member attribute `value` at that point. This value is later propagated to the encompassing `SS_Cell` object to be displayed to the table of cells.
+
+3. The methods to output the cell attributes were updated to not display the previously implemented AST. With the new approach of the Node class, the AST no longer contains the intermediate values but instead utilizes the JIT to compute the final value. The method `void printCellIR(std::ostream& os)` was added to `SS_Cell` to only print out the available JIT'd IR for all expression cells.
+
 ## System Dependencies
 
 The attached CMakeLists.txt was used to compile the assignment files. The following are the version numbers of the tools used:
