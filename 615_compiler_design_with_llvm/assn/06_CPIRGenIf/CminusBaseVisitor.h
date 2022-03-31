@@ -175,66 +175,43 @@ public:
     virtual antlrcpp::Any
     visitSelection_stmt(CminusParser::Selection_stmtContext* ctx) override {
 
-        for (auto& i : ctx->statement()) {
-            std::cout << "stmt " << i->getText() << '\n';
-        }
-        // std::cout << ctx->then_cond->getText() << " if\n";
-        // std::cout << ctx->else_cond->getText() << " else\n";
-
-        antlrcpp::Any relationalExpression = visit(ctx->relational_exp());
+        // relational expression
+        visit(ctx->relational_exp());
 
         llvm::Function* func = irBuilder->GetInsertBlock()->getParent();
-        llvm::BasicBlock* ThenBB =
+        llvm::BasicBlock* thenBB =
             llvm::BasicBlock::Create(*irContext, "then", func);
-        llvm::BasicBlock* ElseBB = llvm::BasicBlock::Create(*irContext, "else");
-        llvm::BasicBlock* MergeBB =
+        llvm::BasicBlock* elseBB = llvm::BasicBlock::Create(*irContext, "else");
+        llvm::BasicBlock* contBB =
             llvm::BasicBlock::Create(*irContext, "ifcont");
 
-        irBuilder->CreateCondBr(expStack.back(), ThenBB, ElseBB);
+        irBuilder->CreateCondBr(expStack.back(), thenBB, elseBB);
         expStack.pop_back();
 
-        // Emit then value.
-        irBuilder->SetInsertPoint(ThenBB);
+        // emit then value
+        irBuilder->SetInsertPoint(thenBB);
 
-        llvm::Value* value =
-            llvm::ConstantInt::get(llvm::Type::getInt32Ty(*irContext), 69);
-        auto ThenV = irBuilder->CreateAdd(value, value, "lol");
-        antlrcpp::Any ifExpression = visit(ctx->then_cond);
-        ThenV = irBuilder->CreateAdd(value, value, "lol2");
-        ThenV = irBuilder->CreateAdd(value, value, "lol3");
-        ThenV = irBuilder->CreateAdd(value, value, "lo432l");
-        ThenV = irBuilder->CreateAdd(value, value, "lol42342");
+        // if expression
+        visit(ctx->then_cond);
 
-        irBuilder->CreateBr(MergeBB);
-        // Codegen of 'Then' can change the current block, update ThenBB for the
-        // PHI.
-        ThenBB = irBuilder->GetInsertBlock();
-
-        // Emit else block.
-        func->getBasicBlockList().push_back(ElseBB);
-        irBuilder->SetInsertPoint(ElseBB);
+        irBuilder->CreateBr(contBB);
+        thenBB = irBuilder->GetInsertBlock();
 
         if (ctx->else_cond) {
-            llvm::Value* value2 =
-                llvm::ConstantInt::get(llvm::Type::getInt32Ty(*irContext), 42);
-            auto ElseV = irBuilder->CreateOr(value2, value);
-            antlrcpp::Any elseExpression = visit(ctx->else_cond);
 
-            irBuilder->CreateBr(MergeBB);
-            // Codegen of 'Else' can change the current block, update ElseBB for
-            // the PHI.
-            ElseBB = irBuilder->GetInsertBlock();
+            // emit else block
+            func->getBasicBlockList().push_back(elseBB);
+            irBuilder->SetInsertPoint(elseBB);
 
-            // Emit merge block.
-            func->getBasicBlockList().push_back(MergeBB);
-            irBuilder->SetInsertPoint(MergeBB);
-            // llvm::PHINode* PN = irBuilder->CreatePHI(
-            //     llvm::Type::getInt32Ty(*irContext), 2, "itmp");
-
-            // PN->addIncoming(ThenV, ThenBB);
-            // PN->addIncoming(ElseV, ElseBB);
+            // else expression
+            visit(ctx->else_cond);
+            irBuilder->CreateBr(contBB);
         }
-        // return visitChildren(ctx);
+
+        // emit else block
+        func->getBasicBlockList().push_back(contBB);
+        irBuilder->SetInsertPoint(contBB);
+
         return nullptr;
     }
 
