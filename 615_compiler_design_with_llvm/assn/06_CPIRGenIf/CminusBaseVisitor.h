@@ -259,7 +259,7 @@ public:
         if (ctx->ASN()) {
 
             // if expression
-            for (auto& i : ctx->exp()) {
+            for (CminusParser::ExpContext*& i : ctx->exp()) {
                 visit(i);
                 irBuilder->CreateStore(expStack.back(),
                                        namedAllocas[assignmentVar], false);

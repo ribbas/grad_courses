@@ -7,6 +7,8 @@
 #include <string>
 #include <unordered_map>
 
+const std::string GLOBAL = "GLOBAL";
+
 class Symbol {
 private:
     std::string name;
@@ -23,7 +25,7 @@ public:
           size(_size), value(-1) {}
 
     Symbol(std::string _name, std::string _type, int _numArgs, bool _isFunc)
-        : name(_name), type(_type), scope("global"), isFunc(_isFunc),
+        : name(_name), type(_type), scope(GLOBAL), isFunc(_isFunc),
           numArgs(_numArgs), size(-1), value(-1) {}
 
     void setType(std::string _type) {
@@ -81,8 +83,7 @@ public:
         } else {
             // if variable is not an array
             if (size == -1) {
-                return "<name:" + name + "><type:" + type +
-                       "><var><value:" + std::to_string(value) + '>';
+                return "<name:" + name + "><type:" + type + "><var>";
             } else {
                 return "<name:" + name + "><type:" + type +
                        "><var><size:" + std::to_string(size) + '>';
@@ -94,7 +95,7 @@ public:
 class SymbolTable {
 private:
     std::unordered_map<std::string, Symbol*> symbols;
-    std::set<std::string> scopeList = {"global"};
+    std::set<std::string> scopeList = {GLOBAL};
 
     Symbol* get(std::string symbolName, std::string scopeName) {
         return symbols[scopeName + symbolName];
@@ -122,8 +123,7 @@ public:
     }
 
     void defineType(std::string symbolName) {
-        set(symbolName, "global",
-            new Symbol(symbolName, "builtin", "global", -1));
+        set(symbolName, GLOBAL, new Symbol(symbolName, "builtin", GLOBAL, -1));
     }
 
     void defineVar(std::string symbolName, std::string symbolType,
@@ -134,13 +134,13 @@ public:
 
     void defineFunc(std::string symbolName, std::string symbolType,
                     int symbolNumArgs) {
-        set(symbolName, "global",
+        set(symbolName, GLOBAL,
             new Symbol(symbolName, symbolType, symbolNumArgs, true));
     }
 
     bool contains(std::string symbolName, std::string scopeName) {
         if (symbols.find(scopeName + symbolName) == symbols.end()) {
-            if (symbols.find("global" + symbolName) == symbols.end()) {
+            if (symbols.find(GLOBAL + symbolName) == symbols.end()) {
                 return false;
             }
         }
@@ -156,8 +156,8 @@ public:
     }
 
     int getNumArgs(std::string symbolName, std::string scopeName) {
-        if (contains(symbolName, "global")) {
-            return get(symbolName, "global")->getNumArgs();
+        if (contains(symbolName, GLOBAL)) {
+            return get(symbolName, GLOBAL)->getNumArgs();
         } else {
             return 0;
         }
