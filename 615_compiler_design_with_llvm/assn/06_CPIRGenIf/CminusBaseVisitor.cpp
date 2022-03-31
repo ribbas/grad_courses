@@ -11,24 +11,14 @@ CminusBaseVisitor::CminusBaseVisitor(std::string fileName)
 
     llvm::FunctionType* inputFuncType =
         llvm::FunctionType::get(llvm::Type::getInt32Ty(*irContext), false);
-    llvm::Function* inputFunc = llvm::Function::Create(
-        inputFuncType, llvm::Function::ExternalLinkage, "input", module.get());
-    llvm::BasicBlock* inputBB =
-        llvm::BasicBlock::Create(*irContext, "entry", inputFunc);
-    llvm::verifyFunction(*inputFunc);
-    irBuilder->SetInsertPoint(inputBB);
+    llvm::Function::Create(inputFuncType, llvm::Function::ExternalLinkage,
+                           "input", module.get());
 
-    std::vector<llvm::Type*> argList =
-        std::vector<llvm::Type*>(1, llvm::Type::getInt32Ty(*irContext));
+    std::vector<llvm::Type*> argList = {llvm::Type::getInt32Ty(*irContext)};
     llvm::FunctionType* outputFuncType = llvm::FunctionType::get(
         llvm::Type::getVoidTy(*irContext), argList, false);
-    llvm::Function* outputFunc =
-        llvm::Function::Create(outputFuncType, llvm::Function::ExternalLinkage,
-                               "output", module.get());
-    llvm::BasicBlock* outputBB =
-        llvm::BasicBlock::Create(*irContext, "entry", outputFunc);
-    llvm::verifyFunction(*outputFunc);
-    irBuilder->SetInsertPoint(outputBB);
+    llvm::Function::Create(outputFuncType, llvm::Function::ExternalLinkage,
+                           "output", module.get());
 }
 
 void CminusBaseVisitor::printModule(std::ofstream& fd) {
@@ -189,7 +179,7 @@ antlrcpp::Any CminusBaseVisitor::visitRelational_exp(
     if (ctx->relop()->EQ()) {
         result = irBuilder->CreateICmpEQ(left, right, "eq");
     } else if (ctx->relop()->NEQ()) {
-        result = irBuilder->CreateICmpNE(left, right, "neq");
+        result = irBuilder->CreateICmpNE(left, right, "ne");
     } else if (ctx->relop()->LT()) {
         result = irBuilder->CreateICmpSLT(left, right, "lt");
     } else if (ctx->relop()->GT()) {
