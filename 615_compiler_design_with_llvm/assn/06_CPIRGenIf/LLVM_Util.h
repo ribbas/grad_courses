@@ -1,5 +1,5 @@
-#ifndef IR_GEN_HPP
-#define IR_GEN_HPP
+#ifndef LLVM_UTIL_HPP
+#define LLVM_UTIL_HPP
 
 #include "llvm/ADT/APInt.h"
 #include "llvm/IR/BasicBlock.h"
@@ -14,4 +14,4 @@
 extern std::unique_ptr<llvm::LLVMContext> irContext;
 extern std::unique_ptr<llvm::IRBuilder<>> irBuilder;
 
-#endif
+#endif // LLVM_UTIL_HPP

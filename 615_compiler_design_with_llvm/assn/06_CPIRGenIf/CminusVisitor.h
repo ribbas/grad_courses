@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "IR_Gen.h"
+#include "LLVM_Util.h"
 #include "Semantics.h"
 
 #include "CminusParser.h"

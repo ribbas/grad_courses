@@ -83,7 +83,8 @@ public:
         } else {
             // if variable is not an array
             if (size == -1) {
-                return "<name:" + name + "><type:" + type + "><var>";
+                return "<name:" + name + "><type:" + type +
+                       "><var><value:" + std::to_string(value) + '>';
             } else {
                 return "<name:" + name + "><type:" + type +
                        "><var><size:" + std::to_string(size) + '>';

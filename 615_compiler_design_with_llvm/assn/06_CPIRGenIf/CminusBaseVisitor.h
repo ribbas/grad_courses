@@ -6,7 +6,7 @@
 #pragma once
 
 #include "CminusVisitor.h"
-#include "IR_Gen.h"
+#include "LLVM_Util.h"
 #include "antlr4-runtime.h"
 
 /**
@@ -51,10 +51,20 @@ public:
         irBuilder->SetInsertPoint(outputBB);
     }
 
-    void printModule() {
+    void printModule(std::ofstream& fd) {
+
+        std::string irCode;
+        llvm::raw_string_ostream irStdout(irCode);
+
+        // std::ofstream fd;
+        // fd.open(fileName + ".ll");
+
         if (!errorFound) {
-            module->print(llvm::errs(), nullptr);
+            module->print(irStdout, nullptr);
+            fd << irStdout.str();
+            irStdout.flush();
         }
+        // fd.close();
         expStack.clear();
         namedAllocas.clear();
     }

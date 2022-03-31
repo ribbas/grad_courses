@@ -1,7 +1,7 @@
 #include "CminusBaseVisitor.h"
 #include "CminusLexer.h"
 #include "CminusParser.h"
-#include "IR_Gen.h"
+#include "LLVM_Util.h"
 
 // open a new context and module
 std::unique_ptr<llvm::LLVMContext> irContext =
@@ -13,13 +13,22 @@ std::unique_ptr<llvm::IRBuilder<>> irBuilder =
 
 int main(int argc, char* argv[]) {
 
-    std::ifstream stream;
+    std::ifstream ifs;
     std::string pathName = argv[1];
-    stream.open(pathName);
+    ifs.open(pathName);
     size_t pos = pathName.find_last_of("\\/");
     std::string exeName = pathName.erase(0, pos + 1);
+    std::string fileName = exeName.substr(0, exeName.length() - 4);
 
-    antlr4::ANTLRInputStream input(stream);
+    if (argc == 2) {
+        if (!ifs.is_open()) {
+            std::cout << "ERROR: Input file " << argv[1] << " not found."
+                      << std::endl;
+            return 1;
+        }
+    }
+
+    antlr4::ANTLRInputStream input(ifs);
     CminusLexer lexer(&input);
     antlr4::CommonTokenStream tokens(&lexer);
     CminusParser parser(&tokens);
@@ -28,12 +37,16 @@ int main(int argc, char* argv[]) {
 
     CminusBaseVisitor visitor = CminusBaseVisitor(exeName);
     visitor.visit(tree);
-    visitor.printModule();
 
     std::ofstream fd;
-    fd.open("C-Output-0-Symbol-Table.txt");
+    fd.open(fileName + ".ll");
+    visitor.printModule(fd);
+    fd.close();
+
+    fd.open(fileName + ".sym");
     fd << visitor.semantics.dump();
     fd.close();
+
     llvm::llvm_shutdown();
 
     return 0;
