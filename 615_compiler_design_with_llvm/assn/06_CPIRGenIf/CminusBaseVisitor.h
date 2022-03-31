@@ -197,16 +197,16 @@ public:
         irBuilder->CreateBr(contBB);
         thenBB = irBuilder->GetInsertBlock();
 
+        // emit else block
+        func->getBasicBlockList().push_back(elseBB);
+        irBuilder->SetInsertPoint(elseBB);
+
+        // else condition exists
         if (ctx->else_cond) {
-
-            // emit else block
-            func->getBasicBlockList().push_back(elseBB);
-            irBuilder->SetInsertPoint(elseBB);
-
-            // else expression
             visit(ctx->else_cond);
-            irBuilder->CreateBr(contBB);
         }
+
+        irBuilder->CreateBr(contBB);
 
         // emit else block
         func->getBasicBlockList().push_back(contBB);
@@ -237,14 +237,6 @@ public:
         expStack.push_back(result);
 
         return expression;
-
-        // std::cout << "2cond lhs: " << ctx->lhs->getText()
-        //           << " 2cond rhs: " << ctx->rhs->getText() << '\n';
-
-        // // // Convert condition to a bool by comparing non-equal to 0.0.
-        // // CondV = Builder->CreateFCmpONE(
-        // //     CondV, ConstantFP::get(*TheContext, APFloat(0.0)), "ifcond");
-        // return visitChildren(ctx);
     }
 
     virtual antlrcpp::Any
@@ -269,10 +261,6 @@ public:
             // if expression
             for (auto& i : ctx->exp()) {
                 visit(i);
-
-                // std::cout << "ASSIGNING " << assignmentVar << " -> "
-                //           << i->getText() << "\n";
-
                 irBuilder->CreateStore(expStack.back(),
                                        namedAllocas[assignmentVar], false);
                 expStack.pop_back();
@@ -360,7 +348,6 @@ public:
     virtual antlrcpp::Any
     visitMult_exp(CminusParser::Mult_expContext* ctx) override {
 
-        // std::cout << "Mult_exp " << ctx->getText() << '\n';
         valIsOpand = true;
         bool isMult = ctx->multop()->MULT();
         antlrcpp::Any expression = visitChildren(ctx);
@@ -384,14 +371,12 @@ public:
     virtual antlrcpp::Any
     visitParen_exp(CminusParser::Paren_expContext* ctx) override {
 
-        // std::cout << "Paren_exp " << ctx->getText() << '\n';
         return visitChildren(ctx);
     }
 
     virtual antlrcpp::Any
     visitVal_exp(CminusParser::Val_expContext* ctx) override {
 
-        // std::cout << "Val_exp " << ctx->getText() << '\n';
         if (!semantics.checkSymbol(ctx->getText())) {
 
             fprintf(stderr, "Line %lu: Variable '%s' was not declared\n",
@@ -401,12 +386,10 @@ public:
 
         } else {
 
-            // if (valIsOpand) {
             llvm::Value* value = irBuilder->CreateLoad(
                 llvm::Type::getInt32Ty(*irContext),
                 namedAllocas[ctx->getText()], "ltmp_" + ctx->getText());
             expStack.push_back(value);
-            // }
             return visitChildren(ctx);
         }
     }
@@ -423,8 +406,6 @@ public:
 
     virtual antlrcpp::Any
     visitCall_exp(CminusParser::Call_expContext* ctx) override {
-
-        // std::cout << "Call_exp " << ctx->getText() << '\n';
 
         llvm::Function* calleeFunc = module->getFunction(ctx->ID()->getText());
         std::vector<llvm::Value*> argsVector;
