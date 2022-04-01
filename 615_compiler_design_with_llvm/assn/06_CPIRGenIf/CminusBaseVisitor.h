@@ -21,6 +21,9 @@ private:
     std::vector<llvm::Value*> expStack;
     bool errorFound;
 
+    bool condInst;
+    llvm::Value* condV;
+
     std::map<std::string, llvm::Value*> namedAllocas;
     std::unique_ptr<llvm::Module> module;
 

@@ -6,7 +6,7 @@
 #include "CminusBaseVisitor.h"
 
 CminusBaseVisitor::CminusBaseVisitor(std::string fileName)
-    : assignmentVar(""), errorFound(false),
+    : assignmentVar(""), errorFound(false), condInst(false), condV(nullptr),
       module(std::make_unique<llvm::Module>(fileName, *irContext)) {
 
     llvm::FunctionType* inputFuncType =
@@ -142,7 +142,10 @@ antlrcpp::Any CminusBaseVisitor::visitSelection_stmt(
     irBuilder->SetInsertPoint(thenBB);
 
     // if expression
+    condInst = true;
     visit(ctx->then_cond);
+    llvm::Value* thenV = condV;
+    condInst = false;
 
     irBuilder->CreateBr(contBB);
     thenBB = irBuilder->GetInsertBlock();
@@ -152,8 +155,12 @@ antlrcpp::Any CminusBaseVisitor::visitSelection_stmt(
     irBuilder->SetInsertPoint(elseBB);
 
     // else condition exists
+    llvm::Value* elseV;
     if (ctx->else_cond) {
+        condInst = true;
         visit(ctx->else_cond);
+        elseV = condV;
+        condInst = false;
     }
 
     irBuilder->CreateBr(contBB);
@@ -161,6 +168,26 @@ antlrcpp::Any CminusBaseVisitor::visitSelection_stmt(
     // emit else block
     func->getBasicBlockList().push_back(contBB);
     irBuilder->SetInsertPoint(contBB);
+
+    llvm::PHINode* phiNode = nullptr;
+    // else condition exists
+    if (ctx->else_cond) {
+
+        // phi node resolving then and else registers
+        phiNode = irBuilder->CreatePHI(llvm::Type::getInt32Ty(*irContext), 2,
+                                       "iftmp");
+        phiNode->addIncoming(thenV, thenBB);
+        phiNode->addIncoming(elseV, elseBB);
+
+    } else {
+
+        // phi node resolving only then register
+        phiNode = irBuilder->CreatePHI(llvm::Type::getInt32Ty(*irContext), 1,
+                                       "iftmp");
+        phiNode->addIncoming(thenV, thenBB);
+    }
+
+    irBuilder->CreateRet(phiNode);
     llvm::verifyFunction(*func);
 
     return nullptr;
@@ -240,8 +267,14 @@ CminusBaseVisitor::visitReturn_stmt(CminusParser::Return_stmtContext* ctx) {
         } else {
 
             antlrcpp::Any retVal = visitChildren(ctx);
-            irBuilder->CreateRet(expStack.back());
-            expStack.pop_back();
+
+            if (condInst) {
+                condV = expStack.back();
+            } else {
+
+                irBuilder->CreateRet(expStack.back());
+                expStack.pop_back();
+            }
 
             return retVal;
         }

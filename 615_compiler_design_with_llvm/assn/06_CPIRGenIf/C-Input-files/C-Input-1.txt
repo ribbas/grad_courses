@@ -2,14 +2,12 @@
    Algorithm to compute gcd.  */
 
 int gcd(int u, int v) {
-  int r;
   if (v == 0) {
-    r = u;
+    return u;
   } else {
     /* u-u/v*v == u mod v */
-    r = gcd(v, u-u/v*v);
+    return gcd(v, u-u/v*v);
   }
-  return r;
 }
 
 void main(void) {
