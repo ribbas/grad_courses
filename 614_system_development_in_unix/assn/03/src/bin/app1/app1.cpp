@@ -17,18 +17,21 @@
 void* PrintHello(void* threadid) {
     long tid;
     tid = (long)threadid;
-    std::cout << "Hello World! Thread ID, " << tid << std::endl;
+    printf("Hello! tid: %ld\n", tid);
     th_exit();
-    // return nullptr;
+    return nullptr;
 }
 
 int main() {
 
-    th_execute(PrintHello);
-    th_execute(PrintHello);
-    th_execute(PrintHello);
-    th_execute(PrintHello);
-    th_exit();
+    for (int i = 0; i < 5; i++) {
+        th_execute(PrintHello);
+    }
+    // for (int i = 0; i < 50; i++) {
+    //     int rc = th_wait(i);
+    //     printf("return %d\n", rc);
+    // }
+    int rc = th_wait_all();
 
-    exit(0);
+    return 0;
 }

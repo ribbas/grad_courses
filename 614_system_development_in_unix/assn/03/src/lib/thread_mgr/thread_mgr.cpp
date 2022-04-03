@@ -12,36 +12,47 @@
 
 #include <iostream>
 
-ThreadHandles THREAD_NUM = 1;
+ThreadHandles THREAD_NUM = -1;
 
 pthread_t THREADS[50];
 
 ThreadHandles th_execute(Funcptrs func) {
+
     THREAD_NUM++;
-    int rc =
-        pthread_create(&THREADS[THREAD_NUM], nullptr, func, (void*)THREAD_NUM);
 
-    if (rc) {
-        std::cout << "Error:unable to create thread," << rc << std::endl;
-        exit(-1);
-    } else {
+    if (pthread_create(&THREADS[THREAD_NUM], nullptr, func,
+                       (void*)THREAD_NUM)) {
+        printf("Error:unable to create thread: %d\n", errno);
+        return THD_ERROR;
     }
-    std::cout << "num: " << THREAD_NUM << '\n';
-
-    // pthread_exit(nullptr);
+    printf("crea: %d:%lu\n", THREAD_NUM, THREADS[THREAD_NUM]);
 
     return THREAD_NUM;
 }
 
-int th_wait(ThreadHandles) {}
+int th_wait(ThreadHandles thread_id) {
 
-int th_wait_all(void) {}
+    printf("wait: %d:%lu\n", thread_id, THREADS[thread_id]);
+    return (pthread_join(THREADS[thread_id], nullptr) == THD_OK);
+}
+
+int th_wait_all(void) {
+
+    for (int tid = 0; tid < MAX_THREAD_NUM; tid++) {
+        if (!THREADS[tid]) {
+            break;
+        }
+        th_wait(tid);
+    }
+    return THD_OK;
+}
 
 int th_kill(ThreadHandles) {}
 
 int th_kill_all(void) {}
 
 int th_exit(void) {
-    std::cout << "thread ID " << THREAD_NUM << ":" << pthread_self() << "\n";
+    printf("exit: %d:%lu:%lu\n", THREAD_NUM, THREADS[THREAD_NUM],
+           pthread_self());
     pthread_exit(nullptr);
 }

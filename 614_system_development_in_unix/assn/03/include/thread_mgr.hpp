@@ -20,7 +20,8 @@ typedef int ThreadHandles;
 typedef void* Funcptrs(void*);
 
 extern ThreadHandles THREAD_NUM;
-extern pthread_t THREADS[50];
+const unsigned int MAX_THREAD_NUM = 50;
+extern pthread_t THREADS[MAX_THREAD_NUM];
 
 ThreadHandles th_execute(Funcptrs);
 
