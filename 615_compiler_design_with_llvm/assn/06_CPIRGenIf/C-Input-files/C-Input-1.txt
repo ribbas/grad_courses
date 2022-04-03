@@ -3,11 +3,14 @@
 
 int gcd(int u, int v) {
   if (v == 0) {
+    //u = v + 10;
     return u;
   } else {
     /* u-u/v*v == u mod v */
+    //u = v + 20;
     return gcd(v, u-u/v*v);
   }
+  //return u;
 }
 
 void main(void) {

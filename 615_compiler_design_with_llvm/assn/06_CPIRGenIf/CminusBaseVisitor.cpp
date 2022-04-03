@@ -7,6 +7,7 @@
 
 CminusBaseVisitor::CminusBaseVisitor(std::string fileName)
     : assignmentVar(""), errorFound(false), condInst(false), condV(nullptr),
+      phiNode(nullptr),
       module(std::make_unique<llvm::Module>(fileName, *irContext)) {
 
     llvm::FunctionType* inputFuncType =
@@ -132,46 +133,41 @@ antlrcpp::Any CminusBaseVisitor::visitSelection_stmt(
     llvm::Function* func = irBuilder->GetInsertBlock()->getParent();
     llvm::BasicBlock* thenBB =
         llvm::BasicBlock::Create(*irContext, "then", func);
-    llvm::BasicBlock* elseBB = llvm::BasicBlock::Create(*irContext, "else");
     llvm::BasicBlock* contBB = llvm::BasicBlock::Create(*irContext, "ifcont");
-
-    irBuilder->CreateCondBr(expStack.back(), thenBB, elseBB);
-    expStack.pop_back();
-
-    // emit then value
-    irBuilder->SetInsertPoint(thenBB);
-
-    // if expression
-    condInst = true;
-    visit(ctx->then_cond);
-    llvm::Value* thenV = condV;
-    condInst = false;
-
-    irBuilder->CreateBr(contBB);
-    thenBB = irBuilder->GetInsertBlock();
-
-    // emit else block
-    func->getBasicBlockList().push_back(elseBB);
-    irBuilder->SetInsertPoint(elseBB);
-
-    // else condition exists
-    llvm::Value* elseV;
     if (ctx->else_cond) {
+
+        llvm::BasicBlock* elseBB = llvm::BasicBlock::Create(*irContext, "else");
+
+        irBuilder->CreateCondBr(expStack.back(), thenBB, elseBB);
+        expStack.pop_back();
+
+        // emit then value
+        irBuilder->SetInsertPoint(thenBB);
+
+        // if expression
+        condInst = true;
+        visit(ctx->then_cond);
+        llvm::Value* thenV = condV;
+        condInst = false;
+
+        irBuilder->CreateBr(contBB);
+        thenBB = irBuilder->GetInsertBlock();
+
+        // emit else block
+        func->getBasicBlockList().push_back(elseBB);
+        irBuilder->SetInsertPoint(elseBB);
+
+        // else condition exists
         condInst = true;
         visit(ctx->else_cond);
-        elseV = condV;
+        llvm::Value* elseV = condV;
         condInst = false;
-    }
 
-    irBuilder->CreateBr(contBB);
+        irBuilder->CreateBr(contBB);
 
-    // emit else block
-    func->getBasicBlockList().push_back(contBB);
-    irBuilder->SetInsertPoint(contBB);
-
-    llvm::PHINode* phiNode = nullptr;
-    // else condition exists
-    if (ctx->else_cond) {
+        // emit else block
+        func->getBasicBlockList().push_back(contBB);
+        irBuilder->SetInsertPoint(contBB);
 
         // phi node resolving then and else registers
         phiNode = irBuilder->CreatePHI(llvm::Type::getInt32Ty(*irContext), 2,
@@ -181,13 +177,37 @@ antlrcpp::Any CminusBaseVisitor::visitSelection_stmt(
 
     } else {
 
-        // phi node resolving only then register
+        irBuilder->CreateCondBr(expStack.back(), thenBB, contBB);
+        expStack.pop_back();
+
+        // emit then value
+        irBuilder->SetInsertPoint(thenBB);
+
+        // if expression
+        condInst = true;
+        visit(ctx->then_cond);
+        llvm::Value* thenV = condV;
+        condInst = false;
+
+        irBuilder->CreateBr(contBB);
+        thenBB = irBuilder->GetInsertBlock();
+
+        // emit else block
+        func->getBasicBlockList().push_back(contBB);
+        irBuilder->SetInsertPoint(contBB);
+
+        // phi node resolving only then registers
         phiNode = irBuilder->CreatePHI(llvm::Type::getInt32Ty(*irContext), 1,
                                        "iftmp");
         phiNode->addIncoming(thenV, thenBB);
     }
 
-    irBuilder->CreateRet(phiNode);
+    // condV = phiNode;
+    // expStack.pop_back();
+    // expStack.push_back(phiNode);
+    // expStack.push_back(phiNode);
+    // irBuilder->CreateRet(phiNode);
+    // irBuilder->CreateRet(phiNode);
     llvm::verifyFunction(*func);
 
     return nullptr;
@@ -269,7 +289,9 @@ CminusBaseVisitor::visitReturn_stmt(CminusParser::Return_stmtContext* ctx) {
             antlrcpp::Any retVal = visitChildren(ctx);
 
             if (condInst) {
+
                 condV = expStack.back();
+
             } else {
 
                 irBuilder->CreateRet(expStack.back());
@@ -318,6 +340,10 @@ CminusBaseVisitor::visitAdd_exp(CminusParser::Add_expContext* ctx) {
     }
     expStack.push_back(result);
 
+    if (condInst) {
+        condV = result;
+    }
+
     return expression;
 }
 
@@ -340,11 +366,17 @@ CminusBaseVisitor::visitMult_exp(CminusParser::Mult_expContext* ctx) {
     }
     expStack.push_back(result);
 
+    if (condInst) {
+        condV = result;
+    }
+
     return expression;
 }
 
 antlrcpp::Any
 CminusBaseVisitor::visitVal_exp(CminusParser::Val_expContext* ctx) {
+
+    std::cout << "val " << ctx->getText() << '\n';
 
     if (!semantics.checkSymbol(ctx->getText())) {
 
@@ -355,10 +387,17 @@ CminusBaseVisitor::visitVal_exp(CminusParser::Val_expContext* ctx) {
 
     } else {
 
-        llvm::Value* value = irBuilder->CreateLoad(
-            llvm::Type::getInt32Ty(*irContext), namedAllocas[ctx->getText()],
-            "ltmp_" + ctx->getText());
-        expStack.push_back(value);
+        llvm::Value* value = nullptr;
+        if (!phiNode) {
+            value = irBuilder->CreateLoad(llvm::Type::getInt32Ty(*irContext),
+                                          namedAllocas[ctx->getText()],
+                                          "ltmp_" + ctx->getText());
+            expStack.push_back(value);
+        } else {
+            // value = irBuilder->CreateLoad(llvm::Type::getInt32Ty(*irContext),
+            //                               phiNode, "ltmp_" + ctx->getText());
+            expStack.push_back(phiNode);
+        }
         return visitChildren(ctx);
     }
 }
@@ -368,6 +407,11 @@ CminusBaseVisitor::visitNum_exp(CminusParser::Num_expContext* ctx) {
 
     llvm::Value* value = llvm::ConstantInt::get(
         llvm::Type::getInt32Ty(*irContext), std::stoi(ctx->getText()));
+
+    if (condInst) {
+        condV = value;
+    }
+
     expStack.push_back(value);
 
     return visitChildren(ctx);
