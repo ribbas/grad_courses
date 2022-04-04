@@ -7,7 +7,6 @@
 
 CminusBaseVisitor::CminusBaseVisitor(std::string fileName)
     : assignmentVar(""), errorFound(false), condInst(false), condV(nullptr),
-      phiNode(nullptr),
       module(std::make_unique<llvm::Module>(fileName, *irContext)) {
 
     llvm::FunctionType* inputFuncType =
@@ -133,41 +132,46 @@ antlrcpp::Any CminusBaseVisitor::visitSelection_stmt(
     llvm::Function* func = irBuilder->GetInsertBlock()->getParent();
     llvm::BasicBlock* thenBB =
         llvm::BasicBlock::Create(*irContext, "then", func);
+    llvm::BasicBlock* elseBB = llvm::BasicBlock::Create(*irContext, "else");
     llvm::BasicBlock* contBB = llvm::BasicBlock::Create(*irContext, "ifcont");
+
+    irBuilder->CreateCondBr(expStack.back(), thenBB, elseBB);
+    expStack.pop_back();
+
+    // emit then value
+    irBuilder->SetInsertPoint(thenBB);
+
+    // if expression
+    condInst = true;
+    visit(ctx->then_cond);
+    llvm::Value* thenV = condV;
+    condInst = false;
+
+    irBuilder->CreateBr(contBB);
+    thenBB = irBuilder->GetInsertBlock();
+
+    // emit else block
+    func->getBasicBlockList().push_back(elseBB);
+    irBuilder->SetInsertPoint(elseBB);
+
+    // else condition exists
+    llvm::Value* elseV;
     if (ctx->else_cond) {
-
-        llvm::BasicBlock* elseBB = llvm::BasicBlock::Create(*irContext, "else");
-
-        irBuilder->CreateCondBr(expStack.back(), thenBB, elseBB);
-        expStack.pop_back();
-
-        // emit then value
-        irBuilder->SetInsertPoint(thenBB);
-
-        // if expression
-        condInst = true;
-        visit(ctx->then_cond);
-        llvm::Value* thenV = condV;
-        condInst = false;
-
-        irBuilder->CreateBr(contBB);
-        thenBB = irBuilder->GetInsertBlock();
-
-        // emit else block
-        func->getBasicBlockList().push_back(elseBB);
-        irBuilder->SetInsertPoint(elseBB);
-
-        // else condition exists
         condInst = true;
         visit(ctx->else_cond);
-        llvm::Value* elseV = condV;
+        elseV = condV;
         condInst = false;
+    }
 
-        irBuilder->CreateBr(contBB);
+    irBuilder->CreateBr(contBB);
 
-        // emit else block
-        func->getBasicBlockList().push_back(contBB);
-        irBuilder->SetInsertPoint(contBB);
+    // emit else block
+    func->getBasicBlockList().push_back(contBB);
+    irBuilder->SetInsertPoint(contBB);
+
+    llvm::PHINode* phiNode = nullptr;
+    // else condition exists
+    if (ctx->else_cond) {
 
         // phi node resolving then and else registers
         phiNode = irBuilder->CreatePHI(llvm::Type::getInt32Ty(*irContext), 2,
@@ -177,37 +181,13 @@ antlrcpp::Any CminusBaseVisitor::visitSelection_stmt(
 
     } else {
 
-        irBuilder->CreateCondBr(expStack.back(), thenBB, contBB);
-        expStack.pop_back();
-
-        // emit then value
-        irBuilder->SetInsertPoint(thenBB);
-
-        // if expression
-        condInst = true;
-        visit(ctx->then_cond);
-        llvm::Value* thenV = condV;
-        condInst = false;
-
-        irBuilder->CreateBr(contBB);
-        thenBB = irBuilder->GetInsertBlock();
-
-        // emit else block
-        func->getBasicBlockList().push_back(contBB);
-        irBuilder->SetInsertPoint(contBB);
-
-        // phi node resolving only then registers
+        // phi node resolving only then register
         phiNode = irBuilder->CreatePHI(llvm::Type::getInt32Ty(*irContext), 1,
                                        "iftmp");
         phiNode->addIncoming(thenV, thenBB);
     }
 
-    // condV = phiNode;
-    // expStack.pop_back();
-    // expStack.push_back(phiNode);
-    // expStack.push_back(phiNode);
-    // irBuilder->CreateRet(phiNode);
-    // irBuilder->CreateRet(phiNode);
+    irBuilder->CreateRet(phiNode);
     llvm::verifyFunction(*func);
 
     return nullptr;
@@ -376,8 +356,6 @@ CminusBaseVisitor::visitMult_exp(CminusParser::Mult_expContext* ctx) {
 antlrcpp::Any
 CminusBaseVisitor::visitVal_exp(CminusParser::Val_expContext* ctx) {
 
-    std::cout << "val " << ctx->getText() << '\n';
-
     if (!semantics.checkSymbol(ctx->getText())) {
 
         fprintf(stderr, "Line %lu: Variable '%s' was not declared\n",
@@ -387,17 +365,10 @@ CminusBaseVisitor::visitVal_exp(CminusParser::Val_expContext* ctx) {
 
     } else {
 
-        llvm::Value* value = nullptr;
-        if (!phiNode) {
-            value = irBuilder->CreateLoad(llvm::Type::getInt32Ty(*irContext),
-                                          namedAllocas[ctx->getText()],
-                                          "ltmp_" + ctx->getText());
-            expStack.push_back(value);
-        } else {
-            // value = irBuilder->CreateLoad(llvm::Type::getInt32Ty(*irContext),
-            //                               phiNode, "ltmp_" + ctx->getText());
-            expStack.push_back(phiNode);
-        }
+        llvm::Value* value = irBuilder->CreateLoad(
+            llvm::Type::getInt32Ty(*irContext), namedAllocas[ctx->getText()],
+            "ltmp_" + ctx->getText());
+        expStack.push_back(value);
         return visitChildren(ctx);
     }
 }

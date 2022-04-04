@@ -23,7 +23,6 @@ private:
 
     bool condInst;
     llvm::Value* condV;
-    llvm::PHINode* phiNode;
 
     std::map<std::string, llvm::Value*> namedAllocas;
     std::unique_ptr<llvm::Module> module;
