@@ -68,6 +68,7 @@ int th_kill(ThreadHandles thread_id) {
 }
 
 int th_kill_all() {
+
     for (int tid = 0; tid < MAX_THREAD_NUM; tid++) {
 
         if (!THREADS[tid]) {
@@ -84,4 +85,20 @@ int th_exit() {
 
     pthread_exit(nullptr);
     return THD_ERROR;
+}
+
+void sigint_handler(int signum) {
+
+    printf("Thread %d is calling\n", pthread_self());
+
+    for (int tid = 0; tid < MAX_THREAD_NUM; tid++) {
+
+        printf("Thread %d:%d is running\n", THREADS[tid], pthread_self());
+        if (!THREADS[tid]) {
+            break;
+        }
+
+        // if (THREADS[tid] != pthread_self()) {
+        // }
+    }
 }

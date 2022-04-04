@@ -29,3 +29,4 @@ clean:
 		$(MAKE) --no-print-directory $@; \
 	done
 	rm -f logfile LOGnewlog LOGwarnlog
+	rm -f *.log

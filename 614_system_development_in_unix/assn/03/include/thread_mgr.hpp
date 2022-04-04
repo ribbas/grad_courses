@@ -12,6 +12,7 @@
 #define THREAD_MGR_HPP
 
 #include <pthread.h>
+#include <signal.h> /* for signal */
 
 #define THD_OK 0
 #define THD_ERROR -1
@@ -35,4 +36,5 @@ int th_kill_all(void);
 
 int th_exit(void);
 
+void sigint_handler(int signum);
 #endif

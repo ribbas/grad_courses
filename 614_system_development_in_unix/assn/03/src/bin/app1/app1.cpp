@@ -51,10 +51,10 @@ void* compute(void* _thread_id) {
         uint64_t num = gen_large_num();
 
         if (is_prime(num)) {
-            printf("Thread %ld: %lu -> prime\n", thread_id, num);
+            // printf("Thread %ld: %lu -> prime\n", thread_id, num);
             primes_found++;
-        } else {
-            printf("Thread %ld: %lu -> non-prime\n", thread_id, num);
+            // } else {
+            //     printf("Thread %ld: %lu -> non-prime\n", thread_id, num);
         }
     }
 
@@ -67,6 +67,8 @@ void* compute(void* _thread_id) {
 }
 
 int main(int argc, char* argv[]) {
+
+    signal(SIGINT, sigint_handler);
 
     set_logfile("app1.log");
 
@@ -94,6 +96,6 @@ int main(int argc, char* argv[]) {
 
         th_wait_all();
 
-        return 0;
+        return THD_OK;
     }
 }
