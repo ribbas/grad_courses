@@ -7,12 +7,12 @@
 class Semantics {
 private:
     bool mainDeclared = false;
-    std::string curFuncName = "global";
+    std::string curFuncName = GLOBAL;
     std::string curFuncType = "";
     SymbolTable symtab;
 
     bool declareFunc(std::string funcName, std::string retType) {
-        if (!symtab.contains(funcName, "global")) {
+        if (!symtab.contains(funcName, GLOBAL)) {
             symtab.defineFunc(funcName, retType, 0);
             curFuncName = funcName;
             curFuncType = retType;
@@ -56,7 +56,7 @@ public:
 
     bool isValidNumArgs(std::string funcName, int numParams) {
 
-        return (symtab.getNumArgs(funcName, "global") == numParams);
+        return (symtab.getNumArgs(funcName, GLOBAL) == numParams);
     }
 
     bool canDeclareFunc(std::string funcName, std::string retType) {

@@ -38,15 +38,32 @@ void CminusBaseVisitor::printModule(std::ofstream& fd) {
 antlrcpp::Any CminusBaseVisitor::visitVar_declaration(
     CminusParser::Var_declarationContext* ctx) {
 
+    std::cout << ctx->ID()->getText() << " val\n";
+
     if (ctx->size) {
         semantics.addVarSymbol(ctx->ID()->getText(),
                                std::stoi(ctx->size->getText().c_str()));
     } else {
         semantics.addVarSymbol(ctx->ID()->getText());
     }
-    namedAllocas[ctx->ID()->getText()] =
-        irBuilder->CreateAlloca(llvm::Type::getInt32Ty(*irContext), nullptr,
-                                "tmp_" + ctx->ID()->getText());
+
+    if (semantics.getCurFuncName() == GLOBAL) {
+
+        std::cout << ctx->ID()->getText() << " is global\n";
+        module->getOrInsertGlobal(ctx->ID()->getText(),
+                                  irBuilder->getInt32Ty());
+        llvm::GlobalVariable* gVar =
+            module->getNamedGlobal(ctx->ID()->getText());
+        gVar->setDSOLocal(true);
+        gVar->setAlignment(llvm::MaybeAlign(4));
+
+    } else {
+
+        namedAllocas[ctx->ID()->getText()] =
+            irBuilder->CreateAlloca(llvm::Type::getInt32Ty(*irContext), nullptr,
+                                    "tmp_" + ctx->ID()->getText());
+    }
+
     return visitChildren(ctx);
 }
 
