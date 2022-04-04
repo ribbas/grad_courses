@@ -16,33 +16,50 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-void* compute(void* thread_id) {
+bool is_prime(int n) {
 
-    log_event(INFO, "Thread %ld created", thread_id);
+    for (int i = 2; i <= n / 2; ++i) {
 
+        // if n is divisible by i, then n is not prime
+        if (!(n % i)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+uint64_t gen_large_num() {
     uint64_t num = rand();
     num = (num << 32) | rand();
 
     // enforce limits of value between 100000000 and 999999999
-    num = (num % (4294967295 - 10000000000)) + 10000000000;
+    return (num % (4294967295 - 10000000000)) + 10000000000;
+}
 
-    bool is_prime = false;
+void* compute(void* _thread_id) {
 
-    for (int i = 2; i <= num / 2; ++i) {
+    long thread_id = (long)_thread_id;
 
-        // if num is divisible by i, then n is not prime
-        if (!(num % i)) {
-            is_prime = true;
-            break;
+    log_event(INFO, "Thread %ld created", thread_id);
+
+    int i = MAX_THREAD_NUM;
+    int primes_found = 0;
+
+    while (--i) {
+
+        uint64_t num = gen_large_num();
+
+        if (is_prime(num)) {
+            printf("Thread %ld: %lu -> prime\n", thread_id, num);
+            primes_found++;
+        } else {
+            printf("Thread %ld: %lu -> non-prime\n", thread_id, num);
         }
     }
 
-    if (is_prime) {
-        printf("%lu is not a prime\n", num);
-    } else {
-        printf("%lu is a prime\n", num);
-    }
-
+    log_event(INFO, "Thread %ld found %d prime numbers", thread_id,
+              primes_found);
     log_event(INFO, "Thread %ld exiting", thread_id);
     th_exit();
 
@@ -50,6 +67,8 @@ void* compute(void* thread_id) {
 }
 
 int main(int argc, char* argv[]) {
+
+    set_logfile("app1.log");
 
     // if wrong number of arguments
     if (argc != 2) {
@@ -64,7 +83,7 @@ int main(int argc, char* argv[]) {
         // if user input is less than 1 or greater than 12, return ERROR
         if (num_threads < 1 || num_threads > 12) {
 
-            printf("Invalid number of arguments provided\n");
+            printf("Invalid argument provided\n");
             return ERROR;
         }
 
@@ -73,7 +92,7 @@ int main(int argc, char* argv[]) {
             th_execute(compute);
         }
 
-        int rc = th_wait_all();
+        th_wait_all();
 
         return 0;
     }
