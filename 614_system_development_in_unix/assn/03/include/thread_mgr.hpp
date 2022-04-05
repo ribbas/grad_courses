@@ -21,6 +21,7 @@ typedef int ThreadHandles;
 typedef void* Funcptrs(void*);
 
 extern ThreadHandles THREAD_NUM;
+extern ThreadHandles CUR_THREAD_NUM;
 const unsigned int MAX_THREAD_NUM = 50;
 extern pthread_t THREADS[MAX_THREAD_NUM];
 
@@ -37,4 +38,7 @@ int th_kill_all(void);
 int th_exit(void);
 
 void sigint_handler(int signum);
-#endif
+
+void sigquit_handler(int signum);
+
+#endif // THREAD_MGR_HPP

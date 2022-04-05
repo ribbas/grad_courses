@@ -9,11 +9,15 @@
  */
 
 #include "thread_mgr.hpp"
+#include "log_mgr.hpp"
 
+#include <cstring>
+#include <errno.h>
 #include <iostream>
 
 ThreadHandles THREAD_NUM = -1;
-pthread_t THREADS[50];
+ThreadHandles CUR_THREAD_NUM = THREAD_NUM;
+pthread_t THREADS[MAX_THREAD_NUM];
 
 ThreadHandles th_execute(Funcptrs func) {
 
@@ -22,9 +26,12 @@ ThreadHandles th_execute(Funcptrs func) {
     if (pthread_create(&THREADS[THREAD_NUM], nullptr, func,
                        (void*)(size_t)THREAD_NUM)) {
 
-        printf("Error:unable to create thread: %d\n", errno);
+        fprintf(stderr, "Unable to create thread '%d': (%d) %s\n", THREAD_NUM,
+                errno, strerror(errno));
         return THD_ERROR;
     }
+
+    CUR_THREAD_NUM = THREAD_NUM;
 
     return THREAD_NUM;
 }
@@ -83,13 +90,14 @@ int th_kill_all() {
 
 int th_exit() {
 
+    log_event(INFO, "Thread %ld exiting", pthread_self());
     pthread_exit(nullptr);
     return THD_ERROR;
 }
 
 void sigint_handler(int signum) {
 
-    printf("Thread %d is calling\n", pthread_self());
+    printf("Thread %d is calling\n", CUR_THREAD_NUM);
 
     for (int tid = 0; tid < MAX_THREAD_NUM; tid++) {
 
@@ -97,8 +105,11 @@ void sigint_handler(int signum) {
         if (!THREADS[tid]) {
             break;
         }
-
-        // if (THREADS[tid] != pthread_self()) {
-        // }
     }
+}
+
+void sigquit_handler(int signum) {
+
+    printf("Thread %d is calling quits\n", CUR_THREAD_NUM);
+    th_kill_all();
 }

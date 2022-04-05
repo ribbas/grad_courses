@@ -47,20 +47,13 @@ void* compute(void* _thread_id) {
     int primes_found = 0;
 
     while (--i) {
-
-        uint64_t num = gen_large_num();
-
-        if (is_prime(num)) {
-            // printf("Thread %ld: %lu -> prime\n", thread_id, num);
+        if (is_prime(gen_large_num())) {
             primes_found++;
-            // } else {
-            //     printf("Thread %ld: %lu -> non-prime\n", thread_id, num);
         }
     }
 
     log_event(INFO, "Thread %ld found %d prime numbers", thread_id,
               primes_found);
-    log_event(INFO, "Thread %ld exiting", thread_id);
     th_exit();
 
     return nullptr;
