@@ -64,13 +64,18 @@ int th_wait_all() {
 
 int th_kill(ThreadHandles thread_id) {
 
-    if (pthread_cancel(thread_id) == THD_OK) {
+    if (!THREADS[thread_id]) {
 
-        return THD_OK;
+        if (pthread_cancel(thread_id) == THD_OK) {
 
+            return THD_OK;
+
+        } else {
+
+            return THD_ERROR;
+        }
     } else {
-
-        return THD_ERROR;
+        return THD_OK;
     }
 }
 
@@ -101,7 +106,7 @@ void sigint_handler(int signum) {
 
     for (int tid = 0; tid < MAX_THREAD_NUM; tid++) {
 
-        printf("Thread %d:%d is running\n", THREADS[tid], pthread_self());
+        printf("Thread %lu:%lu is running\n", THREADS[tid], pthread_self());
         if (!THREADS[tid]) {
             break;
         }
