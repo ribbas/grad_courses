@@ -21,7 +21,7 @@ LIBS = log_mgr thread_mgr
 # construct library paths
 LIB_ARS = $(LIBS:%=$(LIB_DIR)/lib%.a)
 # construct library flags
-LD_FLAGS = -lpthread -L$(LIB_DIR) $(LIBS:%=-l%)
+LD_FLAGS = -lpthread -lrt -L$(LIB_DIR) $(LIBS:%=-l%)
 # declare include headers and libraries as dependencies for the executable
 DEP := $(LIBS:%=$(INC_DIR)/%.hpp) $(LIB_ARS)
 

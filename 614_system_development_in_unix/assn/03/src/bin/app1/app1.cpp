@@ -11,14 +11,13 @@
 #include "log_mgr.hpp"
 #include "thread_mgr.hpp"
 
-#include <chrono>
 #include <inttypes.h>
 #include <iostream>
 #include <stdlib.h>
 #include <unistd.h>
 
-const unsigned int LOW_RANGE = 1000000000;
-const unsigned int UPP_RANGE = 3294967295; // 2^{32}-1 - LOW_RANGE
+const unsigned long LO_RANGE = 1000000000;
+const unsigned long UP_RANGE = 3294967295; // 2^{32}-1 - LO_RANGE
 
 bool is_prime(int n) {
 
@@ -38,10 +37,10 @@ uint64_t gen_large_num() {
     num = (num << 32) | rand();
 
     // enforce limits of value between 1000000000 and 2^{32}-1
-    return (num % UPP_RANGE) + LOW_RANGE;
+    return (num % UP_RANGE) + LO_RANGE;
 }
 
-void* compute(void* _thread_id) {
+void* worker(void* _thread_id) {
 
     long thread_id = (long)_thread_id;
 
@@ -50,21 +49,11 @@ void* compute(void* _thread_id) {
 
     int i = 0;
     int primes_found = 10;
-
-    std::chrono::steady_clock::time_point begin =
-        std::chrono::steady_clock::now();
     while (i < primes_found) {
         if (is_prime(gen_large_num())) {
             i++;
         }
     }
-    std::chrono::steady_clock::time_point end =
-        std::chrono::steady_clock::now();
-    printf("Thread %lu found 10 primes in %f s\n", thread_id,
-           (std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin)
-                .count() /
-            1000000000.0));
-
     printf("Thread %lu found 10 prime numbers\n", thread_id);
     log_event(INFO, "Thread %lu found 10 prime numbers", thread_id);
     th_exit();
@@ -95,7 +84,7 @@ int main(int argc, char* argv[]) {
 
         srand(time(nullptr));
         for (int i = 0; i < num_threads; i++) {
-            th_execute(compute);
+            th_execute(worker);
         }
 
         th_wait_all();

@@ -51,25 +51,19 @@ void sleep_sec(double sec) {
     sigaction(SIGALRM, &old_sig, nullptr);
 }
 
-void* compute(void* _thread_id) {
+void* worker(void* _thread_id) {
 
     long thread_id = (long)_thread_id;
 
-    log_event(INFO, "Thread %ld created", thread_id);
-
     pthread_mutex_lock(&count_mutex);
 
-    // for (;;)
-    //     ;
+    log_event(INFO, "Thread %ld created", thread_id);
+    th_wait(thread_id);
 
-    // while (1)
-    //     ;
-    // sleep_sec(10);
-    // pthread_mutex_lock(&count_mutex);
-    // while (true)
-    //     ;
-
-    // th_exit();
+    for (;;) {
+        // do nothing
+    }
+    pthread_mutex_unlock(&count_mutex);
 
     return nullptr;
 }
@@ -104,19 +98,17 @@ int main(int argc, char* argv[]) {
             return ERROR;
         }
 
-        for (int i = 0; i < num_threads; i++) {
+        for (int i = 2; i < num_threads + 2; i++) {
 
-            printf("gonna exec\n");
-            th_execute(compute);
-            printf("exec'd\n");
+            th_execute(worker);
+            printf("exec'd %d\n", i);
             sleep_sec(delay);
         }
-        // th_wait_all();
 
         printf("gonna wait\n");
         sleep_sec(2);
 
-        for (int i = 0; i < num_threads; i++) {
+        for (int i = 2; i < num_threads + 2; i++) {
 
             printf("KILL\n");
 

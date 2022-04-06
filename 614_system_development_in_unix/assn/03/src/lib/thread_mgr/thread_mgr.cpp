@@ -16,7 +16,7 @@
 #include <iostream>
 #include <string>
 
-ThreadHandles THREAD_NUM = -1;
+ThreadHandles THREAD_NUM = 1;
 pthread_t THREADS[MAX_THREAD_NUM] = {};
 
 ThreadHandles th_execute(Funcptrs func) {
@@ -29,6 +29,8 @@ ThreadHandles th_execute(Funcptrs func) {
                 errno, strerror(errno));
         return THD_ERROR;
     }
+
+    printf("%lu made tid: %lu\n", pthread_self(), THREADS[THREAD_NUM]);
 
     return THREAD_NUM;
 }
@@ -52,9 +54,9 @@ int th_wait(ThreadHandles thread_id) {
 
 int th_wait_all() {
 
-    for (int tid = 0; tid < MAX_THREAD_NUM; tid++) {
+    for (int th_ix = 2; th_ix < MAX_THREAD_NUM; th_ix++) {
 
-        if (th_wait(tid) == THD_ERROR) {
+        if (th_wait(th_ix) == THD_ERROR) {
             return THD_ERROR;
         }
     }
@@ -64,33 +66,37 @@ int th_wait_all() {
 
 int th_kill(ThreadHandles thread_id) {
 
-    fprintf(stderr, "pthread_cancel '%d': (%d) %s\n", thread_id, errno,
-            strerror(errno));
+    fprintf(stderr, "in func '%d:%lu': (%d) %s\n", thread_id,
+            THREADS[thread_id], errno, strerror(errno));
+    int rc;
 
     if (THREADS[thread_id]) {
+        printf("%d exists\n", thread_id);
 
-        if (pthread_cancel(thread_id) == 0) {
+        if ((rc = pthread_cancel(THREADS[thread_id])) == 0) {
             printf("%d succ bruh\n", thread_id);
 
             return THD_OK;
 
         } else {
-            fprintf(stderr, "pthread_cancel '%d': (%d) %s\n", thread_id, errno,
-                    strerror(errno));
+            fprintf(stderr, "pthread_cancel rc(%d) '%d': (%d) %s\n", rc,
+                    thread_id, errno, strerror(errno));
 
             return THD_ERROR;
         }
 
     } else {
+        printf("%d doesnt' exists\n", thread_id);
+
         return THD_OK;
     }
 }
 
 int th_kill_all() {
 
-    for (int tid = 0; tid < MAX_THREAD_NUM; tid++) {
+    for (int th_ix = 2; th_ix < MAX_THREAD_NUM; th_ix++) {
 
-        if (th_kill(tid) == THD_ERROR) {
+        if (th_kill(th_ix) == THD_ERROR) {
             return THD_ERROR;
         }
     }
@@ -100,12 +106,12 @@ int th_kill_all() {
 
 int th_exit() {
 
-    for (int tid = 0; tid < MAX_THREAD_NUM; tid++) {
+    for (int th_ix = 2; th_ix < MAX_THREAD_NUM; th_ix++) {
 
-        if (THREADS[tid] == pthread_self()) {
+        if (THREADS[th_ix] == pthread_self()) {
 
-            log_event(INFO, "Thread %d exiting", tid);
-            printf("Thread %d exiting\n", tid);
+            log_event(INFO, "Thread %d exiting", th_ix);
+            printf("Thread %d exiting\n", th_ix);
             pthread_exit(nullptr);
             break;
         }
@@ -117,10 +123,10 @@ void sigint_handler(int signum) {
 
     // printf("Thread %d is calling\n", CUR_THREAD_NUM);
 
-    for (int tid = 0; tid < MAX_THREAD_NUM; tid++) {
+    for (int th_ix = 2; th_ix < MAX_THREAD_NUM; th_ix++) {
 
-        printf("Thread %lu:%lu is running\n", THREADS[tid], pthread_self());
-        if (!THREADS[tid]) {
+        printf("Thread %lu:%lu is running\n", THREADS[th_ix], pthread_self());
+        if (!THREADS[th_ix]) {
             break;
         }
     }
