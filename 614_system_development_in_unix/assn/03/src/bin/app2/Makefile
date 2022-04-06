@@ -34,11 +34,11 @@ EXE := $(SRC:%.cpp=%)
 
 it: $(EXE)
 $(EXE): $(OBJ) $(DEP) depend
-	$(CXX) -I$(INC_DIR) -g $(OBJ) $(LD_FLAGS) -o $(EXE)
+	$(CXX) -std=c++11 -I$(INC_DIR) -g $(OBJ) $(LD_FLAGS) -o $(EXE)
 	chmod 755 $(EXE)
 
 $(OBJ):
-	$(CXX) -I$(INC_DIR) -g -c $(SRC)
+	$(CXX) -std=c++11 -I$(INC_DIR) -g -c $(SRC)
 
 $(LIBA):
 	@cd ../../lib && $(MAKE) --no-print-directory it
@@ -48,7 +48,7 @@ install: it
 
 depend:
 	echo > depend_list
-	$(CXX) -M -I$(INC_DIR) -g $(SRC) >> depend_list
+	$(CXX) -M -std=c++11 -I$(INC_DIR) -g $(SRC) >> depend_list
 
 # clean out temporary objects and executables
 clean:

@@ -11,42 +11,44 @@
 #include "log_mgr.hpp"
 #include "thread_mgr.hpp"
 
+#include <cstdlib>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
 #include <unistd.h>
 
-void nullfunc() {}
+pthread_mutex_t count_mutex;
+void noop() {}
 
-void sleepSec(double sec) {
+void sleep_sec(double sec) {
 
-    struct itimerval newTV, oldTV;
-    struct sigaction catchAlarm, oldSig;
+    struct itimerval new_it, old_it;
+    struct sigaction catch_alarm, old_sig;
 
-    void nullfunc();
+    void noop();
     sigset_t empty;
     sigemptyset(&empty);
 
-    catchAlarm.sa_handler = (void (*)(int))nullfunc;
-    catchAlarm.sa_mask = empty;
-    catchAlarm.sa_flags = 0;
+    catch_alarm.sa_handler = (void (*)(int))noop;
+    catch_alarm.sa_mask = empty;
+    catch_alarm.sa_flags = 0;
 
-    sigaction(SIGALRM, &catchAlarm, &oldSig);
+    sigaction(SIGALRM, &catch_alarm, &old_sig);
 
     int ms = sec * 1000;
-    newTV.it_value.tv_sec = ms / 1000;
-    newTV.it_value.tv_usec = 1000 * (ms % 1000);
-    newTV.it_interval.tv_sec = 0;
-    newTV.it_interval.tv_usec = 0;
+    new_it.it_value.tv_sec = ms / 1000;
+    new_it.it_value.tv_usec = 1000 * (ms % 1000);
+    new_it.it_interval.tv_sec = 0;
+    new_it.it_interval.tv_usec = 0;
 
-    if (setitimer(ITIMER_REAL, &newTV, &oldTV) < 0) {
+    if (setitimer(ITIMER_REAL, &new_it, &old_it) < 0) {
         perror("setitimer");
         exit(1);
     };
 
     pause();
-    sigaction(SIGALRM, &oldSig, NULL);
+    sigaction(SIGALRM, &old_sig, nullptr);
 }
 
 void* compute(void* _thread_id) {
@@ -55,7 +57,19 @@ void* compute(void* _thread_id) {
 
     log_event(INFO, "Thread %ld created", thread_id);
 
-    th_exit();
+    pthread_mutex_lock(&count_mutex);
+
+    // for (;;)
+    //     ;
+
+    // while (1)
+    //     ;
+    // sleep_sec(10);
+    // pthread_mutex_lock(&count_mutex);
+    // while (true)
+    //     ;
+
+    // th_exit();
 
     return nullptr;
 }
@@ -92,21 +106,22 @@ int main(int argc, char* argv[]) {
 
         for (int i = 0; i < num_threads; i++) {
 
-            printf("AYODSDS\n");
-
+            printf("gonna exec\n");
             th_execute(compute);
-            sleepSec(delay);
+            printf("exec'd\n");
+            sleep_sec(delay);
         }
-        th_wait_all();
+        // th_wait_all();
 
-        sleepSec(5);
+        printf("gonna wait\n");
+        sleep_sec(2);
 
         for (int i = 0; i < num_threads; i++) {
 
             printf("KILL\n");
 
             th_kill(i);
-            sleepSec(1);
+            sleep_sec(1);
         }
 
         return THD_OK;

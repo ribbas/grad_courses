@@ -12,7 +12,7 @@
 #define THREAD_MGR_HPP
 
 #include <pthread.h>
-#include <signal.h> /* for signal */
+#include <signal.h>
 
 #define THD_OK 0
 #define THD_ERROR -1
@@ -21,7 +21,6 @@ typedef int ThreadHandles;
 typedef void* Funcptrs(void*);
 
 extern ThreadHandles THREAD_NUM;
-extern ThreadHandles CUR_THREAD_NUM;
 const unsigned int MAX_THREAD_NUM = 50;
 extern pthread_t THREADS[MAX_THREAD_NUM];
 

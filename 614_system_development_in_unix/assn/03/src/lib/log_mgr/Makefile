@@ -31,14 +31,14 @@ $(LIB): $(OBJ)
 	ranlib $(LIB_DIR)/$(LIB)
 
 $(OBJ): $(DEPS)
-	$(CXX) -g -I$(INC_DIR) -c $(@:%.o=%.cpp) -o $@
+	$(CXX) -g -std=c++11 -I$(INC_DIR) -c $(@:%.o=%.cpp) -o $@
 
 install: it
 	cp $(LIB) $(LIB_DIR)
 	ranlib $(LIB_DIR)/$(LIB)
 
 depend:
-	$(CXX) -M -g -I$(INC_DIR) $(SRC) > depend_list
+	$(CXX) -M -g -std=c++11 -I$(INC_DIR) $(SRC) > depend_list
 
 # clean out temporary objects and files
 clean:
