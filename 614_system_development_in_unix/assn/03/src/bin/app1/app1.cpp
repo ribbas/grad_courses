@@ -61,7 +61,28 @@ void* worker(void* _thread_id) {
     return nullptr;
 }
 
+void my_signal(int sig, void (*handler)(int)) {
+    struct sigaction myaction;
+    sigset_t mymask;
+
+    sigemptyset(&mymask);
+
+    sigaddset(&mymask, SIGHUP);
+    sigaddset(&mymask, SIGINT);
+    sigaddset(&mymask, SIGQUIT);
+
+    myaction.sa_handler = handler;
+    myaction.sa_mask = mymask;
+    myaction.sa_flags = 0;
+
+    if (sigaction(sig, &myaction, NULL) < 0)
+        perror("sigaction");
+    return;
+}
+
 int main(int argc, char* argv[]) {
+
+    my_signal(SIGINT, sigint_handler);
 
     set_logfile("app1.log");
 

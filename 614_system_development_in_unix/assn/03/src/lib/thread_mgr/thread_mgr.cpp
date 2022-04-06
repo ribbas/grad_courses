@@ -121,14 +121,12 @@ int th_exit() {
 
 void sigint_handler(int signum) {
 
-    // printf("Thread %d is calling\n", CUR_THREAD_NUM);
-
     for (int th_ix = 2; th_ix < MAX_THREAD_NUM; th_ix++) {
 
-        printf("Thread %lu:%lu is running\n", THREADS[th_ix], pthread_self());
         if (!THREADS[th_ix]) {
             break;
         }
+        printf("Thread %d (id:%lu) is running\n", th_ix - 2, THREADS[th_ix]);
     }
 }
 
