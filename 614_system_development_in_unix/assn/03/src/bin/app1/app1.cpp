@@ -63,9 +63,6 @@ void* worker(void* _thread_id) {
 
 int main(int argc, char* argv[]) {
 
-    sig_handle_wrapper(SIGINT, sigint_handler);
-    sig_handle_wrapper(SIGQUIT, sigquit_handler);
-
     set_logfile("app1.log");
 
     // if wrong number of arguments
@@ -86,7 +83,7 @@ int main(int argc, char* argv[]) {
         }
 
         srand(time(nullptr));
-        for (int i = 0; i < num_threads; i++) {
+        while (num_threads--) {
             th_execute(worker);
         }
 

@@ -55,23 +55,15 @@ void* worker(void* _thread_id) {
 
     long thread_id = (long)_thread_id;
 
-    pthread_mutex_lock(&count_mutex);
-
     log_event(INFO, "Thread %ld created", thread_id);
-    // th_wait(thread_id);
+    printf("Thread %ld created\n", thread_id);
 
-    for (;;) {
-        // do nothing
-    }
-    pthread_mutex_unlock(&count_mutex);
+    // do nothing
 
     return nullptr;
 }
 
 int main(int argc, char* argv[]) {
-
-    // sig_handle_wrapper(SIGINT, sigint_handler);
-    // sig_handle_wrapper(SIGQUIT, sigquit_handler);
 
     set_logfile("app2.log");
 
@@ -104,20 +96,19 @@ int main(int argc, char* argv[]) {
         for (int i = 0; i < num_threads; i++) {
 
             th_execute(worker);
-            printf("exec'd %d\n", i);
             sleep_sec(delay);
         }
-        // th_wait_all();
 
-        printf("gonna wait\n");
-        sleep_sec(2);
+        // wait 5 seconds
+        printf("Waiting 5 seconds...\n");
+        sleep_sec(2.0);
 
+        printf("Terminating all threads...\n");
         for (int i = 0; i < num_threads; i++) {
 
-            printf("KILL\n");
-
+            printf("Terminating %d\n", i);
             th_kill(i);
-            sleep_sec(1);
+            sleep_sec(1.0);
         }
 
         return THD_OK;

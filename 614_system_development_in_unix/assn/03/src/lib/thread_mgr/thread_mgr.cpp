@@ -17,11 +17,13 @@
 #include <string>
 
 ThreadHandles THREAD_NUM = -1;
-ThreadHandles CUR_NUM = -1;
+ThreadHandles LAST_THREAD_NUM = -1;
 pthread_t THREADS[MAX_THREAD_NUM] = {};
 
 ThreadHandles th_execute(Funcptrs func) {
 
+    sig_handle_wrapper(SIGINT, sigint_handler);
+    sig_handle_wrapper(SIGQUIT, sigquit_handler);
     THREAD_NUM++;
     if (pthread_create(&THREADS[THREAD_NUM], nullptr, func,
                        (void*)(size_t)THREAD_NUM)) {
@@ -31,8 +33,7 @@ ThreadHandles th_execute(Funcptrs func) {
         return THD_ERROR;
     }
 
-    printf("%lu made tid: %lu\n", pthread_self(), THREADS[THREAD_NUM]);
-    CUR_NUM = THREAD_NUM;
+    LAST_THREAD_NUM = THREAD_NUM;
 
     return THREAD_NUM;
 }
@@ -70,16 +71,11 @@ int th_wait_all() {
 
 int th_kill(ThreadHandles thread_id) {
 
-    // thread_id -= 2;
-
-    // fprintf(stderr, "in func '%d:%lu': (%d) %s\n", thread_id,
-    //         THREADS[thread_id], errno, strerror(errno));
-    void* status;
-
     if (THREADS[thread_id]) {
 
         if (pthread_cancel(THREADS[thread_id]) == THD_OK) {
 
+            void* status;
             if (pthread_join(THREADS[thread_id], &status) == THD_ERROR) {
                 fprintf(stderr, "Unable to join thread '%d': (%d) %s\n",
                         thread_id, errno, strerror(errno));
@@ -88,24 +84,19 @@ int th_kill(ThreadHandles thread_id) {
 
             if (status == (int*)THD_ERROR) {
                 printf("Thread %d was killed\n", thread_id);
+                log_event(INFO, "Thread %d was killed", thread_id);
                 THREADS[thread_id] = 0;
             } else {
-                fprintf(stderr, "Thread '%d' can't be killed: (%d) %s\n",
-                        thread_id, errno, strerror(errno));
+                printf("Thread %d was NOT killed\n", thread_id);
             }
 
             return THD_OK;
 
         } else {
-            fprintf(stderr, "pthreadcancel '%d': (%d) %s\n", thread_id, errno,
-                    strerror(errno));
             return THD_ERROR;
         }
 
     } else {
-        fprintf(stderr, "Doesn't exist '%d': (%d) %s\n", thread_id, errno,
-                strerror(errno));
-
         return THD_OK;
     }
 }
@@ -141,7 +132,7 @@ int th_exit() {
 void sigint_handler(int signum) {
 
     printf("Received SIGINT\nPrinting status of all threads\n");
-    for (int th_ix = 0; th_ix < CUR_NUM; th_ix++) {
+    for (int th_ix = 0; th_ix < LAST_THREAD_NUM; th_ix++) {
 
         if (!THREADS[th_ix]) {
             printf("Thread %d is dead\n", th_ix);
