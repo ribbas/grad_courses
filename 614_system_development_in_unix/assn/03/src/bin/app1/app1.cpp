@@ -48,7 +48,7 @@ void* worker(void* _thread_id) {
     log_event(INFO, "Thread %lu created", thread_id);
 
     int i = 0;
-    int primes_found = 10;
+    int primes_found = 50;
     while (i < primes_found) {
         if (is_prime(gen_large_num())) {
             i++;
@@ -82,7 +82,7 @@ void my_signal(int sig, void (*handler)(int)) {
 
 int main(int argc, char* argv[]) {
 
-    my_signal(SIGINT, sigint_handler);
+    // my_signal(SIGQUIT, sigquit_handler);
 
     set_logfile("app1.log");
 
@@ -105,6 +105,7 @@ int main(int argc, char* argv[]) {
 
         srand(time(nullptr));
         for (int i = 0; i < num_threads; i++) {
+            my_signal(SIGINT, sigint_handler);
             th_execute(worker);
         }
 
