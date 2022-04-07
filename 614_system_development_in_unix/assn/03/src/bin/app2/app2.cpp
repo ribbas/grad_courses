@@ -12,25 +12,23 @@
 #include "thread_mgr.hpp"
 
 #include <cstdlib>
+#include <cstring>
+#include <errno.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
 #include <unistd.h>
 
-pthread_mutex_t count_mutex;
-void noop() {}
-
 void sleep_sec(double sec) {
 
     struct itimerval new_it, old_it;
     struct sigaction catch_alarm, old_sig;
 
-    void noop();
     sigset_t empty;
     sigemptyset(&empty);
 
-    catch_alarm.sa_handler = (void (*)(int))noop;
+    catch_alarm.sa_handler = ([](int) {});
     catch_alarm.sa_mask = empty;
     catch_alarm.sa_flags = 0;
 
@@ -43,8 +41,8 @@ void sleep_sec(double sec) {
     new_it.it_interval.tv_usec = 0;
 
     if (setitimer(ITIMER_REAL, &new_it, &old_it) < 0) {
-        perror("setitimer");
-        exit(1);
+        fprintf(stderr, "setitimer: (%d) %s\n", errno, strerror(errno));
+        return;
     };
 
     pause();

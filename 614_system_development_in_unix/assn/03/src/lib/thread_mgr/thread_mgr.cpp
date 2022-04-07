@@ -86,8 +86,6 @@ int th_kill(ThreadHandles thread_id) {
                 printf("Thread %d was killed\n", thread_id);
                 log_event(INFO, "Thread %d was killed", thread_id);
                 THREADS[thread_id] = 0;
-            } else {
-                printf("Thread %d was NOT killed\n", thread_id);
             }
 
             return THD_OK;
