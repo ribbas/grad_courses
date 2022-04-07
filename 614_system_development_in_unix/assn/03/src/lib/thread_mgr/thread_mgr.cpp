@@ -47,6 +47,8 @@ int th_wait(ThreadHandles thread_id) {
 
         } else {
 
+            fprintf(stderr, "Unable to join thread '%d': (%d) %s\n", thread_id,
+                    errno, strerror(errno));
             return THD_ERROR;
         }
     } else {
@@ -68,44 +70,41 @@ int th_wait_all() {
 
 int th_kill(ThreadHandles thread_id) {
 
-    thread_id -= 2;
+    // thread_id -= 2;
 
-    fprintf(stderr, "in func '%d:%lu': (%d) %s\n", thread_id,
-            THREADS[thread_id], errno, strerror(errno));
-    int rc;
+    // fprintf(stderr, "in func '%d:%lu': (%d) %s\n", thread_id,
+    //         THREADS[thread_id], errno, strerror(errno));
     void* status;
 
     if (THREADS[thread_id]) {
-        printf("%d:%lu exists\n", thread_id, THREADS[thread_id]);
 
-        if ((rc = pthread_cancel(THREADS[thread_id])) == 0) {
-            printf("%d:%lu succ bruh\n", thread_id, THREADS[thread_id]);
+        if (pthread_cancel(THREADS[thread_id]) == THD_OK) {
 
-            if (pthread_join(THREADS[thread_id], &status) == -1) {
-                printf("pthread_join failed");
-                exit(4);
+            if (pthread_join(THREADS[thread_id], &status) == THD_ERROR) {
+                fprintf(stderr, "Unable to join thread '%d': (%d) %s\n",
+                        thread_id, errno, strerror(errno));
+                return THD_ERROR;
             }
 
-            if (status == (int*)-1) {
-                printf("%d:%lu thread was cancelled", thread_id,
-                       THREADS[thread_id]);
+            if (status == (int*)THD_ERROR) {
+                printf("Thread %d was killed\n", thread_id);
                 THREADS[thread_id] = 0;
             } else {
-                printf("%d:%lu thread was not cancelled", thread_id,
-                       THREADS[thread_id]);
+                fprintf(stderr, "Thread '%d' can't be killed: (%d) %s\n",
+                        thread_id, errno, strerror(errno));
             }
 
             return THD_OK;
 
         } else {
-            fprintf(stderr, "pthread_cancel rc(%d) '%d': (%d) %s\n", rc,
-                    thread_id, errno, strerror(errno));
-
+            fprintf(stderr, "pthreadcancel '%d': (%d) %s\n", thread_id, errno,
+                    strerror(errno));
             return THD_ERROR;
         }
 
     } else {
-        printf("%d doesnt' exists\n", thread_id);
+        fprintf(stderr, "Doesn't exist '%d': (%d) %s\n", thread_id, errno,
+                strerror(errno));
 
         return THD_OK;
     }
@@ -141,19 +140,41 @@ int th_exit() {
 
 void sigint_handler(int signum) {
 
+    printf("Received SIGINT\nPrinting status of all threads\n");
     for (int th_ix = 0; th_ix < CUR_NUM; th_ix++) {
 
         if (!THREADS[th_ix]) {
             printf("Thread %d is dead\n", th_ix);
         } else {
-            printf("Thread %d (id:%lu) is running\n", th_ix, THREADS[th_ix]);
+            printf("Thread %d is alive\n", th_ix);
         }
     }
 }
 
 void sigquit_handler(int signum) {
 
-    printf("AHHHHHHHHHHHHHHHHHHH\n");
+    printf("Received SIGQUIT\nTerminating all threads\n");
+    th_kill_all();
+    th_wait_all();
     pthread_exit(nullptr);
-    // th_kill_all();
+}
+
+void sig_handle_wrapper(int sig, void (*handler)(int)) {
+    struct sigaction sa;
+    sigset_t mask;
+
+    sigemptyset(&mask);
+
+    sigaddset(&mask, SIGHUP);
+    sigaddset(&mask, SIGINT);
+    sigaddset(&mask, SIGQUIT);
+
+    sa.sa_handler = handler;
+    sa.sa_mask = mask;
+    sa.sa_flags = 0;
+
+    if (sigaction(sig, &sa, NULL) < 0) {
+        fprintf(stderr, "sigaction: (%d) %s\n", errno, strerror(errno));
+    }
+    return;
 }

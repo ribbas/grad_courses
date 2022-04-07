@@ -58,7 +58,7 @@ void* worker(void* _thread_id) {
     pthread_mutex_lock(&count_mutex);
 
     log_event(INFO, "Thread %ld created", thread_id);
-    th_wait(thread_id);
+    // th_wait(thread_id);
 
     for (;;) {
         // do nothing
@@ -69,6 +69,9 @@ void* worker(void* _thread_id) {
 }
 
 int main(int argc, char* argv[]) {
+
+    // sig_handle_wrapper(SIGINT, sigint_handler);
+    // sig_handle_wrapper(SIGQUIT, sigquit_handler);
 
     set_logfile("app2.log");
 
@@ -98,17 +101,18 @@ int main(int argc, char* argv[]) {
             return ERROR;
         }
 
-        for (int i = 2; i < num_threads + 2; i++) {
+        for (int i = 0; i < num_threads; i++) {
 
             th_execute(worker);
             printf("exec'd %d\n", i);
             sleep_sec(delay);
         }
+        // th_wait_all();
 
         printf("gonna wait\n");
         sleep_sec(2);
 
-        for (int i = 2; i < num_threads + 2; i++) {
+        for (int i = 0; i < num_threads; i++) {
 
             printf("KILL\n");
 

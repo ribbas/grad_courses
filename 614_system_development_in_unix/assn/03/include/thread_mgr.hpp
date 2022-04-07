@@ -41,4 +41,6 @@ void sigint_handler(int signum);
 
 void sigquit_handler(int signum);
 
+void sig_handle_wrapper(int sig, void (*handler)(int));
+
 #endif // THREAD_MGR_HPP
