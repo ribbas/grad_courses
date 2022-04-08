@@ -43,26 +43,36 @@ antlrcpp::Any CminusBaseVisitor::visitVar_declaration(
     if (ctx->size) {
         semantics.addVarSymbol(ctx->ID()->getText(),
                                std::stoi(ctx->size->getText().c_str()));
+        llvm::ArrayType* arrayType =
+            llvm::ArrayType::get(llvm::IntegerType::get(*irContext, 32),
+                                 std::stoi(ctx->size->getText().c_str()));
+        namedAllocas[ctx->ID()->getText()] = irBuilder->CreateAlloca(
+            arrayType, nullptr, "tmp_" + ctx->ID()->getText());
     } else {
         semantics.addVarSymbol(ctx->ID()->getText());
-    }
-
-    if (semantics.getCurFuncName() == GLOBAL) {
-
-        std::cout << ctx->ID()->getText() << " is global\n";
-        module->getOrInsertGlobal(ctx->ID()->getText(),
-                                  irBuilder->getInt32Ty());
-        llvm::GlobalVariable* gVar =
-            module->getNamedGlobal(ctx->ID()->getText());
-        gVar->setDSOLocal(true);
-        gVar->setAlignment(llvm::MaybeAlign(4));
-
-    } else {
-
         namedAllocas[ctx->ID()->getText()] =
             irBuilder->CreateAlloca(llvm::Type::getInt32Ty(*irContext), nullptr,
                                     "tmp_" + ctx->ID()->getText());
     }
+
+    // if (semantics.getCurFuncName() == GLOBAL) {
+
+    //     std::cout << ctx->ID()->getText() << " is global\n";
+
+    //     module->getOrInsertGlobal(ctx->ID()->getText(),
+    //                               irBuilder->getInt32Ty());
+    //     llvm::GlobalVariable* gVar =
+    //         module->getNamedGlobal(ctx->ID()->getText());
+    //     gVar->setDSOLocal(true);
+    //     gVar->setAlignment(llvm::MaybeAlign(4));
+
+    //     // } else {
+
+    //     //     namedAllocas[ctx->ID()->getText()] =
+    //     // irBuilder->CreateAlloca(llvm::Type::getInt32Ty(*irContext),
+    //     //         nullptr,
+    //     //                                 "tmp_" + ctx->ID()->getText());
+    // }
 
     return visitChildren(ctx);
 }
@@ -140,6 +150,52 @@ antlrcpp::Any CminusBaseVisitor::visitFun_declaration(
     return visitChildren(ctx);
 }
 
+antlrcpp::Any CminusBaseVisitor::visitIteration_stmt(
+    CminusParser::Iteration_stmtContext* ctx) {
+
+    std::cout << ctx->statement()->getText() << " loooooop\n";
+
+    llvm::Function* func = irBuilder->GetInsertBlock()->getParent();
+    llvm::BasicBlock* loopBB =
+        llvm::BasicBlock::Create(*irContext, "loop", func);
+    llvm::BasicBlock* afterloopBB =
+        llvm::BasicBlock::Create(*irContext, "afterloop");
+
+    irBuilder->CreateBr(loopBB);
+
+    // emit loop value
+    irBuilder->SetInsertPoint(loopBB);
+
+    llvm::PHINode* phiNode =
+        irBuilder->CreatePHI(llvm::Type::getInt32Ty(*irContext), 2, "looptmp");
+
+    // relational expression
+    visit(ctx->relational_exp());
+
+    // if expression
+    condInst = true;
+    visit(ctx->statement());
+    llvm::Value* loopV = condV;
+    condInst = false;
+
+    phiNode->addIncoming(loopV, loopBB);
+    phiNode->addIncoming(loopV, afterloopBB);
+
+    irBuilder->CreateCondBr(expStack.back(), loopBB, afterloopBB);
+    expStack.pop_back();
+
+    loopBB = irBuilder->GetInsertBlock();
+
+    // emit else block
+    func->getBasicBlockList().push_back(afterloopBB);
+    irBuilder->SetInsertPoint(afterloopBB);
+
+    irBuilder->CreateRet(phiNode);
+    llvm::verifyFunction(*func);
+
+    return visitChildren(ctx);
+}
+
 antlrcpp::Any CminusBaseVisitor::visitSelection_stmt(
     CminusParser::Selection_stmtContext* ctx) {
 
@@ -201,6 +257,8 @@ antlrcpp::Any CminusBaseVisitor::visitSelection_stmt(
         // phi node resolving only then register
         phiNode = irBuilder->CreatePHI(llvm::Type::getInt32Ty(*irContext), 1,
                                        "iftmp");
+        std::cout << "phinode here \n";
+        std::cout << thenV->getName().str() << '\n';
         phiNode->addIncoming(thenV, thenBB);
     }
 
@@ -386,6 +444,9 @@ CminusBaseVisitor::visitVal_exp(CminusParser::Val_expContext* ctx) {
             llvm::Type::getInt32Ty(*irContext), namedAllocas[ctx->getText()],
             "ltmp_" + ctx->getText());
         expStack.push_back(value);
+        if (condInst) {
+            condV = expStack.back();
+        }
         return visitChildren(ctx);
     }
 }

@@ -69,9 +69,7 @@ public:
     visitRelational_exp(CminusParser::Relational_expContext* ctx) override;
 
     virtual antlrcpp::Any
-    visitIteration_stmt(CminusParser::Iteration_stmtContext* ctx) override {
-        return visitChildren(ctx);
-    }
+    visitIteration_stmt(CminusParser::Iteration_stmtContext* ctx) override;
 
     virtual antlrcpp::Any
     visitAssignment_stmt(CminusParser::Assignment_stmtContext* ctx) override;

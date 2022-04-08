@@ -16,4 +16,4 @@ argpromotion:
 
 simple-loop-unswitch:
 	$(CC) $(CC_FLAGS) $@.c -o $@-before.ll
-	opt -passes='loop($@),loop-mssa(licm),verify' $@-before.ll -S -o $@-after.ll
+	opt -passes='loop-mssa($@,licm),verify' $@-before.ll -S -o $@-after.ll
