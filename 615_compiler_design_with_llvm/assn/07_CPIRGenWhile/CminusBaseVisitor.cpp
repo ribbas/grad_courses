@@ -7,6 +7,7 @@
 
 CminusBaseVisitor::CminusBaseVisitor(std::string fileName)
     : assignmentVar(""), errorFound(false), condInst(false), condV(nullptr),
+      iterInst(false), iterV(nullptr),
       module(std::make_unique<llvm::Module>(fileName, *irContext)) {
 
     llvm::FunctionType* inputFuncType =
@@ -55,24 +56,24 @@ antlrcpp::Any CminusBaseVisitor::visitVar_declaration(
                                     "tmp_" + ctx->ID()->getText());
     }
 
-    // if (semantics.getCurFuncName() == GLOBAL) {
+    if (semantics.getCurFuncName() == GLOBAL) {
 
-    //     std::cout << ctx->ID()->getText() << " is global\n";
+        std::cout << ctx->ID()->getText() << " is global\n";
 
-    //     module->getOrInsertGlobal(ctx->ID()->getText(),
-    //                               irBuilder->getInt32Ty());
-    //     llvm::GlobalVariable* gVar =
-    //         module->getNamedGlobal(ctx->ID()->getText());
-    //     gVar->setDSOLocal(true);
-    //     gVar->setAlignment(llvm::MaybeAlign(4));
+        module->getOrInsertGlobal(ctx->ID()->getText(),
+                                  irBuilder->getInt32Ty());
+        llvm::GlobalVariable* gVar =
+            module->getNamedGlobal(ctx->ID()->getText());
+        gVar->setDSOLocal(true);
+        gVar->setAlignment(llvm::MaybeAlign(4));
 
-    //     // } else {
+        // } else {
 
-    //     //     namedAllocas[ctx->ID()->getText()] =
-    //     // irBuilder->CreateAlloca(llvm::Type::getInt32Ty(*irContext),
-    //     //         nullptr,
-    //     //                                 "tmp_" + ctx->ID()->getText());
-    // }
+        //     namedAllocas[ctx->ID()->getText()] =
+        // irBuilder->CreateAlloca(llvm::Type::getInt32Ty(*irContext),
+        //         nullptr,
+        //                                 "tmp_" + ctx->ID()->getText());
+    }
 
     return visitChildren(ctx);
 }
@@ -166,19 +167,21 @@ antlrcpp::Any CminusBaseVisitor::visitIteration_stmt(
     // emit loop value
     irBuilder->SetInsertPoint(loopBB);
 
+    // relational expression
+    iterInst = true;
+    visit(ctx->relational_exp());
+    iterInst = false;
+
     llvm::PHINode* phiNode =
         irBuilder->CreatePHI(llvm::Type::getInt32Ty(*irContext), 2, "looptmp");
 
-    // relational expression
-    visit(ctx->relational_exp());
-
     // if expression
-    condInst = true;
+    iterInst = true;
     visit(ctx->statement());
-    llvm::Value* loopV = condV;
-    condInst = false;
+    llvm::Value* loopV = iterV;
+    iterInst = false;
 
-    phiNode->addIncoming(loopV, loopBB);
+    phiNode->addIncoming(iterV, loopBB);
     phiNode->addIncoming(loopV, afterloopBB);
 
     irBuilder->CreateCondBr(expStack.back(), loopBB, afterloopBB);
@@ -293,6 +296,10 @@ antlrcpp::Any CminusBaseVisitor::visitRelational_exp(
     }
     expStack.push_back(result);
 
+    if (iterInst) {
+        iterV = left;
+    }
+
     return expression;
 }
 
@@ -397,6 +404,8 @@ CminusBaseVisitor::visitAdd_exp(CminusParser::Add_expContext* ctx) {
 
     if (condInst) {
         condV = result;
+    } else if (iterInst) {
+        iterV = left;
     }
 
     return expression;

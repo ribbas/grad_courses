@@ -24,6 +24,9 @@ private:
     bool condInst;
     llvm::Value* condV;
 
+    bool iterInst;
+    llvm::Value* iterV;
+
     std::map<std::string, llvm::Value*> namedAllocas;
     std::unique_ptr<llvm::Module> module;
 
