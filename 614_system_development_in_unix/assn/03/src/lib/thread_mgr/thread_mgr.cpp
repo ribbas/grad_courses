@@ -22,8 +22,12 @@ pthread_t THREADS[MAX_THREAD_NUM] = {};
 
 ThreadHandles th_execute(Funcptrs func) {
 
+    // install signal handlers for SIGINT and SIGQUIT
     sig_handle_wrapper(SIGINT, sigint_handler);
     sig_handle_wrapper(SIGQUIT, sigquit_handler);
+
+    // increment index for the threads array
+    // this value is also used as the thread name
     THREAD_NUM++;
     if (pthread_create(&THREADS[THREAD_NUM], nullptr, func,
                        (void*)(size_t)THREAD_NUM)) {
@@ -33,28 +37,21 @@ ThreadHandles th_execute(Funcptrs func) {
         return THD_ERROR;
     }
 
+    // assign the last value of the global threads index to use later
     LAST_THREAD_NUM = THREAD_NUM;
-
     return THREAD_NUM;
 }
 
 int th_wait(ThreadHandles thread_id) {
 
-    if (THREADS[thread_id]) {
+    if (pthread_join(THREADS[thread_id], nullptr) == THD_ERROR) {
 
-        if (pthread_join(THREADS[thread_id], nullptr) == THD_OK) {
-
-            return THD_OK;
-
-        } else {
-
-            fprintf(stderr, "Unable to join thread '%d': (%d) %s\n", thread_id,
-                    errno, strerror(errno));
-            return THD_ERROR;
-        }
-    } else {
-        return THD_OK;
+        fprintf(stderr, "Unable to join thread '%d': (%d) %s\n", thread_id,
+                errno, strerror(errno));
+        return THD_ERROR;
     }
+
+    return THD_OK;
 }
 
 int th_wait_all() {
@@ -73,30 +70,25 @@ int th_kill(ThreadHandles thread_id) {
 
     if (THREADS[thread_id]) {
 
-        if (pthread_cancel(THREADS[thread_id]) == THD_OK) {
-
-            void* status;
-            if (pthread_join(THREADS[thread_id], &status) == THD_ERROR) {
-                fprintf(stderr, "Unable to join thread '%d': (%d) %s\n",
-                        thread_id, errno, strerror(errno));
-                return THD_ERROR;
-            }
-
-            if (status == (int*)THD_ERROR) {
-                printf("Thread %d was killed\n", thread_id);
-                log_event(INFO, "Thread %d was killed", thread_id);
-                THREADS[thread_id] = 0;
-            }
-
-            return THD_OK;
-
-        } else {
+        if (pthread_cancel(THREADS[thread_id]) == THD_ERROR) {
             return THD_ERROR;
         }
 
-    } else {
-        return THD_OK;
+        void* status;
+        if (pthread_join(THREADS[thread_id], &status) == THD_ERROR) {
+            fprintf(stderr, "Unable to join thread '%d': (%d) %s\n", thread_id,
+                    errno, strerror(errno));
+            return THD_ERROR;
+        }
+
+        if (status == (int*)THD_ERROR) {
+            printf("Thread %d was killed\n", thread_id);
+            log_event(INFO, "Thread %d was killed", thread_id);
+            THREADS[thread_id] = 0;
+        }
     }
+
+    return THD_OK;
 }
 
 int th_kill_all() {
@@ -130,7 +122,7 @@ int th_exit() {
 void sigint_handler(int signum) {
 
     printf("Received SIGINT\nPrinting status of all threads\n");
-    for (int th_ix = 0; th_ix < LAST_THREAD_NUM; th_ix++) {
+    for (int th_ix = 0; th_ix < LAST_THREAD_NUM + 1; th_ix++) {
 
         if (!THREADS[th_ix]) {
             printf("Thread %d is dead\n", th_ix);
@@ -149,21 +141,17 @@ void sigquit_handler(int signum) {
 }
 
 void sig_handle_wrapper(int sig, void (*handler)(int)) {
+
     struct sigaction sa;
     sigset_t mask;
 
     sigemptyset(&mask);
 
-    sigaddset(&mask, SIGHUP);
-    sigaddset(&mask, SIGINT);
-    sigaddset(&mask, SIGQUIT);
-
     sa.sa_handler = handler;
     sa.sa_mask = mask;
     sa.sa_flags = 0;
 
-    if (sigaction(sig, &sa, NULL) < 0) {
+    if (sigaction(sig, &sa, nullptr) < 0) {
         fprintf(stderr, "sigaction: (%d) %s\n", errno, strerror(errno));
     }
-    return;
 }

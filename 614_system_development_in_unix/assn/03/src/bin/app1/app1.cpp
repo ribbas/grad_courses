@@ -19,6 +19,9 @@
 const unsigned long LO_RANGE = 1000000000;
 const unsigned long UP_RANGE = 3294967295; // 2^{32}-1 - LO_RANGE
 
+/*
+ * A (purposefully) inefficient method of checking if a number if prime
+ */
 bool is_prime(int n) {
 
     for (int i = 2; i <= n / 2; ++i) {
@@ -32,14 +35,20 @@ bool is_prime(int n) {
     return true;
 }
 
+/*
+ * A method to generate large random numbers
+ */
 uint64_t gen_large_num() {
-    uint64_t num = rand();
-    num = (num << 32) | rand();
 
+    uint64_t n = rand();
+    n = (n << 32) | rand();
     // enforce limits of value between 1000000000 and 2^{32}-1
-    return (num % UP_RANGE) + LO_RANGE;
+    return (n % UP_RANGE) + LO_RANGE;
 }
 
+/*
+ * A worker method that is passed in to every spawned threads
+ */
 void* worker(void* _thread_id) {
 
     long thread_id = (long)_thread_id;
@@ -47,6 +56,7 @@ void* worker(void* _thread_id) {
     printf("Thread %lu created\n", thread_id);
     log_event(INFO, "Thread %lu created", thread_id);
 
+    // keep looping until 50 primes are found
     int i = 0;
     int primes_found = 50;
     while (i < primes_found) {
@@ -54,8 +64,9 @@ void* worker(void* _thread_id) {
             i++;
         }
     }
-    printf("Thread %lu found 10 prime numbers\n", thread_id);
-    log_event(INFO, "Thread %lu found 10 prime numbers", thread_id);
+
+    printf("Thread %lu found 50 prime numbers\n", thread_id);
+    log_event(INFO, "Thread %lu found 50 prime numbers", thread_id);
     th_exit();
 
     return nullptr;

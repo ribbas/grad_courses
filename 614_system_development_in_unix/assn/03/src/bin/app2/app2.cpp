@@ -20,20 +20,32 @@
 #include <sys/time.h>
 #include <unistd.h>
 
+/*
+ * This method utilizes setitimer and SIGALRM to implement sleep for `sec`
+ * seconds. The number of seconds is a double and can therefore be fractional
+ * increments of time.
+ */
 void sleep_sec(double sec) {
 
     struct itimerval new_it, old_it;
     struct sigaction catch_alarm, old_sig;
 
+    // pass in a noop lambda as the handler
+    catch_alarm.sa_handler = ([](int) {});
+
+    // empty mask
     sigset_t empty;
     sigemptyset(&empty);
-
-    catch_alarm.sa_handler = ([](int) {});
     catch_alarm.sa_mask = empty;
+
+    // no flags
     catch_alarm.sa_flags = 0;
 
-    sigaction(SIGALRM, &catch_alarm, &old_sig);
+    if (sigaction(SIGALRM, &catch_alarm, &old_sig) < 0) {
+        fprintf(stderr, "sigaction: (%d) %s\n", errno, strerror(errno));
+    }
 
+    // convert seconds to milliseconds for convenient computations
     int ms = sec * 1000;
     new_it.it_value.tv_sec = ms / 1000;
     new_it.it_value.tv_usec = 1000 * (ms % 1000);
@@ -46,9 +58,14 @@ void sleep_sec(double sec) {
     };
 
     pause();
-    sigaction(SIGALRM, &old_sig, nullptr);
+    if (sigaction(SIGALRM, &old_sig, nullptr) < 0) {
+        fprintf(stderr, "sigaction: (%d) %s\n", errno, strerror(errno));
+    }
 }
 
+/*
+ * A worker method that is passed in to every spawned threads
+ */
 void* worker(void* _thread_id) {
 
     long thread_id = (long)_thread_id;
@@ -99,7 +116,7 @@ int main(int argc, char* argv[]) {
 
         // wait 5 seconds
         printf("Waiting 5 seconds...\n");
-        sleep_sec(2.0);
+        sleep_sec(5.0);
 
         printf("Terminating all threads...\n");
         for (int i = 0; i < num_threads; i++) {
