@@ -13,14 +13,11 @@
 
 #include <inttypes.h>
 #include <iostream>
+#include <random>
 #include <stdlib.h>
-#include <unistd.h>
-
-const unsigned long LO_RANGE = 1000000000;
-const unsigned long UP_RANGE = 3294967295; // 2^{32}-1 - LO_RANGE
 
 /*
- * A (purposefully) inefficient method of checking if a number if prime
+ * A (purposefully inefficient) function to check if a number is prime
  */
 bool is_prime(int n) {
 
@@ -40,10 +37,17 @@ bool is_prime(int n) {
  */
 uint64_t gen_large_num() {
 
-    uint64_t n = rand();
-    n = (n << 32) | rand();
-    // enforce limits of value between 1000000000 and 2^{32}-1
-    return (n % UP_RANGE) + LO_RANGE;
+    /* Seed */
+    std::random_device rd;
+
+    /* Random number generator */
+    std::default_random_engine generator(rd());
+
+    /* Distribution on which to apply the generator */
+    std::uniform_int_distribution<long long unsigned> distribution(
+        0, 0xFFFFFFFFFFFFFFFF);
+
+    return distribution(generator);
 }
 
 /*
@@ -56,17 +60,17 @@ void* worker(void* _thread_id) {
     printf("Thread %lu created\n", thread_id);
     log_event(INFO, "Thread %lu created", thread_id);
 
-    // keep looping until 50 primes are found
+    // keep looping until 100 primes are found
     int i = 0;
-    int primes_found = 50;
+    int primes_found = 100;
     while (i < primes_found) {
         if (is_prime(gen_large_num())) {
             i++;
         }
     }
 
-    printf("Thread %lu found 50 prime numbers\n", thread_id);
-    log_event(INFO, "Thread %lu found 50 prime numbers", thread_id);
+    printf("Thread %lu found 100 prime numbers\n", thread_id);
+    log_event(INFO, "Thread %lu found 100 prime numbers", thread_id);
     th_exit();
 
     return nullptr;

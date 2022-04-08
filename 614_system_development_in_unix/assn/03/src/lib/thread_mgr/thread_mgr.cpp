@@ -44,11 +44,14 @@ ThreadHandles th_execute(Funcptrs func) {
 
 int th_wait(ThreadHandles thread_id) {
 
-    if (pthread_join(THREADS[thread_id], nullptr) == THD_ERROR) {
+    if (THREADS[thread_id]) {
 
-        fprintf(stderr, "Unable to join thread '%d': (%d) %s\n", thread_id,
-                errno, strerror(errno));
-        return THD_ERROR;
+        if (pthread_join(THREADS[thread_id], nullptr) == THD_ERROR) {
+
+            fprintf(stderr, "Unable to join thread '%d': (%d) %s\n", thread_id,
+                    errno, strerror(errno));
+            return THD_ERROR;
+        }
     }
 
     return THD_OK;
@@ -121,7 +124,6 @@ int th_exit() {
 
 void sigint_handler(int signum) {
 
-    printf("Received SIGINT\nPrinting status of all threads\n");
     for (int th_ix = 0; th_ix < LAST_THREAD_NUM + 1; th_ix++) {
 
         if (!THREADS[th_ix]) {
@@ -134,9 +136,16 @@ void sigint_handler(int signum) {
 
 void sigquit_handler(int signum) {
 
-    printf("Received SIGQUIT\nTerminating all threads\n");
-    th_kill_all();
-    th_wait_all();
+    for (int th_ix = 0; th_ix < LAST_THREAD_NUM + 1; th_ix++) {
+
+        if (THREADS[th_ix]) {
+
+            // send SIGQUIT to all the other threads
+            pthread_kill(THREADS[th_ix], SIGQUIT);
+            th_kill(th_ix);
+        }
+    }
+
     pthread_exit(nullptr);
 }
 

@@ -116,7 +116,7 @@ int main(int argc, char* argv[]) {
 
         // wait 5 seconds
         printf("Waiting 5 seconds...\n");
-        sleep_sec(5.0);
+        sleep_sec(1.0);
 
         printf("Terminating all threads...\n");
         for (int i = 0; i < num_threads; i++) {
