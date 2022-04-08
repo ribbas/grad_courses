@@ -18,7 +18,7 @@ define dso_local i32 @main() #0 {
   store i32 0, i32* %2, align 4, !tbaa !3
   %7 = bitcast i32* %3 to i8*
   call void @llvm.lifetime.start.p0i8(i64 4, i8* %7) #3
-  %8 = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i64 0, i64 0), i32* %3)
+  %8 = call i32 (i8*, ...) @__isoc99_scanf(i8* noundef getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i64 0, i64 0), i32* noundef %3)
   %9 = bitcast i32* %4 to i8*
   call void @llvm.lifetime.start.p0i8(i64 4, i8* %9) #3
   store i32 0, i32* %4, align 4, !tbaa !3
@@ -78,7 +78,7 @@ define dso_local i32 @main() #0 {
 ; Function Attrs: argmemonly nofree nosync nounwind willreturn
 declare void @llvm.lifetime.start.p0i8(i64 immarg, i8* nocapture) #1
 
-declare dso_local i32 @__isoc99_scanf(i8*, ...) #2
+declare dso_local i32 @__isoc99_scanf(i8* noundef, ...) #2
 
 ; Function Attrs: argmemonly nofree nosync nounwind willreturn
 declare void @llvm.lifetime.end.p0i8(i64 immarg, i8* nocapture) #1
@@ -93,7 +93,7 @@ attributes #3 = { nounwind }
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"uwtable", i32 1}
-!2 = !{!"clang version 13.0.1"}
+!2 = !{!"clang version 14.0.0"}
 !3 = !{!4, !4, i64 0}
 !4 = !{!"int", !5, i64 0}
 !5 = !{!"omnipotent char", !6, i64 0}

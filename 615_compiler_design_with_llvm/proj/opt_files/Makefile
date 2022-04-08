@@ -11,9 +11,9 @@ CC_FLAGS = -S -emit-llvm -O -Xclang -disable-llvm-passes
 all: argpromotion simple-loop-unswitch
 
 argpromotion:
-	@$(CC) $(CC_FLAGS) $@.c -o $@-before.ll
-	@opt -passes='$@,instcombine,function-attrs' $@-before.ll -S -o $@-after.ll
+	$(CC) $(CC_FLAGS) $@.c -o $@-before.ll
+	opt -passes='$@,instcombine,function-attrs,verify' $@-before.ll -S -o $@-after.ll
 
 simple-loop-unswitch:
-	@$(CC) $(CC_FLAGS) $@.c -o $@-before.ll
-	@opt -passes='$@,licm' $@-before.ll -S -o $@-after.ll
+	$(CC) $(CC_FLAGS) $@.c -o $@-before.ll
+	opt -passes='loop($@),loop-mssa(licm),verify' $@-before.ll -S -o $@-after.ll

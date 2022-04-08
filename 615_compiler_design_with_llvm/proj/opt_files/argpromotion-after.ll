@@ -4,7 +4,7 @@ target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16
 target triple = "x86_64-unknown-linux-gnu"
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind readonly uwtable willreturn
-define dso_local i32 @add(i32* nocapture readonly %0, i32* nocapture readonly %1) #0 {
+define dso_local i32 @add(i32* nocapture noundef readonly %0, i32* nocapture noundef readonly %1) #0 {
   %3 = load i32, i32* %0, align 4, !tbaa !3
   %4 = load i32, i32* %1, align 4, !tbaa !3
   %5 = add nsw i32 %3, %4
@@ -21,7 +21,7 @@ define dso_local i32 @main() #1 {
   call void @llvm.lifetime.start.p0i8(i64 4, i8* nonnull %4) #3
   store i32 1, i32* %1, align 4, !tbaa !3
   store i32 2, i32* %2, align 4, !tbaa !3
-  %5 = call i32 @add(i32* nonnull %1, i32* nonnull %2)
+  %5 = call i32 @add(i32* noundef nonnull %1, i32* noundef nonnull %2)
   %6 = bitcast i32* %2 to i8*
   call void @llvm.lifetime.end.p0i8(i64 4, i8* nonnull %6) #3
   %7 = bitcast i32* %1 to i8*
@@ -45,7 +45,7 @@ attributes #3 = { nounwind }
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"uwtable", i32 1}
-!2 = !{!"clang version 13.0.1"}
+!2 = !{!"clang version 14.0.0"}
 !3 = !{!4, !4, i64 0}
 !4 = !{!"int", !5, i64 0}
 !5 = !{!"omnipotent char", !6, i64 0}
