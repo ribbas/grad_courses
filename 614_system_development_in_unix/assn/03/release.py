@@ -23,7 +23,7 @@ if __name__ == "__main__":
         # files to archive
         arch_files: list = None
         # current directory
-        cur_dir: str = "homework2"
+        cur_dir: str = "homework3"
 
         # if user prompts for a binary release
         if sys.argv[-1] == "-b":
