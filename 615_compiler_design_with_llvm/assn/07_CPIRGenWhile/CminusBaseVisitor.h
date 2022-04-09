@@ -1,6 +1,6 @@
 
 // Generated from
-// /home/ribbas/grad_courses/615_compiler_design_with_llvm/assn/05_CPIRGenEquations/Cminus.g4
+// /home/ribbas/grad_courses/615_compiler_design_with_llvm/assn/07_CPIRGenWhile/Cminus.g4
 // by ANTLR 4.9
 
 #pragma once
@@ -26,6 +26,7 @@ private:
 
     bool iterInst;
     llvm::Value* iterV;
+    llvm::PHINode* iterPN;
 
     std::map<std::string, llvm::Value*> namedAllocas;
     std::unique_ptr<llvm::Module> module;

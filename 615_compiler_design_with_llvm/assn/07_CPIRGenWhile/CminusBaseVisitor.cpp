@@ -1,13 +1,13 @@
 
 // Generated from
-// /home/ribbas/grad_courses/615_compiler_design_with_llvm/assn/06_CPIRGenIf/Cminus.g4
+// /home/ribbas/grad_courses/615_compiler_design_with_llvm/assn/07_CPIRGenWhile/Cminus.g4
 // by ANTLR 4.9
 
 #include "CminusBaseVisitor.h"
 
 CminusBaseVisitor::CminusBaseVisitor(std::string fileName)
     : assignmentVar(""), errorFound(false), condInst(false), condV(nullptr),
-      iterInst(false), iterV(nullptr),
+      iterInst(false), iterV(nullptr), iterPN(nullptr),
       module(std::make_unique<llvm::Module>(fileName, *irContext)) {
 
     llvm::FunctionType* inputFuncType =
@@ -42,14 +42,18 @@ antlrcpp::Any CminusBaseVisitor::visitVar_declaration(
     std::cout << ctx->ID()->getText() << " val\n";
 
     if (ctx->size) {
+
         semantics.addVarSymbol(ctx->ID()->getText(),
                                std::stoi(ctx->size->getText().c_str()));
         llvm::ArrayType* arrayType =
-            llvm::ArrayType::get(llvm::IntegerType::get(*irContext, 32),
+            llvm::ArrayType::get(llvm::Type::getInt32Ty(*irContext),
                                  std::stoi(ctx->size->getText().c_str()));
         namedAllocas[ctx->ID()->getText()] = irBuilder->CreateAlloca(
             arrayType, nullptr, "tmp_" + ctx->ID()->getText());
+        std::cout << ctx->ID()->getText() << " added to symtab\n";
+
     } else {
+
         semantics.addVarSymbol(ctx->ID()->getText());
         namedAllocas[ctx->ID()->getText()] =
             irBuilder->CreateAlloca(llvm::Type::getInt32Ty(*irContext), nullptr,
@@ -166,14 +170,14 @@ antlrcpp::Any CminusBaseVisitor::visitIteration_stmt(
 
     // emit loop value
     irBuilder->SetInsertPoint(loopBB);
+    iterPN =
+        irBuilder->CreatePHI(llvm::Type::getInt32Ty(*irContext), 2, "looptmp");
 
     // relational expression
     iterInst = true;
     visit(ctx->relational_exp());
     iterInst = false;
-
-    llvm::PHINode* phiNode =
-        irBuilder->CreatePHI(llvm::Type::getInt32Ty(*irContext), 2, "looptmp");
+    iterPN->addIncoming(iterV, loopBB);
 
     // if expression
     iterInst = true;
@@ -181,8 +185,7 @@ antlrcpp::Any CminusBaseVisitor::visitIteration_stmt(
     llvm::Value* loopV = iterV;
     iterInst = false;
 
-    phiNode->addIncoming(iterV, loopBB);
-    phiNode->addIncoming(loopV, afterloopBB);
+    iterPN->addIncoming(loopV, afterloopBB);
 
     irBuilder->CreateCondBr(expStack.back(), loopBB, afterloopBB);
     expStack.pop_back();
@@ -193,7 +196,7 @@ antlrcpp::Any CminusBaseVisitor::visitIteration_stmt(
     func->getBasicBlockList().push_back(afterloopBB);
     irBuilder->SetInsertPoint(afterloopBB);
 
-    irBuilder->CreateRet(phiNode);
+    // irBuilder->CreateRet(phiNode);
     llvm::verifyFunction(*func);
 
     return visitChildren(ctx);
@@ -309,6 +312,8 @@ antlrcpp::Any CminusBaseVisitor::visitAssignment_stmt(
     assignmentVar = ctx->ID()->getText();
     if (!semantics.checkSymbol(assignmentVar)) {
 
+        std::cout << "var " << ctx->getText() << '\n';
+
         fprintf(stderr, "Line: %lu: Variable '%s' was not declared\n",
                 ctx->start->getLine(), assignmentVar.c_str());
         errorFound = true;
@@ -395,6 +400,10 @@ CminusBaseVisitor::visitAdd_exp(CminusParser::Add_expContext* ctx) {
     expStack.pop_back();
     llvm::Value* result = nullptr;
 
+    if (iterInst) {
+        left = iterPN;
+    }
+
     if (isAdd) {
         result = irBuilder->CreateAdd(left, right, "atmp");
     } else {
@@ -405,7 +414,7 @@ CminusBaseVisitor::visitAdd_exp(CminusParser::Add_expContext* ctx) {
     if (condInst) {
         condV = result;
     } else if (iterInst) {
-        iterV = left;
+        iterV = result;
     }
 
     return expression;
@@ -423,6 +432,10 @@ CminusBaseVisitor::visitMult_exp(CminusParser::Mult_expContext* ctx) {
     expStack.pop_back();
     llvm::Value* result = nullptr;
 
+    if (iterInst) {
+        left = iterPN;
+    }
+
     if (isMult) {
         result = irBuilder->CreateMul(left, right, "mtmp");
     } else {
@@ -432,6 +445,8 @@ CminusBaseVisitor::visitMult_exp(CminusParser::Mult_expContext* ctx) {
 
     if (condInst) {
         condV = result;
+    } else if (iterInst) {
+        iterV = result;
     }
 
     return expression;
@@ -440,18 +455,19 @@ CminusBaseVisitor::visitMult_exp(CminusParser::Mult_expContext* ctx) {
 antlrcpp::Any
 CminusBaseVisitor::visitVal_exp(CminusParser::Val_expContext* ctx) {
 
-    if (!semantics.checkSymbol(ctx->getText())) {
+    if (!semantics.checkSymbol(ctx->ID()->getText())) {
+        std::cout << "var " << ctx->ID()->getText() << '\n';
 
         fprintf(stderr, "Line %lu: Variable '%s' was not declared\n",
-                ctx->start->getLine(), ctx->getText().c_str());
+                ctx->start->getLine(), ctx->ID()->getText().c_str());
         errorFound = true;
         return nullptr;
 
     } else {
 
         llvm::Value* value = irBuilder->CreateLoad(
-            llvm::Type::getInt32Ty(*irContext), namedAllocas[ctx->getText()],
-            "ltmp_" + ctx->getText());
+            llvm::Type::getInt32Ty(*irContext),
+            namedAllocas[ctx->ID()->getText()], "ltmp_" + ctx->ID()->getText());
         expStack.push_back(value);
         if (condInst) {
             condV = expStack.back();

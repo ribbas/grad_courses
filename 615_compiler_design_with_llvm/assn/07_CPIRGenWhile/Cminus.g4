@@ -60,7 +60,7 @@ WS: [ \t\r\n]+ -> skip;
 
 // Parser Rules
 
-program: (var_declaration | fun_declaration)+ EOF;
+program: var_declaration* fun_declaration* EOF;
 var_declaration: INT ID (LB size = NUM RB)? SEMICOLON;
 fun_declaration:
 	fun_type_specifier ID LP (param (COMMA param)* | VOID) RP compound_stmt;
