@@ -12,12 +12,16 @@ private:
     SymbolTable symtab;
 
     bool declareFunc(std::string funcName, std::string retType) {
+
         if (!symtab.contains(funcName, GLOBAL)) {
+
             symtab.defineFunc(funcName, retType, 0);
             curFuncName = funcName;
             curFuncType = retType;
             return true;
+
         } else {
+
             return false;
         }
     }
@@ -30,7 +34,7 @@ private:
 
 public:
     void addVarSymbol(std::string symbolName, int size = -1) {
-        symtab.defineVar(symbolName, "int", curFuncName, size);
+        symtab.defineVar(symbolName, INT, curFuncName, size);
     }
 
     void addFuncSymbol(std::string symbolName, std::string symbolType,
@@ -43,11 +47,19 @@ public:
     }
 
     bool canReturn() {
-        return (curFuncType == "int");
+        return (curFuncType == INT);
     }
 
     void setCurFuncName(std::string funcName) {
         curFuncName = funcName;
+    }
+
+    void setValue(std::string symbolName, int newValue) {
+        symtab.setValue(symbolName, curFuncName, newValue);
+    }
+
+    int getValue(std::string symbolName) {
+        return symtab.getValue(symbolName, curFuncName);
     }
 
     std::string getCurFuncName() {

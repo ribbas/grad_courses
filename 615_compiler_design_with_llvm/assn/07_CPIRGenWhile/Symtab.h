@@ -8,6 +8,8 @@
 #include <unordered_map>
 
 const std::string GLOBAL = "GLOBAL";
+const std::string INT = "int";
+const std::string VOID = "void";
 
 class Symbol {
 private:
@@ -111,12 +113,12 @@ public:
     SymbolTable() {
 
         // built-in types
-        defineType("int");
-        defineType("void");
+        defineType(INT);
+        defineType(VOID);
 
         // built-in functions
-        defineFunc("input", "int", 0);
-        defineFunc("output", "void", 1);
+        defineFunc("input", INT, 0);
+        defineFunc("output", VOID, 1);
     }
 
     ~SymbolTable() {
@@ -146,6 +148,20 @@ public:
             }
         }
         return true;
+    }
+
+    int getValue(std::string symbolName, std::string scopeName) {
+        if (contains(symbolName, scopeName)) {
+            return get(symbolName, scopeName)->getValue();
+        } else {
+            return -1;
+        }
+    }
+
+    void setValue(std::string symbolName, std::string scopeName, int newValue) {
+        if (contains(symbolName, scopeName)) {
+            get(symbolName, scopeName)->setValue(newValue);
+        }
     }
 
     std::string getScope(std::string symbolName, std::string scopeName) {
