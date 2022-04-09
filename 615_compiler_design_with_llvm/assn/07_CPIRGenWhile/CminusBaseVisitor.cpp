@@ -162,8 +162,6 @@ antlrcpp::Any CminusBaseVisitor::visitFun_declaration(
 antlrcpp::Any CminusBaseVisitor::visitIteration_stmt(
     CminusParser::Iteration_stmtContext* ctx) {
 
-    std::cout << ctx->statement()->getText() << " loooooop\n";
-
     llvm::Function* func = irBuilder->GetInsertBlock()->getParent();
     llvm::BasicBlock* loopBB =
         llvm::BasicBlock::Create(*irContext, "loop", func);
@@ -266,8 +264,6 @@ antlrcpp::Any CminusBaseVisitor::visitSelection_stmt(
         // phi node resolving only then register
         phiNode = irBuilder->CreatePHI(llvm::Type::getInt32Ty(*irContext), 1,
                                        "iftmp");
-        // std::cout << "phinode here \n";
-        // std::cout << thenV->getName().str() << '\n';
         phiNode->addIncoming(thenV, thenBB);
     }
 
@@ -344,52 +340,13 @@ antlrcpp::Any CminusBaseVisitor::visitAssignment_stmt(
 
             if (ctx->size) {
 
-                // llvm::Value* value =
-                //     irBuilder->CreateLoad(llvm::Type::getInt32Ty(*irContext),
-                //                           namedAllocas[ctx->size->getText()],
-                //                           "ltmp_" + ctx->size->getText());
-
-                std::cout << "assn: " << ctx->size->getText() << ":"
-                          << semantics.getValue(ctx->size->getText()) << '\n';
-                std::cout << namedAllocas[assignmentVar]->getName().str() << "|"
-                          << namedAllocas[ctx->size->getText()]->getName().str()
-                          << "|" << expStack.back()->getName().str() << '\n';
-
-                // llvm::Value* value = llvm::ConstantInt::get(
-                //     llvm::Type::getInt32Ty(*irContext), 72);
-
-                // // llvm::ArrayType* arrayType = llvm::ArrayType::get(
-                // //     llvm::Type::getInt32Ty(*irContext),
-                // //     std::stoi(ctx->size->getText().c_str()));
-
-                // llvm::Value* i32zero = llvm::ConstantInt::get(
-                //     llvm::Type::getInt32Ty(*irContext), 69);
-                // llvm::Value* indices[2] = {i32zero, i32zero};
-                // // irBuilder->CreateInBoundsGEP()
-                // irBuilder->CreateGEP(llvm::Type::getInt32Ty(*irContext),
-                //                      namedAllocas[assignmentVar],
-                //                      llvm::ArrayRef<llvm::Value*>(indices,
-                //                      2));
-                // irBuilder->CreateGEP(llvm::ArrayRef<llvm::Value*>(
-                //     llvm::Type::getInt32Ty, 0),
-                //     llvm::Type::getInt32Ty, 0)));
-
-                // irBuilder->CreateGEP(llvm::Type::getInt32Ty(*irContext),
-                //                      namedAllocas[assignmentVar],
-                //                      namedAllocas[ctx->size->getText()]);
-
-                // irBuilder->CreateGEP(
-                //     namedAllocas[assignmentVar],
-                //     llvm::ArrayType::get(llvm::Type::getInt32Ty(*irContext),
-                //     2), namedAllocas[ctx->size->getText()],
-                //     ctx->size->getText());
+                // TODO:
+                // replace array loads with getelementptr
             }
-            // } else {
 
             irBuilder->CreateStore(expStack.back(), namedAllocas[assignmentVar],
                                    false);
             expStack.pop_back();
-            // }
         }
     }
 
@@ -518,7 +475,6 @@ antlrcpp::Any
 CminusBaseVisitor::visitVal_exp(CminusParser::Val_expContext* ctx) {
 
     if (!semantics.checkSymbol(ctx->ID()->getText())) {
-        std::cout << "var " << ctx->ID()->getText() << '\n';
 
         fprintf(stderr, "Line %lu: Variable '%s' was not declared\n",
                 ctx->start->getLine(), ctx->ID()->getText().c_str());
