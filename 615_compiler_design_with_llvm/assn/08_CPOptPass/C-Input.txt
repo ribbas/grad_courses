@@ -1,0 +1,47 @@
+/* A program to perform Euclid's
+   Algorithm to compute accumulateRange.  */
+
+int x;
+
+int accumulateRange(int u, int v, int other) {
+
+  if (u == 1) {
+
+    return 1;
+
+  } else {
+
+    int unnecessaryUnusedExpression;
+    unnecessaryUnusedExpression = other * 999999999 / 88888887 + other;
+
+    return v + accumulateRange(u, v - 1, 0);
+
+  }
+}
+
+int accumulateRangeCopy(int u, int v, int other) {
+
+  if (u == 1) {
+
+    return 1;
+
+  } else {
+
+    int anotherUnnecessaryUnusedExpression;
+    anotherUnnecessaryUnusedExpression = other * other;
+
+    return v + accumulateRangeCopy(u, v - 1, 0);
+
+  }
+}
+
+void main(void) {
+  int x;
+  int y;
+  int xy;
+  x = input();
+  y = input();
+  xy = x * y;
+  output(accumulateRange(x, y, xy));
+  return;
+}

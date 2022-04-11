@@ -38,49 +38,7 @@ public:
 
     void printModule(std::ofstream& fd);
 
-    std::unique_ptr<llvm::Module> getModule() {
-        return std::move(module);
-    }
-
-    void optimize() {
-
-        if (module.get()) {
-
-            // if (llvm::verifyModule(*module)) {
-
-            // Create the analysis managers.
-            llvm::LoopAnalysisManager LAM;
-            llvm::FunctionAnalysisManager FAM;
-            llvm::CGSCCAnalysisManager CGAM;
-            llvm::ModuleAnalysisManager MAM;
-
-            // Create the new pass manager builder.
-            PB = std::make_unique<llvm::PassBuilder>();
-
-            // Register all the basic analyses with the managers.
-            PB->registerModuleAnalyses(MAM);
-            PB->registerCGSCCAnalyses(CGAM);
-            PB->registerFunctionAnalyses(FAM);
-            PB->registerLoopAnalyses(LAM);
-            PB->crossRegisterProxies(LAM, FAM, CGAM, MAM);
-
-            llvm::FunctionPassManager FPM;
-            FPM.addPass(llvm::ADCEPass());
-            FPM.addPass(llvm::InstCombinePass());
-            FPM.addPass(llvm::InstSimplifyPass());
-
-            // Create the pass manager.
-            // This one corresponds to a typical -O2 optimization pipeline.
-            llvm::ModulePassManager MPM = llvm::ModulePassManager();
-            // PB.buildPerModuleDefaultPipeline(llvm::OptimizationLevel::O1);
-
-            MPM.addPass(createModuleToFunctionPassAdaptor(std::move(FPM)));
-            MPM.addPass(llvm::DeadArgumentEliminationPass());
-            MPM.addPass(llvm::GlobalDCEPass());
-            std::cout << "optimized\n";
-            MPM.run(*module, MAM);
-        }
-    }
+    void optimize();
 
     virtual antlrcpp::Any
     visitProgram(CminusParser::ProgramContext* ctx) override {

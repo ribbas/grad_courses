@@ -36,6 +36,39 @@ void CminusBaseVisitor::printModule(std::ofstream& fd) {
     namedAllocas.clear();
 }
 
+void CminusBaseVisitor::optimize() {
+
+    if (module.get()) {
+
+        llvm::LoopAnalysisManager LAM;
+        llvm::FunctionAnalysisManager FAM;
+        llvm::CGSCCAnalysisManager CGAM;
+        llvm::ModuleAnalysisManager MAM;
+
+        llvm::FunctionPassManager FPM;
+        std::unique_ptr<llvm::ModulePassManager> MPM =
+            std::make_unique<llvm::ModulePassManager>();
+
+        PB = std::make_unique<llvm::PassBuilder>();
+
+        PB->registerModuleAnalyses(MAM);
+        PB->registerCGSCCAnalyses(CGAM);
+        PB->registerFunctionAnalyses(FAM);
+        PB->registerLoopAnalyses(LAM);
+        PB->crossRegisterProxies(LAM, FAM, CGAM, MAM);
+
+        FPM.addPass(llvm::InstCombinePass());
+        MPM->addPass(createModuleToFunctionPassAdaptor(std::move(FPM)));
+
+        MPM->addPass(llvm::DeadArgumentEliminationPass());
+        MPM->addPass(llvm::GlobalDCEPass());
+        MPM->addPass(llvm::MergeFunctionsPass());
+        MPM->addPass(llvm::StripSymbolsPass());
+
+        MPM->run(*module, MAM);
+    }
+}
+
 antlrcpp::Any CminusBaseVisitor::visitVar_declaration(
     CminusParser::Var_declarationContext* ctx) {
 
