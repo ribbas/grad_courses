@@ -30,8 +30,8 @@ private:
 
     std::map<std::string, llvm::Value*> namedAllocas;
     std::unique_ptr<llvm::Module> module;
-    // llvm::ModulePassManager MPM;
-    // llvm::ModuleAnalysisManager MAM;
+
+    std::unique_ptr<llvm::PassBuilder> PB;
 
 public:
     CminusBaseVisitor(std::string fileName);
@@ -55,30 +55,30 @@ public:
             llvm::ModuleAnalysisManager MAM;
 
             // Create the new pass manager builder.
-            // Take a look at the PassBuilder constructor parameters for
-            // more customization, e.g. specifying a TargetMachine or
-            // various debugging options.
-            llvm::PassBuilder PB;
+            PB = std::make_unique<llvm::PassBuilder>();
 
             // Register all the basic analyses with the managers.
-            PB.registerModuleAnalyses(MAM);
-            PB.registerCGSCCAnalyses(CGAM);
-            PB.registerFunctionAnalyses(FAM);
-            PB.registerLoopAnalyses(LAM);
-            PB.crossRegisterProxies(LAM, FAM, CGAM, MAM);
+            PB->registerModuleAnalyses(MAM);
+            PB->registerCGSCCAnalyses(CGAM);
+            PB->registerFunctionAnalyses(FAM);
+            PB->registerLoopAnalyses(LAM);
+            PB->crossRegisterProxies(LAM, FAM, CGAM, MAM);
+
+            llvm::FunctionPassManager FPM;
+            FPM.addPass(llvm::ADCEPass());
+            FPM.addPass(llvm::InstCombinePass());
+            FPM.addPass(llvm::InstSimplifyPass());
 
             // Create the pass manager.
             // This one corresponds to a typical -O2 optimization pipeline.
-            llvm::ModulePassManager MPM =
-                PB.buildPerModuleDefaultPipeline(llvm::OptimizationLevel::O2);
+            llvm::ModulePassManager MPM = llvm::ModulePassManager();
+            // PB.buildPerModuleDefaultPipeline(llvm::OptimizationLevel::O1);
 
-            std::cout << "here\n";
-            // Optimize the IR!
+            MPM.addPass(createModuleToFunctionPassAdaptor(std::move(FPM)));
+            MPM.addPass(llvm::DeadArgumentEliminationPass());
+            MPM.addPass(llvm::GlobalDCEPass());
+            std::cout << "optimized\n";
             MPM.run(*module, MAM);
-            // } else {
-            //     std::cout << "OH NAH\n";
-            //     module->print(llvm::errs(), nullptr);
-            // }
         }
     }
 

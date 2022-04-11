@@ -7,7 +7,7 @@
 
 CminusBaseVisitor::CminusBaseVisitor(std::string fileName)
     : assignmentVar(""), errorFound(false), condInst(false), condV(nullptr),
-      iterInst(false), iterV(nullptr), iterPN(nullptr),
+      iterInst(false), iterV(nullptr), iterPN(nullptr), PB(nullptr),
       module(std::make_unique<llvm::Module>(fileName, *irContext)) {
 
     llvm::FunctionType* inputFuncType =
