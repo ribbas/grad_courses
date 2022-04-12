@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef SHMLIB_HPP
-#define SHMLIB_HPP
+#ifndef SHARED_MEM_HPP
+#define SHARED_MEM_HPP
 
 #include "globals.hpp"
 
@@ -19,4 +19,4 @@ int detach_shm(void* addr);
 
 int destroy_shm(int key);
 
-#endif // SHMLIB_HPP
+#endif // SHARED_MEM_HPP

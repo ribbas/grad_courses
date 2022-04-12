@@ -9,9 +9,10 @@
 CXX ?= $(shell which c++)
 
 # root directory paths
-LIB_DIR := ../../../lib
-INC_DIR := ../../../include
-BIN_DIR := ../../../bin
+PROJ_DIR = ../../..
+LIB_DIR := $(PROJ_DIR)/lib
+INC_DIR := $(PROJ_DIR)/include
+BIN_DIR := $(PROJ_DIR)/bin
 
 # source file for executable
 SRC = $(shell basename $(CURDIR)).cpp
@@ -53,3 +54,5 @@ depend:
 # clean out temporary objects and executables
 clean:
 	rm -f *.o *.a *.out depend_list $(EXE)
+
+-include depend_list

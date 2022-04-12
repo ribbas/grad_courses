@@ -9,8 +9,9 @@
 CXX ?= $(shell which c++)
 
 # root directory paths
-LIB_DIR := ../../../lib
-INC_DIR := ../../../include
+PROJ_DIR = ../../..
+LIB_DIR := $(PROJ_DIR)/lib
+INC_DIR := $(PROJ_DIR)/include
 
 # source file for library file
 SRC := shared_mem.cpp
@@ -43,3 +44,5 @@ depend:
 # clean out temporary objects and files
 clean:
 	rm -f *.o *.a depend_list
+
+-include depend_list
