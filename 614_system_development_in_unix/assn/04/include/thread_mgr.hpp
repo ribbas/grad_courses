@@ -11,11 +11,13 @@
 #ifndef THREAD_MGR_HPP
 #define THREAD_MGR_HPP
 
+#include "globals.hpp"
+
 #include <pthread.h>
 #include <signal.h>
 
-#define THD_OK 0
-#define THD_ERROR -1
+#define THD_OK OK
+#define THD_ERROR ERROR
 
 typedef int ThreadHandles;
 typedef void* Funcptrs(void*);

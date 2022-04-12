@@ -17,7 +17,7 @@ BIN_DIR := ../../../bin
 SRC = $(shell basename $(CURDIR)).cpp
 
 # required libraries for executable
-LIBS = log_mgr thread_mgr shmlib
+LIBS = log_mgr thread_mgr shared_mem
 # construct library paths
 LIB_ARS = $(LIBS:%=$(LIB_DIR)/lib%.a)
 # construct library flags

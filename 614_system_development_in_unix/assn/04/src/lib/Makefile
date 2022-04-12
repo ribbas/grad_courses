@@ -8,7 +8,7 @@
 # set the C++ compiler if unset
 CXX ?= $(shell which c++)
 
-SUBDIRS := log_mgr thread_mgr shmlib
+SUBDIRS := log_mgr thread_mgr shared_mem
 
 .PHONY: default it install depend clean $(SUBDIRS)
 default: it

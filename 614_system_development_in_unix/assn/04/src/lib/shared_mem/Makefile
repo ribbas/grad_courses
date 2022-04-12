@@ -2,7 +2,7 @@
 # Sabbir Ahmed
 # System Development in the Unix Environment (605.614)
 #
-# Makefile for lib/shmlib
+# Makefile for lib/shared_mem
 #
 
 # set the C++ compiler if unset
@@ -13,7 +13,7 @@ LIB_DIR := ../../../lib
 INC_DIR := ../../../include
 
 # source file for library file
-SRC := shmlib.cpp
+SRC := shared_mem.cpp
 
 # declare include headers as dependencies for the executable
 DEPS := $(INC_DIR)/$(SRC:%.cpp=%.hpp)
