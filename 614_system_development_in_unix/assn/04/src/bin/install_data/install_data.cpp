@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
 
     } else {
 
-        std::ifstream infile(argv[1]);
+        std::ifstream in_file(argv[1]);
         int index, time_inc;
         float x, y;
 
@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
 
         init_shared_array(shared_array);
 
-        while (infile >> index >> x >> y >> time_inc) {
+        while (in_file >> index >> x >> y >> time_inc) {
 
             if (time_inc > -1) {
 

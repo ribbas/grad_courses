@@ -9,7 +9,6 @@
  */
 
 #include "thread_mgr.hpp"
-#include "log_mgr.hpp"
 
 #include <cstring>
 #include <errno.h>
@@ -86,7 +85,6 @@ int th_kill(ThreadHandles thread_id) {
 
         if (status == (int*)THD_ERROR) {
             printf("Thread %d was killed\n", thread_id);
-            log_event(INFO, "Thread %d was killed", thread_id);
             THREADS[thread_id] = 0;
         }
     }
@@ -112,7 +110,6 @@ int th_exit() {
 
         if (THREADS[th_ix] == pthread_self()) {
 
-            log_event(INFO, "Thread %d exiting", th_ix);
             printf("Thread %d exiting\n", th_ix);
             THREADS[th_ix] = 0;
             pthread_exit(nullptr);

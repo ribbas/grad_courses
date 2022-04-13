@@ -1,10 +1,10 @@
 /*
- * log_mgr.hpp
+ * globals.hpp
  *
  * Sabbir Ahmed
  * System Development in the Unix Environment (605.614)
  *
- * This file contains the declarations for log_mgr
+ * This file contains the declarations for globals
  *
  */
 
