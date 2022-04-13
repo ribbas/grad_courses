@@ -64,6 +64,7 @@ int main(int argc, char* argv[]) {
 
             } else {
                 sleep(abs(time_inc));
+                shared_array[index].is_valid = 0;
                 // printf("not gonna sleep for %d s\n", abs(time_inc));
             }
         }

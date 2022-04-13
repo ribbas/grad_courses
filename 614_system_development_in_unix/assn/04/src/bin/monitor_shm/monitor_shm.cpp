@@ -49,22 +49,36 @@ int main(int argc, char* argv[]) {
 
     while (time_elapsed < monitor_duration) {
 
-        sleep(1);
+        if (!num_valid) {
 
-        for (int i = 0; i < shared_array_size; i++) {
-            num_valid += shared_array[i].is_valid;
-            x_ave += shared_array[i].x;
-            y_ave += shared_array[i].y;
+            printf("At time: %d: no elements are active\n", time_elapsed);
+
+        } else {
+
+            printf("At time: %d: %d elements are active: x = %f, y = %f\n",
+                   time_elapsed, num_valid, x_ave, y_ave);
         }
-        x_ave /= num_valid;
-        y_ave /= num_valid;
-
-        printf("num_valid: %d, x: %f, y: %f\n", num_valid, x_ave, y_ave);
 
         num_valid = 0;
         x_ave = 0.0;
         y_ave = 0.0;
         time_elapsed++;
+
+        sleep(1);
+
+        for (int i = 0; i < shared_array_size; i++) {
+            if (shared_array[i].is_valid) {
+                num_valid += shared_array[i].is_valid;
+                x_ave += shared_array[i].x;
+                y_ave += shared_array[i].y;
+            }
+        }
+
+        // prevent divide-by-zero
+        if (num_valid) {
+            x_ave /= num_valid;
+            y_ave /= num_valid;
+        }
     }
 
     detach_shm((void*)shared_array);
