@@ -21,8 +21,7 @@ void* connect_shm(int key, int size) {
     int shm_id;
     int* shm_ptr;
 
-    shm_id = shmget(key, size, IPC_CREAT | 0666);
-    if (shm_id < 0) {
+    if ((shm_id = shmget(key, size, IPC_CREAT | 0666)) < 0) {
         fprintf(stderr, "shmget() (%d) %s\n", errno, strerror(errno));
         return nullptr;
     }
@@ -38,7 +37,16 @@ void* connect_shm(int key, int size) {
 }
 
 int detach_shm(void* addr) {
-    return OK;
+
+    if (shmdt(addr) == -1) {
+
+        fprintf(stderr, "shmdt() (%d) %s\n", errno, strerror(errno));
+        return ERROR;
+
+    } else {
+        printf("detached\n");
+        return OK;
+    }
 }
 
 int destroy_shm(int key) {
