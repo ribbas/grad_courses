@@ -24,7 +24,7 @@
 #include <unistd.h>
 
 const short DELAY_LO = 1;
-const short DELAY_HI = 2;
+const short DELAY_HI = 8;
 
 /*
  * This method utilizes setitimer and SIGALRM to implement sleep for `sec`
@@ -70,19 +70,20 @@ void sleep_sec(double sec) {
 }
 
 std::string exec(const char* cmd) {
+
     char buffer[128];
     std::string result = "";
     FILE* pipe = popen(cmd, "r");
     if (!pipe)
         throw std::runtime_error("popen() failed!");
-    try {
-        while (fgets(buffer, sizeof(buffer), pipe) != NULL) {
-            result += buffer;
-        }
-    } catch (...) {
-        pclose(pipe);
-        throw;
+    // try {
+    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        result += buffer;
     }
+    // } catch (...) {
+    //     pclose(pipe);
+    //     throw;
+    // }
     pclose(pipe);
     return result;
 }
@@ -92,98 +93,46 @@ int main() {
     srand(time(nullptr));
 
     fd_set rfds;
+    int rc;
     struct timeval tv;
-    int retval;
+    tv.tv_sec = 0;
+    tv.tv_usec = 0;
 
-    char user_input;
+    char user_input = ' ';
     int random_delay = 0;
 
     while (user_input != 'q') {
 
-        printf("user input %c\n", user_input);
-
-        std::string fortune = exec("./fortune");
-        for (int i = 0; i < fortune.size(); i++) {
-            fortune.at(i) = toupper(fortune.at(i));
-        }
-        std::cout << fortune;
-
-        /* Watch stdin (fd 0) to see when it has input. */
+        // Watch stdin (fd 0) to see when it has input
         FD_ZERO(&rfds);
         FD_SET(0, &rfds);
-        /* Wait up to five seconds. */
-        tv.tv_sec = 0;
-        tv.tv_usec = 0;
 
-        retval = select(1, &rfds, nullptr, nullptr, &tv);
-        /* Don’t rely on the value of tv now! */
+        rc = select(1, &rfds, nullptr, nullptr, &tv);
 
-        if (retval == -1) {
+        if (rc == -1) {
+
             perror("select()");
-        } else if (retval) {
+
+        } else if (rc) {
+
             user_input = getchar();
             if (user_input == 'q') {
                 break;
             }
-        }
 
-        random_delay = DELAY_LO + rand() % DELAY_HI;
-        std::cout << "sleeping for " << random_delay << "s\n";
-        sleep_sec(random_delay);
+        } else {
+
+            std::string fortune = exec("./fortune");
+            for (int i = 0; i < fortune.size(); i++) {
+                fortune.at(i) = toupper(fortune.at(i));
+            }
+            std::cout << fortune;
+
+            random_delay = DELAY_LO + rand() % DELAY_HI;
+            std::cout << "sleeping for " << random_delay << "s\n";
+            sleep_sec(random_delay);
+        }
     }
 
     return OK;
 }
-
-/*
-
-#include <pthread.h>
-#include <stdio.h>
-#include <unistd.h>
-
-struct Common {
-    bool mRunning;
-    float mCount;
-};
-void* Cruncher(void* info) {
-    struct Common* cptr = (struct Common*)info;
-    cptr->mCount = 0.0;
-    while (cptr->mRunning) {
-        sleep(1);
-        cptr->mCount++;
-    }
-
-    return (void*)0;
-}
-
-void* PollKbd(void* info) {
-    struct Common* cptr = (struct Common*)info;
-    int ch;
-
-    printf("Press q followed by return to quit\n");
-    do {
-        ch = getchar();
-
-    } while (ch != 'q');
-    cptr->mRunning = false;
-
-    return (void*)0;
-}
-
-int main() {
-    pthread_t crunchThread, pollThread;
-    struct Common common = {true, 0.0};
-
-    pthread_create(&pollThread, 0, PollKbd, &common);
-    pthread_create(&crunchThread, 0, Cruncher, &common);
-
-    pthread_join(pollThread, 0);
-    pthread_join(crunchThread, 0);
-
-    printf("Count got up to %f\n", common.mCount);
-
-    return 0;
-}
-
-
-*/
