@@ -103,7 +103,7 @@ int main() {
 
     while (user_input != 'q') {
 
-        // Watch stdin (fd 0) to see when it has input
+        // watch stdin (fd 0) to see when it has input
         FD_ZERO(&rfds);
         FD_SET(0, &rfds);
 

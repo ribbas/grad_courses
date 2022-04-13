@@ -9,7 +9,7 @@
 CXX ?= $(shell which c++)
 
 # SUBDIRS := my_fortune install_data monitor_shm install_and_monitor
-SUBDIRS := my_fortune
+SUBDIRS := my_fortune install_data monitor_shm
 
 .PHONY: it install depend clean $(SUBDIRS)
 
