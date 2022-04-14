@@ -1,9 +1,17 @@
-// ID_List.cpp
-// by Allyn Shell
-// July 2019
-// the ID_List class provides list functions
-// addID, dropID, matchLists, diffList
-// inList, std::ostream << of List
+/*
+ * ID_List.cpp
+ * Allyn Shell
+ * July 2019
+ *
+ * Modified by:
+ * Sabbir Ahmed
+ * April 2022
+ *
+ * The ID_List class provides list functions
+ * addID, dropID, matchLists, diffList
+ * inList, std::ostream << of List
+ *
+ */
 
 #include "ID_List.h"
 

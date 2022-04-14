@@ -1,9 +1,10 @@
-// Parser_Util.h
-// Sabbir Ahmed
-// 3/2/2022
-//
-// Declaration of the FF_List class
-//
+/*
+ * FF_List.h
+ * Sabbir Ahmed
+ * April 2022
+ *
+ * Declaration of the FF_List data structure
+ */
 
 #ifndef FF_LIST_H
 #define FF_LIST_H

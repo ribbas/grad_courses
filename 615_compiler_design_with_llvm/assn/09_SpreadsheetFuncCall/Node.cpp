@@ -35,6 +35,14 @@ void Node::walkTreeAddIDs(SS_Cell* cell) {
 void Node::codeGen(SS_Cell* cell) {
 
     argVals.clear();
+
+    std::vector<llvm::Type*> argList = {llvm::Type::getInt32Ty(*irContext)};
+    llvm::FunctionType* outputFuncType = llvm::FunctionType::get(
+        llvm::Type::getVoidTy(*irContext), argList, false);
+    llvm::Function* printdFunc =
+        llvm::Function::Create(outputFuncType, llvm::Function::ExternalLinkage,
+                               "printd", *cell->module);
+
     std::vector<std::string> args = cell->controllers.getList();
     std::vector<llvm::Type*> funcArgs(args.size(),
                                       llvm::Type::getInt32Ty(*irContext));
@@ -58,6 +66,10 @@ void Node::codeGen(SS_Cell* cell) {
         llvm::BasicBlock::Create(*irContext, "entry", func);
     irBuilder->SetInsertPoint(basicBlock);
     walkCodeGen(cell->getTOC(), cell);
+
+    std::vector<llvm::Value*> heh = {irValue};
+    irBuilder->CreateCall(printdFunc, heh, "lol");
+
     irBuilder->CreateRet(irValue);
 }
 

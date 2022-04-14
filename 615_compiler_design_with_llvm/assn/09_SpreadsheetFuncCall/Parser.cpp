@@ -7,7 +7,7 @@
 // 2/22/2022
 //
 // EBNF for homework parser
-//  <$>         => <exp> <eof>
+//  <$>      -> <exp> <eof>
 // exp       -> term add-op term | term
 // add-op    -> + | -
 // term      -> factor mult-op factor | factor

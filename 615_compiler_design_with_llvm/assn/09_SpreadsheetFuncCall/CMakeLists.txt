@@ -41,4 +41,5 @@ llvm_map_components_to_libnames(
 )
 
 # Link against LLVM libraries
+target_link_options(${CMAKE_PROJECT_NAME} PRIVATE "-Xlinker --export-dynamic")
 target_link_libraries(${CMAKE_PROJECT_NAME} ${llvm_libs})

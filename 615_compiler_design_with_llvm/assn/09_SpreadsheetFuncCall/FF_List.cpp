@@ -1,9 +1,10 @@
-// Parser_Util.cpp
-// Sabbir Ahmed
-// 3/2/2022
-//
-// Implementation of the FF_List data structure
-//
+/*
+ * FF_List.cpp
+ * Sabbir Ahmed
+ * April 2022
+ *
+ * Implementation of the FF_List data structure
+ */
 
 #include "FF_List.h"
 

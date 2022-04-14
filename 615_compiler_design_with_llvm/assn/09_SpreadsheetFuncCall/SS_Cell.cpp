@@ -1,13 +1,17 @@
-// SS_Cell.cpp
-// Allyn Shell
-// Feb 2018
-// Modified by:
-// Modified date:
+/*
+ * SS_Cell.cpp
+ * Allyn Shell
+ * Feb 2018
+ *
+ * Modified by:
+ * Sabbir Ahmed
+ * April 2022
+ *
+ */
 
 #include "SS_Cell.h"
 #include "Node.h"
 #include "Token.h"
-
 #include <sstream>
 #include <string>
 

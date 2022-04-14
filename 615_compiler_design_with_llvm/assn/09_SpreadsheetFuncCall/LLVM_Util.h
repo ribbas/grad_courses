@@ -19,15 +19,22 @@
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Target/TargetMachine.h"
 #include "llvm/Target/TargetOptions.h"
-#include "llvm/Transforms/InstCombine/InstCombine.h"
 
 using namespace llvm;
 using namespace llvm::orc;
+
+#define DLLEXPORT
 
 static ExitOnError ExitOnErr;
 
 extern std::unique_ptr<LLVMContext> irContext;
 extern std::unique_ptr<IRBuilder<>> irBuilder;
+
+/// printd - printf that takes a double prints it as "%f\n", returning 0.
+extern "C" DLLEXPORT inline double printd(double X) {
+    fprintf(stderr, "%f\n", X);
+    return 0;
+}
 
 inline void initLLVMContext() {
 
@@ -61,9 +68,11 @@ public:
                        std::make_unique<ConcurrentIRCompiler>(std::move(JTMB))),
           MainJD(this->ES->createBareJITDylib("<main>")) {
 
-        MainJD.addGenerator(
-            cantFail(DynamicLibrarySearchGenerator::GetForCurrentProcess(
-                DL.getGlobalPrefix())));
+        SymbolMap M;
+        // Register every symbol that can be accessed from the JIT'ed code.
+        M[Mangle("printd")] = JITEvaluatedSymbol(
+            pointerToJITTargetAddress(&printd), JITSymbolFlags());
+        cantFail(MainJD.define(absoluteSymbols(M)));
 
         if (JTMB.getTargetTriple().isOSBinFormatCOFF()) {
             ObjectLayer.setOverrideObjectFlagsWithResponsibilityFlags(true);
