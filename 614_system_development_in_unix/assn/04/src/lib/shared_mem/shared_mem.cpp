@@ -9,7 +9,6 @@
  */
 
 #include "shared_mem.hpp"
-
 #include <cstring>
 #include <errno.h>
 #include <iostream>
@@ -19,7 +18,7 @@
 void* connect_shm(int key, int size) {
 
     int shm_id;
-    int* shm_ptr;
+    void* shm_ptr;
 
     if ((shm_id = shmget(key, size, IPC_CREAT | 0666)) < 0) {
         fprintf(stderr, "shmget() (%d) %s\n", errno, strerror(errno));
@@ -27,7 +26,7 @@ void* connect_shm(int key, int size) {
     }
 
     // attach
-    shm_ptr = (int*)shmat(shm_id, nullptr, 0);
+    shm_ptr = shmat(shm_id, nullptr, 0);
     if (shm_ptr == (int*)-1) {
         fprintf(stderr, "shmat() (%d) %s\n", errno, strerror(errno));
         return nullptr;

@@ -9,7 +9,6 @@
  */
 
 #include "log_mgr.hpp"
-
 #include <cstring>
 #include <ctime>
 #include <errno.h>

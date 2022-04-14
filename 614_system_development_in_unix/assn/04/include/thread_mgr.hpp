@@ -12,7 +12,6 @@
 #define THREAD_MGR_HPP
 
 #include "globals.hpp"
-
 #include <pthread.h>
 #include <signal.h>
 
@@ -27,6 +26,7 @@ extern ThreadHandles LAST_THREAD_NUM;
 const unsigned int MAX_THREAD_NUM = 50;
 extern pthread_t THREADS[MAX_THREAD_NUM];
 
+// function declarations
 ThreadHandles th_execute(Funcptrs);
 
 int th_wait(ThreadHandles);

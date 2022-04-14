@@ -13,10 +13,11 @@
 
 #include "globals.hpp"
 
-void* connect_shm(int key, int size);
+// function declarations
+void* connect_shm(int, int);
 
-int detach_shm(void* addr);
+int detach_shm(void*);
 
-int destroy_shm(int key);
+int destroy_shm(int);
 
 #endif // SHARED_MEM_HPP

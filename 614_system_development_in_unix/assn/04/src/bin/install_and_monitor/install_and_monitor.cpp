@@ -8,10 +8,9 @@
  *
  */
 
-// #include "log_mgr.hpp"
+#include "log_mgr.hpp"
 #include "shared_mem.hpp"
 #include "thread_mgr.hpp"
-
 #include <fstream>
 #include <iostream>
 #include <sys/ipc.h>

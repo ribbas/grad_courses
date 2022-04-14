@@ -10,7 +10,6 @@
 
 #include "log_mgr.hpp"
 #include "thread_mgr.hpp"
-
 #include <cstdlib>
 #include <cstring>
 #include <errno.h>

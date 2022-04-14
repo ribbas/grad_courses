@@ -21,33 +21,16 @@ typedef struct {
 
 const int shared_array_size = 20;
 
-int main(int argc, char* argv[]) {
+void monitor(int duration, shared_array_elem* shared_array) {
 
-    int monitor_duration = 30;
     int time_elapsed = 0;
-
-    // if wrong number of arguments
-    if (argc > 2) {
-
-        printf("Invalid number of arguments provided\n");
-        return ERROR;
-
-    } else if (argc == 2) {
-
-        monitor_duration = std::stoi(argv[1]);
-    }
-
-    int mem_key = ftok("input_data", 1);
-    shared_array_elem* shared_array =
-        (shared_array_elem*)connect_shm(mem_key, 4 * sizeof(int));
-    printf("key: %d\n", mem_key);
 
     // count of the active array elements (i.e. valid)
     int num_valid = 0;
     // the average x and y values over the active array elements
     float x_ave = 0.0, y_ave = 0.0;
 
-    while (time_elapsed < monitor_duration) {
+    while (time_elapsed < duration) {
 
         if (!num_valid) {
 
@@ -80,6 +63,29 @@ int main(int argc, char* argv[]) {
             y_ave /= num_valid;
         }
     }
+}
+
+int main(int argc, char* argv[]) {
+
+    int monitor_duration = 30;
+
+    // if wrong number of arguments
+    if (argc > 2) {
+
+        printf("Invalid number of arguments provided\n");
+        return ERROR;
+
+    } else if (argc == 2) {
+
+        monitor_duration = std::stoi(argv[1]);
+    }
+
+    int mem_key = ftok("input_data", 1);
+    shared_array_elem* shared_array =
+        (shared_array_elem*)connect_shm(mem_key, 4 * sizeof(int));
+    printf("key: %d\n", mem_key);
+
+    monitor(monitor_duration, shared_array);
 
     detach_shm((void*)shared_array);
 

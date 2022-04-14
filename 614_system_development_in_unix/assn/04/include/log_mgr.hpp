@@ -29,8 +29,10 @@ extern const char* LOG_FILE;
 extern int FD;
 
 // function declarations
-int log_event(Levels l, const char* fmt, ...);
-int set_logfile(const char* logfile_name);
+int log_event(Levels, const char*, ...);
+
+int set_logfile(const char*);
+
 void close_logfile(void);
 
 #endif // LOG_MGR_HPP
