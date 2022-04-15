@@ -149,6 +149,19 @@ void SS_Cell::generateIR() {
     irStdout.str().clear();
 
     cellJIT = ExitOnErr(JIT::Create());
+
+    //
+    auto& dl = cellJIT->getDataLayout();
+    MangleAndInterner Mangle(cellJIT->getExecutionSession(), dl);
+    auto& jd = cellJIT->getMainJITDylib();
+
+    auto s = absoluteSymbols(
+        {{Mangle("printd"),
+          JITEvaluatedSymbol(llvm::pointerToJITTargetAddress(&printd),
+                             JITSymbolFlags::Exported)}});
+    jd.define(s);
+    //
+
     module = std::make_unique<llvm::Module>(id + "_module", *irContext);
     module->setDataLayout(cellJIT->getDataLayout());
 

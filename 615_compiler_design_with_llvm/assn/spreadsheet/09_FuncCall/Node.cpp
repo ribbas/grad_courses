@@ -69,6 +69,8 @@ void Node::codeGen(SS_Cell* cell) {
 
     std::vector<llvm::Value*> heh = {irValue};
     irBuilder->CreateCall(printdFunc, heh, "lol");
+    std::cout << "string id: " << cell->id << " int:" << cell->col << cell->row
+              << '\n';
 
     irBuilder->CreateRet(irValue);
 }

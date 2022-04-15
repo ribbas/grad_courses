@@ -18,6 +18,9 @@
 std::unique_ptr<llvm::LLVMContext> irContext;
 std::unique_ptr<llvm::IRBuilder<>> irBuilder;
 
+// open spreadsheet cell table
+TableOfCells symTab;
+
 int main(int argc, const char* argv[]) {
 
     std::cout << "Welcome to mySpreadsheet" << std::endl << std::endl;
@@ -46,9 +49,6 @@ int main(int argc, const char* argv[]) {
             ifs.close();
         return 1;
     }
-
-    // open spreadsheet cell table
-    TableOfCells symTab;
 
     LLVMInitializeNativeTarget();
     LLVMInitializeNativeAsmPrinter();

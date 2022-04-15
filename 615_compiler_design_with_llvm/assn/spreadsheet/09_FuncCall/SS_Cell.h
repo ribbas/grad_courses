@@ -10,10 +10,18 @@
 #define SS_CELL_H_
 
 #include "ID_List.h"
+#include "JIT.h"
 #include "LLVM_Util.h"
-
 #include <iostream>
 #include <string>
+
+#define DLLEXPORT
+
+/// printd - printf that takes a double prints it as "%f\n", returning 0.
+extern "C" DLLEXPORT inline double printd(int X) {
+    fprintf(stderr, "test %d\n", X);
+    return 0;
+}
 
 class Node;
 
@@ -25,6 +33,7 @@ enum CellStatusAction { EMPTY, CALC, READY, ERROR };
 class TableOfCells;
 
 class SS_Cell {
+  private:
     friend class Parser;
     friend class Node;
     friend class TableOfCells;
@@ -56,7 +65,9 @@ class SS_Cell {
     std::unique_ptr<JIT> cellJIT;
     std::map<std::string, llvm::Value*> namedValues;
 
-public:
+    void setID(int i, int j);
+
+  public:
     SS_Cell();
     ~SS_Cell();
 
@@ -109,16 +120,14 @@ public:
     void printCellIR(std::ostream& os);
     friend std::ostream& operator<<(std::ostream& os, const SS_Cell& c);
     friend std::ostream& operator<<(std::ostream& os, const SS_Cell* c);
-
-private:
-    void setID(int i, int j);
 };
 
 class TableOfCells {
+  private:
     SS_Cell cell[10][6];
     SS_Cell badCell;
 
-public:
+  public:
     TableOfCells(); // initializes cell IDs
     ~TableOfCells() {}
 

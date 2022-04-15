@@ -15,6 +15,7 @@ add_executable(${CMAKE_PROJECT_NAME} SS_Driver.cpp)
 target_sources(${CMAKE_PROJECT_NAME} PUBLIC
     FF_List.cpp
     ID_List.cpp
+    JIT.cpp
     Node.cpp
     Parser.cpp
     Parser_Util.cpp
@@ -41,5 +42,4 @@ llvm_map_components_to_libnames(
 )
 
 # Link against LLVM libraries
-target_link_options(${CMAKE_PROJECT_NAME} PRIVATE "-Xlinker --export-dynamic")
 target_link_libraries(${CMAKE_PROJECT_NAME} ${llvm_libs})

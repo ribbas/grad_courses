@@ -20,6 +20,13 @@
 class SS_Cell;
 class TableOfCells;
 
+// /// printd - printf that takes a double prints it as "%f\n", returning 0.
+// extern "C" DLLEXPORT double getCell(double X) {
+//     fprintf(stderr, "%f\n", X);
+//     initLLVMContext();
+//     return 0;
+// }
+
 class Node {
 public:
     Node();
