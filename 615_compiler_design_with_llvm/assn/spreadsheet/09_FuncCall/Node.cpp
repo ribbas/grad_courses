@@ -21,6 +21,7 @@ Node::~Node() {
 }
 
 void Node::walkTreeAddIDs(SS_Cell* cell) {
+
     if (tok && tok->getKind() == ID) {
         cell->newControllers.addID(tok->getLexeme());
     }
@@ -94,14 +95,22 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
                 irValue = nullptr;
                 return;
             }
+            std::string refCellName = refCell->getID();
 
-            std::vector<llvm::Value*> args = {
-                llvm::ConstantInt::get(*irContext,
-                                       llvm::APInt(32, refCell->col)),
-                llvm::ConstantInt::get(*irContext,
-                                       llvm::APInt(32, refCell->row))};
-            irValue = irBuilder->CreateCall(
-                cell->module->getFunction("getCell"), args, refCell->getID());
+            // if refCellName was already called
+            if (cell->namedValues.find(refCellName) ==
+                cell->namedValues.end()) {
+
+                std::vector<llvm::Value*> args = {
+                    llvm::ConstantInt::get(*irContext,
+                                           llvm::APInt(32, refCell->col)),
+                    llvm::ConstantInt::get(*irContext,
+                                           llvm::APInt(32, refCell->row))};
+                cell->namedValues[refCellName] = irBuilder->CreateCall(
+                    cell->module->getFunction("getCell"), args, refCellName);
+            }
+
+            irValue = cell->namedValues[refCellName];
             return;
         }
 

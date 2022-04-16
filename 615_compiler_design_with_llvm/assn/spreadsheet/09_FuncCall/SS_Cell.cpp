@@ -29,24 +29,30 @@ SS_Cell::~SS_Cell() {
         expNode = nullptr;
     }
     controllers.clear();
+    namedValues.clear();
     users.clear();
 }
 
 TableOfCells* SS_Cell::getTOC() {
     return SS_Cell::TOC;
 }
+
 std::string SS_Cell::getID() {
     return id;
 }
+
 CellArrayColumn SS_Cell::getCellArrayColumn() {
     return (CellArrayColumn)col;
 }
+
 char SS_Cell::getColChar() {
     return (char)('A' + col);
 }
+
 int SS_Cell::getCol() {
     return col;
 }
+
 int SS_Cell::getRow() {
     return row;
 }
@@ -142,22 +148,26 @@ void SS_Cell::dropUser(const int row, const int col) {
     users.dropID(row, col);
 }
 
+void SS_Cell::addIRSymbols() {
+
+    MangleAndInterner mangle(cellJIT->getExecutionSession(),
+                             cellJIT->getDataLayout());
+    llvm::orc::JITDylib& jd = cellJIT->getMainJITDylib();
+
+    auto s = absoluteSymbols(
+        {{mangle("getCell"),
+          JITEvaluatedSymbol(llvm::pointerToJITTargetAddress(&getCell),
+                             JITSymbolFlags::Exported)}});
+    ExitOnErr(jd.define(s));
+}
+
 void SS_Cell::generateIR() {
 
     irStdout.str().clear();
+    namedValues.clear();
 
     cellJIT = ExitOnErr(JIT::Create());
-
-    llvm::DataLayout dl = cellJIT->getDataLayout();
-    MangleAndInterner Mangle(cellJIT->getExecutionSession(), dl);
-    llvm::orc::JITDylib& jd = cellJIT->getMainJITDylib();
-
-    std::unique_ptr<llvm::orc::AbsoluteSymbolsMaterializationUnit> s =
-        absoluteSymbols(
-            {{Mangle("getCell"),
-              JITEvaluatedSymbol(llvm::pointerToJITTargetAddress(&getCell),
-                                 JITSymbolFlags::Exported)}});
-    ExitOnErr(jd.define(s));
+    addIRSymbols();
 
     module = std::make_unique<llvm::Module>(id + "_module", *irContext);
     module->setDataLayout(cellJIT->getDataLayout());
@@ -227,12 +237,14 @@ void SS_Cell::calculateExpression(SS_Cell* root, bool err) {
 
 // int to std::string
 std::string itos(int value) {
+
     std::stringstream oss;
     oss << value;
     return oss.str();
 }
 
 void SS_Cell::setTXTCell(const std::string txt) {
+
     kind = TEXT;
     value = 0;
     error = false;
@@ -244,6 +256,7 @@ void SS_Cell::setTXTCell(const std::string txt) {
 }
 
 void SS_Cell::setNUMCell(const int num, int sign) {
+
     kind = NUMBER;
     value = num * sign;
     error = false;
@@ -255,6 +268,7 @@ void SS_Cell::setNUMCell(const int num, int sign) {
 }
 
 void SS_Cell::setNUMCell(const std::string num) {
+
     kind = NUMBER;
     if (num == "") {
         value = 0;
@@ -272,6 +286,7 @@ void SS_Cell::setNUMCell(const std::string num) {
 }
 
 void SS_Cell::clearCell() {
+
     kind = BLANK;
     value = 0;
     error = false;
@@ -283,6 +298,7 @@ void SS_Cell::clearCell() {
 }
 
 void SS_Cell::identifyControllers(Node* node) {
+
     newControllers.clear();
     if (node) {
         // walk AST && add all IDs in AST to list
@@ -291,6 +307,7 @@ void SS_Cell::identifyControllers(Node* node) {
 }
 
 void SS_Cell::updateControllerUsers() {
+
     // row, col identify *this
     ID_List dropCont = controllers - newControllers;
     for (int r = 0; r < 10; ++r) {
@@ -312,6 +329,7 @@ void SS_Cell::updateControllerUsers() {
 }
 
 void SS_Cell::calculateUserExpressions(SS_Cell* root, bool err) {
+
     for (int r = 0; r < 10; ++r) {
         for (int c = 0; c < 6; ++c) {
             if (users.contains(r, c)) {
@@ -322,6 +340,7 @@ void SS_Cell::calculateUserExpressions(SS_Cell* root, bool err) {
 }
 
 void SS_Cell::printCellAttributes(std::ostream& os) {
+
     os << id << ": col = " << col << "; row = " << row << ": kind = " << kind
        << ": " << std::endl;
     if (error) {
@@ -352,6 +371,7 @@ void SS_Cell::printCellIR(std::ostream& os) {
 
 // enum CellKind {BLANK, TXT, NUM, EXP, ERROR}; // Cell kind
 std::ostream& operator<<(std::ostream& os, const SS_Cell& cell) {
+
     if (cell.error) {
         os << "ERROR";
         return os;
@@ -377,5 +397,6 @@ std::ostream& operator<<(std::ostream& os, const SS_Cell& cell) {
 }
 
 std::ostream& operator<<(std::ostream& os, const SS_Cell* cell) {
+
     return os << *cell;
 }

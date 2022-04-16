@@ -50,6 +50,7 @@ class SS_Cell {
     // expression root
     std::string equation;
     Node* expNode;
+    std::map<std::string, llvm::Value*> namedValues;
 
     std::string irCode;
     llvm::raw_string_ostream irStdout;
@@ -101,6 +102,7 @@ class SS_Cell {
     void dropUser(const int row, const int col);
 
     void calculateExpression(SS_Cell* root = 0, bool err = false);
+    void addIRSymbols();
     void generateIR();
 
     void identifyControllers(Node* node);
