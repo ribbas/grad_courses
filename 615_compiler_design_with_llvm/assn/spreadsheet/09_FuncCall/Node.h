@@ -20,15 +20,8 @@
 class SS_Cell;
 class TableOfCells;
 
-// /// printd - printf that takes a double prints it as "%f\n", returning 0.
-// extern "C" DLLEXPORT double getCell(double X) {
-//     fprintf(stderr, "%f\n", X);
-//     initLLVMContext();
-//     return 0;
-// }
-
 class Node {
-public:
+  public:
     Node();
     virtual ~Node();
 
@@ -54,7 +47,7 @@ public:
     friend std::ostream& operator<<(std::ostream& os, Node& n);
     friend std::ostream& operator<<(std::ostream& os, Node* n);
 
-private:
+  private:
     void walkCodeGen(TableOfCells* TOC, SS_Cell* cell);
 };
 

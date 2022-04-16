@@ -34,119 +34,28 @@ void Node::walkTreeAddIDs(SS_Cell* cell) {
 
 void Node::codeGen(SS_Cell* cell) {
 
-    argVals.clear();
-
-    std::vector<llvm::Type*> argList = {llvm::Type::getInt32Ty(*irContext)};
+    std::vector<llvm::Type*> argList =
+        std::vector<llvm::Type*>(2, llvm::Type::getInt32Ty(*irContext));
     llvm::FunctionType* outputFuncType = llvm::FunctionType::get(
-        llvm::Type::getVoidTy(*irContext), argList, false);
-    llvm::Function* printdFunc =
-        llvm::Function::Create(outputFuncType, llvm::Function::ExternalLinkage,
-                               "printd", *cell->module);
+        llvm::Type::getInt32Ty(*irContext), argList, false);
+    llvm::Function::Create(outputFuncType, llvm::Function::ExternalLinkage,
+                           "getCell", *cell->module);
 
-    std::vector<std::string> args = cell->controllers.getList();
-    std::vector<llvm::Type*> funcArgs(args.size(),
-                                      llvm::Type::getInt32Ty(*irContext));
-    llvm::FunctionType* funcType = llvm::FunctionType::get(
-        llvm::Type::getInt32Ty(*irContext), funcArgs, false);
+    llvm::FunctionType* funcType =
+        llvm::FunctionType::get(llvm::Type::getInt32Ty(*irContext), false);
     llvm::Function* func =
         llvm::Function::Create(funcType, llvm::Function::ExternalLinkage,
-                               cell->id + "_exp", cell->module.get());
-
-    // set names for all arguments
-    unsigned argIx = 0;
-    std::string namedArg = "";
-    for (llvm::Argument& arg : func->args()) {
-        namedArg = args[argIx++];
-        argVals.push_back(cell->getTOC()->getCell(namedArg)->value);
-        arg.setName(namedArg);
-        cell->namedValues[namedArg] = &arg;
-    }
+                               cell->id + "_exp", *cell->module);
 
     llvm::BasicBlock* basicBlock =
         llvm::BasicBlock::Create(*irContext, "entry", func);
     irBuilder->SetInsertPoint(basicBlock);
     walkCodeGen(cell->getTOC(), cell);
-
-    std::vector<llvm::Value*> heh = {irValue};
-    irBuilder->CreateCall(printdFunc, heh, "lol");
-    std::cout << "string id: " << cell->id << " int:" << cell->col << cell->row
-              << '\n';
-
     irBuilder->CreateRet(irValue);
 }
 
 void Node::evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym) {
-
-    switch (argVals.size()) {
-
-        case 0: {
-            value = ((int (*)())(intptr_t)exprSym->getAddress())();
-            return;
-        }
-
-        case 1: {
-            value = ((int (*)(int))(intptr_t)exprSym->getAddress())(argVals[0]);
-            return;
-        }
-
-        case 2: {
-            value = ((int (*)(int, int))(intptr_t)exprSym->getAddress())(
-                argVals[0], argVals[1]);
-            return;
-        }
-
-        case 3: {
-            value = ((int (*)(int, int, int))(intptr_t)exprSym->getAddress())(
-                argVals[0], argVals[1], argVals[2]);
-            return;
-        }
-
-        case 4: {
-            value =
-                ((int (*)(int, int, int, int))(intptr_t)exprSym->getAddress())(
-                    argVals[0], argVals[1], argVals[2], argVals[3]);
-            return;
-        }
-
-        case 5: {
-            value = ((int (*)(int, int, int, int, int))(
-                         intptr_t)exprSym->getAddress())(
-                argVals[0], argVals[1], argVals[2], argVals[3], argVals[4]);
-            return;
-        }
-
-        case 6: {
-            value = ((int (*)(int, int, int, int, int, int))(
-                         intptr_t)exprSym->getAddress())(
-                argVals[0], argVals[1], argVals[2], argVals[3], argVals[4],
-                argVals[5]);
-            return;
-        }
-
-        case 7: {
-            value = ((int (*)(int, int, int, int, int, int, int))(
-                         intptr_t)exprSym->getAddress())(
-                argVals[0], argVals[1], argVals[2], argVals[3], argVals[4],
-                argVals[5], argVals[6]);
-            return;
-        }
-
-        case 8: {
-            value = ((int (*)(int, int, int, int, int, int, int, int))(
-                         intptr_t)exprSym->getAddress())(
-                argVals[0], argVals[1], argVals[2], argVals[3], argVals[4],
-                argVals[5], argVals[6], argVals[7]);
-            return;
-        }
-
-        default: {
-            value = 0;
-            error = true;
-            std::cerr << "Function exceeded maximum number of arguments "
-                         "allowed\n";
-            return;
-        }
-    }
+    value = ((int (*)())(intptr_t)exprSym->getAddress())();
 }
 
 void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
@@ -186,8 +95,13 @@ void Node::walkCodeGen(TableOfCells* TOC, SS_Cell* cell) {
                 return;
             }
 
-            std::string refCellName = tok->getLexeme();
-            irValue = cell->namedValues[refCellName];
+            std::vector<llvm::Value*> args = {
+                llvm::ConstantInt::get(*irContext,
+                                       llvm::APInt(32, refCell->col)),
+                llvm::ConstantInt::get(*irContext,
+                                       llvm::APInt(32, refCell->row))};
+            irValue = irBuilder->CreateCall(
+                cell->module->getFunction("getCell"), args, refCell->getID());
             return;
         }
 

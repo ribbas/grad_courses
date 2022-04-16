@@ -11,9 +11,6 @@ JIT::JIT(std::unique_ptr<ExecutionSession> executionSession,
                    std::make_unique<ConcurrentIRCompiler>(std::move(JTMB))),
       mainJD(this->executionSession->createBareJITDylib("<main>")) {
 
-    // symbolMap[mangle("printd")] = JITEvaluatedSymbol(
-    //     pointerToJITTargetAddress(&printd), JITSymbolFlags());
-    // cantFail(mainJD.define(absoluteSymbols(symbolMap)));
     mainJD.addGenerator(
         cantFail(DynamicLibrarySearchGenerator::GetForCurrentProcess(
             dataLayout.getGlobalPrefix())));
@@ -63,4 +60,12 @@ Error JIT::addModule(ThreadSafeModule TSM) {
 
 Expected<JITEvaluatedSymbol> JIT::lookup(StringRef Name) {
     return executionSession->lookup({&mainJD}, mangle(Name.str()));
+}
+
+JITDylib& JIT::getMainJITDylib() {
+    return mainJD;
+}
+
+ExecutionSession& JIT::getExecutionSession() {
+    return *executionSession;
 }

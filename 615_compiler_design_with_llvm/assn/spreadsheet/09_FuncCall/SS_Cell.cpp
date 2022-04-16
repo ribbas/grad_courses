@@ -28,7 +28,6 @@ SS_Cell::~SS_Cell() {
         delete expNode;
         expNode = nullptr;
     }
-    namedValues.clear();
     controllers.clear();
     users.clear();
 }
@@ -145,22 +144,20 @@ void SS_Cell::dropUser(const int row, const int col) {
 
 void SS_Cell::generateIR() {
 
-    namedValues.clear();
     irStdout.str().clear();
 
     cellJIT = ExitOnErr(JIT::Create());
 
-    //
-    auto& dl = cellJIT->getDataLayout();
+    llvm::DataLayout dl = cellJIT->getDataLayout();
     MangleAndInterner Mangle(cellJIT->getExecutionSession(), dl);
-    auto& jd = cellJIT->getMainJITDylib();
+    llvm::orc::JITDylib& jd = cellJIT->getMainJITDylib();
 
-    auto s = absoluteSymbols(
-        {{Mangle("printd"),
-          JITEvaluatedSymbol(llvm::pointerToJITTargetAddress(&printd),
-                             JITSymbolFlags::Exported)}});
-    jd.define(s);
-    //
+    std::unique_ptr<llvm::orc::AbsoluteSymbolsMaterializationUnit> s =
+        absoluteSymbols(
+            {{Mangle("getCell"),
+              JITEvaluatedSymbol(llvm::pointerToJITTargetAddress(&getCell),
+                                 JITSymbolFlags::Exported)}});
+    ExitOnErr(jd.define(s));
 
     module = std::make_unique<llvm::Module>(id + "_module", *irContext);
     module->setDataLayout(cellJIT->getDataLayout());

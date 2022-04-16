@@ -6,22 +6,14 @@
 // Modified date:
 // TBD ... This is to be filled in for HW3
 
-#ifndef SS_CELL_H_
-#define SS_CELL_H_
+#ifndef SS_CELL_H
+#define SS_CELL_H
 
 #include "ID_List.h"
 #include "JIT.h"
 #include "LLVM_Util.h"
 #include <iostream>
 #include <string>
-
-#define DLLEXPORT
-
-/// printd - printf that takes a double prints it as "%f\n", returning 0.
-extern "C" DLLEXPORT inline double printd(int X) {
-    fprintf(stderr, "test %d\n", X);
-    return 0;
-}
 
 class Node;
 
@@ -63,7 +55,6 @@ class SS_Cell {
     llvm::raw_string_ostream irStdout;
     std::unique_ptr<llvm::Module> module;
     std::unique_ptr<JIT> cellJIT;
-    std::map<std::string, llvm::Value*> namedValues;
 
     void setID(int i, int j);
 
@@ -141,4 +132,9 @@ class TableOfCells {
     SS_Cell* getCell(int col, int row);
 };
 
-#endif // SS_CELL_H_
+#define DLLEXPORT
+extern "C" DLLEXPORT inline int getCell(int col, int row) {
+    return symTab.getCell(col, row)->getValue();
+}
+
+#endif // SS_CELL_H

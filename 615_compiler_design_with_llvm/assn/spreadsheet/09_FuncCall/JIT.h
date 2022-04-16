@@ -14,7 +14,6 @@ class JIT {
     IRCompileLayer compileLayer;
 
     JITDylib& mainJD;
-    SymbolMap symbolMap;
 
   public:
     JIT(std::unique_ptr<ExecutionSession>, JITTargetMachineBuilder, DataLayout);
@@ -29,13 +28,9 @@ class JIT {
 
     Expected<JITEvaluatedSymbol> lookup(StringRef);
 
-    JITDylib& getMainJITDylib() {
-        return mainJD;
-    }
+    JITDylib& getMainJITDylib();
 
-    ExecutionSession& getExecutionSession() {
-        return *executionSession;
-    }
+    ExecutionSession& getExecutionSession();
 };
 
 #endif // JIT_H
