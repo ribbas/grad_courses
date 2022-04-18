@@ -58,6 +58,8 @@ class SS_Cell {
     std::unique_ptr<JIT> cellJIT;
 
     void setID(int i, int j);
+    void addIRSymbols();
+    void generateIR();
 
   public:
     SS_Cell();
@@ -102,8 +104,6 @@ class SS_Cell {
     void dropUser(const int row, const int col);
 
     void calculateExpression(SS_Cell* root = 0, bool err = false);
-    void addIRSymbols();
-    void generateIR();
 
     void identifyControllers(Node* node);
     void updateControllerUsers();
@@ -134,8 +134,7 @@ class TableOfCells {
     SS_Cell* getCell(int col, int row);
 };
 
-#define DLLEXPORT
-extern "C" DLLEXPORT inline int getCell(int col, int row) {
+inline int getCell(int col, int row) {
     return symTab.getCell(col, row)->getValue();
 }
 

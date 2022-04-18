@@ -10,7 +10,6 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
 
 class ID_List {
     static const unsigned char addMask[6];  // value of bit to represent ID
@@ -19,13 +18,10 @@ class ID_List {
     // each of low order 6 bits in a byte represents a column
     // each byte represents a row
     unsigned char list[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    std::vector<std::string> idVec;
 
-public:
+  public:
     ID_List() {}
     ~ID_List() {}
-
-    std::vector<std::string> getList();
 
     ID_List& operator=(const ID_List& rtlst) = default;
 

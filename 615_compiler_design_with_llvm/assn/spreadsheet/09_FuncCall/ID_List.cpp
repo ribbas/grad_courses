@@ -90,19 +90,3 @@ std::ostream& operator<<(std::ostream& os, const ID_List& lst) {
     os << " }";
     return os;
 }
-
-std::vector<std::string> ID_List::getList() {
-    if (!idVec.size()) {
-        for (int r = 0; r < 10; ++r) {
-            unsigned char row = list[r];
-            for (int col = 0; col < 6; ++col) {
-                if (row & addMask[col]) {
-                    std::string item(1, (char)('A' + col));
-                    item += std::to_string(r);
-                    idVec.push_back(item);
-                }
-            }
-        }
-    }
-    return idVec;
-}

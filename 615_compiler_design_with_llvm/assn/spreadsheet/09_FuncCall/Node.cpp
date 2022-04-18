@@ -51,6 +51,7 @@ void Node::codeGen(SS_Cell* cell) {
     llvm::BasicBlock* basicBlock =
         llvm::BasicBlock::Create(*irContext, "entry", func);
     irBuilder->SetInsertPoint(basicBlock);
+
     walkCodeGen(cell->getTOC(), cell);
     irBuilder->CreateRet(irValue);
 }

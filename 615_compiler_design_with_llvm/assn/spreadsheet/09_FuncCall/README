@@ -2,6 +2,18 @@
 
 ## Modifications for assignment
 
+Major modifications to most of the source files were made to implement this assignment.
+
+1. `TableOfCells symTab` was promoted to a singleton for global access to the generate IR and JIT.
+2. Getter methods were added to the `JIT` class to add custom symbols.
+3. `std::vector<std::string> getList()` was removed from the `ID_List` class.
+4. Methods in the `Node` class had major modifications:
+   1. The switch statements in `void evaluate(llvm::Expected<llvm::JITEvaluatedSymbol> exprSym)` were removed due to all JIT functions now containing the same number of parameters.
+   2. `void codeGen(SS_Cell* cell)` was refactored to declare the `getCell` function prototype in the JIT.
+   3. In the case of a Token being of type ID in `void walkCodeGen(TableOfCells* TOC, SS_Cell* cell)`, the builder adds call instructions to the IR instead of referencing argument values.
+5. The method `void SS_Cell::addIRSymbols()` was added to get `int getCell(int col, int row)` added to the JIT as a symbol.
+6. `std::map<std::string, llvm::Value*> namedValues` was moved to hold return values of function calls rather than function parameters.
+
 ## System Dependencies
 
 The attached CMakeLists.txt was used to compile the assignment files. The following are the version numbers of the tools used:
