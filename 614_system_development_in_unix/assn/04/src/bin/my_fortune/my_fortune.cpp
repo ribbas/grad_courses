@@ -127,7 +127,7 @@ int main() {
 
             random_delay = DELAY_LO + rand() % DELAY_HI;
             std::cout << "sleeping for " << random_delay << "s\n";
-            sleep_sec(random_delay);
+            sleep(random_delay);
         }
     }
 

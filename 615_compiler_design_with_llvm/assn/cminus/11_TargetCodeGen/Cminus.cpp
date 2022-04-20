@@ -38,19 +38,29 @@ int main(int argc, char* argv[]) {
     CminusBaseVisitor visitor = CminusBaseVisitor(exeName);
     visitor.visit(tree);
 
+    std::ifstream file{"../C-IO.ll"};
+
+    std::string const file_contents =
+        static_cast<std::ostringstream&>(std::ostringstream{} << file.rdbuf())
+            .str();
+
+    std::cout << "contents:" << file_contents << '\n';
+
     std::ofstream fd;
     fd.open(fileName + ".ll");
     visitor.printModule(fd);
     fd.close();
 
-    fd.open(fileName + "-opt.ll");
-    visitor.optimize();
-    visitor.printModule(fd);
-    fd.close();
+    // fd.open(fileName + "-opt.ll");
+    // visitor.optimize();
+    // visitor.printModule(fd);
+    // fd.close();
 
-    fd.open(fileName + ".sym");
-    fd << visitor.semantics.dump();
-    fd.close();
+    visitor.generateObject();
+
+    // fd.open(fileName + ".sym");
+    // fd << visitor.semantics.dump();
+    // fd.close();
 
     llvm::llvm_shutdown();
 

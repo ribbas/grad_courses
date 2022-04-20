@@ -31,6 +31,7 @@ int log_event(Levels l, const char* fmt, ...) {
 
     int logfile_status;
     if (FD == ERROR) {
+
         logfile_status = set_logfile(LOG_FILE);
     }
 
