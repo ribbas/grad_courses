@@ -5,8 +5,8 @@ The ANTLR4 tool was installed and ran using the instructions in the official doc
 The tool and its dependencies were installed on the system using `apt`.
 
 ```
-llc -filetype=obj C-IO.ll -o io
-clang output.o io -o C-Input-0
+llc -filetype=obj C-IO.ll -o io.o
+clang io.o C-Input.o -o C-Input-0
 ```
 
 ## Modifications made for the assignment

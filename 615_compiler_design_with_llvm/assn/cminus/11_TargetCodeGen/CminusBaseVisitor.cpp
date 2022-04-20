@@ -36,6 +36,53 @@ void CminusBaseVisitor::printModule(std::ofstream& fd) {
     namedAllocas.clear();
 }
 
+void CminusBaseVisitor::generateObject(std::string objName) {
+
+    // Initialize the target registry etc.
+    llvm::InitializeAllTargetInfos();
+    llvm::InitializeAllTargets();
+    llvm::InitializeAllTargetMCs();
+    llvm::InitializeAllAsmParsers();
+    llvm::InitializeAllAsmPrinters();
+
+    std::string targetTriple = llvm::sys::getDefaultTargetTriple();
+    module->setTargetTriple(targetTriple);
+
+    std::string err;
+    const llvm::Target* target =
+        llvm::TargetRegistry::lookupTarget(targetTriple, err);
+
+    if (!target) {
+        llvm::errs() << err;
+        return;
+    }
+
+    llvm::TargetOptions opt;
+    llvm::TargetMachine* theTargetMachine = target->createTargetMachine(
+        targetTriple, "generic", "", opt, llvm::Optional<llvm::Reloc::Model>());
+
+    module->setDataLayout(theTargetMachine->createDataLayout());
+
+    std::error_code errorCode;
+    llvm::raw_fd_ostream dest(objName, errorCode);
+
+    if (errorCode) {
+        llvm::errs() << "Could not open file: " << errorCode.message();
+        return;
+    }
+
+    llvm::legacy::PassManager pass;
+
+    if (theTargetMachine->addPassesToEmitFile(pass, dest, nullptr,
+                                              llvm::CGFT_ObjectFile)) {
+        llvm::errs() << "TheTargetMachine can't emit a file of this type";
+        return;
+    }
+
+    pass.run(*module);
+    dest.flush();
+}
+
 void CminusBaseVisitor::optimize() {
 
     if (module.get()) {

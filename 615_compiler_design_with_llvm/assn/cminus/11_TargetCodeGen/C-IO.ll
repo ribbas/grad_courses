@@ -1,3 +1,6 @@
+; ModuleID = 'C-IO.c'
+source_filename = "C-IO.c"
+
 @.str = private unnamed_addr constant [3 x i8] c"%d\00", align 1
 @.str.1 = private unnamed_addr constant [5 x i8] c"%d\0D\0A\00", align 1
 

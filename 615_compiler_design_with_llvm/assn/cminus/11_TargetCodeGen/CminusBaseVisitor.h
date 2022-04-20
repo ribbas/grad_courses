@@ -40,70 +40,7 @@ public:
 
     void optimize();
 
-    void generateObject() {
-
-        // Initialize the target registry etc.
-        llvm::InitializeAllTargetInfos();
-        llvm::InitializeAllTargets();
-        llvm::InitializeAllTargetMCs();
-        llvm::InitializeAllAsmParsers();
-        llvm::InitializeAllAsmPrinters();
-
-        std::string TargetTriple = llvm::sys::getDefaultTargetTriple();
-        module->setTargetTriple(TargetTriple);
-
-        std::string Error;
-        const llvm::Target* Target =
-            llvm::TargetRegistry::lookupTarget(TargetTriple, Error);
-
-        // Print an error and exit if we couldn't find the requested target.
-        // This generally occurs if we've forgotten to initialise the
-        // TargetRegistry or we have a bogus target triple.
-        if (!Target) {
-            llvm::errs() << Error;
-            std::cout << "ERR\n";
-            return;
-        }
-
-        std::string CPU = "generic";
-        std::string Features = "";
-
-        llvm::TargetOptions opt;
-        llvm::Optional<llvm::Reloc::Model> RM =
-            llvm::Optional<llvm::Reloc::Model>();
-        llvm::TargetMachine* TheTargetMachine =
-            Target->createTargetMachine(TargetTriple, CPU, Features, opt, RM);
-
-        module->setDataLayout(TheTargetMachine->createDataLayout());
-
-        std::string objName = "output.o";
-        std::error_code errorCode;
-        llvm::raw_fd_ostream dest(objName, errorCode);
-
-        if (errorCode) {
-            llvm::errs() << "Could not open file: " << errorCode.message();
-            std::cout << "ERR\n";
-            return;
-        }
-
-        llvm::legacy::PassManager pass;
-        auto FileType = llvm::CGFT_ObjectFile;
-
-        if (TheTargetMachine->addPassesToEmitFile(pass, dest, nullptr,
-                                                  FileType)) {
-            llvm::errs() << "TheTargetMachine can't emit a file of this type";
-            std::cout << "ERR\n";
-            return;
-        }
-
-        module->print(llvm::outs(), nullptr);
-
-        pass.run(*module);
-
-        dest.flush();
-
-        llvm::outs() << "Wrote " << objName << "\n";
-    }
+    void generateObject(std::string objName);
 
     virtual antlrcpp::Any
     visitProgram(CminusParser::ProgramContext* ctx) override {

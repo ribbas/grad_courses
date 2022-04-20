@@ -32,35 +32,21 @@ int main(int argc, char* argv[]) {
     CminusLexer lexer(&input);
     antlr4::CommonTokenStream tokens(&lexer);
     CminusParser parser(&tokens);
-
-    antlr4::tree::ParseTree* tree = parser.program();
-
     CminusBaseVisitor visitor = CminusBaseVisitor(exeName);
-    visitor.visit(tree);
 
-    std::ifstream file{"../C-IO.ll"};
-
-    std::string const file_contents =
-        static_cast<std::ostringstream&>(std::ostringstream{} << file.rdbuf())
-            .str();
-
-    std::cout << "contents:" << file_contents << '\n';
+    visitor.visit(parser.program());
 
     std::ofstream fd;
-    fd.open(fileName + ".ll");
+    fd.open(fileName + "-opt.ll");
+    visitor.optimize();
     visitor.printModule(fd);
     fd.close();
 
-    // fd.open(fileName + "-opt.ll");
-    // visitor.optimize();
-    // visitor.printModule(fd);
-    // fd.close();
+    visitor.generateObject(fileName + ".o");
 
-    visitor.generateObject();
-
-    // fd.open(fileName + ".sym");
-    // fd << visitor.semantics.dump();
-    // fd.close();
+    fd.open(fileName + ".sym");
+    fd << visitor.semantics.dump();
+    fd.close();
 
     llvm::llvm_shutdown();
 
