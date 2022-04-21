@@ -4,14 +4,22 @@ The ANTLR4 tool was installed and ran using the instructions in the official doc
 
 The tool and its dependencies were installed on the system using `apt`.
 
-```
-llc -filetype=obj C-IO.ll -o io.o
-clang io.o C-Input.o -o C-Input-0
-```
-
 ## Modifications made for the assignment
 
+1. The method `void generateObject(std::string objName)` was added to the `CminusBaseVisitor` class to generate target code for the machine.
+2. The IR code for the external IO functions for C- were added to `C-IO.ll`. The IR of `int input(void)` and `void output(int)` were added to the file. The file is compiled into bytecode using the following command:
+
+```
+llc -filetype=obj C-IO.ll -o io.o
+```
+
 ## Output files
+
+The object file is generated as `C-Input-X.o`, where `X` is the name of the input file in `C-Input-files`. The object is compiled with the external IO object using the following command:
+
+```
+clang io.o C-Input-X.o -o C-Input-X
+```
 
 ## System
 
