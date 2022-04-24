@@ -32,6 +32,7 @@ private:
     std::unique_ptr<llvm::Module> module;
 
     std::unique_ptr<llvm::PassBuilder> PB;
+    llvm::TargetMachine* theTargetMachine;
 
 public:
     CminusBaseVisitor(std::string fileName);

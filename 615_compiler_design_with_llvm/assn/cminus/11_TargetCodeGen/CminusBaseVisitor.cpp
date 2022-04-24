@@ -38,31 +38,6 @@ void CminusBaseVisitor::printModule(std::ofstream& fd) {
 
 void CminusBaseVisitor::generateObject(std::string objName) {
 
-    // Initialize the target registry etc.
-    llvm::InitializeAllTargetInfos();
-    llvm::InitializeAllTargets();
-    llvm::InitializeAllTargetMCs();
-    llvm::InitializeAllAsmParsers();
-    llvm::InitializeAllAsmPrinters();
-
-    std::string targetTriple = llvm::sys::getDefaultTargetTriple();
-    module->setTargetTriple(targetTriple);
-
-    std::string err;
-    const llvm::Target* target =
-        llvm::TargetRegistry::lookupTarget(targetTriple, err);
-
-    if (!target) {
-        llvm::errs() << err;
-        return;
-    }
-
-    llvm::TargetOptions opt;
-    llvm::TargetMachine* theTargetMachine = target->createTargetMachine(
-        targetTriple, "generic", "", opt, llvm::Optional<llvm::Reloc::Model>());
-
-    module->setDataLayout(theTargetMachine->createDataLayout());
-
     std::error_code errorCode;
     llvm::raw_fd_ostream dest(objName, errorCode);
 
@@ -86,6 +61,32 @@ void CminusBaseVisitor::generateObject(std::string objName) {
 void CminusBaseVisitor::optimize() {
 
     if (module.get()) {
+
+        // Initialize the target registry etc.
+        llvm::InitializeAllTargetInfos();
+        llvm::InitializeAllTargets();
+        llvm::InitializeAllTargetMCs();
+        llvm::InitializeAllAsmParsers();
+        llvm::InitializeAllAsmPrinters();
+
+        std::string targetTriple = llvm::sys::getDefaultTargetTriple();
+        module->setTargetTriple(targetTriple);
+
+        std::string err;
+        const llvm::Target* target =
+            llvm::TargetRegistry::lookupTarget(targetTriple, err);
+
+        if (!target) {
+            llvm::errs() << err;
+            return;
+        }
+
+        llvm::TargetOptions opt;
+        theTargetMachine =
+            target->createTargetMachine(targetTriple, "generic", "", opt,
+                                        llvm::Optional<llvm::Reloc::Model>());
+
+        module->setDataLayout(theTargetMachine->createDataLayout());
 
         llvm::LoopAnalysisManager LAM;
         llvm::FunctionAnalysisManager FAM;
@@ -415,12 +416,6 @@ antlrcpp::Any CminusBaseVisitor::visitAssignment_stmt(
                 semantics.setValue(assignmentVar, std::stoi(i->getText()));
             }
             visit(i);
-
-            if (ctx->size) {
-
-                // TODO:
-                // replace array loads with getelementptr
-            }
 
             irBuilder->CreateStore(expStack.back(), namedAllocas[assignmentVar],
                                    false);
