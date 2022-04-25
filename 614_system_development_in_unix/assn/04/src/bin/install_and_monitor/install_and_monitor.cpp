@@ -41,7 +41,6 @@ void* install_data(void* _thread_id) {
 
     long thread_id = (long)_thread_id;
 
-    // log_event(INFO, "install_data created with thread ID: %ld", thread_id);
     printf("install_data created with thread ID: %ld\n", thread_id);
 
     int index, time_inc;
@@ -71,7 +70,6 @@ void* monitor_shm(void* _thread_id) {
 
     long thread_id = (long)_thread_id;
 
-    // log_event(INFO, "monitor_sleep created with thread ID: %ld", thread_id);
     printf("monitor_sleep created with thread ID: %ld\n", thread_id);
 
     int time_elapsed = 0;

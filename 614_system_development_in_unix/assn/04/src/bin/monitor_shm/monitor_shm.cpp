@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
     // if wrong number of arguments
     if (argc > 2) {
 
-        printf("Invalid number of arguments provided\n");
+        fprintf(stderr, "Invalid number of arguments provided\n");
         return ERROR;
 
     } else if (argc == 2) {
@@ -83,7 +83,6 @@ int main(int argc, char* argv[]) {
     int mem_key = ftok("input_data", 1);
     shared_array_elem* shared_array =
         (shared_array_elem*)connect_shm(mem_key, 4 * sizeof(int));
-    printf("key: %d\n", mem_key);
 
     monitor(monitor_duration, shared_array);
 

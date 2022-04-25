@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
     // if wrong number of arguments
     if (argc != 2) {
 
-        printf("Invalid number of arguments provided\n");
+        fprintf(stderr, "Invalid number of arguments provided\n");
         return ERROR;
 
     } else {
@@ -48,7 +48,6 @@ int main(int argc, char* argv[]) {
         int mem_key = ftok(argv[1], 1);
         shared_array_elem* shared_array =
             (shared_array_elem*)connect_shm(mem_key, 4 * sizeof(int));
-        printf("key: %d\n", mem_key);
 
         init_shared_array(shared_array);
 
@@ -56,7 +55,6 @@ int main(int argc, char* argv[]) {
 
             if (time_inc > -1) {
 
-                // printf("gonna sleep for %d s\n", time_inc);
                 sleep(time_inc);
                 shared_array[index].is_valid = 1;
                 shared_array[index].x = x;
@@ -65,7 +63,6 @@ int main(int argc, char* argv[]) {
             } else {
                 sleep(abs(time_inc));
                 shared_array[index].is_valid = 0;
-                // printf("not gonna sleep for %d s\n", abs(time_inc));
             }
         }
 

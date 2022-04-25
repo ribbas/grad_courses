@@ -22,59 +22,24 @@
 #include <sys/time.h>
 #include <unistd.h>
 
+#ifdef __linux__
+// absaroka
+const std::string fortune_exe = "~jcn/unix_class/fortune_absaroka/fortune";
+#else
+// dev4
+const std::string fortune_exe = "~jcn/unix_class/fortune/fortune";
+#endif
+
 const short DELAY_LO = 1;
 const short DELAY_HI = 8;
 
-/*
- * This method utilizes setitimer and SIGALRM to implement sleep for `sec`
- * seconds. The number of seconds is a double and can therefore be fractional
- * increments of time.
- */
-void sleep_sec(double sec) {
+std::string exec_and_pipe(const char* cmd) {
 
-    struct itimerval new_it, old_it;
-    struct sigaction catch_alarm, old_sig;
-
-    // pass in a noop lambda as the handler
-    catch_alarm.sa_handler = ([](int) {});
-
-    // empty mask
-    sigset_t empty;
-    sigemptyset(&empty);
-    catch_alarm.sa_mask = empty;
-
-    // no flags
-    catch_alarm.sa_flags = 0;
-
-    if (sigaction(SIGALRM, &catch_alarm, &old_sig) < 0) {
-        fprintf(stderr, "sigaction: (%d) %s\n", errno, strerror(errno));
-    }
-
-    // convert seconds to milliseconds for convenient computations
-    int ms = sec * 1000;
-    new_it.it_value.tv_sec = ms / 1000;
-    new_it.it_value.tv_usec = 1000 * (ms % 1000);
-    new_it.it_interval.tv_sec = 0;
-    new_it.it_interval.tv_usec = 0;
-
-    if (setitimer(ITIMER_REAL, &new_it, &old_it) < 0) {
-        fprintf(stderr, "setitimer: (%d) %s\n", errno, strerror(errno));
-        return;
-    };
-
-    pause();
-    if (sigaction(SIGALRM, &old_sig, nullptr) < 0) {
-        fprintf(stderr, "sigaction: (%d) %s\n", errno, strerror(errno));
-    }
-}
-
-std::string exec(const char* cmd) {
-
-    char buffer[128];
+    char buffer[1000];
     std::string result = "";
     FILE* pipe = popen(cmd, "r");
     if (!pipe) {
-        throw std::runtime_error("popen() failed!");
+        fprintf(stderr, "popen: (%d) %s\n", errno, strerror(errno));
     }
 
     while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
@@ -83,6 +48,16 @@ std::string exec(const char* cmd) {
 
     pclose(pipe);
     return result;
+}
+
+void to_upper(std::string& piped_output) {
+    for (int i = 0; i < piped_output.size(); i++) {
+        piped_output.at(i) = toupper(piped_output.at(i));
+    }
+}
+
+void rand_wait() {
+    sleep(DELAY_LO + rand() % DELAY_HI);
 }
 
 int main() {
@@ -96,7 +71,6 @@ int main() {
     tv.tv_usec = 0;
 
     char user_input = ' ';
-    int random_delay = 0;
 
     while (user_input != 'q') {
 
@@ -108,7 +82,7 @@ int main() {
 
         if (rc == -1) {
 
-            perror("select()");
+            fprintf(stderr, "select: (%d) %s\n", errno, strerror(errno));
 
         } else if (rc) {
 
@@ -119,15 +93,10 @@ int main() {
 
         } else {
 
-            std::string fortune = exec("./fortune");
-            for (int i = 0; i < fortune.size(); i++) {
-                fortune.at(i) = toupper(fortune.at(i));
-            }
-            std::cout << fortune;
-
-            random_delay = DELAY_LO + rand() % DELAY_HI;
-            std::cout << "sleeping for " << random_delay << "s\n";
-            sleep(random_delay);
+            std::string fortune_output = exec_and_pipe(fortune_exe.c_str());
+            to_upper(fortune_output);
+            std::cout << fortune_output;
+            rand_wait();
         }
     }
 
