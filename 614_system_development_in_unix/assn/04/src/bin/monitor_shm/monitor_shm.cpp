@@ -13,6 +13,8 @@
 #include <sys/ipc.h>
 #include <unistd.h>
 
+#define FTOK_PATH "/home/"
+
 typedef struct {
     int is_valid;
     float x;
@@ -80,9 +82,9 @@ int main(int argc, char* argv[]) {
         monitor_duration = std::stoi(argv[1]);
     }
 
-    int mem_key = ftok("input_data", 1);
+    int mem_key = ftok(FTOK_PATH, 1);
     shared_array_elem* shared_array =
-        (shared_array_elem*)connect_shm(mem_key, 4 * sizeof(int));
+        (shared_array_elem*)connect_shm(mem_key, sizeof(shared_array_elem));
 
     monitor(monitor_duration, shared_array);
 

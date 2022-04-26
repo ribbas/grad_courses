@@ -77,7 +77,6 @@ int main() {
         // watch stdin (fd 0) to see when it has input
         FD_ZERO(&rfds);
         FD_SET(0, &rfds);
-
         rc = select(1, &rfds, nullptr, nullptr, &tv);
 
         if (rc == -1) {

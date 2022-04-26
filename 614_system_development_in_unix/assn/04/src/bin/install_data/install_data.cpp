@@ -14,6 +14,8 @@
 #include <sys/ipc.h>
 #include <unistd.h>
 
+#define FTOK_PATH "/home/"
+
 typedef struct {
     int is_valid;
     float x;
@@ -45,9 +47,9 @@ int main(int argc, char* argv[]) {
         int index, time_inc;
         float x, y;
 
-        int mem_key = ftok(argv[1], 1);
+        int mem_key = ftok(FTOK_PATH, 1);
         shared_array_elem* shared_array =
-            (shared_array_elem*)connect_shm(mem_key, 4 * sizeof(int));
+            (shared_array_elem*)connect_shm(mem_key, sizeof(shared_array_elem));
 
         init_shared_array(shared_array);
 
@@ -66,7 +68,7 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        detach_shm((void*)shared_array);
+        destroy_shm(mem_key);
     }
 
     return OK;
