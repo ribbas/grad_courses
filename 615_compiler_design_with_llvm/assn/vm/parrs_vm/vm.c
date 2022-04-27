@@ -262,13 +262,13 @@ void vm_exec(VM* vm, int startip, bool trace) {
             case ILT: {
                 b = vm->stack[sp--];
                 a = vm->stack[sp--];
-                vm->stack[++sp] = (a < b) ? true : false;
+                vm->stack[++sp] = (a < b);
                 break;
             }
             case IEQ: {
                 b = vm->stack[sp--];
                 a = vm->stack[sp--];
-                vm->stack[++sp] = (a == b) ? true : false;
+                vm->stack[++sp] = (a == b);
                 break;
             }
             case BR: {

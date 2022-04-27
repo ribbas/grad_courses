@@ -1,4 +1,4 @@
-CC ?= gcc
+CC = gcc
 CFLAGS = -Wall -Wextra
 DEP = vm.h
 OBJ = vm.o vm_test.o
@@ -11,6 +11,9 @@ all: $(EXE)
 
 $(EXE): $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS)
+
+report: $(EXE)
+	./$(EXE) 2> times.txt 1> /dev/null
 
 clean:
 	@rm -f *.o

@@ -3,14 +3,19 @@
 
 #include "vm.h"
 #include <stdio.h>
+#include <time.h>
 
-int hello[] = {ICONST, 1234, PRINT, HALT};
+int hello[] = {
+    ICONST, 1234, // 0
+    PRINT,        // 1
+    HALT          // 2
+};
 
 int loop[] = {
     // .GLOBALS 2; N, I
     // N = 10            ADDRESS
-    ICONST, 10, // 0
-    GSTORE, 0,  // 2
+    ICONST, 1000, // 0
+    GSTORE, 0,    // 2
     // I = 0
     ICONST, 0, // 4
     GSTORE, 1, // 6
@@ -54,7 +59,7 @@ int factorial[] = {
     RET,           // 22
     // .DEF MAIN: ARGS=0, LOCALS=0
     // PRINT FACT(1)
-    ICONST, 10, // 23    <-- MAIN METHOD!
+    ICONST, 11, // 23    <-- MAIN METHOD!
     // CALL, FACTORIAL_ADDRESS, 1, 0,    // 25
     CALL, 0, 1, 0, // 25
     PRINT,         // 29
@@ -79,35 +84,56 @@ static int f[] = {
     RET        // 17
 };
 
+double time_func(VM* vm, int startip, void (*f)(VM*, int, bool)) {
+
+    struct timespec start, end;
+
+    clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+    f(vm, startip, false);
+    clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+    double time_spent = (end.tv_sec - start.tv_sec) +
+                        (end.tv_nsec - start.tv_nsec) / 1000000000.0;
+    return time_spent; // in seconds
+}
+
+void compute_time_ave(VM* vm, char* func_name, int startip) {
+
+    int iters = 100000;
+    double duration = 0.0;
+    fprintf(stderr, "Timing: %s() with %d iterations...\n", func_name, iters);
+
+    for (int i = 0; i < iters; i++) {
+        duration += time_func(vm, startip, &vm_exec);
+    }
+    fprintf(stderr, "\tSwitch:\t\t\t%.6f\n", duration / (double)iters * 1000.0);
+
+    duration = 0.0;
+    for (int i = 0; i < iters; i++) {
+        duration += time_func(vm, startip, &vm_exec_goto);
+    }
+    fprintf(stderr, "\tComputed goto:\t%.6f\n",
+            duration / (double)iters * 1000.0);
+}
+
 int main() {
-    VM* vm = vm_create(hello, sizeof(hello), 0);
-    vm_exec(vm, 0, false);
+
+    VM* vm = NULL;
+
+    vm = vm_create(hello, sizeof(hello), 0);
+    compute_time_ave(vm, "hello", 0);
     vm_free(vm);
 
-    //    int t1 = (clock() / (CLOCKS_PER_SEC / 1000));
-    vm = vm_create(loop, sizeof(loop), 200);
-    vm_exec(vm, 0, false);
+    vm = vm_create(loop, sizeof(loop), 0);
+    compute_time_ave(vm, "loop", 0);
     vm_free(vm);
-
-    //    int t2 = (clock() / (CLOCKS_PER_SEC / 1000));
-
-    // vm = vm_create(factorial, sizeof(factorial), 0);
-    // vm_exec(vm, 23, true);
-    // vm_print_data(vm->globals, vm->nglobals);
-    // vm_print_stack(vm->stack, vm->code_size);
-    // vm_free(vm);
 
     vm = vm_create(factorial, sizeof(factorial), 0);
-    vm_exec_goto(vm, 23, true);
-    vm_print_data(vm->globals, vm->nglobals);
-    vm_print_stack(vm->stack, vm->code_size);
+    compute_time_ave(vm, "factorial", 23);
     vm_free(vm);
 
     vm = vm_create(f, sizeof(f), 0);
-    vm_exec(vm, 0, false);
+    compute_time_ave(vm, "f", 0);
     vm_free(vm);
-
-    //    printf("duration = %d ms\n", (t2 - t1));
 
     return 0;
 }
