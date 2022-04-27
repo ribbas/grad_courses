@@ -54,7 +54,7 @@ int factorial[] = {
     RET,           // 22
     // .DEF MAIN: ARGS=0, LOCALS=0
     // PRINT FACT(1)
-    ICONST, 5, // 23    <-- MAIN METHOD!
+    ICONST, 10, // 23    <-- MAIN METHOD!
     // CALL, FACTORIAL_ADDRESS, 1, 0,    // 25
     CALL, 0, 1, 0, // 25
     PRINT,         // 29
@@ -87,14 +87,18 @@ int main() {
     //    int t1 = (clock() / (CLOCKS_PER_SEC / 1000));
     vm = vm_create(loop, sizeof(loop), 200);
     vm_exec(vm, 0, false);
-    // vm_print_data(vm->globals, vm->nglobals);
-    // vm_print_stack(vm->stack, vm->code_size);
     vm_free(vm);
 
     //    int t2 = (clock() / (CLOCKS_PER_SEC / 1000));
 
+    // vm = vm_create(factorial, sizeof(factorial), 0);
+    // vm_exec(vm, 23, true);
+    // vm_print_data(vm->globals, vm->nglobals);
+    // vm_print_stack(vm->stack, vm->code_size);
+    // vm_free(vm);
+
     vm = vm_create(factorial, sizeof(factorial), 0);
-    vm_exec(vm, 23, false);
+    vm_exec_goto(vm, 23, true);
     vm_print_data(vm->globals, vm->nglobals);
     vm_print_stack(vm->stack, vm->code_size);
     vm_free(vm);
