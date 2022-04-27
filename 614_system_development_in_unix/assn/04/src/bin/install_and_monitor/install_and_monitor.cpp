@@ -4,7 +4,7 @@
  * Sabbir Ahmed
  * System Development in the Unix Environment (605.614)
  *
- * This file contains the driver for the install_and_monitor library
+ * This file contains the driver for the install_and_monitor program
  *
  */
 
@@ -50,7 +50,6 @@ void* install_data(void* _thread_id) {
 
         if (time_inc > -1) {
 
-            // printf("gonna sleep for %d s\n", time_inc);
             sleep(time_inc);
             shared_array[index].is_valid = 1;
             shared_array[index].x = x;
@@ -59,7 +58,6 @@ void* install_data(void* _thread_id) {
         } else {
             sleep(abs(time_inc));
             shared_array[index].is_valid = 0;
-            // printf("not gonna sleep for %d s\n", abs(time_inc));
         }
     }
 

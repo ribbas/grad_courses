@@ -4,7 +4,7 @@
  * Sabbir Ahmed
  * System Development in the Unix Environment (605.614)
  *
- * This file contains the driver for the install_and_monitor library
+ * This file contains the driver for the install_and_monitor program
  *
  */
 
@@ -14,8 +14,6 @@
 #include <cstring>
 #include <errno.h>
 #include <iostream>
-#include <signal.h>
-#include <stdexcept>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>

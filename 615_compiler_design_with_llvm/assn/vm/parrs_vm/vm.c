@@ -53,15 +53,6 @@ VM* vm_create(int* code, int code_size, int nglobals) {
     return vm;
 }
 
-void DISPATCH(void* dispatch_table[], VM* vm, int ip, int sp, bool trace) {
-    printf("ip: %d\n", ip);
-    goto* dispatch_table[vm->code[ip++]];
-    // if (trace) {
-    //     vm_print_instr(vm->code, ip);
-    //     vm_print_stack(vm->stack, sp);
-    // }
-}
-
 void vm_exec_goto(VM* vm, int startip, bool trace) {
 
     static void* dispatch_table[] = {
@@ -69,8 +60,6 @@ void vm_exec_goto(VM* vm, int startip, bool trace) {
         &&DO_IEQ,  &&DO_BR,    &&DO_BRT,   &&DO_BRF,    &&DO_ICONST,
         &&DO_LOAD, &&DO_GLOAD, &&DO_STORE, &&DO_GSTORE, &&DO_PRINT,
         &&DO_POP,  &&DO_CALL,  &&DO_RET,   &&DO_HALT};
-
-    // #define DISPATCH() goto* dispatch_table[vm->code[ip++]]
 
     // registers
     int ip;     // instruction pointer register

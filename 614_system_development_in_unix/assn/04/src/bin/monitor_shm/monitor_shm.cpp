@@ -4,7 +4,7 @@
  * Sabbir Ahmed
  * System Development in the Unix Environment (605.614)
  *
- * This file contains the driver for the monitor_shm library
+ * This file contains the driver for the monitor_shm program
  *
  */
 
