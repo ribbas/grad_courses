@@ -180,11 +180,13 @@ void vm_exec_goto(VM* vm, int startip, bool trace) {
     DO_PRINT : {
 
         printf("%d\n", vm->stack[sp--]);
+
         goto* dispatch_table[vm->code[ip++]];
     }
     DO_POP : {
 
         --sp;
+
         goto* dispatch_table[vm->code[ip++]];
     }
     DO_CALL : {

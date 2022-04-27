@@ -9,12 +9,16 @@
  */
 
 #include "shared_mem.hpp"
+#include <cstring>
 #include <fstream>
 #include <iostream>
+#include <signal.h>
 #include <sys/ipc.h>
 #include <unistd.h>
 
 #define FTOK_PATH "/home/"
+
+int MEM_KEY = -1;
 
 typedef struct {
     int is_valid;
@@ -33,7 +37,57 @@ void init_shared_array(shared_array_elem* shared_array) {
     }
 }
 
+int loop_file(std::ifstream& in_file, shared_array_elem* shared_array) {
+
+    int index, time_inc;
+    float x, y;
+
+    while (in_file >> index >> x >> y >> time_inc) {
+
+        if (index >= shared_array_size) {
+            fprintf(stderr, "Invalid index found in input file\n");
+            return ERROR;
+        }
+
+        if (time_inc > -1) {
+
+            sleep(time_inc);
+            shared_array[index].is_valid = 1;
+            shared_array[index].x = x;
+            shared_array[index].y = y;
+
+        } else {
+            sleep(abs(time_inc));
+            shared_array[index].is_valid = 0;
+        }
+    }
+
+    return OK;
+}
+
+void sigterm_handler(int signum) {
+    destroy_shm(MEM_KEY);
+}
+
+void sighup_handler(int signum) {}
+
+void sig_handle_wrapper(int sig, void (*handler)(int)) {
+
+    struct sigaction sa;
+
+    sa.sa_handler = handler;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+
+    if (sigaction(sig, &sa, nullptr) < 0) {
+        fprintf(stderr, "sigaction: (%d) %s\n", errno, strerror(errno));
+    }
+}
+
 int main(int argc, char* argv[]) {
+
+    // sig_handle_wrapper(SIGINT, sigterm_handler);
+    // sig_handle_wrapper(SIGHUP, sighup_handler);
 
     // if wrong number of arguments
     if (argc != 2) {
@@ -44,31 +98,17 @@ int main(int argc, char* argv[]) {
     } else {
 
         std::ifstream in_file(argv[1]);
-        int index, time_inc;
-        float x, y;
 
-        int mem_key = ftok(FTOK_PATH, 1);
+        MEM_KEY = ftok(FTOK_PATH, 1);
         shared_array_elem* shared_array =
-            (shared_array_elem*)connect_shm(mem_key, sizeof(shared_array_elem));
+            (shared_array_elem*)connect_shm(MEM_KEY, sizeof(shared_array_elem));
 
         init_shared_array(shared_array);
-
-        while (in_file >> index >> x >> y >> time_inc) {
-
-            if (time_inc > -1) {
-
-                sleep(time_inc);
-                shared_array[index].is_valid = 1;
-                shared_array[index].x = x;
-                shared_array[index].y = y;
-
-            } else {
-                sleep(abs(time_inc));
-                shared_array[index].is_valid = 0;
-            }
+        if (loop_file(in_file, shared_array) == ERROR) {
+            return ERROR;
         }
 
-        destroy_shm(mem_key);
+        destroy_shm(MEM_KEY);
     }
 
     return OK;

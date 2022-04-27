@@ -1,12 +1,15 @@
 Timing: hello() with 100000 iterations...
 	Switch:			0.007185
 	Computed goto:	0.006996
+
 Timing: loop() with 100000 iterations...
 	Switch:			0.045989
 	Computed goto:	0.031410
+
 Timing: factorial() with 100000 iterations...
 	Switch:			0.008389
 	Computed goto:	0.008304
+
 Timing: f() with 100000 iterations...
 	Switch:			0.007212
 	Computed goto:	0.007179

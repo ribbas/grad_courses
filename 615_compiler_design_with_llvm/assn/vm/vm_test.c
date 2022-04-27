@@ -111,7 +111,7 @@ void compute_time_ave(VM* vm, char* func_name, int startip) {
     for (int i = 0; i < iters; i++) {
         duration += time_func(vm, startip, &vm_exec_goto);
     }
-    fprintf(stderr, "\tComputed goto:\t%.6f\n",
+    fprintf(stderr, "\tComputed goto:\t%.6f\n\n",
             duration / (double)iters * 1000.0);
 }
 
