@@ -22,10 +22,10 @@
 
 #ifdef __linux__
 // absaroka
-const std::string fortune_exe = "~jcn/unix_class/fortune_absaroka/fortune";
+const std::string FORTUNE_EXE = "~jcn/unix_class/fortune_absaroka/fortune";
 #else
 // dev4
-const std::string fortune_exe = "~jcn/unix_class/fortune/fortune";
+const std::string FORTUNE_EXE = "~jcn/unix_class/fortune/fortune";
 #endif
 
 const short DELAY_LO = 1;
@@ -90,7 +90,7 @@ int main() {
 
         } else {
 
-            std::string fortune_output = exec_and_pipe(fortune_exe.c_str());
+            std::string fortune_output = exec_and_pipe(FORTUNE_EXE.c_str());
             to_upper(fortune_output);
             std::cout << fortune_output;
             rand_wait();

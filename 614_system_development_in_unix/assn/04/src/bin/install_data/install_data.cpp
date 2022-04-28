@@ -18,10 +18,12 @@
 
 #define FTOK_PATH "/home/"
 
-int MEM_KEY = -1;
 bool SIGHUP_CALLED = false;
 bool SIGTERM_CALLED = false;
 bool DATA_INSTALLED = false;
+
+int MEM_KEY = -1;
+const int SHARED_ARRAY_SIZE = 20;
 
 typedef struct {
     int is_valid;
@@ -29,74 +31,11 @@ typedef struct {
     float y;
 } shared_array_elem;
 
-const int shared_array_size = 20;
-
-void init_shared_array(shared_array_elem* shared_array) {
-
-    for (int i = 0; i < shared_array_size; i++) {
-        shared_array[i].is_valid = 0;
-        shared_array[i].x = 0;
-        shared_array[i].y = 0;
-    }
-}
-
-int loop_file(char* in_file_path, shared_array_elem* shared_array) {
-
-    std::ifstream in_file(in_file_path);
-
-    int index, time_inc;
-    float x, y;
-
-    while (in_file >> index >> x >> y >> time_inc) {
-
-        if (!SIGHUP_CALLED && !SIGTERM_CALLED) {
-
-            if (index >= shared_array_size) {
-                fprintf(stderr, "Invalid index found in input file\n");
-                return ERROR;
-            }
-
-            if (time_inc > -1) {
-
-                sleep(time_inc);
-                shared_array[index].is_valid = 1;
-                shared_array[index].x = x;
-                shared_array[index].y = y;
-
-            } else {
-
-                sleep(abs(time_inc));
-                shared_array[index].is_valid = 0;
-            }
-
-        } else if (SIGHUP_CALLED) {
-
-            in_file.close();
-            init_shared_array(shared_array);
-            SIGHUP_CALLED = false;
-            return OK;
-
-        } else if (SIGTERM_CALLED) {
-
-            in_file.close();
-            init_shared_array(shared_array);
-            destroy_shm(MEM_KEY);
-            DATA_INSTALLED = true;
-            return OK;
-        }
-    }
-
-    DATA_INSTALLED = true;
-    in_file.close();
-
-    return OK;
-}
-
-void sigterm_handler(int signum) {
+void sigterm_handler(int) {
     SIGTERM_CALLED = true;
 }
 
-void sighup_handler(int signum) {
+void sighup_handler(int) {
     SIGHUP_CALLED = true;
 }
 
@@ -112,10 +51,91 @@ void sig_handle_wrapper(int sig, void (*handler)(int)) {
     }
 }
 
+void init_shared_array(shared_array_elem* shared_array) {
+
+    for (int i = 0; i < SHARED_ARRAY_SIZE; i++) {
+        shared_array[i].is_valid = 0;
+        shared_array[i].x = 0;
+        shared_array[i].y = 0;
+    }
+}
+
+void install_at_index(shared_array_elem* shared_array, int index, float x,
+                      float y, int time_inc) {
+    if (time_inc > -1) {
+
+        sleep(time_inc);
+        shared_array[index].is_valid = 1;
+        shared_array[index].x = x;
+        shared_array[index].y = y;
+
+    } else {
+
+        sleep(abs(time_inc));
+        shared_array[index].is_valid = 0;
+    }
+}
+
+void post_loop() {
+
+    if (SIGHUP_CALLED) {
+
+        // if SIGHUP was invoked, reset the flag and return to the loop
+        SIGHUP_CALLED = false;
+
+    } else if (SIGTERM_CALLED) {
+
+        // if SIGTERM was invoked, destroy the shared memory segments and exit
+        // the loop
+        destroy_shm(MEM_KEY);
+        DATA_INSTALLED = true;
+
+    } else {
+
+        // if no signals were invoked, exit
+        DATA_INSTALLED = true;
+    }
+}
+
+int loop_file(char* in_file_path, shared_array_elem* shared_array) {
+
+    std::ifstream in_file(in_file_path);
+    int index, time_inc;
+    float x, y;
+
+    while (in_file >> index >> x >> y >> time_inc) {
+
+        if (!SIGHUP_CALLED && !SIGTERM_CALLED) {
+
+            if (index >= SHARED_ARRAY_SIZE) {
+
+                fprintf(stderr, "Invalid index found in input file\n");
+                return ERROR;
+
+            } else {
+
+                install_at_index(shared_array, index, x, y, time_inc);
+            }
+
+        } else {
+
+            init_shared_array(shared_array);
+            break;
+        }
+    }
+
+    post_loop();
+    in_file.close();
+    return OK;
+}
+
 int main(int argc, char* argv[]) {
 
-    sig_handle_wrapper(SIGTERM, sigterm_handler);
-    sig_handle_wrapper(SIGHUP, sighup_handler);
+    // sig_handle_wrapper(SIGTERM, sigterm_handler);
+    // sig_handle_wrapper(SIGHUP, sighup_handler);
+
+    sig_handle_wrapper(SIGQUIT, sigterm_handler);
+    sig_handle_wrapper(SIGINT, sighup_handler);
 
     // if wrong number of arguments
     if (argc != 2) {
@@ -130,12 +150,15 @@ int main(int argc, char* argv[]) {
             (shared_array_elem*)connect_shm(MEM_KEY, sizeof(shared_array_elem));
 
         init_shared_array(shared_array);
+        // if the installation loop was not completed
         while (!DATA_INSTALLED) {
             if (loop_file(argv[1], shared_array) == ERROR) {
                 return ERROR;
             }
         }
 
+        // if SIGTERM was invoked, the shared memory segments was already
+        // destroyed
         if (!SIGTERM_CALLED) {
             destroy_shm(MEM_KEY);
         }

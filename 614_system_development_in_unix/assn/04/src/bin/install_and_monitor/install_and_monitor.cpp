@@ -22,18 +22,17 @@ typedef struct {
     float y;
 } shared_array_elem;
 
-const int shared_array_size = 20;
-shared_array_elem shared_array[shared_array_size];
+const int SHARED_ARRAY_SIZE = 20;
+shared_array_elem SHARED_ARRAY[SHARED_ARRAY_SIZE];
+int MONITOR_DURATION = 30;
+std::ifstream IN_FILE;
 
-int monitor_duration = 30;
-std::ifstream in_file;
+void init_shared_array(shared_array_elem* SHARED_ARRAY) {
 
-void init_shared_array(shared_array_elem* shared_array) {
-
-    for (int i = 0; i < shared_array_size; i++) {
-        shared_array[i].is_valid = 0;
-        shared_array[i].x = 0;
-        shared_array[i].y = 0;
+    for (int i = 0; i < SHARED_ARRAY_SIZE; i++) {
+        SHARED_ARRAY[i].is_valid = 0;
+        SHARED_ARRAY[i].x = 0;
+        SHARED_ARRAY[i].y = 0;
     }
 }
 
@@ -46,18 +45,18 @@ void* install_data(void* _thread_id) {
     int index, time_inc;
     float x, y;
 
-    while (in_file >> index >> x >> y >> time_inc) {
+    while (IN_FILE >> index >> x >> y >> time_inc) {
 
         if (time_inc > -1) {
 
             sleep(time_inc);
-            shared_array[index].is_valid = 1;
-            shared_array[index].x = x;
-            shared_array[index].y = y;
+            SHARED_ARRAY[index].is_valid = 1;
+            SHARED_ARRAY[index].x = x;
+            SHARED_ARRAY[index].y = y;
 
         } else {
             sleep(abs(time_inc));
-            shared_array[index].is_valid = 0;
+            SHARED_ARRAY[index].is_valid = 0;
         }
     }
 
@@ -77,7 +76,7 @@ void* monitor_shm(void* _thread_id) {
     // the average x and y values over the active array elements
     float x_ave = 0.0, y_ave = 0.0;
 
-    while (time_elapsed < monitor_duration) {
+    while (time_elapsed < MONITOR_DURATION) {
 
         if (!num_valid) {
 
@@ -96,11 +95,11 @@ void* monitor_shm(void* _thread_id) {
 
         sleep(1);
 
-        for (int i = 0; i < shared_array_size; i++) {
-            if (shared_array[i].is_valid) {
-                num_valid += shared_array[i].is_valid;
-                x_ave += shared_array[i].x;
-                y_ave += shared_array[i].y;
+        for (int i = 0; i < SHARED_ARRAY_SIZE; i++) {
+            if (SHARED_ARRAY[i].is_valid) {
+                num_valid += SHARED_ARRAY[i].is_valid;
+                x_ave += SHARED_ARRAY[i].x;
+                y_ave += SHARED_ARRAY[i].y;
             }
         }
 
@@ -124,11 +123,11 @@ int main(int argc, char* argv[]) {
 
     } else if (argc == 3) {
 
-        monitor_duration = std::stoi(argv[2]);
+        MONITOR_DURATION = std::stoi(argv[2]);
     }
 
-    in_file.open(argv[1]);
-    init_shared_array(shared_array);
+    IN_FILE.open(argv[1]);
+    init_shared_array(SHARED_ARRAY);
 
     th_execute(install_data);
     th_execute(monitor_shm);

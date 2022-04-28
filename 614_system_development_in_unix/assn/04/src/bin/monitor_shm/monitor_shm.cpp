@@ -15,13 +15,13 @@
 
 #define FTOK_PATH "/home/"
 
+const int SHARED_ARRAY_SIZE = 20;
+
 typedef struct {
     int is_valid;
     float x;
     float y;
 } shared_array_elem;
-
-const int shared_array_size = 20;
 
 void monitor(int duration, shared_array_elem* shared_array) {
 
@@ -51,7 +51,7 @@ void monitor(int duration, shared_array_elem* shared_array) {
 
         sleep(1);
 
-        for (int i = 0; i < shared_array_size; i++) {
+        for (int i = 0; i < SHARED_ARRAY_SIZE; i++) {
             if (shared_array[i].is_valid) {
                 num_valid += shared_array[i].is_valid;
                 x_ave += shared_array[i].x;
