@@ -8,6 +8,7 @@
  *
  */
 
+#include "log_mgr.hpp"
 #include "shared_mem.hpp"
 #include <iostream>
 #include <sys/ipc.h>
@@ -15,15 +16,15 @@
 
 #define FTOK_PATH "/home/"
 
-const int SHARED_ARRAY_SIZE = 20;
+const int SHM_ARRAY_SIZE = 20;
 
 typedef struct {
     int is_valid;
     float x;
     float y;
-} shared_array_elem;
+} shm_struct;
 
-void monitor(int duration, shared_array_elem* shared_array) {
+void monitor(int duration, shm_struct* shm_array) {
 
     int time_elapsed = 0;
 
@@ -51,11 +52,11 @@ void monitor(int duration, shared_array_elem* shared_array) {
 
         sleep(1);
 
-        for (int i = 0; i < SHARED_ARRAY_SIZE; i++) {
-            if (shared_array[i].is_valid) {
-                num_valid += shared_array[i].is_valid;
-                x_ave += shared_array[i].x;
-                y_ave += shared_array[i].y;
+        for (int i = 0; i < SHM_ARRAY_SIZE; i++) {
+            if (shm_array[i].is_valid) {
+                num_valid += shm_array[i].is_valid;
+                x_ave += shm_array[i].x;
+                y_ave += shm_array[i].y;
             }
         }
 
@@ -69,11 +70,13 @@ void monitor(int duration, shared_array_elem* shared_array) {
 
 int main(int argc, char* argv[]) {
 
+    set_logfile("monitor_shm.log");
     int monitor_duration = 30;
 
     // if wrong number of arguments
     if (argc > 2) {
 
+        log_event(FATAL, "Invalid number of arguments provided");
         fprintf(stderr, "Invalid number of arguments provided\n");
         return ERROR;
 
@@ -83,12 +86,12 @@ int main(int argc, char* argv[]) {
     }
 
     int mem_key = ftok(FTOK_PATH, 1);
-    shared_array_elem* shared_array =
-        (shared_array_elem*)connect_shm(mem_key, sizeof(shared_array_elem));
+    shm_struct* shm_array =
+        (shm_struct*)connect_shm(mem_key, sizeof(shm_struct));
 
-    monitor(monitor_duration, shared_array);
+    monitor(monitor_duration, shm_array);
 
-    detach_shm((void*)shared_array);
+    detach_shm((void*)shm_array);
 
     return OK;
 }

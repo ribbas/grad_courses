@@ -20,19 +20,19 @@ typedef struct {
     int is_valid;
     float x;
     float y;
-} shared_array_elem;
+} shm_struct;
 
-const int SHARED_ARRAY_SIZE = 20;
-shared_array_elem SHARED_ARRAY[SHARED_ARRAY_SIZE];
+const int SHM_ARRAY_SIZE = 20;
+shm_struct SHM_ARRAY[SHM_ARRAY_SIZE];
 int MONITOR_DURATION = 30;
 std::ifstream IN_FILE;
 
-void init_shared_array(shared_array_elem* SHARED_ARRAY) {
+void init_shared_array() {
 
-    for (int i = 0; i < SHARED_ARRAY_SIZE; i++) {
-        SHARED_ARRAY[i].is_valid = 0;
-        SHARED_ARRAY[i].x = 0;
-        SHARED_ARRAY[i].y = 0;
+    for (int i = 0; i < SHM_ARRAY_SIZE; i++) {
+        SHM_ARRAY[i].is_valid = 0;
+        SHM_ARRAY[i].x = 0;
+        SHM_ARRAY[i].y = 0;
     }
 }
 
@@ -50,13 +50,13 @@ void* install_data(void* _thread_id) {
         if (time_inc > -1) {
 
             sleep(time_inc);
-            SHARED_ARRAY[index].is_valid = 1;
-            SHARED_ARRAY[index].x = x;
-            SHARED_ARRAY[index].y = y;
+            SHM_ARRAY[index].is_valid = 1;
+            SHM_ARRAY[index].x = x;
+            SHM_ARRAY[index].y = y;
 
         } else {
             sleep(abs(time_inc));
-            SHARED_ARRAY[index].is_valid = 0;
+            SHM_ARRAY[index].is_valid = 0;
         }
     }
 
@@ -67,7 +67,7 @@ void* monitor_shm(void* _thread_id) {
 
     long thread_id = (long)_thread_id;
 
-    printf("monitor_sleep created with thread ID: %ld\n", thread_id);
+    printf("monitor_shm created with thread ID: %ld\n", thread_id);
 
     int time_elapsed = 0;
 
@@ -95,11 +95,11 @@ void* monitor_shm(void* _thread_id) {
 
         sleep(1);
 
-        for (int i = 0; i < SHARED_ARRAY_SIZE; i++) {
-            if (SHARED_ARRAY[i].is_valid) {
-                num_valid += SHARED_ARRAY[i].is_valid;
-                x_ave += SHARED_ARRAY[i].x;
-                y_ave += SHARED_ARRAY[i].y;
+        for (int i = 0; i < SHM_ARRAY_SIZE; i++) {
+            if (SHM_ARRAY[i].is_valid) {
+                num_valid += SHM_ARRAY[i].is_valid;
+                x_ave += SHM_ARRAY[i].x;
+                y_ave += SHM_ARRAY[i].y;
             }
         }
 
@@ -115,9 +115,12 @@ void* monitor_shm(void* _thread_id) {
 
 int main(int argc, char* argv[]) {
 
+    set_logfile("install_and_monitor.log");
+
     // if wrong number of arguments
     if (argc > 3) {
 
+        log_event(FATAL, "Invalid number of arguments provided");
         printf("Invalid number of arguments provided\n");
         return ERROR;
 
@@ -127,7 +130,7 @@ int main(int argc, char* argv[]) {
     }
 
     IN_FILE.open(argv[1]);
-    init_shared_array(SHARED_ARRAY);
+    init_shared_array();
 
     th_execute(install_data);
     th_execute(monitor_shm);

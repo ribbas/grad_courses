@@ -37,6 +37,7 @@ std::string exec_and_pipe(const char* cmd) {
     std::string result = "";
     FILE* pipe = popen(cmd, "r");
     if (!pipe) {
+        log_event(FATAL, "popen: (%d) %s", errno, strerror(errno));
         fprintf(stderr, "popen: (%d) %s\n", errno, strerror(errno));
     }
 
@@ -61,6 +62,7 @@ void rand_wait() {
 int main() {
 
     srand(time(nullptr));
+    set_logfile("my_fortune.log");
 
     fd_set rfds;
     int rc;
@@ -79,6 +81,7 @@ int main() {
 
         if (rc == -1) {
 
+            log_event(FATAL, "select: (%d) %s", errno, strerror(errno));
             fprintf(stderr, "select: (%d) %s\n", errno, strerror(errno));
 
         } else if (rc) {
