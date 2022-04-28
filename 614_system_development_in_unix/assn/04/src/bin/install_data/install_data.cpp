@@ -19,6 +19,8 @@
 #define FTOK_PATH "/home/"
 
 int MEM_KEY = -1;
+bool SIGHUP_CALLED = false;
+bool DATA_INSTALLED = false;
 
 typedef struct {
     int is_valid;
@@ -39,28 +41,37 @@ void init_shared_array(shared_array_elem* shared_array) {
 
 int loop_file(std::ifstream& in_file, shared_array_elem* shared_array) {
 
+    printf("begin\n");
     int index, time_inc;
     float x, y;
 
     while (in_file >> index >> x >> y >> time_inc) {
 
-        if (index >= shared_array_size) {
-            fprintf(stderr, "Invalid index found in input file\n");
-            return ERROR;
-        }
+        if (!SIGHUP_CALLED) {
 
-        if (time_inc > -1) {
+            if (index >= shared_array_size) {
+                fprintf(stderr, "Invalid index found in input file\n");
+                return ERROR;
+            }
 
-            sleep(time_inc);
-            shared_array[index].is_valid = 1;
-            shared_array[index].x = x;
-            shared_array[index].y = y;
+            if (time_inc > -1) {
 
+                sleep(time_inc);
+                shared_array[index].is_valid = 1;
+                shared_array[index].x = x;
+                shared_array[index].y = y;
+
+            } else {
+                sleep(abs(time_inc));
+                shared_array[index].is_valid = 0;
+            }
         } else {
-            sleep(abs(time_inc));
-            shared_array[index].is_valid = 0;
+            SIGHUP_CALLED = false;
+            return OK;
         }
     }
+
+    DATA_INSTALLED = true;
 
     return OK;
 }
@@ -69,7 +80,10 @@ void sigterm_handler(int signum) {
     destroy_shm(MEM_KEY);
 }
 
-void sighup_handler(int signum) {}
+void sighup_handler(int signum) {
+    SIGHUP_CALLED = true;
+    printf("sighup called\n");
+}
 
 void sig_handle_wrapper(int sig, void (*handler)(int)) {
 
@@ -87,7 +101,7 @@ void sig_handle_wrapper(int sig, void (*handler)(int)) {
 int main(int argc, char* argv[]) {
 
     // sig_handle_wrapper(SIGINT, sigterm_handler);
-    // sig_handle_wrapper(SIGHUP, sighup_handler);
+    sig_handle_wrapper(SIGINT, sighup_handler);
 
     // if wrong number of arguments
     if (argc != 2) {
@@ -104,8 +118,10 @@ int main(int argc, char* argv[]) {
             (shared_array_elem*)connect_shm(MEM_KEY, sizeof(shared_array_elem));
 
         init_shared_array(shared_array);
-        if (loop_file(in_file, shared_array) == ERROR) {
-            return ERROR;
+        while (!DATA_INSTALLED) {
+            if (loop_file(in_file, shared_array) == ERROR) {
+                return ERROR;
+            }
         }
 
         destroy_shm(MEM_KEY);
