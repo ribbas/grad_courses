@@ -39,9 +39,10 @@ void init_shared_array(shared_array_elem* shared_array) {
     }
 }
 
-int loop_file(std::ifstream& in_file, shared_array_elem* shared_array) {
+int loop_file(char* in_file_path, shared_array_elem* shared_array) {
 
-    printf("begin\n");
+    std::ifstream in_file(in_file_path);
+
     int index, time_inc;
     float x, y;
 
@@ -62,16 +63,22 @@ int loop_file(std::ifstream& in_file, shared_array_elem* shared_array) {
                 shared_array[index].y = y;
 
             } else {
+
                 sleep(abs(time_inc));
                 shared_array[index].is_valid = 0;
             }
+
         } else {
+
+            in_file.close();
+            init_shared_array(shared_array);
             SIGHUP_CALLED = false;
             return OK;
         }
     }
 
     DATA_INSTALLED = true;
+    in_file.close();
 
     return OK;
 }
@@ -111,15 +118,13 @@ int main(int argc, char* argv[]) {
 
     } else {
 
-        std::ifstream in_file(argv[1]);
-
         MEM_KEY = ftok(FTOK_PATH, 1);
         shared_array_elem* shared_array =
             (shared_array_elem*)connect_shm(MEM_KEY, sizeof(shared_array_elem));
 
         init_shared_array(shared_array);
         while (!DATA_INSTALLED) {
-            if (loop_file(in_file, shared_array) == ERROR) {
+            if (loop_file(argv[1], shared_array) == ERROR) {
                 return ERROR;
             }
         }
