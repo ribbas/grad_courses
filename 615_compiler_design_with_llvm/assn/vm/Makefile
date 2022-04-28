@@ -7,12 +7,12 @@ EXE = vm
 all: $(EXE)
 
 %.o: %.c vm.h
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -DNUM_ITERS=10000 -o $@ $< $(CFLAGS)
 
 $(EXE): $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS)
 
-report: $(EXE)
+timeit: $(EXE)
 	./$(EXE) 2> times.txt 1> /dev/null
 
 clean:

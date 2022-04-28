@@ -5,6 +5,10 @@
 #include <stdio.h>
 #include <time.h>
 
+#ifndef NUM_ITERS
+#define NUM_ITERS 1000
+#endif
+
 int hello[] = {
     ICONST, 1234, // 0
     PRINT,        // 1
@@ -13,9 +17,9 @@ int hello[] = {
 
 int loop[] = {
     // .GLOBALS 2; N, I
-    // N = 10            ADDRESS
-    ICONST, 1000, // 0
-    GSTORE, 0,    // 2
+    // N = 10000            ADDRESS
+    ICONST, 10000, // 0
+    GSTORE, 0,     // 2
     // I = 0
     ICONST, 0, // 4
     GSTORE, 1, // 6
@@ -91,49 +95,45 @@ double time_func(VM* vm, int startip, void (*f)(VM*, int, bool)) {
     clock_gettime(CLOCK_MONOTONIC_RAW, &start);
     f(vm, startip, false);
     clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+
     double time_spent = (end.tv_sec - start.tv_sec) +
                         (end.tv_nsec - start.tv_nsec) / 1000000000.0;
-    return time_spent; // in seconds
+    return time_spent;
 }
 
-void compute_time_ave(VM* vm, char* func_name, int startip) {
+void compute_time_ave(char* func_name, int code[], int code_size, int startip) {
 
-    int iters = 100000;
     double duration = 0.0;
-    fprintf(stderr, "Timing: %s() with %d iterations...\n", func_name, iters);
+    fprintf(stderr, "Timing: %s() with %d iterations...\n", func_name,
+            NUM_ITERS);
 
-    for (int i = 0; i < iters; i++) {
+    VM* vm = NULL;
+    vm = vm_create(code, code_size, 0);
+
+    for (int i = 0; i < NUM_ITERS; i++) {
         duration += time_func(vm, startip, &vm_exec);
     }
-    fprintf(stderr, "\tSwitch:\t\t\t%.6f\n", duration / (double)iters * 1000.0);
+    fprintf(stderr, "\tSwitch:\t\t\t%.5f\n",
+            duration / (double)NUM_ITERS * 1000.0);
 
     duration = 0.0;
-    for (int i = 0; i < iters; i++) {
+    vm_free(vm);
+    vm = vm_create(code, code_size, 0);
+
+    for (int i = 0; i < NUM_ITERS; i++) {
         duration += time_func(vm, startip, &vm_exec_goto);
     }
-    fprintf(stderr, "\tComputed goto:\t%.6f\n\n",
-            duration / (double)iters * 1000.0);
+    fprintf(stderr, "\tComputed goto:\t%.5f\n\n",
+            duration / (double)NUM_ITERS * 1000.0);
+    vm_free(vm);
 }
 
 int main() {
 
-    VM* vm = NULL;
-
-    vm = vm_create(hello, sizeof(hello), 0);
-    compute_time_ave(vm, "hello", 0);
-    vm_free(vm);
-
-    vm = vm_create(loop, sizeof(loop), 0);
-    compute_time_ave(vm, "loop", 0);
-    vm_free(vm);
-
-    vm = vm_create(factorial, sizeof(factorial), 0);
-    compute_time_ave(vm, "factorial", 23);
-    vm_free(vm);
-
-    vm = vm_create(f, sizeof(f), 0);
-    compute_time_ave(vm, "f", 0);
-    vm_free(vm);
+    compute_time_ave("hello", hello, sizeof(hello), 0);
+    compute_time_ave("loop", loop, sizeof(loop), 0);
+    compute_time_ave("factorial", factorial, sizeof(factorial), 23);
+    compute_time_ave("f", f, sizeof(f), 0);
 
     return 0;
 }

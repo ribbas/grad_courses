@@ -11,14 +11,15 @@ extern "C" {
 #include <stdbool.h>
 
 #define DEFAULT_STACK_SIZE 1000
+#define DEFAULT_BR_STACK_SIZE 500
 #define DEFAULT_CALL_STACK_SIZE 100
 #define DEFAULT_NUM_LOCALS 10
 
 typedef enum {
-    NOOP = 0,
-    IADD = 1, // int add
-    ISUB = 2,
-    IMUL = 3,
+    NOOP = 0,    // noop
+    IADD = 1,    // int add
+    ISUB = 2,    // int sub
+    IMUL = 3,    // int mul
     ILT = 4,     // int less than
     IEQ = 5,     // int equal
     BR = 6,      // branch
@@ -33,7 +34,7 @@ typedef enum {
     POP = 15,    // throw away top of stack
     CALL = 16,   // call function at address with nargs,nlocals
     RET = 17,    // return value from function
-    HALT = 18
+    HALT = 18    // halt
 } VM_CODE;
 
 typedef struct {
@@ -52,6 +53,10 @@ typedef struct {
     // Operand stack, grows upwards
     int stack[DEFAULT_STACK_SIZE];
     Context call_stack[DEFAULT_CALL_STACK_SIZE];
+
+    int activation_stack[DEFAULT_STACK_SIZE];
+    int call_stack2[DEFAULT_CALL_STACK_SIZE][DEFAULT_NUM_LOCALS];
+    int ret_stack[DEFAULT_CALL_STACK_SIZE];
 } VM;
 
 VM* vm_create(int* code, int code_size, int nglobals);

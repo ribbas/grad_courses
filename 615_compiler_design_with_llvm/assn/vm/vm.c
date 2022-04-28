@@ -55,7 +55,7 @@ VM* vm_create(int* code, int code_size, int nglobals) {
 
 void vm_exec_goto(VM* vm, int startip, bool trace) {
 
-    static void* dispatch_table[] = {
+    static void* goto_vm_inst[] = {
         &&DO_NOOP, &&DO_IADD,  &&DO_ISUB,  &&DO_IMUL,   &&DO_ILT,
         &&DO_IEQ,  &&DO_BR,    &&DO_BRT,   &&DO_BRF,    &&DO_ICONST,
         &&DO_LOAD, &&DO_GLOAD, &&DO_STORE, &&DO_GSTORE, &&DO_PRINT,
@@ -65,6 +65,7 @@ void vm_exec_goto(VM* vm, int startip, bool trace) {
     int ip;     // instruction pointer register
     int sp;     // stack pointer register
     int callsp; // call stack pointer register
+    int retsp;  // call stack pointer register
 
     int a = 0;
     int b = 0;
@@ -74,18 +75,19 @@ void vm_exec_goto(VM* vm, int startip, bool trace) {
     ip = startip;
     sp = -1;
     callsp = -1;
+    retsp = -1;
 
-    goto* dispatch_table[vm->code[ip++]];
+    goto* goto_vm_inst[vm->code[ip++]];
     while (true) {
 
-    DO_NOOP : { goto* dispatch_table[vm->code[ip++]]; }
+    DO_NOOP : { goto* goto_vm_inst[vm->code[ip++]]; }
     DO_IADD : {
 
         b = vm->stack[sp--];     // 2nd opnd at top of stack
         a = vm->stack[sp--];     // 1st opnd 1 below top
         vm->stack[++sp] = a + b; // push result
 
-        goto* dispatch_table[vm->code[ip++]];
+        goto* goto_vm_inst[vm->code[ip++]];
     }
     DO_ISUB : {
 
@@ -93,7 +95,7 @@ void vm_exec_goto(VM* vm, int startip, bool trace) {
         a = vm->stack[sp--];
         vm->stack[++sp] = a - b;
 
-        goto* dispatch_table[vm->code[ip++]];
+        goto* goto_vm_inst[vm->code[ip++]];
     }
     DO_IMUL : {
 
@@ -101,7 +103,7 @@ void vm_exec_goto(VM* vm, int startip, bool trace) {
         a = vm->stack[sp--];
         vm->stack[++sp] = a * b;
 
-        goto* dispatch_table[vm->code[ip++]];
+        goto* goto_vm_inst[vm->code[ip++]];
     }
     DO_ILT : {
 
@@ -109,7 +111,7 @@ void vm_exec_goto(VM* vm, int startip, bool trace) {
         a = vm->stack[sp--];
         vm->stack[++sp] = (a < b);
 
-        goto* dispatch_table[vm->code[ip++]];
+        goto* goto_vm_inst[vm->code[ip++]];
     }
     DO_IEQ : {
 
@@ -117,13 +119,13 @@ void vm_exec_goto(VM* vm, int startip, bool trace) {
         a = vm->stack[sp--];
         vm->stack[++sp] = (a == b);
 
-        goto* dispatch_table[vm->code[ip++]];
+        goto* goto_vm_inst[vm->code[ip++]];
     }
     DO_BR : {
 
         ip = vm->code[ip];
 
-        goto* dispatch_table[vm->code[ip++]];
+        goto* goto_vm_inst[vm->code[ip++]];
     }
     DO_BRT : {
 
@@ -132,7 +134,7 @@ void vm_exec_goto(VM* vm, int startip, bool trace) {
             ip = addr;
         }
 
-        goto* dispatch_table[vm->code[ip++]];
+        goto* goto_vm_inst[vm->code[ip++]];
     }
     DO_BRF : {
 
@@ -141,85 +143,229 @@ void vm_exec_goto(VM* vm, int startip, bool trace) {
             ip = addr;
         }
 
-        goto* dispatch_table[vm->code[ip++]];
+        goto* goto_vm_inst[vm->code[ip++]];
     }
     DO_ICONST : {
 
         vm->stack[++sp] = vm->code[ip++]; // push operand
 
-        goto* dispatch_table[vm->code[ip++]];
+        goto* goto_vm_inst[vm->code[ip++]];
     }
     DO_LOAD : { // load local or arg
 
         offset = vm->code[ip++];
-        vm->stack[++sp] = vm->call_stack[callsp].locals[offset];
+        vm->stack[++sp] = vm->call_stack2[callsp][offset];
+        // vm->stack[++sp] = vm->call_stack[callsp].locals[offset];
 
-        goto* dispatch_table[vm->code[ip++]];
+        goto* goto_vm_inst[vm->code[ip++]];
     }
     DO_GLOAD : { // load from global memory
 
         addr = vm->code[ip++];
         vm->stack[++sp] = vm->globals[addr];
 
-        goto* dispatch_table[vm->code[ip++]];
+        goto* goto_vm_inst[vm->code[ip++]];
     }
     DO_STORE : {
 
         offset = vm->code[ip++];
-        vm->call_stack[callsp].locals[offset] = vm->stack[sp--];
+        vm->call_stack2[callsp][offset] = vm->stack[sp--];
+        // vm->call_stack[callsp].locals[offset] = vm->stack[sp--];
 
-        goto* dispatch_table[vm->code[ip++]];
+        goto* goto_vm_inst[vm->code[ip++]];
     }
     DO_GSTORE : {
 
         addr = vm->code[ip++];
         vm->globals[addr] = vm->stack[sp--];
 
-        goto* dispatch_table[vm->code[ip++]];
+        goto* goto_vm_inst[vm->code[ip++]];
     }
     DO_PRINT : {
 
         printf("%d\n", vm->stack[sp--]);
 
-        goto* dispatch_table[vm->code[ip++]];
+        goto* goto_vm_inst[vm->code[ip++]];
     }
     DO_POP : {
 
         --sp;
 
-        goto* dispatch_table[vm->code[ip++]];
+        goto* goto_vm_inst[vm->code[ip++]];
     }
     DO_CALL : {
 
         // expects all args on stack
-        addr = vm->code[ip++];        // index of target function
-        int nargs = vm->code[ip++];   // how many args got pushed
-        int nlocals = vm->code[ip++]; // how many locals to allocate
+        addr = vm->code[ip++]; // index of target function
+        // int nlocals = vm->code[ip++]; // how many locals to allocate
+        int nargs = vm->code[ip++]; // how many args got pushed
         ++callsp; // bump stack pointer to reveal space for this call
-        vm_context_init(&vm->call_stack[callsp], ip, nargs + nlocals);
+
+        // vm_context_init(&vm->call_stack[callsp], ip, nargs + nlocals);
+        // // copy args into new context
+        // for (int i = 0; i < nargs; i++) {
+        //     vm->call_stack[callsp].locals[i] = vm->stack[sp - i];
+        // }
+
+        vm->ret_stack[++retsp] = ip;
         // copy args into new context
         for (int i = 0; i < nargs; i++) {
-            vm->call_stack[callsp].locals[i] = vm->stack[sp - i];
+            vm->call_stack2[callsp][i] = vm->stack[sp - i];
         }
         sp -= nargs;
         ip = addr; // jump to function
 
-        goto* dispatch_table[vm->code[ip++]];
+        goto* goto_vm_inst[vm->code[ip++]];
     }
     DO_RET : {
 
-        ip = vm->call_stack[callsp].returnip;
-        callsp--; // pop context
+        ip = vm->ret_stack[retsp];
+        retsp--; // pop context
+        // ip = vm->call_stack[callsp].returnip;
+        // callsp--; // pop context
 
-        goto* dispatch_table[vm->code[ip++]];
+        goto* goto_vm_inst[vm->code[ip++]];
     }
     DO_HALT : { break; }
     }
-
     if (trace) {
         vm_print_data(vm->globals, vm->nglobals);
     }
 }
+
+// void vm_exec_goto(VM* vm, int startip, bool trace) {
+
+//     static void* goto_vm_inst[] = {
+//         &&DO_NOOP, &&DO_IADD,  &&DO_ISUB,  &&DO_IMUL,   &&DO_ILT,
+//         &&DO_IEQ,  &&DO_BR,    &&DO_BRT,   &&DO_BRF,    &&DO_ICONST,
+//         &&DO_LOAD, &&DO_GLOAD, &&DO_STORE, &&DO_GSTORE, &&DO_PRINT,
+//         &&DO_POP,  &&DO_CALL,  &&DO_RET,   &&DO_HALT};
+
+//     // registers
+//     int ip;     // instruction pointer register
+//     int sp;     // stack pointer register
+//     int callsp; // call stack pointer register
+
+//     int a = 0;
+//     int b = 0;
+//     int addr = 0;
+//     int offset = 0;
+
+//     ip = startip;
+//     sp = -1;
+//     callsp = -1;
+
+//     goto* goto_vm_inst[vm->code[ip++]];
+//     while (true) {
+//     DO_NOOP : { goto* goto_vm_inst[vm->code[ip++]]; }
+//     DO_IADD : {
+//         b = vm->stack[sp--];     // 2nd opnd at top of stack
+//         a = vm->stack[sp--];     // 1st opnd 1 below top
+//         vm->stack[++sp] = a + b; // push result
+//         goto* goto_vm_inst[vm->code[ip++]];
+//     }
+//     DO_ISUB : {
+//         b = vm->stack[sp--];
+//         a = vm->stack[sp--];
+//         vm->stack[++sp] = a - b;
+//         goto* goto_vm_inst[vm->code[ip++]];
+//     }
+//     DO_IMUL : {
+//         b = vm->stack[sp--];
+//         a = vm->stack[sp--];
+//         vm->stack[++sp] = a * b;
+//         goto* goto_vm_inst[vm->code[ip++]];
+//     }
+//     DO_ILT : {
+//         b = vm->stack[sp--];
+//         a = vm->stack[sp--];
+//         vm->stack[++sp] = (a < b);
+//         goto* goto_vm_inst[vm->code[ip++]];
+//     }
+//     DO_IEQ : {
+//         b = vm->stack[sp--];
+//         a = vm->stack[sp--];
+//         vm->stack[++sp] = (a == b);
+//         goto* goto_vm_inst[vm->code[ip++]];
+//     }
+//     DO_BR : {
+//         ip = vm->code[ip];
+//         goto* goto_vm_inst[vm->code[ip++]];
+//     }
+//     DO_BRT : {
+//         addr = vm->code[ip++];
+//         if (vm->stack[sp--] == true) {
+//             ip = addr;
+//         }
+//         goto* goto_vm_inst[vm->code[ip++]];
+//     }
+//     DO_BRF : {
+//         addr = vm->code[ip++];
+//         if (vm->stack[sp--] == false) {
+//             ip = addr;
+//         }
+//         goto* goto_vm_inst[vm->code[ip++]];
+//     }
+//     DO_ICONST : {
+//         vm->stack[++sp] = vm->code[ip++]; // push operand
+//         goto* goto_vm_inst[vm->code[ip++]];
+//     }
+//     DO_LOAD : { // load local or arg
+//         offset = vm->code[ip++];
+//         vm->stack[++sp] = vm->call_stack[callsp].locals[offset];
+//         goto* goto_vm_inst[vm->code[ip++]];
+//     }
+//     DO_GLOAD : { // load from global memory
+//         addr = vm->code[ip++];
+//         vm->stack[++sp] = vm->globals[addr];
+//         goto* goto_vm_inst[vm->code[ip++]];
+//     }
+//     DO_STORE : {
+//         offset = vm->code[ip++];
+//         vm->call_stack[callsp].locals[offset] = vm->stack[sp--];
+//         goto* goto_vm_inst[vm->code[ip++]];
+//     }
+//     DO_GSTORE : {
+//         addr = vm->code[ip++];
+//         vm->globals[addr] = vm->stack[sp--];
+//         goto* goto_vm_inst[vm->code[ip++]];
+//     }
+//     DO_PRINT : {
+//         printf("%d\n", vm->stack[sp--]);
+//         goto* goto_vm_inst[vm->code[ip++]];
+//     }
+//     DO_POP : {
+//         --sp;
+//         goto* goto_vm_inst[vm->code[ip++]];
+//     }
+//     DO_CALL : {
+//         // expects all args on stack
+//         addr = vm->code[ip++];        // index of target function
+//         int nargs = vm->code[ip++];   // how many args got pushed
+//         int nlocals = vm->code[ip++]; // how many locals to allocate
+//         ++callsp; // bump stack pointer to reveal space for this
+//                   // call
+//         vm_context_init(&vm->call_stack[callsp], ip, nargs + nlocals);
+//         // copy args into new context
+//         for (int i = 0; i < nargs; i++) {
+//             vm->call_stack[callsp].locals[i] = vm->stack[sp - i];
+//         }
+//         sp -= nargs;
+//         ip = addr; // jump to function
+//         goto* goto_vm_inst[vm->code[ip++]];
+//     }
+//     DO_RET : {
+//         ip = vm->call_stack[callsp].returnip;
+//         callsp--; // pop context
+//         goto* goto_vm_inst[vm->code[ip++]];
+//     }
+//     DO_HALT : { break; }
+//     }
+
+//     if (trace) {
+//         vm_print_data(vm->globals, vm->nglobals);
+//     }
+// }
 
 void vm_exec(VM* vm, int startip, bool trace) {
     // registers

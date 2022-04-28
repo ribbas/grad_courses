@@ -1,0 +1,22 @@
+# Week 13: Virtual Machine
+
+## Modifications made for this assignment
+
+1. The method `void vm_exec_goto(VM* vm, int startip, bool trace)` was added. The method replicates the original `void vm_exec(VM* vm, int startip, bool trace)` method, but replaces the switch-based control flow with goto labels. Additional arrays were added to split the stack into return stacks, activation stacks and data stacks.
+2. The functions `loop` and `factorial` were modified to increase their execution times, i.e. `factorial` now computes 11! instead of 5!, and `loop` loops 10,000 times instead of 10.
+3. Helper methods were added in `vm_test.c` to run the two variations of the `vm_exec` methods several times and computing their average execution times.
+4. A Makefile was added to assist with trivial compilation and execution tasks. `make timeit` compiles the executable, runs it and suppresses stdout and redirects stderr to `times.txt`.
+
+## Timing statistics
+
+The execution times get outputted to `times.txt`. The methods get iterated `NUM_ITERS` times and their averages are computed and saved to the output file.
+
+On average, the time gains achieved by computed-goto threading were not significant. On some occasion, the switch threading appears to be faster if not identical to its new version. Some of the functions had to be modified to increase its execution time (`loop` and `factorial`) to notice any changes. The `loop` function appears to have been affected the most with the new version,
+
+## System
+
+The target machine used was an Ubuntu 20.04 64-bit virtual machine. The Linux kernel version is 5.13.0-40-generic. The following output is generated from running the command `uname -orm`:
+
+```
+5.13.0-40-generic x86_64 GNU/Linux
+```
