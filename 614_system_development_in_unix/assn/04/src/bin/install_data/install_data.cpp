@@ -20,6 +20,7 @@
 
 int MEM_KEY = -1;
 bool SIGHUP_CALLED = false;
+bool SIGTERM_CALLED = false;
 bool DATA_INSTALLED = false;
 
 typedef struct {
@@ -48,7 +49,7 @@ int loop_file(char* in_file_path, shared_array_elem* shared_array) {
 
     while (in_file >> index >> x >> y >> time_inc) {
 
-        if (!SIGHUP_CALLED) {
+        if (!SIGHUP_CALLED && !SIGTERM_CALLED) {
 
             if (index >= shared_array_size) {
                 fprintf(stderr, "Invalid index found in input file\n");
@@ -68,11 +69,19 @@ int loop_file(char* in_file_path, shared_array_elem* shared_array) {
                 shared_array[index].is_valid = 0;
             }
 
-        } else {
+        } else if (SIGHUP_CALLED) {
 
             in_file.close();
             init_shared_array(shared_array);
             SIGHUP_CALLED = false;
+            return OK;
+
+        } else if (SIGTERM_CALLED) {
+
+            in_file.close();
+            init_shared_array(shared_array);
+            destroy_shm(MEM_KEY);
+            DATA_INSTALLED = true;
             return OK;
         }
     }
@@ -84,18 +93,16 @@ int loop_file(char* in_file_path, shared_array_elem* shared_array) {
 }
 
 void sigterm_handler(int signum) {
-    destroy_shm(MEM_KEY);
+    SIGTERM_CALLED = true;
 }
 
 void sighup_handler(int signum) {
     SIGHUP_CALLED = true;
-    printf("sighup called\n");
 }
 
 void sig_handle_wrapper(int sig, void (*handler)(int)) {
 
     struct sigaction sa;
-
     sa.sa_handler = handler;
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = 0;
@@ -107,8 +114,8 @@ void sig_handle_wrapper(int sig, void (*handler)(int)) {
 
 int main(int argc, char* argv[]) {
 
-    // sig_handle_wrapper(SIGINT, sigterm_handler);
-    sig_handle_wrapper(SIGINT, sighup_handler);
+    sig_handle_wrapper(SIGTERM, sigterm_handler);
+    sig_handle_wrapper(SIGHUP, sighup_handler);
 
     // if wrong number of arguments
     if (argc != 2) {
@@ -129,7 +136,9 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        destroy_shm(MEM_KEY);
+        if (!SIGTERM_CALLED) {
+            destroy_shm(MEM_KEY);
+        }
     }
 
     return OK;
