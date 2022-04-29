@@ -14,17 +14,16 @@
 #include <sys/ipc.h>
 #include <unistd.h>
 
-#define FTOK_PATH "/home/"
-
-const int SHM_ARRAY_SIZE = 20;
+#define FTOK_PATH "/home/sahmed80"
+#define SHM_ARRAY_SIZE 20
 
 typedef struct {
 	int is_valid;
 	float x;
 	float y;
-} shm_struct;
+} Shm_Struct;
 
-void monitor(int duration, shm_struct* shm_array) {
+void monitor(int duration, Shm_Struct* shm_array) {
 
 	int time_elapsed = 0;
 
@@ -86,8 +85,8 @@ int main(int argc, char* argv[]) {
 	}
 
 	int mem_key = ftok(FTOK_PATH, 1);
-	shm_struct* shm_array =
-		(shm_struct*)connect_shm(mem_key, sizeof(shm_struct));
+	Shm_Struct* shm_array =
+		(Shm_Struct*)connect_shm(mem_key, sizeof(Shm_Struct));
 
 	monitor(monitor_duration, shm_array);
 

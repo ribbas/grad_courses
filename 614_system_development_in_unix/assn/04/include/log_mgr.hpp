@@ -23,10 +23,10 @@ typedef enum { INFO, WARNING, FATAL } Levels;
 extern const char* LEVEL_STR[3];
 
 // name of the logfile
-extern const char* LOG_FILE;
+extern const char* Logfile;
 
 // file descriptor of the logfile
-extern int FD;
+extern int Fd;
 
 // function declarations
 int log_event(Levels, const char*, ...);

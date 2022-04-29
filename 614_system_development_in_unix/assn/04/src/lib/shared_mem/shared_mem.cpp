@@ -15,13 +15,8 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
-typedef struct {
-	int key;
-	void* addr;
-} SHMEM_SEG;
-
-SHMEM_SEG* SHMEM_SEGS[50] = {};
-int SHMEM_SEGS_CUR = 0;
+ShmSeg* ShmSegs[MAX_SHM] = {};
+int ShmSegCur = 0;
 
 void* connect_shm(int key, int size) {
 
@@ -40,12 +35,12 @@ void* connect_shm(int key, int size) {
 		return nullptr;
 	}
 
-	SHMEM_SEG* seg_data = new SHMEM_SEG();
+	ShmSeg* seg_data = new ShmSeg();
 	seg_data->key = key;
 	seg_data->addr = shm_ptr;
 
-	SHMEM_SEGS[SHMEM_SEGS_CUR] = seg_data;
-	SHMEM_SEGS_CUR++;
+	ShmSegs[ShmSegCur] = seg_data;
+	ShmSegCur++;
 
 	return shm_ptr;
 }
@@ -64,9 +59,9 @@ int detach_shm(void* addr) {
 
 int destroy_shm(int key) {
 
-	for (int i = 0; i < SHMEM_SEGS_CUR; i++) {
-		if (SHMEM_SEGS[i]->key == key) {
-			if (detach_shm(SHMEM_SEGS[i]->addr) == ERROR) {
+	for (int i = 0; i < ShmSegCur; i++) {
+		if (ShmSegs[i]->key == key) {
+			if (detach_shm(ShmSegs[i]->addr) == ERROR) {
 				return ERROR;
 			}
 		}

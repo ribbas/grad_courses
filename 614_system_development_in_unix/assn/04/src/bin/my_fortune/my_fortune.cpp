@@ -20,16 +20,14 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#ifdef __linux__
-// absaroka
-const std::string FORTUNE_EXE = "~jcn/unix_class/fortune_absaroka/fortune";
-#else
-// dev4
-const std::string FORTUNE_EXE = "~jcn/unix_class/fortune/fortune";
+#ifdef __linux__  // absaroka
+#define FORTUNE_EXE "~jcn/unix_class/fortune_absaroka/fortune"
+#else  // dev4
+#define FORTUNE_EXE "~jcn/unix_class/fortune/fortune"
 #endif
 
-const short DELAY_LO = 1;
-const short DELAY_HI = 8;
+#define DELAY_LO 1
+#define DELAY_HI 8
 
 std::string exec_and_pipe(const char* cmd) {
 
@@ -93,7 +91,7 @@ int main() {
 
 		} else {
 
-			std::string fortune_output = exec_and_pipe(FORTUNE_EXE.c_str());
+			std::string fortune_output = exec_and_pipe(FORTUNE_EXE);
 			to_upper(fortune_output);
 			std::cout << fortune_output;
 			rand_wait();

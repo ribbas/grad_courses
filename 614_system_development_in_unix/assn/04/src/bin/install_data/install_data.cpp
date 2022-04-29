@@ -17,27 +17,27 @@
 #include <sys/ipc.h>
 #include <unistd.h>
 
-#define FTOK_PATH "/home/"
+#define FTOK_PATH "/home/sahmed80"
+#define SHM_ARRAY_SIZE 20
 
-bool SIGHUP_CALLED = false;
-bool SIGTERM_CALLED = false;
-bool DATA_INSTALLED = false;
+bool Sighup_Called = false;
+bool Sigterm_Called = false;
+bool Data_Installed = false;
 
-int MEM_KEY = -1;
-const int SHM_ARRAY_SIZE = 20;
+int Mem_Key = -1;
 
 typedef struct {
 	int is_valid;
 	float x;
 	float y;
-} shm_struct;
+} Shm_Struct;
 
 void sigterm_handler(int) {
-	SIGTERM_CALLED = true;
+	Sigterm_Called = true;
 }
 
 void sighup_handler(int) {
-	SIGHUP_CALLED = true;
+	Sighup_Called = true;
 }
 
 void sig_handle_wrapper(int sig, void (*handler)(int)) {
@@ -53,7 +53,7 @@ void sig_handle_wrapper(int sig, void (*handler)(int)) {
 	}
 }
 
-void init_shared_array(shm_struct* shm_array) {
+void init_shared_array(Shm_Struct* shm_array) {
 
 	for (int i = 0; i < SHM_ARRAY_SIZE; i++) {
 		shm_array[i].is_valid = 0;
@@ -62,7 +62,7 @@ void init_shared_array(shm_struct* shm_array) {
 	}
 }
 
-void install_at_index(shm_struct* shm_array, int index, float x, float y,
+void install_at_index(Shm_Struct* shm_array, int index, float x, float y,
 					  int time_inc) {
 	if (time_inc > -1) {
 
@@ -80,26 +80,26 @@ void install_at_index(shm_struct* shm_array, int index, float x, float y,
 
 void post_loop() {
 
-	if (SIGHUP_CALLED) {
+	if (Sighup_Called) {
 
 		// if SIGHUP was invoked, reset the flag and return to the loop
-		SIGHUP_CALLED = false;
+		Sighup_Called = false;
 
-	} else if (SIGTERM_CALLED) {
+	} else if (Sigterm_Called) {
 
 		// if SIGTERM was invoked, destroy the shared memory segments and exit
 		// the loop
-		destroy_shm(MEM_KEY);
-		DATA_INSTALLED = true;
+		destroy_shm(Mem_Key);
+		Data_Installed = true;
 
 	} else {
 
 		// if no signals were invoked, exit
-		DATA_INSTALLED = true;
+		Data_Installed = true;
 	}
 }
 
-int loop_file(char* in_file_path, shm_struct* shm_array) {
+int loop_file(char* in_file_path, Shm_Struct* shm_array) {
 
 	std::ifstream in_file(in_file_path);
 	int index, time_inc;
@@ -107,7 +107,8 @@ int loop_file(char* in_file_path, shm_struct* shm_array) {
 
 	while (in_file >> index >> x >> y >> time_inc) {
 
-		if (!SIGHUP_CALLED && !SIGTERM_CALLED) {
+		// if neither SIGHUP or SIGTERM were invoked
+		if (!Sighup_Called && !Sigterm_Called) {
 
 			if (index >= SHM_ARRAY_SIZE) {
 
@@ -117,17 +118,21 @@ int loop_file(char* in_file_path, shm_struct* shm_array) {
 
 			} else {
 
+				// install data with valid data from file
 				install_at_index(shm_array, index, x, y, time_inc);
 			}
 
 		} else {
 
+			// reset shared memory data
 			init_shared_array(shm_array);
 			break;
 		}
 	}
 
+	// once loop is exited, check states of flags to determine the next branch
 	post_loop();
+
 	in_file.close();
 	return OK;
 }
@@ -135,11 +140,8 @@ int loop_file(char* in_file_path, shm_struct* shm_array) {
 int main(int argc, char* argv[]) {
 
 	set_logfile("install_data.log");
-	// sig_handle_wrapper(SIGTERM, sigterm_handler);
-	// sig_handle_wrapper(SIGHUP, sighup_handler);
-
-	sig_handle_wrapper(SIGQUIT, sigterm_handler);
-	sig_handle_wrapper(SIGINT, sighup_handler);
+	sig_handle_wrapper(SIGTERM, sigterm_handler);
+	sig_handle_wrapper(SIGHUP, sighup_handler);
 
 	// if wrong number of arguments
 	if (argc != 2) {
@@ -150,13 +152,13 @@ int main(int argc, char* argv[]) {
 
 	} else {
 
-		MEM_KEY = ftok(FTOK_PATH, 1);
-		shm_struct* shm_array =
-			(shm_struct*)connect_shm(MEM_KEY, sizeof(shm_struct));
+		Mem_Key = ftok(FTOK_PATH, 1);
+		Shm_Struct* shm_array =
+			(Shm_Struct*)connect_shm(Mem_Key, sizeof(Shm_Struct));
 
 		init_shared_array(shm_array);
 		// if the installation loop was not completed
-		while (!DATA_INSTALLED) {
+		while (!Data_Installed) {
 			if (loop_file(argv[1], shm_array) == ERROR) {
 				return ERROR;
 			}
@@ -164,8 +166,8 @@ int main(int argc, char* argv[]) {
 
 		// if SIGTERM was invoked, the shared memory segments was already
 		// destroyed
-		if (!SIGTERM_CALLED) {
-			destroy_shm(MEM_KEY);
+		if (!Sigterm_Called) {
+			destroy_shm(Mem_Key);
 		}
 	}
 

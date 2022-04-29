@@ -13,6 +13,17 @@
 
 #include "globals.hpp"
 
+// maximum shared memory segments
+#define MAX_SHM 50
+
+typedef struct {
+	int key;
+	void* addr;
+} ShmSeg;
+
+extern ShmSeg* ShmSegs[MAX_SHM];
+extern int ShmSegCur;
+
 // function declarations
 void* connect_shm(int, int);
 

@@ -19,20 +19,20 @@
 #include <unistd.h>
 
 // default logfile name
-const char* Log_File = "logfile";
-
-// default (invalid) file descriptor value
-int FD = ERROR;
+const char* Logfile = "logfile";
 
 // default string names corresponding to the Levels enum
 const char* LEVEL_STR[] = {"INFO", "WARNING", "FATAL"};
 
+// default (invalid) file descriptor value
+int Fd = ERROR;
+
 int log_event(Levels l, const char* fmt, ...) {
 
 	int logfile_status;
-	if (FD == ERROR) {
+	if (Fd == ERROR) {
 
-		logfile_status = set_logfile(Log_File);
+		logfile_status = set_logfile(Logfile);
 	}
 
 	if (logfile_status == ERROR) {
@@ -60,8 +60,11 @@ int log_event(Levels l, const char* fmt, ...) {
 
 		// append newline to buffer
 		strcat(buffer, "\n");
+
 		// write buffer to file
-		write(FD, buffer, strlen(buffer));
+		if (write(Fd, buffer, strlen(buffer)) == ERROR) {
+			return ERROR;
+		}
 
 		return OK;
 	}
@@ -84,24 +87,24 @@ int set_logfile(const char* logfile_name) {
 		close_logfile();
 
 		// update descriptor and name of logfile
-		FD = new_fd;
-		Log_File = logfile_name;
+		Fd = new_fd;
+		Logfile = logfile_name;
 		return OK;
 	}
 }
 
 void close_logfile(void) {
 
-	if (FD != ERROR) {
+	if (Fd != ERROR) {
 
 		// close the global file descriptor
-		if (close(FD) < 0) {
+		if (close(Fd) < 0) {
 			// file failed to open
-			FD = -1;
-			fprintf(stderr, "Error with file '%s': (%d) %s\n", Log_File, errno,
+			Fd = ERROR;
+			fprintf(stderr, "Error with file '%s': (%d) %s\n", Logfile, errno,
 					strerror(errno));
 		}
 	} else {
-		FD = -1;
+		Fd = -1;
 	}
 }

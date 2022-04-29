@@ -18,13 +18,14 @@
 #define THD_OK OK
 #define THD_ERROR ERROR
 
+#define MAX_THREAD_NUM 50
+
 typedef int ThreadHandles;
 typedef void* Funcptrs(void*);
 
-extern ThreadHandles THREAD_NUM;
-extern ThreadHandles LAST_THREAD_NUM;
-const unsigned int MAX_THREAD_NUM = 50;
-extern pthread_t THREADS[MAX_THREAD_NUM];
+extern ThreadHandles Thread_Num;
+extern ThreadHandles Last_Thread_Num;
+extern pthread_t Threads[MAX_THREAD_NUM];
 
 // function declarations
 ThreadHandles th_execute(Funcptrs);
@@ -43,6 +44,6 @@ void sigint_handler(int);
 
 void sigquit_handler(int);
 
-void sig_handle_wrapper(int sig, void (*)(int));
+void sig_handle_wrapper(int, void (*)(int));
 
 #endif // THREAD_MGR_HPP
