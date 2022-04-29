@@ -33,72 +33,72 @@ const short DELAY_HI = 8;
 
 std::string exec_and_pipe(const char* cmd) {
 
-    char buffer[1000];
-    std::string result = "";
-    FILE* pipe = popen(cmd, "r");
-    if (!pipe) {
-        log_event(FATAL, "popen: (%d) %s", errno, strerror(errno));
-        fprintf(stderr, "popen: (%d) %s\n", errno, strerror(errno));
-    }
+	char buffer[1000];
+	std::string result = "";
+	FILE* pipe = popen(cmd, "r");
+	if (!pipe) {
+		log_event(FATAL, "popen: (%d) %s", errno, strerror(errno));
+		fprintf(stderr, "popen: (%d) %s\n", errno, strerror(errno));
+	}
 
-    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-        result += buffer;
-    }
+	while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+		result += buffer;
+	}
 
-    pclose(pipe);
-    return result;
+	pclose(pipe);
+	return result;
 }
 
 void to_upper(std::string& piped_output) {
-    for (int i = 0; i < piped_output.size(); i++) {
-        piped_output.at(i) = toupper(piped_output.at(i));
-    }
+	for (int i = 0; i < piped_output.size(); i++) {
+		piped_output.at(i) = toupper(piped_output.at(i));
+	}
 }
 
 void rand_wait() {
-    sleep(DELAY_LO + rand() % DELAY_HI);
+	sleep(DELAY_LO + rand() % DELAY_HI);
 }
 
 int main() {
 
-    srand(time(nullptr));
-    set_logfile("my_fortune.log");
+	srand(time(nullptr));
+	set_logfile("my_fortune.log");
 
-    fd_set rfds;
-    int rc;
-    struct timeval tv;
-    tv.tv_sec = 0;
-    tv.tv_usec = 0;
+	fd_set rfds;
+	int rc;
+	struct timeval tv;
+	tv.tv_sec = 0;
+	tv.tv_usec = 0;
 
-    char user_input = ' ';
+	char user_input = ' ';
 
-    while (user_input != 'q') {
+	while (user_input != 'q') {
 
-        // watch stdin (fd 0) to see when it has input
-        FD_ZERO(&rfds);
-        FD_SET(0, &rfds);
-        rc = select(1, &rfds, nullptr, nullptr, &tv);
+		// watch stdin (fd 0) to see when it has input
+		FD_ZERO(&rfds);
+		FD_SET(0, &rfds);
+		rc = select(1, &rfds, nullptr, nullptr, &tv);
 
-        if (rc == -1) {
+		if (rc == -1) {
 
-            log_event(FATAL, "select: (%d) %s", errno, strerror(errno));
-            fprintf(stderr, "select: (%d) %s\n", errno, strerror(errno));
+			log_event(FATAL, "select: (%d) %s", errno, strerror(errno));
+			fprintf(stderr, "select: (%d) %s\n", errno, strerror(errno));
 
-        } else if (rc) {
+		} else if (rc) {
 
-            user_input = getchar();
-            if (user_input == 'q') {
-                break;
-            }
+			user_input = getchar();
+			if (user_input == 'q') {
+				break;
+			}
 
-        } else {
+		} else {
 
-            std::string fortune_output = exec_and_pipe(FORTUNE_EXE.c_str());
-            to_upper(fortune_output);
-            std::cout << fortune_output;
-            rand_wait();
-        }
-    }
+			std::string fortune_output = exec_and_pipe(FORTUNE_EXE.c_str());
+			to_upper(fortune_output);
+			std::cout << fortune_output;
+			rand_wait();
+		}
+	}
 
-    return OK;
+	return OK;
 }

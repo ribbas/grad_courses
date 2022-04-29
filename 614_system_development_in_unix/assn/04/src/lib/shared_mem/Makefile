@@ -23,7 +23,8 @@ LIB = $(SRC:%.cpp=lib%.a)
 # construct objects
 OBJ = $(SRC:.cpp=.o)
 
-.PHONY: it install depend clean
+.PHONY: default it install depend clean
+default: it
 
 it: $(LIB)
 $(LIB): $(OBJ)

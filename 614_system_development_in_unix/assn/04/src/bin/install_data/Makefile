@@ -31,7 +31,8 @@ OBJ := $(SRC:%.cpp=%.o)
 # construct executables
 EXE := $(SRC:%.cpp=%)
 
-.PHONY: it install depend clean
+.PHONY: default it install depend clean
+default: it
 
 it: $(EXE)
 $(EXE): $(OBJ) $(DEP) depend

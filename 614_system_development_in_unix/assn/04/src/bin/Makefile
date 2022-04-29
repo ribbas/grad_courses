@@ -10,7 +10,8 @@ CXX ?= $(shell which c++)
 
 SUBDIRS := my_fortune install_data monitor_shm install_and_monitor
 
-.PHONY: it install depend clean $(SUBDIRS)
+.PHONY: default it install depend clean $(SUBDIRS)
+default: it
 
 # target to propagate make through all the subdirectories
 $(SUBDIRS):

@@ -19,79 +19,79 @@
 const int SHM_ARRAY_SIZE = 20;
 
 typedef struct {
-    int is_valid;
-    float x;
-    float y;
+	int is_valid;
+	float x;
+	float y;
 } shm_struct;
 
 void monitor(int duration, shm_struct* shm_array) {
 
-    int time_elapsed = 0;
+	int time_elapsed = 0;
 
-    // count of the active array elements (i.e. valid)
-    int num_valid = 0;
-    // the average x and y values over the active array elements
-    float x_ave = 0.0, y_ave = 0.0;
+	// count of the active array elements (i.e. valid)
+	int num_valid = 0;
+	// the average x and y values over the active array elements
+	float x_ave = 0.0, y_ave = 0.0;
 
-    while (time_elapsed < duration) {
+	while (time_elapsed < duration) {
 
-        if (!num_valid) {
+		if (!num_valid) {
 
-            printf("At time: %d: no elements are active\n", time_elapsed);
+			printf("At time: %d: no elements are active\n", time_elapsed);
 
-        } else {
+		} else {
 
-            printf("At time: %d: %d elements are active: x = %f, y = %f\n",
-                   time_elapsed, num_valid, x_ave, y_ave);
-        }
+			printf("At time: %d: %d elements are active: x = %f, y = %f\n",
+				   time_elapsed, num_valid, x_ave, y_ave);
+		}
 
-        num_valid = 0;
-        x_ave = 0.0;
-        y_ave = 0.0;
-        time_elapsed++;
+		num_valid = 0;
+		x_ave = 0.0;
+		y_ave = 0.0;
+		time_elapsed++;
 
-        sleep(1);
+		sleep(1);
 
-        for (int i = 0; i < SHM_ARRAY_SIZE; i++) {
-            if (shm_array[i].is_valid) {
-                num_valid += shm_array[i].is_valid;
-                x_ave += shm_array[i].x;
-                y_ave += shm_array[i].y;
-            }
-        }
+		for (int i = 0; i < SHM_ARRAY_SIZE; i++) {
+			if (shm_array[i].is_valid) {
+				num_valid += shm_array[i].is_valid;
+				x_ave += shm_array[i].x;
+				y_ave += shm_array[i].y;
+			}
+		}
 
-        // prevent divide-by-zero
-        if (num_valid) {
-            x_ave /= num_valid;
-            y_ave /= num_valid;
-        }
-    }
+		// prevent divide-by-zero
+		if (num_valid) {
+			x_ave /= num_valid;
+			y_ave /= num_valid;
+		}
+	}
 }
 
 int main(int argc, char* argv[]) {
 
-    set_logfile("monitor_shm.log");
-    int monitor_duration = 30;
+	set_logfile("monitor_shm.log");
+	int monitor_duration = 30;
 
-    // if wrong number of arguments
-    if (argc > 2) {
+	// if wrong number of arguments
+	if (argc > 2) {
 
-        log_event(FATAL, "Invalid number of arguments provided");
-        fprintf(stderr, "Invalid number of arguments provided\n");
-        return ERROR;
+		log_event(FATAL, "Invalid number of arguments provided");
+		fprintf(stderr, "Invalid number of arguments provided\n");
+		return ERROR;
 
-    } else if (argc == 2) {
+	} else if (argc == 2) {
 
-        monitor_duration = std::stoi(argv[1]);
-    }
+		monitor_duration = std::stoi(argv[1]);
+	}
 
-    int mem_key = ftok(FTOK_PATH, 1);
-    shm_struct* shm_array =
-        (shm_struct*)connect_shm(mem_key, sizeof(shm_struct));
+	int mem_key = ftok(FTOK_PATH, 1);
+	shm_struct* shm_array =
+		(shm_struct*)connect_shm(mem_key, sizeof(shm_struct));
 
-    monitor(monitor_duration, shm_array);
+	monitor(monitor_duration, shm_array);
 
-    detach_shm((void*)shm_array);
+	detach_shm((void*)shm_array);
 
-    return OK;
+	return OK;
 }
