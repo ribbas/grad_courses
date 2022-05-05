@@ -1,8 +1,8 @@
 CC = gcc
-CFLAGS = -Wall -Wextra
+CFLAGS = -Wall -Wextra -lrt
 # DEP = vm.h
-OBJ = msgq_send.o msgq_recv.o
-EXE = msgq_send msgq_recv
+OBJ = server.o client.o
+EXE = server client
 
 all: $(EXE)
 
