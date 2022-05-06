@@ -1,13 +1,9 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -lrt
-# DEP = vm.h
-OBJ = server.o client.o
-EXE = server client
+EXE = server listener
 
 all: $(EXE)
 
-# %.o: %.c
-# 	$(CC) -c -o $@ $< $(CFLAGS)
 
 $(EXE):
 	$(CC) $@.c -o $@ $^ $(CFLAGS)

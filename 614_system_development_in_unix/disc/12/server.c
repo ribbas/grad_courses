@@ -4,39 +4,36 @@
 #include <string.h>
 #include <sys/stat.h>
 
-#define MESSAGE_PRIO 0
+int main() {
 
-int main(void) {
-    mqd_t MQDes;
-    int ret;
-    char Message[100];
-    char MQName[10] = "/USER_MQ";
-
-    MQDes = mq_open(MQName, O_RDWR | O_CREAT | O_EXCL, 777, NULL);
-    if (MQDes == -1) {
+    mqd_t mqd = mq_open("/USER_MQ", O_RDWR | O_CREAT | O_EXCL, 777, NULL);
+    if (mqd == -1) {
         perror("server mq_open");
         return -1;
     }
 
-    printf("Enter your inputs line by line.\nTo Exit, type 'EXIT' .\n");
-    do {
-        scanf("%s", Message);
+    char msg[16];
+    printf("Notify the client with a message (under 16 chars)\n");
+    while (1) {
 
-        ret = mq_send(MQDes, Message, sizeof(Message), MESSAGE_PRIO);
-        if (ret == -1) {
+        scanf("%s", msg);
+        if (mq_send(mqd, msg, sizeof(msg), 0) == -1) {
             perror("mq_send");
             return -1;
         }
-    } while (strcasecmp(Message, "EXIT"));
 
-    ret = mq_close(MQDes);
-    if (ret == -1) {
+        if (strcasecmp(msg, "q") == 0) {
+            printf("Server is done sending messages\n");
+            break;
+        }
+    }
+
+    if (mq_close(mqd) == -1) {
         perror("mq_close");
         return -1;
     }
 
-    ret = mq_unlink(MQName);
-    if (ret == -1) {
+    if (mq_unlink("/USER_MQ") == -1) {
         perror("mq_unlink");
         return -1;
     }
