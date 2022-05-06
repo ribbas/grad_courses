@@ -1,14 +1,19 @@
-#include <fcntl.h>
+/*
+ * notifier.c
+ * 
+ * This file is the server portion of the simple example for mq_notify.
+ *
+ */
+
 #include <mqueue.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/stat.h>
 
 int main() {
 
     mqd_t mqd = mq_open("/USER_MQ", O_RDWR | O_CREAT | O_EXCL, 777, NULL);
     if (mqd == -1) {
-        perror("server mq_open");
+        perror("mq_open");
         return -1;
     }
 
@@ -23,7 +28,7 @@ int main() {
         }
 
         if (strcasecmp(msg, "q") == 0) {
-            printf("Server is done sending messages\n");
+            printf("Notifier is done sending messages\n");
             break;
         }
     }

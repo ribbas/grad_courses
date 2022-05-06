@@ -1,9 +1,15 @@
-#include <fcntl.h>
+/*
+ * listener.c
+ * 
+ * This file is the client portion of the simple example for mq_notify.
+ *
+ */
+
+#include <ctype.h>
 #include <mqueue.h>
 #include <signal.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/stat.h>
 #include <unistd.h>
 
 mqd_t Mqd;
@@ -13,13 +19,12 @@ struct sigevent Signal;
 
 void recv_msg() {
 
-    char msg[16];
-
     if (mq_getattr(Mqd, &Mq_Struct) == -1) {
         perror("mq_getattr");
         return;
     }
 
+    char msg[16];
     if (mq_receive(Mqd, msg, Mq_Struct.mq_msgsize, 0) == -1) {
         perror("mq_receive");
         return;
@@ -32,7 +37,12 @@ void recv_msg() {
 
     } else {
 
+        size_t i;
+        for (i = 0; i < strlen(msg); i++) {
+            msg[i] = toupper(msg[i]);
+        }
         printf("%s\n", msg);
+
         if (mq_getattr(Mqd, &Mq_Struct) == -1) {
             perror("mq_getattr");
             return;
@@ -60,7 +70,7 @@ int main() {
         return -1;
     }
 
-    printf("Messages from the server:\n");
+    printf("Messages from the notifier:\n");
     Signal.sigev_notify = SIGEV_THREAD;
     Signal.sigev_notify_function = recv_msg;
 
@@ -69,8 +79,7 @@ int main() {
         return -1;
     }
 
-    while (Quit_Flag != 1)
-        ;
+    while (Quit_Flag != 1);
 
     return 0;
 }
