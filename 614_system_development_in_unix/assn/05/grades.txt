@@ -1,0 +1,32 @@
+# Student One (out of 100): 99
+
+## Project directory structure and Makefiles (out of 10): 10
+
+## Correctness of the libraries (out of 30): 30
+
+## Program organization, style, and general correctness (out of 40): 39
+- (-1) Some global variables are not capitalized and do not follow the style guide (e.g. probe, key_array, etc.)
+- (-0) Command line argument `cavern id` has the unnecessary restriction of being a non-negative integer. The argument is used as a seed for `srand()` which implicitly converts it into an unsigned integer. Similarly with `port number`, however, it is a good check to prevent an invalid socket number.
+
+## The percentage of the cavern which was mapped (out of 15): 15
+
+## The move/space ratio (out of 5): 5
+
+--------------------------------------------------------------------------------------------------
+
+# Student Two (out of 100): 93
+
+## Project directory structure and Makefiles (out of 10): 9
+- (-1) Typo in Makefile for the 'depend' recipe flags (-xM instead of -M)
+
+## Correctness of the libraries (out of 30): 30
+
+## Program organization, style, and general correctness (out of 40): 37
+- (-2) Command line argument variable `cavern id` was of invalid type `int *` instead of `int`. This caused seg faults during runtime.
+- (-1) Some global variables are not capitalized and do not follow the style guide (e.g. `g`, `sock`, etc.)
+- (-0) Although not mandated by the assignment prompt, there should be a check on the `shared memory key` command line argument to be a valid non-negative integer.
+
+## The percentage of the cavern which was mapped (out of 15): 15
+
+## The move/space ratio (out of 5): 2
+- (-3) The average ratio tends towards >6.0
