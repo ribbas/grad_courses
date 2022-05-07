@@ -34,7 +34,7 @@ main(int argc, char *argv[]) {
     int numRead, counter = 0, moveBackResult, backUpResult;
     int c;
     int portNumber = 10000;
-    int *cavernNumber = malloc(sizeof (int));
+    int cavernNumber = 0;
     long oldFlag;
     Coordinate nextLoc;
     Coordinate newLoc;
@@ -53,7 +53,7 @@ main(int argc, char *argv[]) {
             case 'P':
                 portNumber = atoi(optarg); break;
             case 'c':
-                cavernNumber = (int *) atoi(optarg); break;
+                cavernNumber = atoi(optarg); break;
             default:
                 printf("c = %d\n", c); break;
         }
@@ -82,7 +82,7 @@ main(int argc, char *argv[]) {
     log_event(INFO, "Connection to port (%d) on host (localhost).", portNumber);
 
     message.msg_type = MSG_INSERT_PROBE;
-    message.msg.insert.cavern = *cavernNumber;
+    message.msg.insert.cavern = cavernNumber;
     sendMessage(&message);
  
     currLoc.row = MAXROW - 1;

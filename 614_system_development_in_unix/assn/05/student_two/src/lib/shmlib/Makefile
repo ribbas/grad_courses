@@ -37,7 +37,7 @@ bare: clean
 	rm -f ${LIBDIR}/${PROGRAM}
 
 depend: ${SRC}
-	${CC} -xM ${SRC} > dependList
+	${CC} -M ${SRC} > dependList
 	sed -e '1,/^# DO NOT DELETE/!d' Makefile > make.tmp
 	cat dependList >> make.tmp
 	mv make.tmp Makefile

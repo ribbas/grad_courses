@@ -1,3 +1,16 @@
-1. Typo in Makefile for the 'depend' recipe flag
-2. `make clean it install` fails
-1. Command line arguments are not (or improperly) implemented.
+# Project directory structure and Makefiles (out of 10): 9
+
+- (-1) Typo in Makefile for the 'depend' recipe flags (-xM instead of -M)
+
+# Correctness of the libraries (out of 30): 30
+
+# Program organization, style, and general correctness (out of 40): 37
+
+- (-2) Command line argument variable `cavern id` was of invalid type `int *` instead of `int`. This caused seg faults during runtime.
+- (-1) Some global variables are not capitalized and do not follow the style guide (e.g. `g`, `sock`, etc.)
+
+# The percentage of the cavern which was mapped (out of 15): 15
+
+# The move/space ratio (out of 5): 3
+
+- (-2) The average ratio tends towards >6.0

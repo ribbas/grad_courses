@@ -5,6 +5,7 @@
 # Program organization, style, and general correctness (out of 40): 39
 
 - (-1) Some global variables are not capitalized and do not follow the style guide (e.g. probe, key_array, etc.)
+- (-0) Command line argument `cavern_id` has the unnecessary restriction of being a non-negative integer. The argument is used as a seed for `srand()` which implicitly converts it into an unsigned integer.
 
 # The percentage of the cavern which was mapped (out of 15): 15
 
