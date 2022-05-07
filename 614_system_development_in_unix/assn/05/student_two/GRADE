@@ -1,0 +1,3 @@
+1. Typo in Makefile for the 'depend' recipe flag
+2. `make clean it install` fails
+1. Command line arguments are not (or improperly) implemented.

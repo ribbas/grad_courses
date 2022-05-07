@@ -1,0 +1,11 @@
+# Project directory structure and Makefiles (out of 10): 10
+
+# Correctness of the libraries (out of 30): 30
+
+# Program organization, style, and general correctness (out of 40): 39
+
+- (-1) Some global variables are not capitalized and do not follow the style guide (e.g. probe, key_array, etc.)
+
+# The percentage of the cavern which was mapped (out of 15): 15
+
+# The move/space ratio (out of 5): 5
