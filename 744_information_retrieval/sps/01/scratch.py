@@ -45,10 +45,13 @@ def intersect(p1, p2):
             answer.add(dic.docID(p1))
             p1 = dic.next(p1)
             p2 = dic.next(p2)
-        elif dic.docID(p1) < dic.docID(p2):
-            p1 = dic.next(p1)
+
         else:
-            p2 = dic.next(p2)
+            if dic.docID(p1) < dic.docID(p2):
+                p1 = dic.next(p1)
+            else:
+                p2 = dic.next(p2)
+
     return answer
 
 
@@ -76,12 +79,25 @@ print(t1, "AND", t2)
 print(intersect(p1, p2))
 
 
-def intersect2(p1, p2):
+def difference(p1, p2):
 
     answer = set()
-    for p in p1:
-        if p not in p2:
-            answer.add(p)
+    while p1:
+        if dic.docID(p1) == dic.docID(p2):
+            p1 = dic.next(p1)
+            p2 = dic.next(p2)
+
+        else:
+            if dic.docID(p1) < dic.docID(p2):
+                answer.add(dic.docID(p1))
+                p1 = dic.next(p1)
+            else:
+                p2 = dic.next(p2)
+
+        if not p2:
+            while p1:
+                answer.add(dic.docID(p1))
+                p1 = dic.next(p1)
 
     return answer
 
@@ -93,4 +109,4 @@ p2 = dic.postings(t2)
 # schizophrenia AND NOT drug
 # expecting {3, 4}
 print(t1, "AND NOT", t2)
-print(intersect2(p1, p2))
+print(difference(p1, p2))
