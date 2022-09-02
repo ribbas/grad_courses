@@ -62,29 +62,26 @@ dic.add(doc1)
 dic.add(doc2)
 dic.add(doc3)
 dic.add(doc4)
-print(dic.get())
 
-t1 = "drug"
-t2 = "new"
+t1 = "schizophrenia"
+t2 = "drug"
 
 p1 = dic.postings(t1)
 p2 = dic.postings(t2)
+print(p1, p2)
 
 # schizophrenia AND drug
 # expecting {1, 2}
+print(t1, "AND", t2)
 print(intersect(p1, p2))
 
 
 def intersect2(p1, p2):
 
     answer = set()
-    while p1:
-        print(dic.docID(p1), dic.docID(p2))
-        if dic.docID(p1) not in p2:
-            answer.add(dic.docID(p1))
-            p1 = dic.next(p1)
-        else:
-            p1 = dic.next(p1)
+    for p in p1:
+        if p not in p2:
+            answer.add(p)
 
     return answer
 
@@ -92,8 +89,8 @@ def intersect2(p1, p2):
 p1 = dic.postings(t1)
 p2 = dic.postings(t2)
 
-print(p1, p2)
 
 # schizophrenia AND NOT drug
 # expecting {3, 4}
+print(t1, "AND NOT", t2)
 print(intersect2(p1, p2))

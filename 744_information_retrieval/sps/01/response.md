@@ -53,6 +53,17 @@ INTERSECT2(p1, p2)
             then p1 ← next(p1)
             else p2 ← next(p2)
     return answer
+
+INTERSECT2(p1, p2):
+
+    answer ← <>
+    for element p in p1
+        if docID(p) not in p2
+            then ADD(answer, docID(p))
+
+    return answer
+
+
 ```
 
 4. [20%] Give one specific and clear example of a word where case-folding (i.e., lower-casing text) can cause an IR system to make an error that would not normally occur if case distinctions were retained. Briefly explain the error.
