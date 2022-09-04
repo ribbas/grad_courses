@@ -17,9 +17,9 @@ Doc1 = {apple, oranges, banana}
 Doc2 = {denim, nylon, silk}
 Doc3 = {apple, bottom, denim}
 
-The disjunctive clause: `"apple OR denim"` will yield `result = {Doc1, Doc2, Doc3}`. "apple" is found in both Doc1 and Doc3, but not Doc2. However, the other term "denim" is found in Doc2 (as well as Doc3, which has already been added to the results set).
+The disjunctive clause: `"apple OR denim"` will yield \\( $result = {Doc1, Doc2, Doc3}$ \\). "apple" is found in both Doc1 and Doc3, but not Doc2. However, the other term "denim" is found in Doc2 (as well as Doc3, which has already been added to the results set).
 
-The conjunctive clause: `"apple AND denim"` will yield `result = {Doc3}`. "apple" is found in both Doc1 and Doc3, but not Doc2. The other term "denim" is found in Doc2 and Doc3. Making an intersection of the 2 results sets: `{Doc1, Doc3} ∩ {Doc2, Doc3}` yields `{Doc3}` as the final result set.
+The conjunctive clause: `"apple AND denim"` will yield $result = {Doc3}$. "apple" is found in both Doc1 and Doc3, but not Doc2. The other term "denim" is found in Doc2 and Doc3. Making an intersection of the 2 results sets: ${Doc1, Doc3} \cap {Doc2, Doc3}$ yields ${Doc3}$ as the final result set.
 
 3. [20%] Section 1.3 in IIR describes how two postings lists of lengths $x$ and $y$ can be merged in a conjunctive Boolean query in $O(x+y)$ operations (see Figure 1.6). Describe how the Intersect algorithm could be modified to handle queries where one term is negated. For example: "PIE AND NOT PEACH" which should return all docIDs that have PIE but do not also contain PEACH. Your modified algorithm should have a similar fast computational complexity even if "NOT PEACH" matches 10x more documents than "PEACH". Note: no program needs to be written or submitted to answer this question.
 
