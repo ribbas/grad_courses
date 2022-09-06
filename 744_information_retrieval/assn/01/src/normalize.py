@@ -61,7 +61,7 @@ CONTRACTIONS: dict[str, str] = {
 }
 
 
-class Preprocessor:
+class Normalizer:
     def __init__(self) -> None:
 
         self.__document: str = ""

@@ -29,7 +29,9 @@ class Lexer:
 
         return len(self.__tf)
 
-    def get_top_n_tf_df(self, n: int) -> Generator[tuple[str, int, int], None, None]:
+    def get_top_n_tf_df(
+        self, n: int
+    ) -> Generator[tuple[str, int, int], None, None]:
 
         top_n_tf = self.__tf.most_common(n)
         for tf in top_n_tf:

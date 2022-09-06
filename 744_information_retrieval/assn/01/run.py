@@ -1,14 +1,15 @@
-from src.io import print_stats
-from src.normalize import Preprocessor
-from src.stats import Lexer
+from src.io import IO
+from src.normalize import Normalizer
+from src.lexer import Lexer
 
 
 if __name__ == "__main__":
 
     def process_document(filename: str) -> None:
 
-        prep = Preprocessor()
+        prep = Normalizer()
         lex = Lexer()
+        io = IO()
 
         line_num = 0
         num_docs = 0
@@ -26,7 +27,7 @@ if __name__ == "__main__":
                         pass
                 line_num += 1
 
-        print_stats(filename[:-4], num_docs, lex)
+        io.print_stats(filename[:-4], num_docs, lex)
 
     process_document("yelp.txt")
     process_document("headlines.txt")
