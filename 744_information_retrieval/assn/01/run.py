@@ -16,13 +16,9 @@ def gen_freq(filename: str) -> None:
                 case 0:
                     num_docs += 1
                 case 1:
-                    try:
-                        prep.set_document(line)
-                        prep.process()
-                        lex.add(prep.get_tokens())
-                    except Exception as e:
-                        print(num_docs, e, line)
-                        exit()
+                    prep.set_document(line)
+                    prep.process()
+                    lex.add(prep.get_tokens())
                 case _:
                     pass
             line_num += 1
