@@ -82,17 +82,17 @@ class Preprocessor:
 
         return CONTRACTIONS.get(token, token)
 
-    def __split_document(self) -> None:
+    def __split_document(self, document: str) -> list[str]:
 
-        self.__tokens = self.__document.split(" ")
+        return document.split(" ")
 
     def __remove_punc(self, tokens: str) -> list[str]:
 
         return self.__punc_re.split(tokens)
 
-    def __to_lower_case(self) -> None:
+    def __to_lower_case(self, document: str) -> str:
 
-        self.__document = self.__document.lower()
+        return document.lower()
 
     def get_tokens(self) -> list[str]:
 
@@ -100,13 +100,15 @@ class Preprocessor:
 
     def process(self) -> None:
 
-        self.__to_lower_case()
-        self.__split_document()
+        self.__document = self.__to_lower_case(self.__document)
+        self.__tokens = self.__split_document(self.__document)
 
         temp_str: str = ""
         for token in self.__tokens:
             temp_str += self.__translate_contractions(token) + " "
 
         no_puncs: list[str] = self.__remove_punc(temp_str)
-        no_empty: Iterable[str] = filter(None, " ".join(no_puncs).split(" "))
+        no_empty: Iterable[str] = filter(
+            None, self.__split_document(" ".join(no_puncs))
+        )
         self.__tokens = self.__basic_stem(no_empty)
