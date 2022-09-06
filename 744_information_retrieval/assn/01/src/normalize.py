@@ -1,7 +1,4 @@
 from string import punctuation
-from collections import Counter
-import json
-from typing import Any
 
 CONTRACTIONS: dict[str, list[str]] = {
     "aren't": ["are", "not"],
@@ -58,26 +55,6 @@ CONTRACTIONS: dict[str, list[str]] = {
 }
 
 
-class Lexer:
-    def __init__(self) -> None:
-
-        self.__tf: Counter[str] = Counter()
-        self.__df: Counter[str] = Counter()
-
-    def add(self, tokens: list[str]) -> None:
-
-        self.__tf.update(tokens)
-        self.__df.update(set(tokens))
-
-    def get_tf(self) -> Counter[str]:
-
-        return self.__tf
-
-    def get_df(self) -> Counter[str]:
-
-        return self.__df
-
-
 class Preprocessor:
     def __init__(self) -> None:
 
@@ -125,44 +102,3 @@ class Preprocessor:
     def get_tokens(self) -> list[str]:
 
         return self.__tokens
-
-
-def save_freq(filename: str, data: Any) -> None:
-
-    with open(filename, "w") as fp:
-        json.dump(data, fp)
-
-
-def gen_freq(filename: str) -> tuple[Counter[str], Counter[str]]:
-
-    prep = Preprocessor()
-    lex = Lexer()
-
-    line_num = 0
-    num_docs = 0
-
-    with open(filename) as fp:
-        for line in fp:
-            match line_num % 4:
-                case 0:
-                    num_docs += 1
-                case 1:
-                    prep.set_document(line)
-                    prep.process()
-                    lex.add(prep.get_tokens())
-                case _:
-                    pass
-            line_num += 1
-
-    print("Processed", num_docs, "documents.")
-    return lex.get_tf(), lex.get_df()
-
-
-# def gen_freq(filename:str)->None:
-
-
-if __name__ == "__main__":
-
-    tf, df = gen_freq("yelp.txt")
-    save_freq("yelp_tf.json", tf)
-    save_freq("yelp_df.json", df)
