@@ -1,4 +1,5 @@
 from string import punctuation
+import re
 
 CONTRACTIONS: dict[str, list[str]] = {
     "aren't": ["are", "not"],
@@ -13,10 +14,10 @@ CONTRACTIONS: dict[str, list[str]] = {
     "he'd": ["he", "had"],
     "he'll": ["he", "will"],
     "he's": ["he", "is"],
-    "I'd": ["I", "had"],
-    "I'll": ["I", "will"],
-    "I'm": ["I", "am"],
-    "I've": ["I", "have"],
+    "i'd": ["i", "had"],
+    "i'll": ["i", "will"],
+    "i'm": ["i", "am"],
+    "i've": ["i", "have"],
     "isn't": ["is", "not"],
     "let's": ["let", "us"],
     "mightn't": ["might", "not"],
@@ -60,6 +61,7 @@ class Preprocessor:
 
         self.document: str = ""
         self.__tokens: list[str] = []
+        self.__punc_re = re.compile("[!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~]")
 
     def set_document(self, document: str) -> None:
 
@@ -72,14 +74,14 @@ class Preprocessor:
         for ix, token in enumerate(self.__tokens):
             temp = self.__translate_contractions(token)
             temp = self.__remove_punc(temp)
-            self.__tokens[ix] = temp
+            self.__tokens[ix] = [item for sublist in temp for item in sublist]
 
         self.__tokens = [item for sublist in self.__tokens for item in sublist if item]
 
     def __translate_contractions(self, token: str) -> list[str]:
 
         if token in CONTRACTIONS:
-            return CONTRACTIONS[token]
+            return CONTRACTIONS[token].copy()
 
         return [token]
 
@@ -89,9 +91,8 @@ class Preprocessor:
 
     def __remove_punc(self, tokens: list[str]) -> list[str]:
 
-        for p in punctuation:
-            for ix, token in enumerate(tokens):
-                tokens[ix] = token.replace(p, "")
+        for ix, token in enumerate(tokens):
+            tokens[ix] = self.__punc_re.split(token)
 
         return tokens
 
