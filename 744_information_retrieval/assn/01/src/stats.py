@@ -1,5 +1,5 @@
 from collections import Counter
-import json
+from typing import Generator
 
 
 class Lexer:
@@ -21,14 +21,6 @@ class Lexer:
 
         return self.__df
 
-    def save_freq(self, filename: str) -> None:
-
-        with open(f"data/{filename}_tf.json", "w") as fp:
-            json.dump(self.__tf, fp)
-
-        with open(f"data/{filename}_df.json", "w") as fp:
-            json.dump(self.__df, fp)
-
     def get_collection_size(self) -> int:
 
         return self.__tf.total()
@@ -37,14 +29,23 @@ class Lexer:
 
         return len(self.__tf)
 
-    def print_top_100_tf_df(self) -> None:
+    def get_top_n_tf_df(self, n: int) -> Generator[tuple[str, int, int], None, None]:
 
-        top_100 = self.__tf.most_common(100)
-        for i in top_100:
-            term, freq = i
-            print(term, "|", freq, "|", self.__df[term])
+        top_n_tf = self.__tf.most_common(n)
+        for tf in top_n_tf:
+            term, freq = tf
+            yield term, freq, self.__df[term]
 
-    def get_nth_freq_term(self, n: int) -> str:
+    def get_nth_freq_term(self, n: int) -> tuple[str, int, int]:
 
         term, freq = self.__tf.most_common(n)[-1]
-        return f"{n}th word: {term} | {freq} | {self.__df[term]}"
+        return term, freq, self.__df[term]
+
+    def get_single_occs(self) -> int:
+
+        single_occs: int = 0
+        for df in self.__df.values():
+            if df == 1:
+                single_occs += 1
+
+        return single_occs

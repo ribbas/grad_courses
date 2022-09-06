@@ -5,6 +5,7 @@ import nltk
 
 CONTRACTIONS: dict[str, str] = {
     "aren't": "are not",
+    "ain't": "is not",
     "can't": "cannot",
     "couldn't": "could not",
     "didn't": "did not",
@@ -73,19 +74,6 @@ class Preprocessor:
 
         self.__document = document[:-1]
 
-    def process(self) -> None:
-
-        self.__to_lower_case()
-        self.__split_document()
-
-        temp_str: str = ""
-        for token in self.__tokens:
-            temp_str += self.__translate_contractions(token) + " "
-
-        no_puncs: list[str] = self.__remove_punc(temp_str)
-        no_empty: Iterable[str] = filter(None, " ".join(no_puncs).split(" "))
-        self.__tokens = self.__basic_stem(no_empty)
-
     def __basic_stem(self, tokens: Iterable[str]) -> list[str]:
 
         return [self.__sno.stem(token) for token in tokens]
@@ -109,3 +97,16 @@ class Preprocessor:
     def get_tokens(self) -> list[str]:
 
         return self.__tokens
+
+    def process(self) -> None:
+
+        self.__to_lower_case()
+        self.__split_document()
+
+        temp_str: str = ""
+        for token in self.__tokens:
+            temp_str += self.__translate_contractions(token) + " "
+
+        no_puncs: list[str] = self.__remove_punc(temp_str)
+        no_empty: Iterable[str] = filter(None, " ".join(no_puncs).split(" "))
+        self.__tokens = self.__basic_stem(no_empty)
