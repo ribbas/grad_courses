@@ -1,0 +1,47 @@
+@startuml
+
+skinparam linetype polyline
+skinparam linetype ortho
+
+namespace Corpus_Statistics {
+
+  class IO {
+    - table_header: str
+    - dump_json(filename: str, data: Any): None
+    - format_tf_df(term: str, tf: int, df: int): str
+    + print_stats(filename: str, num_docs: int, lex: Lexer): None
+  }
+
+  class Normalizer {
+    - document: str
+    - tokens: list[str]
+    - punc_re: re.Pattern[str]
+    - sno: nltk.stem.SnowballStemmer
+    - basic_stem(tokens: Iterable[str]): list[str]
+    - translate_contractions(token: str): str
+    - split_document(document: str): list[str]
+    - remove_punc(tokens: str): list[str]
+    - to_lower_case(document: str): str
+    + get_tokens(): list[str]
+    + process(): None
+  }
+
+  class Lexer {
+    - tf : Counter[str]
+    - df : Counter[str]
+    + add(tokens: list[str]): None
+    + get_tf(): Counter[str]
+    + get_df(): Counter[str]
+    + get_collection_size(): int
+    + get_vocab_size(): int
+    + get_top_n_tf_df(n: int): Generator[tuple[str, int, int], None, None]
+    + get_nth_freq_term(n: int): tuple[str, int, int]
+    + get_single_occs(): int
+  }
+  
+
+  IO -- Lexer
+
+}
+
+@enduml

@@ -31,7 +31,7 @@ This paper describes a collection of scripts written to compute the term-frequen
 \section{Technical Background}
 All of the source code is in Python 3.10. The program is split into several modules and follows an object oriented structure. The following is the directory structure of the source code:
 
-\begin{figure}[!h]
+\begin{figure}[!ht]
     \caption{Directory Hierarchy of Assignment 1}
     \centering
     \includegraphics[scale=0.2]{statics/dirtree.png}
@@ -40,6 +40,12 @@ All of the source code is in Python 3.10. The program is split into several modu
 The source code for all of the files are attached in Appendix \ref{appendix:src}.
 
 The total number of non-empty lines of code for the program comes to 200, with an average execution time of 40 seconds to process both of the sample files.
+
+\begin{figure}[!ht]
+    \caption{UML of Corpus Statistics}
+    \centering
+    \includegraphics[scale=0.6]{statics/uml.png}
+\end{figure}
 
 \subsection{Driver} \label{sec:driver}
 The driver script for the program is \texttt{run.py}. The file is responsible for opening up the input files, reading in all of the documents contained in those files, processing them into the lexicon, and generating and saving statistics on them. Since the sample files are relatively small, the entire content may be loaded into the memory of a modern machine. However, to account for possible larger files, the lines containing the documents are saved in memory, normalized, and added to the lexicon before moving to the next document.

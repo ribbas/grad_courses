@@ -6,7 +6,7 @@ from .lexer import Lexer
 
 class IO:
 
-    table_header: str = (
+    __table_header: str = (
         f"{'Word':<12} | {'TF':<6} | {'DF':<6}\n----------------------------"
     )
 
@@ -39,23 +39,23 @@ class IO:
             print("\n----------------------------", file=fp)
 
             print("Top 100 most frequent words:", file=fp)
-            print(IO.table_header, file=fp)
+            print(IO.__table_header, file=fp)
             for term in lex.get_top_n_tf_df(100):
                 print(IO.__format_tf_df(*term), file=fp)
 
             print("\n----------------------------", file=fp)
             print("500th word:", file=fp)
-            print(IO.table_header, file=fp)
+            print(IO.__table_header, file=fp)
             print(IO.__format_tf_df(*lex.get_nth_freq_term(500)), file=fp)
 
             print("\n----------------------------", file=fp)
             print("1000th word:", file=fp)
-            print(IO.table_header, file=fp)
+            print(IO.__table_header, file=fp)
             print(IO.__format_tf_df(*lex.get_nth_freq_term(1000)), file=fp)
 
             print("\n----------------------------", file=fp)
             print("5000th word:", file=fp)
-            print(IO.table_header, file=fp)
+            print(IO.__table_header, file=fp)
             print(IO.__format_tf_df(*lex.get_nth_freq_term(5000)), file=fp)
 
             print("\n----------------------------", file=fp)

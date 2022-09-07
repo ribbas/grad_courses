@@ -67,8 +67,12 @@ class Normalizer:
         self.__document: str = ""
         self.__tokens: list[str] = []
 
-        self.__punc_re = re.compile('[!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~]')
-        self.__sno = nltk.stem.SnowballStemmer("english")
+        self.__punc_re: re.Pattern[str] = re.compile(
+            '[!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~]'
+        )
+        self.__sno: nltk.stem.SnowballStemmer = nltk.stem.SnowballStemmer(
+            "english"
+        )
 
     def set_document(self, document: str) -> None:
 
