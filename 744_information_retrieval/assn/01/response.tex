@@ -82,6 +82,8 @@ Since stopwords were not removed, they were prominent in the 100 most frequent t
 
 Both of the corpora had an almost identical percentage of singly-occurring terms (~48.8\%). These are terms that appeared in only one document.
 
+The outputs are attached in Appendix \ref{appendix:outputs}.
+
 \appendix
 
 \section{Source Code} \label{appendix:src}
@@ -91,5 +93,10 @@ Both of the corpora had an almost identical percentage of singly-occurring terms
 \inputpython{./src/lexer.py}{./src/lexer.py}
 
 \inputpython{./run.py}{./run.py}
+
+\section{Outputs} \label{appendix:outputs}
+
+\lstinputlisting[caption=Statistics of 'yelp.txt',basicstyle=\small]{./data/yelp_stats.txt}
+\lstinputlisting[caption=Statistics of 'headlines.txt',basicstyle=\small]{./data/headlines_stats.txt}
 
 \end{document}
