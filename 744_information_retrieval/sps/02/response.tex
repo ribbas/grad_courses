@@ -49,13 +49,34 @@
 
         The Dice-coefficient is: $2|X \cap Y| / (|X|+|Y|)$. Then, \[ 2(2) / (7 + 9) = 4 / 16 = 0.25 \]
 
-        The Dice-coefficient for 3-grams are higher.
+        The Dice-coefficient for 3-grams is higher.
 
         \item (30\%) Compute the edit distance (or Levenshtein distance) for these two pairs of strings: (a) "CHEBYSHEV" and "TSCHEBYSCHEF"; and (b) "LEVINSTINE" and "LEVENSHTEIN". Then report a sequence of transformations for that cost that converts one string into the other. You should use unit costs for each operation: insertion, deletion, or substitution; that is, each step has a cost of 1. Note, you do not need to write a program or produce any code for this problem - these examples can be easily determined by pencil and paper - you do not need to construct a table as the example in the textbook.
 
         Trivia: Computing edit distance is a classic dynamic programming problem with an $O(N^2)$ complexity. However, the decision problem "Do strings $x$ and $y$ (say each of length $N$) have an edit distance $<= k$ can be solved in $O(kN)$, which is subquadratic. See: Esko Ukkonen's paper 'Algorithms for approximate string matching' (1985).
 
         \textbf{Answer:}
+
+        \begin{enumerate}
+            \item "CHEBYSHEV" and "TSCHEBYSCHEF"
+            \begin{enumerate}
+                \item Insert T: $\text{"\_CHEBYSHEV" -> "TCHEBYSHEV"}$
+                \item Insert S: $\text{"T\_CHEBYSHEV" -> "TSCHEBYSHEV"}$
+                \item Insert C: $\text{"TSCHEBYS\_HEV" -> "TSCHEBYSCHEV"}$
+                \item Substitute F with V: $\text{"TSCHEBYSCHE\underline{V}" -> "TSCHEBYSCHEF"}$
+            \end{enumerate}
+            The edit distance is 4.
+
+            \item "LEVINSTINE" and "LEVENSHTEIN"
+            \begin{enumerate}
+                \item Substitute I with E: $\text{"LEV\underline{I}NSTINE" -> "LEVENSTINE"}$
+                \item Insert H: $\text{"LEVENS\_TINE" -> "LEVENSHTINE"}$
+                \item Insert E: $\text{"LEVENSHT\_INE" -> "LEVENSHTEINE"}$
+                \item Delete E: $\text{"LEVENSHTEIN\underline{E}" -> "LEVENSHTEIN"}$
+            \end{enumerate}
+            The edit distance is 4.
+
+        \end{enumerate}
 
         \item (30\%) Following the method described in the textbook (or lecture materials), calculate Soundex codes for the strings: (a) "Stanford" and (b) "Georgetown"? Show intermediate steps to produce the final code.
 
