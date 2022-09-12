@@ -3,6 +3,7 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{listings}
+\usepackage{array}
 
 % Margins
 \topmargin=-0.45in
@@ -12,7 +13,7 @@
 \textheight=9.0in
 \headsep=0.25in
 
-\title{605.744: Information Retrieval \\ Problem Set (Module 2)}
+\title{605.744: Information Retrieval \\ Problem Set (Module 3)}
 \author{Sabbir Ahmed}
 \date{\today}
 
@@ -21,85 +22,72 @@
 
     \begin{enumerate}
 
-        \item (10\%) What advantage(s) do balanced binary trees have over hashtables when used to store our dictionary of indexing terms?
-
-        \textbf{Answer:}
-
-        One major advantage that balanced trees have over hash tables are their performance in terms of memory usage. Trees can be constructed and easily expanded to account for new data, whereas hash tables need to initialize its container size with a maximum capacity that has to resize with additional data. Another advantage is that the keys are stored in a sorted manner in a tree and retrieving them would not require additional operations, while hash tables are not sorted. 
-
-        \item (30\%) Character n-gram overlap is used for both automated spelling correction and name matching (i.e., deciding whether two names might be the same, a common database problem known as "record linkage"). Using a character 3-gram representation, how many distinct n-grams do "CHEONGSONG" and "CHEONMACHONG" have in common? What is the Dice-coefficient score for these two strings using 3-grams? What is the Dice score using 4-grams instead? Which score is higher? Note: although there is nothing conceptually wrong in doing so, for this problem, do not use "padded" n-grams (e.g., '\$' or '\_' symbols marking the beginning and end of the strings).
-
-        \textbf{Answer:}
-        
-        The following are the 3-grams of:
-        
-        "CHEONGSONG": \[ X = \{CHE, HEO, EON, ONG, NGS, GSO, SON\}, |X| = 7 \]
-
-        "CHEONMACHONG": \[ Y = \{CHE, HEO, EON, ONM, NMA, MAC, ACH, CHO, HON, ONG\}, |Y| = 10 \]
-
-        Both of the words: \[ X \cap Y = \{CHE, HEO, EON, ONG\}, |X \cap Y| = 4 \]
-
-        The Dice-coefficient is computed with the formula: $2|X \cap Y| / (|X|+|Y|)$. Then, \[ 2(4) / (7 + 10) = 8 / 17 = 0.47 \]
-
-        The following are the 4-grams of:
-        
-        "CHEONGSONG": \[ X = \{CHEO, HEON, EONG, ONGS, NGSO, GSON, SONG\}, |X| = 7 \]
-
-        "CHEONMACHONG": \[ Y = \{CHEO, HEON, EONM, ONMA, NMAC, MACH, ACHO, CHON, HONG\}, |Y| = 9 \]
-
-        Both of the words: \[ X \cap Y = \{CHEO, HEON\}, |X \cap Y| = 2 \]
-
-        The Dice-coefficient is: $2|X \cap Y| / (|X|+|Y|)$. Then, \[ 2(2) / (7 + 9) = 4 / 16 = 0.25 \]
-
-        The Dice-coefficient for 3-grams is higher.
-
-        \item (30\%) Compute the edit distance (or Levenshtein distance) for these two pairs of strings: (a) "CHEBYSHEV" and "TSCHEBYSCHEF"; and (b) "LEVINSTINE" and "LEVENSHTEIN". Then report a sequence of transformations for that cost that converts one string into the other. You should use unit costs for each operation: insertion, deletion, or substitution; that is, each step has a cost of 1. Note, you do not need to write a program or produce any code for this problem - these examples can be easily determined by pencil and paper - you do not need to construct a table as the example in the textbook.
-
-        Trivia: Computing edit distance is a classic dynamic programming problem with an $O(N^2)$ complexity. However, the decision problem "Do strings $x$ and $y$ (say each of length $N$) have an edit distance $<= k$ can be solved in $O(kN)$, which is subquadratic. See: Esko Ukkonen's paper 'Algorithms for approximate string matching' (1985).
-
-        \textbf{Answer:}
+        \item (20\%) Examine Table 5.1 in the text. The table reports the effect of various tokenization choices on the size of the index built from the Reuters RCV1 corpus.
 
         \begin{enumerate}
-            \item "CHEBYSHEV" and "TSCHEBYSCHEF"
-            \begin{enumerate}
-                \item Insert T: $\text{"\_CHEBYSHEV" -> "TCHEBYSHEV"}$
-                \item Insert S: $\text{"T\_CHEBYSHEV" -> "TSCHEBYSHEV"}$
-                \item Insert C: $\text{"TSCHEBYS\_HEV" -> "TSCHEBYSCHEV"}$
-                \item Substitute F with V: $\text{"TSCHEBYSCHE\underline{V}" -> "TSCHEBYSCHEF"}$
-            \end{enumerate}
-            The edit distance is 4.
+            \item Expressed as a percentage of the original vocabulary size, how big is the vocabulary size (i.e., the number of indexing terms) after removing numbers, case folding, stopword removal, and then stemming with the Porter stemmer?
 
-            \item "LEVINSTINE" and "LEVENSHTEIN"
-            \begin{enumerate}
-                \item Substitute I with E: $\text{"LEV\underline{I}NSTINE" -> "LEVENSTINE"}$
-                \item Insert H: $\text{"LEVENS\_TINE" -> "LEVENSHTINE"}$
-                \item Insert E: $\text{"LEVENSHT\_INE" -> "LEVENSHTEINE"}$
-                \item Delete E: $\text{"LEVENSHTEIN\underline{E}" -> "LEVENSHTEIN"}$
-            \end{enumerate}
-            The edit distance is 4.
+            \textbf{Answer:}
+
+            \item After removing numbers and case normalization, there are 96.97 million posting list entries in the inverted file. Removing 150 stop words reduces this to 67.00 million. If stemming is then performed, the number of posting lists entries reduces to 63.81 million. Explain why stemming makes a difference in the number of entries. A short example may be helpful.
+
+            \textbf{Answer:}
+
+            \item Is the mean posting list length longer or shorter after stemming is performed? Offer a brief explanation for the difference.
+
+            \textbf{Answer:}
 
         \end{enumerate}
 
-        \item (30\%) Following the method described in the textbook (or lecture materials), calculate Soundex codes for the strings: (a) "Stanford" and (b) "Georgetown"? Show intermediate steps to produce the final code.
+        \item (30\%) Express the numbers {32, 57, and 800} two ways: using a 12-bit binary representation and using gamma coding. You must follow the method for computing gamma described in the text and presented in the lecture materials.
+        
+        I strongly recommend learning to do this by hand, but you may write (and provide) a short computer program if you prefer - but do not use a program that you did not write yourself.
+
+        \begin{enumerate}
+            \item 32
+
+            \textbf{Answer:}
+
+            \item 57
+
+            \textbf{Answer:}
+
+            \item 800
+
+            \textbf{Answer:}
+
+        \end{enumerate}
+
+        \item (20\%) Below is a bit sequence for a gamma encoded gap list (as described in Chapter 5 of IIR and the lecture materials). Decode the gap list and reconstruct the corresponding list of docids. Spaces are added for ease of reading.
+        Hint: there are six docids. \[1110 \ 0101 \ 1110 \ 1010 \ 1001 \ 1111 \ 1000 \ 0110 \ 1101 \ 1101\]
 
         \textbf{Answer:}
-        \begin{enumerate}
-            \item "Stanford"
-            \begin{enumerate}
-                \item Retain the first letter of the name and change all other occurrences of a, e, i, o, u, y, h, w to 0: Stanford -> St0nf0rd
-                \item Replace consonants with their corresponding digits: St0nf0rd -> S3051063
-                \item Remove all zeros: S3051063 -> S35163
-                \item Return the first four positions: S35163 -> S351
-            \end{enumerate}
 
-            \item "Georgetown"
-            \begin{enumerate}
-                \item Retain the first letter of the name and change all other occurrences of a, e, i, o, u, y, h, w to 0: Georgetown -> G00rg0t00n
-                \item Replace consonants with their corresponding digits: G00rg0t00n -> G006203005
-                \item Remove all zeros: G006203005 -> G6235
-                \item Return the first four positions: G6235 -> G623
-            \end{enumerate}
-        \end{enumerate}
+        \item (30\%) Researchers have proposed other schemes for gap list compression in inverted files. Some of these are slightly less space efficient, but may have faster implementations on modern hardware. Consider the following scheme called Simple-9 (Anh \& Moffat, "Inverted Index Compression Using Word-Aligned Binary Codes", 2005).
+        
+        In Simple-9 a 32-bit word is used to store between 1 and 28 numbers (gaps). The first four bits are used as a control to choose between nine options shown in the table below. The remaining 28 bits of each 32-bit word store numbers (gaps) using the same number of bits. For example, if the next 7 gaps are each between 1 and 16, then each of the 7 gaps will be represented in 4 bits. Note that since there are no gaps of size zero in a postings list, a gap of 1 is represented in 4 bits as "0000" and a gap of 16 is represented as "1111" -- in other words for Simple-9 we store a gap, g, as the integer g-1 in binary. The following table shows the control bits, the number of integers represented, the length of each code in bits, and the number of unused bits wasted at the end. In this problem, any leftover bits are set to 0.
+
+        \begin{center}
+            \begin{tabular}{| c | >{\centering\arraybackslash}p{3cm} | >{\centering\arraybackslash}p{3cm} | c | c |}
+            \hline
+            \textbf{4-bit control} & \textbf{\# codes in 28-bit block} & \textbf{code length in bits} & \textbf{leftover bits} & \textbf{possible gaps} \\
+            \hline
+            0000 & 28 & 1 & 0 & 1 or 2 \\
+            0001 & 14 & 2 & 0 & 1 to 4 \\
+            0010 & 9 & 3 & 1 & 1 to 8 \\
+            0011 & 7 & 4 & 0 & 1 to 16 \\
+            0100 & 5 & 5 & 3 & 1 to 32 \\
+            0101 & 4 & 7 & 0 & 1 to 128 \\
+            0110 & 3 & 9 & 1 & 1 to 512 \\
+            0111 & 2 & 14 & 0 & 1 to 16384 \\
+            1000 & 1 & 28 & 0 & 1 to 2\^28 \\
+            \hline
+            \end{tabular}
+        \end{center}
+
+        Using Simple-9 encode a posting list for the following nine docids. Please write the bits four at a time, with a space between each four. Recall that you will first have to create a gap list before encoding gaps. Work carefully and do show your work. Docids: \{4, 12, 15, 35, 36, 52, 102, 118, 218\}
+
+        \textbf{Answer:}
 
     \end{enumerate}
 
