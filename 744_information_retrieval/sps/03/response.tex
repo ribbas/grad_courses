@@ -13,6 +13,37 @@
 \textheight=9.0in
 \headsep=0.25in
 
+
+\newcounter{divline}
+\def\rlwd{.5pt} \def\rlht{\dimexpr\dp\strutbox+\ht\strutbox} \def\rldp{.75ex}
+\newcommand\bindiv[3][\relax]{%
+  \ifx\relax#1\stepcounter{divline}\else\setcounter{divline}{#1}\fi%
+  \mbox{}\hspace{\thedivline\dimexpr1ex}#2~\setbox0=\hbox{~$#3$}%
+  \dumbstackengine{-\rlwd}{\rule[-\rldp]{\rlwd}{\rlht}~#3}{\rule{\dimexpr4pt+\wd0}{\rlwd}}%
+}
+\def\remainder#1{\stepcounter{divline}%
+  \mbox{}\hspace{\dimexpr1ex+\thedivline\dimexpr1ex}~#1\setcounter{divline}{0}}
+\makeatletter
+\global\newlength\@stackedboxwidth
+\newlength\@boxshift
+\newsavebox\@addedbox
+\newsavebox\@anchorbox
+\newcommand*\dumbstackengine[3]{%
+    \sbox{\@anchorbox}{$#2$}%
+    \sbox{\@addedbox}{$#3$}%
+    \setlength{\@stackedboxwidth}{\wd\@anchorbox}%
+      \ifdim\wd\@addedbox>\@stackedboxwidth%
+        \setlength{\@stackedboxwidth}{\wd\@addedbox}%
+      \fi%
+        \setlength{\@boxshift}{\dimexpr-\dp\@anchorbox -\ht\@addedbox -#1}%
+        \usebox{\@anchorbox}%
+        \hspace{-\wd\@anchorbox}%
+        \raisebox{\@boxshift}{\usebox{\@addedbox}}%
+        \hspace{-\wd\@addedbox}%
+        \hspace{\@stackedboxwidth}%
+}
+
+
 \title{605.744: Information Retrieval \\ Problem Set (Module 3)}
 \author{Sabbir Ahmed}
 \date{\today}
@@ -43,18 +74,100 @@
         
         I strongly recommend learning to do this by hand, but you may write (and provide) a short computer program if you prefer - but do not use a program that you did not write yourself.
 
+
+        \textbf{Answer:}
+        Gamma coding formula: $unary(floor(log_2(x))), binary(x-2^{(floor(log_2(x)))})$
+
         \begin{enumerate}
             \item 32
 
             \textbf{Answer:}
 
+            Converting to binary:
+
+            \begin{tabular}{lcc}
+                \bindiv{2}{32} && Remainders\\
+                \bindiv{2}{16} &---& 0\\
+                \bindiv{2}{8} &---& 0\\
+                \bindiv{2}{4} &---& 0\\
+                \bindiv{2}{2} &---& 0\\
+                \bindiv{2}{0} &---& 0\\
+                \remainder{1} &---& 1 
+            \end{tabular}
+
+            12-bit representation: $0000 \ 0010 \ 0000$
+
+            Converting to gamma coding:
+            
+            \begin{align*}
+                \implies unary(floor(log_2(32))) &= unary(5) \\
+                &= 111110 \\
+                \implies binary(x-2^{(floor(log_2(x)))}) &= binary(32 - 32) \\
+                &= 00000 \\
+                \implies 0111 \ 1100 \ 0000
+            \end{align*}
+
             \item 57
 
             \textbf{Answer:}
 
+            Converting to binary:
+
+            \begin{tabular}{lcc}
+                \bindiv{2}{57} && Remainders\\
+                \bindiv{2}{28} &---& 1\\
+                \bindiv{2}{14} &---& 0\\
+                \bindiv{2}{7} &---& 0\\
+                \bindiv{2}{3} &---& 1\\
+                \bindiv{2}{1} &---& 1\\
+                \remainder{1} &---& 1
+            \end{tabular}
+
+            12-bit representation: $0000 \ 0011 \ 1001$
+
+            Converting to gamma coding:
+            
+            \begin{align*}
+                \implies unary(floor(log_2(57))) &= unary(5) \\
+                &= 111110 \\
+                \implies binary(x-2^{(floor(log_2(x)))}) &= binary(57 - 32) \\
+                &= binary(25) \\
+                &= 11001 \\
+                \implies 0111 \ 1101 \ 1001
+            \end{align*}
+
             \item 800
 
             \textbf{Answer:}
+
+            Converting to binary:
+
+            \begin{tabular}{lcc}
+                \bindiv{2}{800} && Remainders\\
+                \bindiv{2}{400} &---& 0\\
+                \bindiv{2}{200} &---& 0\\
+                \bindiv{2}{100} &---& 0\\
+                \bindiv{2}{50} &---& 0\\
+                \bindiv{2}{25} &---& 0\\
+                \bindiv{2}{12} &---& 1\\
+                \bindiv{2}{6} &---& 0\\
+                \bindiv{2}{3} &---& 0\\
+                \bindiv{2}{1} &---& 1\\
+                \remainder{1} &---& 1 
+            \end{tabular}
+
+            12-bit representation: $0011 \ 0010 \ 0000$
+
+            Converting to gamma coding:
+            
+            \begin{align*}
+                \implies unary(floor(log_2(800))) &= unary(9) \\
+                &= 1111111110 \\
+                \implies binary(x-2^{(floor(log_2(x)))}) &= binary(800 - 512) \\
+                &= binary(288) \\
+                &= 100100000 \\
+                \implies 0111 \ 1111 \ 1101 \ 0010 \ 0000
+            \end{align*}
 
         \end{enumerate}
 
