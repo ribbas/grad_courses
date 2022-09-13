@@ -172,9 +172,24 @@
         \end{enumerate}
 
         \item (20\%) Below is a bit sequence for a gamma encoded gap list (as described in Chapter 5 of IIR and the lecture materials). Decode the gap list and reconstruct the corresponding list of docids. Spaces are added for ease of reading.
-        Hint: there are six docids. \[1110 \ 0101 \ 1110 \ 1010 \ 1001 \ 1111 \ 1000 \ 0110 \ 1101 \ 1101\]
+        Hint: there are six docids.
+        \[ 1110 \ 0101 \ 1110 \ 1010 \ 1001 \ 1111 \ 1000 \ 0110 \ 1101 \ 1101 \]
 
-        \textbf{Answer:}
+        \textbf{Answer:} Regrouping the bit sequence using the following algorithm:
+        \begin{itemize}
+            \item Read the 1 bits until the first zero and store it as the magnitude of the unary code
+            \item Count the magnitude number of bits as the binary code
+            \item Compute $2^\text{magnitude}$ and add it to the decimal value of the binary code
+        \end{itemize}
+
+        Therefore,
+        \begin{align*}
+            &\{1110 010 \ 11110 1010 \ 10 0 \ 1111110 000110 \ 110 11 \ 10 1 \}\\
+            &= \{2^3 + dec(010), \ 2^4 +  dec(1010), \ 2^1 + dec(0), \ 2^6 + dec(000110), \ 2^2 + dec(11), \ 2^1 + dec(1)\} \\
+            &= \{2^3 + 2, \ 2^4 +  10, \ 2^1 + 0, \ 2^6 + 6, \ 2^2 + 3, \ 2^1 + 1\} \\
+            &= \{8 + 2, \ 16 + 10, \ 2 + 0, \ 64 + 6, \ 4 + 3, \ 2 + 1\} \\
+            &= \{10, \ 26, \ 2, \ 70, \ 7, \ 3\} \\
+        \end{align*}
 
         \item (30\%) Researchers have proposed other schemes for gap list compression in inverted files. Some of these are slightly less space efficient, but may have faster implementations on modern hardware. Consider the following scheme called Simple-9 (Anh \& Moffat, "Inverted Index Compression Using Word-Aligned Binary Codes", 2005).
         
