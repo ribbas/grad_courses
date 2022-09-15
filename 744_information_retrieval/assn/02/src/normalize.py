@@ -68,7 +68,7 @@ class Normalizer:
         self.tokens: list[str] = []
 
         self.punc_re: re.Pattern[str] = re.compile(
-            '[!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~]'
+            "['!\"#$%&()*+,-./:;<=>?@[\\]^_`{|}~]"
         )
         self.porter: nltk.stem.PorterStemmer = nltk.stem.PorterStemmer()
 

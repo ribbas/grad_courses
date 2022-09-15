@@ -7,11 +7,21 @@ class Lexer:
 
         self.tf: Counter[str] = Counter()
         self.df: Counter[str] = Counter()
+        self.tf_in_doc: Counter[str] = Counter()
 
     def add(self, tokens: list[str]) -> None:
 
-        self.tf.update(tokens)
-        self.df.update(set(tokens))
+        self.tf_in_doc.clear()
+        self.tf_in_doc.update(tokens)
+        self.tf.update(self.tf_in_doc)
+        self.df.update(self.tf_in_doc.keys())
+
+    def term_doc_tf(
+        self, doc_id: str
+    ) -> Generator[tuple[str, str, int], None, None]:
+
+        for term in self.tf_in_doc:
+            yield term, doc_id, self.tf_in_doc[term]
 
     def get_tf(self) -> Counter[str]:
 
