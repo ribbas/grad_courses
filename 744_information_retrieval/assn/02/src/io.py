@@ -68,6 +68,18 @@ class IO:
 
                 self.line_num += 1
 
+    def read_term_doc_tf_file(self, filename: str) -> str:
+
+        with open(f"{filename}_if.txt") as fp:
+            return fp.read()
+
+    def dump_all_to_txt(self, filename: str, data: Any) -> None:
+
+        print("Dumped term_doc_tf", self.num_docs, "documents.")
+
+        with open(f"{filename}.txt", "w") as fp:
+            fp.write("\n".join(data))
+
     def dump_term_doc_tf(self, filename: str) -> None:
 
         print("Dumped term_doc_tf", self.num_docs, "documents.")

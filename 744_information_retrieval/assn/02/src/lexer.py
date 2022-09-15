@@ -16,6 +16,10 @@ class Lexer:
         self.tf.update(self.tf_in_doc)
         self.df.update(self.tf_in_doc.keys())
 
+    def vocabulary(self) -> list[str]:
+
+        return sorted(self.tf.keys())
+
     def term_doc_tf(
         self, doc_id: str
     ) -> Generator[tuple[str, str, int], None, None]:
