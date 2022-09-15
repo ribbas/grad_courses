@@ -11,25 +11,10 @@ if __name__ == "__main__":
 
         prep = Normalizer()
         lex = Lexer()
-        io = IO()
+        io = IO(filename, prep, lex)
 
-        line_num = 0
-        num_docs = 0
-
-        with open(filename) as fp:
-            for line in fp:
-                match line_num % 4:
-                    case 0:
-                        num_docs += 1
-                    case 1:
-                        prep.set_document(line)
-                        prep.process()
-                        lex.add(prep.get_tokens())
-                    case _:
-                        pass
-                line_num += 1
-
-        io.print_stats(f"stats/{filename.stem}", num_docs, lex)
+        io.read_file()
+        io.print_stats(f"stats/{filename.stem}")
 
     data_dir: Path = Path(__file__).parent.parent / "data"
 

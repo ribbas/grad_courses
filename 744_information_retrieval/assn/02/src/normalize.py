@@ -64,21 +64,21 @@ CONTRACTIONS: dict[str, str] = {
 class Normalizer:
     def __init__(self) -> None:
 
-        self.__document: str = ""
-        self.__tokens: list[str] = []
+        self.document: str = ""
+        self.tokens: list[str] = []
 
-        self.__punc_re: re.Pattern[str] = re.compile(
+        self.punc_re: re.Pattern[str] = re.compile(
             '[!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~]'
         )
-        self.__sno: nltk.stem.PorterStemmer = nltk.stem.PorterStemmer()
+        self.porter: nltk.stem.PorterStemmer = nltk.stem.PorterStemmer()
 
     def set_document(self, document: str) -> None:
 
-        self.__document = document[:-1]
+        self.document = document[:-1]
 
     def __basic_stem(self, tokens: Iterable[str]) -> list[str]:
 
-        return [self.__sno.stem(token) for token in tokens]
+        return [self.porter.stem(token) for token in tokens]
 
     def __translate_contractions(self, token: str) -> str:
 
@@ -90,7 +90,7 @@ class Normalizer:
 
     def __remove_punc(self, tokens: str) -> list[str]:
 
-        return self.__punc_re.split(tokens)
+        return self.punc_re.split(tokens)
 
     def __to_lower_case(self, document: str) -> str:
 
@@ -98,19 +98,19 @@ class Normalizer:
 
     def get_tokens(self) -> list[str]:
 
-        return self.__tokens
+        return self.tokens
 
     def process(self) -> None:
 
-        self.__document = self.__to_lower_case(self.__document)
-        self.__tokens = self.__split_document(self.__document)
+        self.document = self.__to_lower_case(self.document)
+        self.tokens = self.__split_document(self.document)
 
         temp_str: str = ""
-        for token in self.__tokens:
+        for token in self.tokens:
             temp_str += self.__translate_contractions(token) + " "
 
         no_puncs: list[str] = self.__remove_punc(temp_str)
         no_empty: Iterable[str] = filter(
             None, self.__split_document(" ".join(no_puncs))
         )
-        self.__tokens = self.__basic_stem(no_empty)
+        self.tokens = self.__basic_stem(no_empty)
