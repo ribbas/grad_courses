@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from src.io import IO
 from src.normalize import Normalizer
 from src.lexer import Lexer
@@ -5,7 +7,7 @@ from src.lexer import Lexer
 
 if __name__ == "__main__":
 
-    def process_document(filename: str) -> None:
+    def process_document(filename: Path) -> None:
 
         prep = Normalizer()
         lex = Lexer()
@@ -27,7 +29,9 @@ if __name__ == "__main__":
                         pass
                 line_num += 1
 
-        io.print_stats(filename[:-4], num_docs, lex)
+        io.print_stats(f"stats/{filename.stem}", num_docs, lex)
 
-    process_document("yelp.txt")
-    process_document("headlines.txt")
+    data_dir: Path = Path(__file__).parent.parent / "data"
+
+    process_document(data_dir / "yelp.txt")
+    process_document(data_dir / "headlines.txt")

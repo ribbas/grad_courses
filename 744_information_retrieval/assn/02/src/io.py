@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 from typing import Any
 
 from .lexer import Lexer
@@ -13,7 +14,7 @@ class IO:
     @staticmethod
     def __dump_json(filename: str, data: Any) -> None:
 
-        with open(f"stats/{filename}.json", "w") as fp:
+        with open(f"{filename}.json", "w") as fp:
             json.dump(data, fp)
 
     @staticmethod
@@ -28,7 +29,7 @@ class IO:
         IO.__dump_json(filename + "_tf", lex.get_tf())
         IO.__dump_json(filename + "_df", lex.get_df())
 
-        with open(f"data/{filename}_stats.txt", "w") as fp:
+        with open(f"{filename}_stats.txt", "w") as fp:
 
             print("----------------------------", file=fp)
             print(num_docs, "documents.", file=fp)
