@@ -1,9 +1,11 @@
 \documentclass[11pt]{article}
 
 \usepackage{graphicx}
-\usepackage{amsmath}
+\usepackage[fleqn]{amsmath}
 \usepackage{listings}
 \usepackage{array}
+\usepackage[autostyle, english = american]{csquotes}
+\MakeOuterQuote{"}
 
 % Margins
 \topmargin=-0.45in
@@ -12,7 +14,7 @@
 \textwidth=6.5in
 \textheight=9.0in
 \headsep=0.25in
-
+\setlength{\mathindent}{0pt}
 
 \newcounter{divline}
 \def\rlwd{.5pt} \def\rlht{\dimexpr\dp\strutbox+\ht\strutbox} \def\rldp{.75ex}
@@ -49,7 +51,7 @@
 \date{\today}
 
 \begin{document}
-\maketitle	
+\maketitle
 
     \begin{enumerate}
 
@@ -58,22 +60,21 @@
         \begin{enumerate}
             \item Expressed as a percentage of the original vocabulary size, how big is the vocabulary size (i.e., the number of indexing terms) after removing numbers, case folding, stopword removal, and then stemming with the Porter stemmer?
 
-            \textbf{Answer:}
+            \textbf{Answer:} The original vocabulary size was 484,494. The size after being reduced through the different levels of preprocessing is 322,383, which is 66.54\% of the original vocabulary size.
 
             \item After removing numbers and case normalization, there are 96.97 million posting list entries in the inverted file. Removing 150 stop words reduces this to 67.00 million. If stemming is then performed, the number of posting lists entries reduces to 63.81 million. Explain why stemming makes a difference in the number of entries. A short example may be helpful.
 
-            \textbf{Answer:}
+            \textbf{Answer:} Stemming terms leads to loss of information regardless of context. When terms are stemmed, depending on the algorithm used, the term may have its suffixes replaced with a simple fragment or have it entirely removed. Different words with similar prefixes of a term usually stem to identical terms, for example, both of the words "intern" and "internal" get stemmed to "intern" using a Porter stemmer. Although those words are unrelated, they get stemmed to the common term and the vocabulary size gets reduced by 1. Different conjugations of words also get reduced to their common stemmed word, such as "transparent" and "transparency" get stemmed to "transpar" using a Porter stemmer.
 
             \item Is the mean posting list length longer or shorter after stemming is performed? Offer a brief explanation for the difference.
 
-            \textbf{Answer:}
+            \textbf{Answer:} 
 
         \end{enumerate}
 
         \item (30\%) Express the numbers {32, 57, and 800} two ways: using a 12-bit binary representation and using gamma coding. You must follow the method for computing gamma described in the text and presented in the lecture materials.
         
         I strongly recommend learning to do this by hand, but you may write (and provide) a short computer program if you prefer - but do not use a program that you did not write yourself.
-
 
         \textbf{Answer:}
         Gamma coding formula: $unary(floor(log_2(x))), binary(x-2^{(floor(log_2(x)))})$
@@ -83,91 +84,94 @@
 
             \textbf{Answer:}
 
-            Converting to binary:
+            \begin{itemize}
+                \item Converting to binary:
 
-            \begin{tabular}{lcc}
-                \bindiv{2}{32} && Remainders\\
-                \bindiv{2}{16} &---& 0\\
-                \bindiv{2}{8} &---& 0\\
-                \bindiv{2}{4} &---& 0\\
-                \bindiv{2}{2} &---& 0\\
-                \bindiv{2}{0} &---& 0\\
-                \remainder{1} &---& 1 
-            \end{tabular}
+                \begin{tabular}{lcc}
+                    \bindiv{2}{32} && Remainders\\
+                    \bindiv{2}{16} &---& 0\\
+                    \bindiv{2}{8} &---& 0\\
+                    \bindiv{2}{4} &---& 0\\
+                    \bindiv{2}{2} &---& 0\\
+                    \bindiv{2}{0} &---& 0\\
+                    \remainder{1} &---& 1 
+                \end{tabular}
 
-            12-bit representation: $0000 \ 0010 \ 0000$
+                12-bit representation: $0000 \ 0010 \ 0000$
 
-            Converting to gamma coding:
-            
-            \begin{align*}
-                \implies unary(floor(log_2(32))) &= unary(5) \\
-                &= 111110 \\
-                \implies binary(x-2^{(floor(log_2(x)))}) &= binary(32 - 32) \\
-                &= 00000 \\
-                \implies 0111 \ 1100 \ 0000
-            \end{align*}
+                \item Converting to gamma coding:
+                \begin{align*}
+                    unary(floor(log_2(32))) &= unary(5) \\
+                    &= 111110 \\
+                    binary(x-2^{(floor(log_2(x)))}) &= binary(32 - 32) \\
+                    &= 00000 \\
+                    gamma(32) &= 0111 \ 1100 \ 0000
+                \end{align*}
+            \end{itemize}
 
             \item 57
 
             \textbf{Answer:}
 
-            Converting to binary:
+            \begin{itemize}
+                \item Converting to binary:
 
-            \begin{tabular}{lcc}
-                \bindiv{2}{57} && Remainders\\
-                \bindiv{2}{28} &---& 1\\
-                \bindiv{2}{14} &---& 0\\
-                \bindiv{2}{7} &---& 0\\
-                \bindiv{2}{3} &---& 1\\
-                \bindiv{2}{1} &---& 1\\
-                \remainder{1} &---& 1
-            \end{tabular}
+                \begin{tabular}{lcc}
+                    \bindiv{2}{57} && Remainders\\
+                    \bindiv{2}{28} &---& 1\\
+                    \bindiv{2}{14} &---& 0\\
+                    \bindiv{2}{7} &---& 0\\
+                    \bindiv{2}{3} &---& 1\\
+                    \bindiv{2}{1} &---& 1\\
+                    \remainder{1} &---& 1
+                \end{tabular}
 
-            12-bit representation: $0000 \ 0011 \ 1001$
+                12-bit representation: $0000 \ 0011 \ 1001$
 
-            Converting to gamma coding:
-            
-            \begin{align*}
-                \implies unary(floor(log_2(57))) &= unary(5) \\
-                &= 111110 \\
-                \implies binary(x-2^{(floor(log_2(x)))}) &= binary(57 - 32) \\
-                &= binary(25) \\
-                &= 11001 \\
-                \implies 0111 \ 1101 \ 1001
-            \end{align*}
+                \item Converting to gamma coding:
+                \begin{align*}
+                    unary(floor(log_2(57))) &= unary(5) \\
+                    &= 111110 \\
+                    binary(x-2^{(floor(log_2(x)))}) &= binary(57 - 32) \\
+                    &= binary(25) \\
+                    &= 11001 \\
+                    gamma(57) &= 0111 \ 1101 \ 1001
+                \end{align*}
+            \end{itemize}
 
             \item 800
 
             \textbf{Answer:}
 
-            Converting to binary:
+            \begin{itemize}
+                \item Converting to binary:
+                \begin{tabular}{lcc}
+                    \bindiv{2}{800} && Remainders\\
+                    \bindiv{2}{400} &---& 0\\
+                    \bindiv{2}{200} &---& 0\\
+                    \bindiv{2}{100} &---& 0\\
+                    \bindiv{2}{50} &---& 0\\
+                    \bindiv{2}{25} &---& 0\\
+                    \bindiv{2}{12} &---& 1\\
+                    \bindiv{2}{6} &---& 0\\
+                    \bindiv{2}{3} &---& 0\\
+                    \bindiv{2}{1} &---& 1\\
+                    \remainder{1} &---& 1 
+                \end{tabular}
 
-            \begin{tabular}{lcc}
-                \bindiv{2}{800} && Remainders\\
-                \bindiv{2}{400} &---& 0\\
-                \bindiv{2}{200} &---& 0\\
-                \bindiv{2}{100} &---& 0\\
-                \bindiv{2}{50} &---& 0\\
-                \bindiv{2}{25} &---& 0\\
-                \bindiv{2}{12} &---& 1\\
-                \bindiv{2}{6} &---& 0\\
-                \bindiv{2}{3} &---& 0\\
-                \bindiv{2}{1} &---& 1\\
-                \remainder{1} &---& 1 
-            \end{tabular}
+                12-bit representation: $0011 \ 0010 \ 0000$
 
-            12-bit representation: $0011 \ 0010 \ 0000$
-
-            Converting to gamma coding:
-            
-            \begin{align*}
-                \implies unary(floor(log_2(800))) &= unary(9) \\
-                &= 1111111110 \\
-                \implies binary(x-2^{(floor(log_2(x)))}) &= binary(800 - 512) \\
-                &= binary(288) \\
-                &= 100100000 \\
-                \implies 0111 \ 1111 \ 1101 \ 0010 \ 0000
-            \end{align*}
+                \item Converting to gamma coding:
+                
+                \begin{align*}
+                    unary(floor(log_2(800))) &= unary(9) \\
+                    &= 1111111110 \\
+                    binary(x-2^{(floor(log_2(x)))}) &= binary(800 - 512) \\
+                    &= binary(288) \\
+                    &= 100100000 \\
+                    gamma(800) &= 0111 \ 1111 \ 1101 \ 0010 \ 0000
+                \end{align*}
+            \end{itemize}
 
         \end{enumerate}
 
@@ -177,9 +181,10 @@
 
         \textbf{Answer:} Regrouping the bit sequence using the following algorithm:
         \begin{itemize}
-            \item Read the 1 bits until the first zero and store it as the magnitude of the unary code
-            \item Count the magnitude number of bits as the binary code
-            \item Compute $2^\text{magnitude}$ and add it to the decimal value of the binary code
+            \item Read the 1 bits until the first zero and store it as $magnitude$ of the unary code
+            \item Read the $magnitude$ number of bits as $b=\text{binary code}$
+            \item Compute $u=2^{magnitude}$
+            \item Add $u$ to the decimal value of the binary code, $u + dec(b)$
         \end{itemize}
 
         Therefore,
@@ -193,7 +198,7 @@
 
         \item (30\%) Researchers have proposed other schemes for gap list compression in inverted files. Some of these are slightly less space efficient, but may have faster implementations on modern hardware. Consider the following scheme called Simple-9 (Anh \& Moffat, "Inverted Index Compression Using Word-Aligned Binary Codes", 2005).
         
-        In Simple-9 a 32-bit word is used to store between 1 and 28 numbers (gaps). The first four bits are used as a control to choose between nine options shown in the table below. The remaining 28 bits of each 32-bit word store numbers (gaps) using the same number of bits. For example, if the next 7 gaps are each between 1 and 16, then each of the 7 gaps will be represented in 4 bits. Note that since there are no gaps of size zero in a postings list, a gap of 1 is represented in 4 bits as "0000" and a gap of 16 is represented as "1111" -- in other words for Simple-9 we store a gap, g, as the integer g-1 in binary. The following table shows the control bits, the number of integers represented, the length of each code in bits, and the number of unused bits wasted at the end. In this problem, any leftover bits are set to 0.
+        In Simple-9 a 32-bit word is used to store between 1 and 28 numbers (gaps). The first four bits are used as a control to choose between nine options shown in the table below. The remaining 28 bits of each 32-bit word store numbers (gaps) using the same number of bits. For example, if the next 7 gaps are each between 1 and 16, then each of the 7 gaps will be represented in 4 bits. Note that since there are no gaps of size zero in a postings list, a gap of 1 is represented in 4 bits as "0000" and a gap of 16 is represented as "1111" -- in other words for Simple-9 we store a gap, $g$, as the integer $g-1$ in binary. The following table shows the control bits, the number of integers represented, the length of each code in bits, and the number of unused bits wasted at the end. In this problem, any leftover bits are set to 0.
 
         \begin{center}
             \begin{tabular}{| c | >{\centering\arraybackslash}p{3cm} | >{\centering\arraybackslash}p{3cm} | c | c |}
@@ -208,14 +213,16 @@
             0101 & 4 & 7 & 0 & 1 to 128 \\
             0110 & 3 & 9 & 1 & 1 to 512 \\
             0111 & 2 & 14 & 0 & 1 to 16384 \\
-            1000 & 1 & 28 & 0 & 1 to 2\^28 \\
+            1000 & 1 & 28 & 0 & 1 to $2^{28}$ \\
             \hline
             \end{tabular}
         \end{center}
 
         Using Simple-9 encode a posting list for the following nine docids. Please write the bits four at a time, with a space between each four. Recall that you will first have to create a gap list before encoding gaps. Work carefully and do show your work. Docids: \{4, 12, 15, 35, 36, 52, 102, 118, 218\}
 
-        \textbf{Answer:}
+        \textbf{Answer:} Gap list of \{4, 12, 15, 35, 36, 52, 102, 118, 218\}:
+        
+        \{4, 8, 3, 20, 1, 16, 50, 16, 100\}
 
     \end{enumerate}
 
