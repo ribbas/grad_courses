@@ -7,6 +7,7 @@ CONTRACTIONS: dict[str, str] = {
     "aren't": "are not",
     "ain't": "is not",
     "can't": "cannot",
+    "could've": "could have",
     "couldn't": "could not",
     "didn't": "did not",
     "doesn't": "does not",
@@ -22,15 +23,21 @@ CONTRACTIONS: dict[str, str] = {
     "i'm": "i am",
     "i've": "i have",
     "isn't": "is not",
+    "it'll": "it will",
+    "it'd": "it would",
     "it's": "it is",
     "let's": "let us",
     "mightn't": "might not",
+    "might've'": "might have",
     "mustn't": "must not",
+    "must've'": "must have",
     "shan't": "shall not",
     "she'd": "she had",
     "she'll": "she will",
     "she's": "she is",
+    "should've": "should have",
     "shouldn't": "should not",
+    "that'll": "that will",
     "that's": "that is",
     "there's": "there is",
     "they'd": "they had",
@@ -39,6 +46,7 @@ CONTRACTIONS: dict[str, str] = {
     "they've": "they have",
     "wasn't": "was not",
     "we'd": "we had",
+    "we'll": "we will",
     "we're": "we are",
     "we've": "we have",
     "weren't": "were not",
@@ -54,6 +62,7 @@ CONTRACTIONS: dict[str, str] = {
     "who've": "who have",
     "won't": "will not",
     "wouldn't": "would not",
+    "would've": "would have",
     "you'd": "you had",
     "you'll": "you will",
     "you're": "you are",
@@ -68,10 +77,12 @@ class Normalizer:
         self.__tokens: Generator[str, None, None]
 
         self.ws_re: re.Pattern[str] = re.compile(r"[A-Za-z']+")
-        self.punc_re: re.Pattern[str] = re.compile(
-            "['!\"#$%&()*+,-./:;<=>?@[\\]^_`{|}~]"
+        # self.punc_re: re.Pattern[str] = re.compile(
+        #     "['!\"#$%&()*+,-./:;<=>?@[\\]^_`{|}~]"
+        # )
+        self.porter: nltk.stem.SnowballStemmer = nltk.stem.SnowballStemmer(
+            "english"
         )
-        self.porter: nltk.stem.PorterStemmer = nltk.stem.PorterStemmer()
 
     def set_document(self, document: str) -> None:
 
@@ -89,9 +100,9 @@ class Normalizer:
 
         return (x.group(0) for x in self.ws_re.finditer(document))
 
-    def __remove_punc(self, tokens: str) -> list[str]:
+    # def __remove_punc(self, tokens: str) -> list[str]:
 
-        return self.punc_re.split(tokens)
+    #     return self.punc_re.split(tokens)
 
     def __to_lower_case(self, document: str) -> str:
 
@@ -108,10 +119,10 @@ class Normalizer:
 
         temp_str: str = ""
         for token in self.__tokens:
+            # print(token, self.__translate_contractions(token))
             temp_str += self.__translate_contractions(token) + " "
 
-        no_puncs: list[str] = self.__remove_punc(temp_str)
-        no_empty: Iterator[str] = filter(
-            None, self.__split_document(" ".join(no_puncs))
-        )
+        # print(temp_str)
+        # no_puncs: list[str] = self.__remove_punc(temp_str)
+        no_empty: Iterator[str] = filter(None, self.__split_document(temp_str))
         self.__tokens = self.__basic_stem(no_empty)
