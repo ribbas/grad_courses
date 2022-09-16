@@ -1,5 +1,5 @@
 import re
-from typing import Iterable
+from typing import Iterator, Generator
 
 import nltk
 
@@ -65,8 +65,9 @@ class Normalizer:
     def __init__(self) -> None:
 
         self.document: str = ""
-        self.tokens: list[str] = []
+        self.__tokens: Generator[str, None, None]
 
+        self.ws_re: re.Pattern[str] = re.compile(r"[A-Za-z']+")
         self.punc_re: re.Pattern[str] = re.compile(
             "['!\"#$%&()*+,-./:;<=>?@[\\]^_`{|}~]"
         )
@@ -76,17 +77,17 @@ class Normalizer:
 
         self.document = document[:-1]
 
-    def __basic_stem(self, tokens: Iterable[str]) -> list[str]:
+    def __basic_stem(self, tokens: Iterator[str]) -> Generator[str, None, None]:
 
-        return [self.porter.stem(token) for token in tokens]
+        return (self.porter.stem(token) for token in tokens)
 
     def __translate_contractions(self, token: str) -> str:
 
         return CONTRACTIONS.get(token, token)
 
-    def __split_document(self, document: str) -> list[str]:
+    def __split_document(self, document: str) -> Generator[str, None, None]:
 
-        return document.split(" ")
+        return (x.group(0) for x in self.ws_re.finditer(document))
 
     def __remove_punc(self, tokens: str) -> list[str]:
 
@@ -96,21 +97,21 @@ class Normalizer:
 
         return document.lower()
 
-    def get_tokens(self) -> list[str]:
+    def tokens(self) -> Generator[str, None, None]:
 
-        return self.tokens
+        return self.__tokens
 
     def process(self) -> None:
 
         self.document = self.__to_lower_case(self.document)
-        self.tokens = self.__split_document(self.document)
+        self.__tokens = self.__split_document(self.document)
 
         temp_str: str = ""
-        for token in self.tokens:
+        for token in self.__tokens:
             temp_str += self.__translate_contractions(token) + " "
 
         no_puncs: list[str] = self.__remove_punc(temp_str)
-        no_empty: Iterable[str] = filter(
+        no_empty: Iterator[str] = filter(
             None, self.__split_document(" ".join(no_puncs))
         )
-        self.tokens = self.__basic_stem(no_empty)
+        self.__tokens = self.__basic_stem(no_empty)

@@ -9,7 +9,7 @@ class Lexer:
         self.df: Counter[str] = Counter()
         self.tf_in_doc: Counter[str] = Counter()
 
-    def add(self, tokens: list[str]) -> None:
+    def add(self, tokens: Generator[str, None, None]) -> None:
 
         self.tf_in_doc.clear()
         self.tf_in_doc.update(tokens)

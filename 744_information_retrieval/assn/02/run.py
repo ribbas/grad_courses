@@ -18,15 +18,13 @@ if __name__ == "__main__":
         io.dump_term_doc_tf(f"tmp/{filename.stem}")
         io.print_stats(f"stats/{filename.stem}")
 
-        # io.dump_all_to_txt(f"tmp/{filename.stem}.vocab", lex.vocabulary())
-
-        inv_if = InvertedFile(
-            io.read_term_doc_tf_file(f"tmp/{filename.stem}"), lex.vocabulary()
-        )
-        inv_if.ingest()
+        # inv_if = InvertedFile(
+        #     io.read_term_doc_tf_file(f"tmp/{filename.stem}"), lex.vocabulary()
+        # )
+        # inv_if.ingest()
 
     data_dir: Path = Path(__file__).parent.parent / "data"
 
-    process_document(data_dir / "test.txt")
-    # process_document(data_dir / "yelp.txt")
+    # process_document(data_dir / "test.txt")
+    process_document(data_dir / "yelp.txt")
     # process_document(data_dir / "headlines.txt")

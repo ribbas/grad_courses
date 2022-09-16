@@ -57,7 +57,7 @@ class IO:
                         self.prep.process()
 
                         # add processed tokens to the lexer
-                        self.lex.add(self.prep.get_tokens())
+                        self.lex.add(self.prep.tokens())
 
                         # save records of term-DocID-tf
                         self.term_doc_tf.extend(self.lex.term_doc_tf(doc_id))
