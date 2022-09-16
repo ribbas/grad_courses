@@ -1,0 +1,16 @@
+<P ID=1>
+Every good boy deserves fudge.
+</P>
+
+<P ID=2>
+All cows eat ALL grass!
+</P>
+
+<P ID=3>
+Good boy deserves fudge.
+</P>
+
+<P ID=4>
+Good boy deserves ALL fudge!!!
+</P>
+

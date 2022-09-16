@@ -21,10 +21,13 @@ if __name__ == "__main__":
         inv_if = InvertedFile(
             io.read_term_doc_tf_file(f"tmp/{filename.stem}"), lex.vocabulary()
         )
-        inv_if.merge_postings()
+        inv_if.ingest()
+        data = inv_if.encode()
+        print(data)
+        print(inv_if.decode(data))
 
     data_dir: Path = Path(__file__).parent.parent / "data"
 
-    # process_document(data_dir / "test.txt")
-    process_document(data_dir / "yelp.txt")
+    process_document(data_dir / "test.txt")
+    # process_document(data_dir / "yelp.txt")
     # process_document(data_dir / "headlines.txt")
