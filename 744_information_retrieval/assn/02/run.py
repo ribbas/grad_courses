@@ -20,8 +20,10 @@ if __name__ == "__main__":
 
         # io.dump_all_to_txt(f"tmp/{filename.stem}.vocab", lex.vocabulary())
 
-        inv_if = InvertedFile(io.read_term_doc_tf_file(f"tmp/{filename.stem}"))
-        inv_if.to_list()
+        inv_if = InvertedFile(
+            io.read_term_doc_tf_file(f"tmp/{filename.stem}"), lex.vocabulary()
+        )
+        inv_if.ingest()
 
     data_dir: Path = Path(__file__).parent.parent / "data"
 

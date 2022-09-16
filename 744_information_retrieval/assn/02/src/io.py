@@ -73,12 +73,12 @@ class IO:
         with open(f"{filename}_if.txt") as fp:
             return fp.read()
 
-    def dump_all_to_txt(self, filename: str, data: Any) -> None:
+    # def dump_all_to_txt(self, filename: str, data: Any) -> None:
 
-        print("Dumped term_doc_tf", self.num_docs, "documents.")
+    #     print("Dumped term_doc_tf", self.num_docs, "documents.")
 
-        with open(f"{filename}.txt", "w") as fp:
-            fp.write("\n".join(data))
+    #     with open(f"{filename}.txt", "w") as fp:
+    #         fp.write("\n".join(data))
 
     def dump_term_doc_tf(self, filename: str) -> None:
 
@@ -92,7 +92,8 @@ class IO:
 
         print("Processed", self.num_docs, "documents.")
 
-        self.__dump_json(filename + "_tf", self.lex.get_tf())
+        self.__dump_json(filename + "_vocab", self.lex.vocabulary())
+        self.__dump_json(filename + "_df", self.lex.get_df())
         self.__dump_json(filename + "_df", self.lex.get_df())
 
         with open(f"{filename}_stats.txt", "w") as fp:

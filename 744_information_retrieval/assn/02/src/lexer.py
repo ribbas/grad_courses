@@ -16,9 +16,13 @@ class Lexer:
         self.tf.update(self.tf_in_doc)
         self.df.update(self.tf_in_doc.keys())
 
-    def vocabulary(self) -> list[str]:
+    def vocabulary(self) -> dict[str, int]:
 
-        return sorted(self.tf.keys())
+        vocab_idx: dict[str, int] = {}
+        for idx, term in enumerate(sorted(self.tf.keys())):
+            vocab_idx[term] = idx
+
+        return vocab_idx
 
     def term_doc_tf(
         self, doc_id: str
