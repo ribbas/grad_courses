@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from src.io import IO, Formatter, DataFile
+from src.files import IO, Formatter, DataFile
 from src.normalize import Normalizer
 from src.lexer import Lexer
 from src.invertedfile import InvertedFile
@@ -15,10 +15,9 @@ if __name__ == "__main__":
         data = DataFile(filename)
 
         term_doc_tf: list[tuple[str, str, int]] = []
-        num_docs = DataFile.ingest_data_file(filename, prep, lex, term_doc_tf)
+        num_docs = data.ingest(prep, lex, term_doc_tf)
         term_doc_tf_str: str = Formatter.format_term_doc_tf(term_doc_tf)
         IO.dump(data.tdt_file_name, term_doc_tf_str)
-
         IO.dump_json(data.df_file_name, lex.get_df())
         IO.dump_json(data.tf_file_name, lex.get_tf())
 
@@ -49,10 +48,10 @@ if __name__ == "__main__":
 
     process_document(data_dir / "test.txt")
     read_inverted_file(data_dir / "test.txt")
-    # process_document(data_dir / "yelp.txt")
-    # read_inverted_file(data_dir / "yelp.txt")
-    # process_document(data_dir / "headlines.txt")
-    # read_inverted_file(data_dir / "headlines.txt")
+    process_document(data_dir / "yelp.txt")
+    read_inverted_file(data_dir / "yelp.txt")
+    process_document(data_dir / "headlines.txt")
+    read_inverted_file(data_dir / "headlines.txt")
 
 """
 1. Print out the document frequency and postings list for terms: "Heidelberg", "cesium", "Trondheim”, "crustacean".

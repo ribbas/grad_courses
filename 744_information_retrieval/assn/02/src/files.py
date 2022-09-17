@@ -15,7 +15,7 @@ class IO:
             return fp.read()
 
     @staticmethod
-    def dump(filename: str, data: Any) -> None:
+    def dump(filename: str, data: str) -> None:
 
         with open(f"{filename}.txt", "w") as fp:
             fp.write(data)
@@ -35,13 +35,13 @@ class IO:
         print(f"Dumped json to '{filename}.json'")
 
     @staticmethod
-    def read_bin(filename: str) -> Any:
+    def read_bin(filename: str) -> bytes:
 
         with open(f"{filename}.bin", "rb") as fp:
             return fp.read()
 
     @staticmethod
-    def dump_bin(filename: str, data: Any) -> None:
+    def dump_bin(filename: str, data: bytes) -> None:
 
         with open(f"{filename}.bin", "wb") as fp:
             fp.write(data)
@@ -51,16 +51,19 @@ class IO:
 class DataFile:
     def __init__(self, filename: Path) -> None:
 
+        self.filename = filename
+
         self.df_file_name: str = f"stats/{filename.stem}_df"
         self.tf_file_name: str = f"stats/{filename.stem}_tf"
         self.stats_file_name: str = f"stats/{filename.stem}_stats"
+
         self.tdt_file_name: str = f"tmp/{filename.stem}_tdt"
-        self.inv_file_name: str = f"bin/{filename.stem}_tf"
+
+        self.inv_file_name: str = f"bin/{filename.stem}_if"
         self.dict_name: str = f"bin/{filename.stem}_dict"
 
-    @staticmethod
-    def ingest_data_file(
-        filename: Path,
+    def ingest(
+        self,
         prep: Normalizer,
         lex: Lexer,
         term_doc_tf: list[tuple[str, str, int]],
@@ -71,7 +74,7 @@ class DataFile:
         line_num: int = 0
         num_docs: int = 0
 
-        with open(filename) as fp:
+        with open(self.filename) as fp:
             for line in fp:
                 match line_num % 4:
 
@@ -157,7 +160,6 @@ class Formatter:
     @staticmethod
     def format_term_doc_tf(term_doc_tf: list[tuple[str, str, int]]) -> str:
 
-        print("Dumped term_doc_tf")
         contents: str = ""
         for line in term_doc_tf:
             contents += " ".join(str(i) for i in line) + "\n"

@@ -76,10 +76,7 @@ class Normalizer:
         self.document: str = ""
         self.__tokens: Generator[str, None, None]
 
-        self.ws_re: re.Pattern[str] = re.compile(r"[A-Za-z']+")
-        # self.punc_re: re.Pattern[str] = re.compile(
-        #     "['!\"#$%&()*+,-./:;<=>?@[\\]^_`{|}~]"
-        # )
+        self.ws_re: re.Pattern[str] = re.compile(r"([A-Za-z]+'?[A-Za-z]+)")
         self.porter: nltk.stem.SnowballStemmer = nltk.stem.SnowballStemmer(
             "english"
         )
@@ -99,10 +96,6 @@ class Normalizer:
     def __split_document(self, document: str) -> Generator[str, None, None]:
 
         return (x.group(0) for x in self.ws_re.finditer(document))
-
-    # def __remove_punc(self, tokens: str) -> list[str]:
-
-    #     return self.punc_re.split(tokens)
 
     def __to_lower_case(self, document: str) -> str:
 
