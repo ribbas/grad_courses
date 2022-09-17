@@ -11,18 +11,15 @@ class Lexer:
 
     def add(self, tokens: Generator[str, None, None]) -> None:
 
+        # create a Counter for the document
         self.tf_in_doc.clear()
         self.tf_in_doc.update(tokens)
+
+        # update the total term-frequency values with the Counter
         self.tf.update(self.tf_in_doc)
+
+        # increment the document-frequency values
         self.df.update(self.tf_in_doc.keys())
-
-    def vocabulary(self) -> dict[str, int]:
-
-        vocab_idx: dict[str, int] = {}
-        for idx, term in enumerate(sorted(self.tf.keys())):
-            vocab_idx[term] = idx
-
-        return vocab_idx
 
     def term_doc_tf(
         self, doc_id: str
