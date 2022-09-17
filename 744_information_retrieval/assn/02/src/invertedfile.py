@@ -1,5 +1,7 @@
 from collections import Counter
-from struct import pack, unpack
+from typing import Any
+
+from .packer import Packer
 
 # shared indices
 TERM_ID_IDX = 0
@@ -18,8 +20,6 @@ class InvertedFile:
         self.mapped_values: list[tuple[int, int, int, str]] = []
         self.inverted_file_raw: list[int] = []
 
-        self.byte_fmt: str = ""
-
     def vocabulary(
         self, df: Counter[str], tf: Counter[str]
     ) -> dict[str, list[int]]:
@@ -29,7 +29,7 @@ class InvertedFile:
 
         return self.dictionary
 
-    def convert_inv_file_types(
+    def __convert_tdt_types(
         self, col_split_list: list[str]
     ) -> tuple[int, int, int, str]:
         return (
@@ -41,23 +41,23 @@ class InvertedFile:
             col_split_list[TERM_ID_IDX],  # term
         )
 
-    def map_to_int(self, term_doc_tf: str) -> list[tuple[int, int, int, str]]:
+    def __map_to_int(self, term_doc_tf: str) -> list[tuple[int, int, int, str]]:
 
         return [
-            self.convert_inv_file_types(i.split(" "))
+            self.__convert_tdt_types(i.split(" "))
             for i in term_doc_tf.split("\n")[:-1]
         ]
 
     def ingest(self, term_doc_tf: str) -> None:
 
-        self.mapped_values = self.map_to_int(term_doc_tf)
+        self.mapped_values = self.__map_to_int(term_doc_tf)
 
         # builtin timsort implicitly performs radix sort
         self.mapped_values.sort()
 
         cur: int = -1
         offset: int = 0
-        length: int = 0
+        width: int = 0
 
         for val in self.mapped_values:
 
@@ -66,8 +66,9 @@ class InvertedFile:
             if cur != val[TERM_ID_IDX]:
                 cur = val[TERM_ID_IDX]
                 self.dictionary[term_str][OFFSET_IDX] = offset  # update offset
-                length = offset + self.dictionary[term_str][DF_IDX] * 2
-                self.dictionary[term_str][LEN_IDX] = length  # update length
+                # width between the current term and the next
+                width = offset + self.dictionary[term_str][DF_IDX] * 2
+                self.dictionary[term_str][LEN_IDX] = width  # update width
             offset += 2
             self.inverted_file_raw.extend(val[DOC_ID_IDX:TERM_STR_IDX])
 
@@ -95,32 +96,23 @@ class InvertedFile:
 
         return self.dictionary
 
-    def lookup(self, term: str) -> dict[str, int | str | list[int]]:
+    def lookup(self, term: str) -> dict[str, Any]:
 
         if term not in self.dictionary:
             return {"term": term}
 
-        metadata: dict[str, int | str | list[int]] = {"term": term}
+        metadata: dict[str, Any] = {"term": term}
 
-        metadata["offset"] = self.dictionary[term][OFFSET_IDX]
-        metadata["len"] = self.dictionary[term][LEN_IDX]
-        metadata["postings"] = self.decode(
-            "i" * (len(self.inverted_file) // 4), self.inverted_file
-        )[metadata["offset"] : metadata["len"] : 2]
-        metadata["postings_len"] = len(metadata["postings"])
+        of: int = self.dictionary[term][OFFSET_IDX]
+        width: int = self.dictionary[term][LEN_IDX]
+        postings: tuple[int, ...] = Packer.decode(self.inverted_file)[
+            of:width:2
+        ]
+        pos_len: int = len(postings)
+
+        metadata["offset"] = of
+        metadata["width"] = width
+        metadata["postings"] = postings
+        metadata["postings_len"] = pos_len
 
         return metadata
-
-    def set_byte_fmt(self, data: list[int]) -> None:
-
-        self.byte_fmt = "i" * len(data)
-
-    @staticmethod
-    def encode(byte_fmt: str, data: list[int]) -> bytes:
-
-        return pack(byte_fmt, *data)
-
-    @staticmethod
-    def decode(byte_fmt: str, data: bytes) -> tuple[int, ...]:
-
-        return unpack(byte_fmt, data)

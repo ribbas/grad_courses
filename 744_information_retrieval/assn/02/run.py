@@ -4,6 +4,7 @@ from src.io import IO
 from src.normalize import Normalizer
 from src.lexer import Lexer
 from src.invertedfile import InvertedFile
+from src.packer import Packer
 
 if __name__ == "__main__":
 
@@ -24,8 +25,7 @@ if __name__ == "__main__":
         invf.vocabulary(lex.get_df(), lex.get_tf())
         invf.ingest(io.read_term_doc_tf_file(f"tmp/{filename.stem}"))
         inv_file = invf.get_inverted_file_raw()
-        invf.set_byte_fmt(inv_file)
-        data = invf.encode("i" * len(inv_file), inv_file)
+        data = Packer.encode(inv_file)
         io.dump_bin(f"bin/{filename.stem}.if", data)
         io.dump_json(f"bin/{filename.stem}.dict", invf.get_dictionary())
 
@@ -43,7 +43,8 @@ if __name__ == "__main__":
 
     data_dir: Path = Path(__file__).parent.parent / "data"
 
-    # process_document(data_dir / "test.txt")
+    process_document(data_dir / "test.txt")
     read_inverted_file(data_dir / "test.txt")
     # process_document(data_dir / "yelp.txt")
+    # read_inverted_file(data_dir / "yelp.txt")
     # process_document(data_dir / "headlines.txt")
