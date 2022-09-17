@@ -67,7 +67,7 @@ class InvertedFile:
                 cur = val[TERM_ID_IDX]
                 self.dictionary[term_str][OFFSET_IDX] = offset  # update offset
                 # width between the current term and the next
-                width = offset + self.dictionary[term_str][DF_IDX] * 2
+                width = self.dictionary[term_str][DF_IDX] * 2
                 self.dictionary[term_str][LEN_IDX] = width  # update width
             offset += 2
             self.inverted_file_raw.extend(val[DOC_ID_IDX:TERM_STR_IDX])
@@ -106,7 +106,7 @@ class InvertedFile:
         of: int = self.dictionary[term][OFFSET_IDX]
         width: int = self.dictionary[term][LEN_IDX]
         postings: tuple[int, ...] = Packer.decode(self.inverted_file)[
-            of:width:2
+            of : of + width : 2
         ]
         pos_len: int = len(postings)
 
