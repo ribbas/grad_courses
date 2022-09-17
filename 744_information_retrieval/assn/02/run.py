@@ -21,25 +21,29 @@ if __name__ == "__main__":
         io.dump_stats(f"stats/{filename.stem}")
 
         invf = InvertedFile()
-        invf.vocabulary(lex.get_tf(), lex.get_df())
+        invf.vocabulary(lex.get_df(), lex.get_tf())
         invf.ingest(io.read_term_doc_tf_file(f"tmp/{filename.stem}"))
-        inv_file = invf.get_inverted_file()
+        inv_file = invf.get_inverted_file_raw()
         invf.set_byte_fmt(inv_file)
         data = invf.encode("i" * len(inv_file), inv_file)
-        print(data)
         io.dump_bin(f"bin/{filename.stem}.if", data)
+        io.dump_json(f"bin/{filename.stem}.dict", invf.get_dictionary())
 
     def read_inverted_file(filename: Path) -> None:
 
         io = IO()
 
-        data = io.read_bin(f"bin/{filename.stem}.if")
         invf = InvertedFile()
-        print(invf.decode("i" * (len(data) // 4), data)[22:])
+        inv_file = io.read_bin(f"bin/{filename.stem}.if")
+        dict_ = io.read_json(f"bin/{filename.stem}.dict")
+
+        invf.set_inverted_file(inv_file)
+        invf.set_dictionary(dict_)
+        print(invf.lookup("fudg"))
 
     data_dir: Path = Path(__file__).parent.parent / "data"
 
-    process_document(data_dir / "test.txt")
+    # process_document(data_dir / "test.txt")
     read_inverted_file(data_dir / "test.txt")
     # process_document(data_dir / "yelp.txt")
     # process_document(data_dir / "headlines.txt")

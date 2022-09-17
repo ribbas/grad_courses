@@ -32,7 +32,13 @@ class IO:
         self.lex: Lexer = lex
 
     @staticmethod
-    def __dump_json(filename: str, data: Any) -> None:
+    def read_json(filename: str) -> Any:
+
+        with open(f"{filename}.json") as fp:
+            return json.loads(fp.read())
+
+    @staticmethod
+    def dump_json(filename: str, data: Any) -> None:
 
         with open(f"{filename}.json", "w") as fp:
             json.dump(data, fp)
@@ -101,8 +107,8 @@ class IO:
 
         print("Processed", self.num_docs, "documents.")
 
-        self.__dump_json(filename + "_df", self.lex.get_df())
-        self.__dump_json(filename + "_df", self.lex.get_df())
+        self.dump_json(filename + "_df", self.lex.get_df())
+        self.dump_json(filename + "_df", self.lex.get_df())
 
         contents: str = ""
 
