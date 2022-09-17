@@ -74,7 +74,7 @@ class Normalizer:
     def __init__(self) -> None:
 
         self.document: str = ""
-        self.__tokens: Generator[str, None, None]
+        self.tokens: Generator[str, None, None]
 
         self.ws_re: re.Pattern[str] = re.compile(r"([A-Za-z]+'?[A-Za-z]+)")
         self.porter: nltk.stem.SnowballStemmer = nltk.stem.SnowballStemmer(
@@ -101,21 +101,21 @@ class Normalizer:
 
         return document.lower()
 
-    def tokens(self) -> Generator[str, None, None]:
+    def get_tokens(self) -> Generator[str, None, None]:
 
-        return self.__tokens
+        return self.tokens
 
     def process(self) -> None:
 
         self.document = self.__to_lower_case(self.document)
-        self.__tokens = self.__split_document(self.document)
+        self.tokens = self.__split_document(self.document)
 
         temp_str: str = ""
-        for token in self.__tokens:
+        for token in self.tokens:
             # print(token, self.__translate_contractions(token))
             temp_str += self.__translate_contractions(token) + " "
 
         # print(temp_str)
         # no_puncs: list[str] = self.__remove_punc(temp_str)
         no_empty: Iterator[str] = filter(None, self.__split_document(temp_str))
-        self.__tokens = self.__basic_stem(no_empty)
+        self.tokens = self.__basic_stem(no_empty)

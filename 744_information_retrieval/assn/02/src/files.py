@@ -91,7 +91,7 @@ class DataFile:
                         prep.process()
 
                         # add processed tokens to the lexer
-                        lex.add(prep.tokens())
+                        lex.add(prep.get_tokens())
 
                         # save records of term-DocID-tf
                         term_doc_tf.extend(lex.term_doc_tf(doc_id))
