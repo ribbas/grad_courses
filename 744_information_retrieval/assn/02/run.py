@@ -20,7 +20,7 @@ if __name__ == "__main__":
         IO.dump(data.tdt_file_name, term_doc_tf_str)
 
         IO.dump_json(data.df_file_name, lex.get_df())
-        IO.dump_json(data.tf_file_name, lex.get_df())
+        IO.dump_json(data.tf_file_name, lex.get_tf())
 
         contents: str = Formatter.format_stats(lex, num_docs)
         IO.dump(data.stats_file_name, contents)
