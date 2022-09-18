@@ -4,70 +4,182 @@ from typing import Iterator, Generator
 
 import nltk
 
-CONTRACTIONS: dict[str, str] = {
-    "aren't": "are not",
-    "ain't": "is not",
-    "can't": "cannot",
-    "could've": "could have",
-    "couldn't": "could not",
-    "didn't": "did not",
-    "doesn't": "does not",
-    "don't": "do not",
-    "hadn't": "had not",
-    "hasn't": "has not",
-    "haven't": "have not",
-    "he'd": "he had",
-    "he'll": "he will",
-    "he's": "he is",
-    "i'd": "i had",
-    "i'll": "i will",
-    "i'm": "i am",
-    "i've": "i have",
-    "isn't": "is not",
-    "it'll": "it will",
-    "it'd": "it would",
-    "it's": "it is",
-    "let's": "let us",
-    "mightn't": "might not",
-    "might've'": "might have",
-    "mustn't": "must not",
-    "must've'": "must have",
-    "shan't": "shall not",
-    "she'd": "she had",
-    "she'll": "she will",
-    "she's": "she is",
-    "should've": "should have",
-    "shouldn't": "should not",
-    "that'll": "that will",
-    "that's": "that is",
-    "there's": "there is",
-    "they'd": "they had",
-    "they'll": "they will",
-    "they're": "they are",
-    "they've": "they have",
-    "wasn't": "was not",
-    "we'd": "we had",
-    "we'll": "we will",
-    "we're": "we are",
-    "we've": "we have",
-    "weren't": "were not",
-    "what'll": "what will",
-    "what're": "what are",
-    "what's": "what is",
-    "what've": "what have",
-    "where's": "where is",
-    "who'd": "who had",
-    "who'll": "who will",
-    "who're": "who are",
-    "who's": "who is",
-    "who've": "who have",
-    "won't": "will not",
-    "wouldn't": "would not",
-    "would've": "would have",
-    "you'd": "you had",
-    "you'll": "you will",
-    "you're": "you are",
-    "you've": "you have",
+STOPWORDS: set[str] = {
+    # contractions
+    "aren't",
+    "ain't",
+    "can't",
+    "could've",
+    "couldn't",
+    "didn't",
+    "doesn't",
+    "don't",
+    "hadn't",
+    "hasn't",
+    "haven't",
+    "he'd",
+    "he'll",
+    "he's",
+    "i'd",
+    "i'll",
+    "i'm",
+    "i've",
+    "isn't",
+    "it'll",
+    "it'd",
+    "it's",
+    "let's",
+    "mightn't",
+    "might've'",
+    "mustn't",
+    "must've'",
+    "need'nt'",
+    "shan't",
+    "she'd",
+    "she'll",
+    "she's",
+    "should've",
+    "shouldn't",
+    "that'll",
+    "that's",
+    "there's",
+    "they'd",
+    "they'll",
+    "they're",
+    "they've",
+    "this'll",
+    "wasn't",
+    "we'd",
+    "we'll",
+    "we're",
+    "we've",
+    "weren't",
+    "what'll",
+    "what're",
+    "what's",
+    "what've",
+    "where's",
+    "who'd",
+    "who'll",
+    "who're",
+    "who's",
+    "who've",
+    "won't",
+    "wouldn't",
+    "would've",
+    "you'd",
+    "you'll",
+    "you're",
+    "you've",
+    # stopwords
+    "all",
+    "am",
+    "an",
+    "and",
+    "any",
+    "are",
+    "as",
+    "at",
+    "be",
+    "because",
+    "been",
+    "being",
+    "but",
+    "by",
+    "can",
+    "cannot",
+    "could",
+    "did",
+    "do",
+    "does",
+    "doing",
+    "few",
+    "for",
+    "from",
+    "had",
+    "has",
+    "have",
+    "having",
+    "he",
+    "her",
+    "here",
+    "hers",
+    "herself",
+    "him",
+    "himself",
+    "his",
+    "how",
+    "i",
+    "if",
+    "in",
+    "is",
+    "it",
+    "its",
+    "itself",
+    "just",
+    "may",
+    "me",
+    "might",
+    "more",
+    "most",
+    "must",
+    "my",
+    "myself",
+    "need",
+    "no",
+    "nor",
+    "not",
+    "now",
+    "o",
+    "of",
+    "off",
+    "on",
+    "once",
+    "only",
+    "or",
+    "our",
+    "ours",
+    "ourselves",
+    "shall",
+    "she",
+    "should",
+    "so",
+    "some",
+    "such",
+    "than",
+    "that",
+    "the",
+    "their",
+    "theirs",
+    "them",
+    "themselves",
+    "then",
+    "there",
+    "these",
+    "they",
+    "this",
+    "those",
+    "to",
+    "too",
+    "very",
+    "was",
+    "we",
+    "were",
+    "what",
+    "when",
+    "where",
+    "which",
+    "who",
+    "whom",
+    "why",
+    "will",
+    "with",
+    "would",
+    "you",
+    "your",
+    "yours",
+    "yourself",
+    "yourselves",
 }
 
 
@@ -81,7 +193,6 @@ class Normalizer:
         self.porter: nltk.stem.SnowballStemmer = nltk.stem.SnowballStemmer(
             "english"
         )
-        self.stopwords_dict = Counter(nltk.corpus.stopwords.words("english"))
 
     def set_document(self, document: str) -> None:
 
@@ -91,10 +202,6 @@ class Normalizer:
 
         return (self.porter.stem(token) for token in tokens)
 
-    def __translate_contractions(self, token: str) -> str:
-
-        return CONTRACTIONS.get(token, token)
-
     def __split_document(self, document: str) -> Generator[str, None, None]:
 
         return (x.group(0) for x in self.ws_re.finditer(document))
@@ -103,10 +210,8 @@ class Normalizer:
 
         return document.lower()
 
-    def __remove_stopwords(self, tokens: list[str]) -> str:
-        return " ".join(
-            word for word in tokens if word not in self.stopwords_dict
-        )
+    def __remove_stopwords(self, tokens: Generator[str, None, None]) -> str:
+        return " ".join(word for word in tokens if word not in STOPWORDS)
 
     def get_tokens(self) -> Generator[str, None, None]:
 
@@ -115,12 +220,14 @@ class Normalizer:
     def process(self) -> None:
 
         self.document = self.__to_lower_case(self.document)
+        # print(self.document)
         self.tokens = self.__split_document(self.document)
 
-        no_contr: list[str] = []
-        for token in self.tokens:
-            no_contr.append(self.__translate_contractions(token))
+        # no_contr: list[str] = []
+        # for token in self.tokens:
+        #     no_contr.append(self.__translate_contractions(token))
 
-        no_sw: str = self.__remove_stopwords(no_contr)
+        no_sw: str = self.__remove_stopwords(self.tokens)
+        # print(no_sw)
         no_empty: Iterator[str] = filter(None, self.__split_document(no_sw))
         self.tokens = self.__basic_stem(no_empty)
