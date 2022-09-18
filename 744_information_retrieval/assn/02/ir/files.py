@@ -107,9 +107,9 @@ class DataFile:
 
 class Formatter:
 
-    table_header: str = (
-        f"{'Word':<12} | {'TF':<6} | {'DF':<6}\n----------------------------\n"
-    )
+    hr: str = "------------------------------\n"
+
+    table_header: str = f"{'Word':<12} | {'TF':<6} | {'DF':<6}\n{hr}"
 
     @staticmethod
     def __format_tf_df(term: str, tf: int, df: int) -> str:
@@ -121,35 +121,35 @@ class Formatter:
 
         contents: str = ""
 
-        contents += "----------------------------\n"
+        contents += f"{Formatter.hr}"
         contents += f"{num_docs} documents.\n"
 
-        contents += "----------------------------\n"
+        contents += f"{Formatter.hr}"
         contents += f"Collections size: {lex.get_collection_size()}\n"
         contents += f"Vocabulary size: {lex.get_vocab_size()}\n"
-        contents += "\n----------------------------\n"
+        contents += f"\n{Formatter.hr}"
 
         contents += "Top 100 most frequent words:\n"
         contents += Formatter.table_header
         for term in lex.get_top_n_tf_df(100):
             contents += Formatter.__format_tf_df(*term)
 
-        contents += "\n----------------------------\n"
+        contents += f"\n{Formatter.hr}"
         contents += "500th word:\n"
         contents += Formatter.table_header
         contents += Formatter.__format_tf_df(*lex.get_nth_freq_term(500))
 
-        contents += "\n----------------------------\n"
+        contents += f"\n{Formatter.hr}"
         contents += "1000th word:\n"
         contents += Formatter.table_header
         contents += Formatter.__format_tf_df(*lex.get_nth_freq_term(1000))
 
-        contents += "\n----------------------------\n"
+        contents += f"\n{Formatter.hr}"
         contents += "5000th word:\n"
         contents += Formatter.table_header
         contents += Formatter.__format_tf_df(*lex.get_nth_freq_term(5000))
 
-        contents += "\n----------------------------\n"
+        contents += f"\n{Formatter.hr}"
         single_occs: int = lex.get_single_occs()
         contents += "Number of words that occur in exactly one document:\n"
         contents += f"{single_occs} ({round(single_occs / lex.get_vocab_size() * 100, 2)}%)\n"

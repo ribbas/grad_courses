@@ -1,83 +1,18 @@
-from collections import Counter
 import re
 from typing import Iterator, Generator
 
 import nltk
 
 STOPWORDS: set[str] = {
-    # contractions
-    "aren't",
-    "ain't",
-    "can't",
-    "could've",
-    "couldn't",
-    "didn't",
-    "doesn't",
-    "don't",
-    "hadn't",
-    "hasn't",
-    "haven't",
-    "he'd",
-    "he'll",
-    "he's",
-    "i'd",
-    "i'll",
-    "i'm",
-    "i've",
-    "isn't",
-    "it'll",
-    "it'd",
-    "it's",
-    "let's",
-    "mightn't",
-    "might've'",
-    "mustn't",
-    "must've'",
-    "need'nt'",
-    "shan't",
-    "she'd",
-    "she'll",
-    "she's",
-    "should've",
-    "shouldn't",
-    "that'll",
-    "that's",
-    "there's",
-    "they'd",
-    "they'll",
-    "they're",
-    "they've",
-    "this'll",
-    "wasn't",
-    "we'd",
-    "we'll",
-    "we're",
-    "we've",
-    "weren't",
-    "what'll",
-    "what're",
-    "what's",
-    "what've",
-    "where's",
-    "who'd",
-    "who'll",
-    "who're",
-    "who's",
-    "who've",
-    "won't",
-    "wouldn't",
-    "would've",
-    "you'd",
-    "you'll",
-    "you're",
-    "you've",
-    # stopwords
+    "a",
+    "ain",
     "all",
     "am",
     "an",
     "and",
     "any",
     "are",
+    "aren",
     "as",
     "at",
     "be",
@@ -89,16 +24,24 @@ STOPWORDS: set[str] = {
     "can",
     "cannot",
     "could",
+    "couldn",
+    "d",
     "did",
+    "didn",
     "do",
     "does",
+    "doesn",
     "doing",
+    "don",
     "few",
     "for",
     "from",
     "had",
+    "hadn",
     "has",
+    "hasn",
     "have",
+    "haven",
     "having",
     "he",
     "her",
@@ -113,16 +56,22 @@ STOPWORDS: set[str] = {
     "if",
     "in",
     "is",
+    "isn",
     "it",
     "its",
     "itself",
     "just",
+    "let",
+    "ll",
+    "m",
     "may",
     "me",
     "might",
+    "mightn",
     "more",
     "most",
     "must",
+    "mustn",
     "my",
     "myself",
     "need",
@@ -140,12 +89,17 @@ STOPWORDS: set[str] = {
     "our",
     "ours",
     "ourselves",
+    "re",
+    "s",
     "shall",
+    "shan",
     "she",
     "should",
+    "shouldn",
     "so",
     "some",
     "such",
+    "t",
     "than",
     "that",
     "the",
@@ -161,10 +115,13 @@ STOPWORDS: set[str] = {
     "those",
     "to",
     "too",
+    "ve",
     "very",
     "was",
+    "wasn",
     "we",
     "were",
+    "weren",
     "what",
     "when",
     "where",
@@ -174,7 +131,9 @@ STOPWORDS: set[str] = {
     "why",
     "will",
     "with",
+    "won",
     "would",
+    "wouldn",
     "you",
     "your",
     "yours",
@@ -189,29 +148,29 @@ class Normalizer:
         self.document: str = ""
         self.tokens: Generator[str, None, None]
 
-        self.ws_re: re.Pattern[str] = re.compile(r"([A-Za-z]+'?[A-Za-z]+)")
-        self.porter: nltk.stem.SnowballStemmer = nltk.stem.SnowballStemmer(
-            "english"
-        )
+        self.ws_re: re.Pattern[str] = re.compile(r"[A-Za-z]+")
+        self.porter: nltk.stem.PorterStemmer = nltk.stem.PorterStemmer()
 
     def set_document(self, document: str) -> None:
 
         self.document = document[:-1]
 
-    def __basic_stem(self, tokens: Iterator[str]) -> Generator[str, None, None]:
+    def __to_lower_case(self, document: str) -> str:
 
-        return (self.porter.stem(token) for token in tokens)
+        return document.lower()
 
     def __split_document(self, document: str) -> Generator[str, None, None]:
 
         return (x.group(0) for x in self.ws_re.finditer(document))
 
-    def __to_lower_case(self, document: str) -> str:
+    def __remove_stopwords(
+        self, tokens: Generator[str, None, None]
+    ) -> Generator[str, None, None]:
+        return (word for word in tokens if word not in STOPWORDS)
 
-        return document.lower()
+    def __stem(self, tokens: Iterator[str]) -> Generator[str, None, None]:
 
-    def __remove_stopwords(self, tokens: Generator[str, None, None]) -> str:
-        return " ".join(word for word in tokens if word not in STOPWORDS)
+        return (self.porter.stem(token) for token in tokens)
 
     def get_tokens(self) -> Generator[str, None, None]:
 
@@ -219,15 +178,14 @@ class Normalizer:
 
     def process(self) -> None:
 
-        self.document = self.__to_lower_case(self.document)
-        # print(self.document)
-        self.tokens = self.__split_document(self.document)
+        # convert the entire document to lower-case
+        doc_lc: str = self.__to_lower_case(self.document)
 
-        # no_contr: list[str] = []
-        # for token in self.tokens:
-        #     no_contr.append(self.__translate_contractions(token))
+        # split the document on its whitespace
+        tokens: Generator[str, None, None] = self.__split_document(doc_lc)
 
-        no_sw: str = self.__remove_stopwords(self.tokens)
-        # print(no_sw)
-        no_empty: Iterator[str] = filter(None, self.__split_document(no_sw))
-        self.tokens = self.__basic_stem(no_empty)
+        # remove contractions and stopwords
+        no_sw: Generator[str, None, None] = self.__remove_stopwords(tokens)
+
+        # stem tokens
+        self.tokens = self.__stem(no_sw)
