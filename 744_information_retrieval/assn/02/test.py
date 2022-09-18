@@ -1,11 +1,5 @@
-"""1. Print out the document frequency and postings list for terms: “Heidelberg", "cesium", “Trondheim”, “crustacean".
-2. Give document frequency, but do not print postings for the words: "Hopkins", “Stanford", "Brown", and “college”
-(these postings lists are longer -- I just want to see the counts).
-3. Print out the docids for documents that have both "Elon" and "Musk" in the text. You can do this by finding the
-postings list for each term, and then intersecting the two lists. For this test you do not need to use or supply frequency
-information. Please print the docids in increasing order."""
-
 from pathlib import Path
+from pprint import pprint
 from typing import Generator
 
 from ir.files import IO, DataFile
@@ -46,26 +40,30 @@ if __name__ == "__main__":
 
     prep = Normalizer()
 
+    # Print out the document frequency and postings list for terms:
+    # "Heidelberg", "cesium", "Trondheim", "crustacean".
     tokens1 = normalize_test_terms(
-        prep, ("Heidelberg", "cesium", "Trondheim", "crustacean", "crustaceans")
+        prep, ("Heidelberg", "cesium", "Trondheim", "crustaceans")
     )
-    results = read_inverted_file(
+    results1 = read_inverted_file(
         invf,
         tokens1,
-        ("term", "offset", "width", "postings", "postings_len"),
+        ("term", "postings", "postings_len"),
     )
-    print(list(results))
+    pprint(list(results1))
 
+    # Give document frequency, but do not print postings for the words:
+    # "Hopkins", "Stanford", "Brown", and "college"
     tokens2 = normalize_test_terms(
         prep, ("Hopkins", "Stanford", "Brown", "college")
     )
-    results = read_inverted_file(invf, tokens2, ("term", "postings_len"))
-    print(list(results))
+    results2 = read_inverted_file(invf, tokens2, ("term", "postings_len"))
+    pprint(list(results2))
 
+    # Print out the docids for documents that have both "Elon" and "Musk" in the text.
     tokens3 = normalize_test_terms(prep, ("Elon", "Musks"))
-    results = read_inverted_file(invf, tokens3, ("postings",))
-    elon, musk = results
+    results3 = read_inverted_file(invf, tokens3, ("postings",))
+    elon, musk = results3
     elon_postings, musk_postings = set(elon["postings"]), set(musk["postings"])
     elon_musk_postings = elon_postings & musk_postings
-    print(len(elon_musk_postings))
-    print(sorted(elon_musk_postings))
+    pprint(sorted(elon_musk_postings))

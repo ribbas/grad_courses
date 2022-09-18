@@ -7,6 +7,8 @@
 
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
+\usepackage[autostyle, english = american]{csquotes}
+\MakeOuterQuote{"}
 
 \usepackage{pythonhighlight}
 
@@ -26,10 +28,31 @@
 \maketitle	
 
 \section{Introduction}
-This paper describes a collection of scripts written to compute the term-frequency, document-frequency, and other statistics from a pre-generated corpus.
+This paper describes the enhancements and features added to the Information Retrieval program started in Assignment 1. Modifications include improvement in performance and efficiency in normalizing text and generating statistics from the pre-generated corpus and addition of binary inverted files.
 
 \section{Technical Background}
 All of the source code is in Python 3.10. The program is split into several modules and follows an object oriented structure. The following is the directory structure of the source code:
+
+% .
+% ├── bin
+% │   ├── headlines_dict.json
+% │   └── headlines_if.bin
+% ├── ir
+% │   ├── files.py
+% │   ├── __init__.py
+% │   ├── invertedfile.py
+% │   ├── lexer.py
+% │   ├── normalize.py
+% │   └── packer
+% ├── run.py
+% ├── stats
+% │   ├── headlines_df.json
+% │   ├── headlines_stats.txt
+% │   └── headlines_tf.json
+% ├── test.py
+% └── tmp
+%     └── headlines_tdt.txt
+
 
 \begin{figure}[!ht]
     \caption{Directory Hierarchy of Assignment 2}
@@ -39,52 +62,70 @@ All of the source code is in Python 3.10. The program is split into several modu
 
 The source code for all of the files are attached in Appendix \ref{appendix:src}.
 
-The total number of non-empty lines of code for the program comes to 200, with an average execution time of 40 seconds to process both of the sample files.
+The total number of non-empty lines of code for the program doubled to just under 400. However, with an average execution time to process the sample files reduced to 37 seconds. 
 
-\begin{figure}[!ht]
-    \caption{UML of Corpus Statistics}
-    \centering
-    \includegraphics[scale=0.6]{statics/uml.png}
-\end{figure}
+% \begin{figure}[!ht]
+%     \caption{UML of Corpus Statistics}
+%     \centering
+%     \includegraphics[scale=0.6]{statics/uml.png}
+% \end{figure}
 
-\subsection{Driver} \label{sec:driver}
-The driver script for the program is \texttt{run.py}. The file is responsible for opening up the input files, reading in all of the documents contained in those files, processing them into the lexicon, and generating and saving statistics on them. Since the sample files are relatively small, the entire content may be loaded into the memory of a modern machine. However, to account for possible larger files, the lines containing the documents are saved in memory, normalized, and added to the lexicon before moving to the next document.
+\subsection{Existing Classes}
 
-This method of reading the files imposes a limitation, where every document is assumed to be on the 2nd line out of 4 (line\_num \% 4 == 1). The algorithm will need to be modified if the files in the future have different formats.
+\subsubsection{Driver} \label{sec:driver}
+The driver script for the program is split between \texttt{run.py} and \texttt{test.py}. The former script, while maintaining the responsibility for the same list of tasks as the previous iteration, also generates the binary inverted files and dictionaries for the sample corpus and saves it to disk. The latter script loads the inverted files and dictionaries and looks up the test terms as specified in the prompt.
 
-\subsection{\texttt{normalize.Normalizer}}
-The \texttt{Normalizer} class normalizes the documents. The class is instantiated once and it provides a method to set the document for normalization. The normalization pipeline includes the following processes, in order:
+\subsubsection{\texttt{normalize.Normalizer}}
+The \texttt{Normalizer} class received the following modifications:
 
 \begin{enumerate}
-    \item translating the entire document to lower case. The document is unconditionally transformed into lower case, which can lead to confusion with words that are considered proper nouns.
+    \item expansion of word contractions was replaced by removing all of the stopwords. The stopwords are a mixture of tokens from \texttt{nltk.corpus.stopwords.words("english")} and the contractions hash table keys. The larger list of "STOPWORDS" is represented as a Python set() object for efficient lookups.
 
-    \item splitting the document on whitespace into tokens.
-
-    \item expanding word contractions into their components. The contractions are pre-generated into a Python dict in \texttt{normalize.CONTRACTIONS} for constant-time look-ups.
-
-    \item splitting the tokens on all punctuations except "'". The "'" is preserved for the stemmer to process later. Not splitting on this character also avoids including incorrect tokens into the lexicon. For example, "food's" will get tokenized into ["food", "s"].
-
-    \item rejoining and splitting the tokens to remove empty tokens.
-
-    \item stemming tokens with nltk.stem.SnowballStemmer.stem(word).
+    \item all of the normalizing methods accept generators as input to improve performance on memory.
 \end{enumerate}
 
->>> nltk.corpus.stopwords.words("english")
-['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
+\subsubsection{\texttt{lexer.Lexer}}
+The \texttt{Lexer} class received the following modifications:
+\begin{enumerate}
+    \item the Counter object \texttt{tf\_in\_doc} was added to maintain a term-frequency of the current document. This addition allows for the new method \texttt{term\_doc\_tf(self, doc\_id: str)} that generates tuples of \texttt{(term-string, doc-ID, term-document-frequency)}. These tuples are saved on disk in files named "sample\_tdt.txt" for further sorting and processing to generate the inverted files.
+\end{enumerate}
 
+\subsection{\texttt{New Classes}}
 
-The tokens are available as a list of string to be added into the lexicon before being overwritten by the next document.
+\subsubsection{\texttt{invertedfile.InvertedFile}}
+The \texttt{InvertedFile} class is responsible for building the binary inverted files and dictionaries. The class ingests the "sample\_tdt.txt" files, sorts (in memory) the tuples as detailed in the prompt, and converts the values into 4-byte integer formats. The class also provides a method to look up tokens in the generated inverted files and dictionaries.
 
-\subsubsection{External Libraries}
-The external library \texttt{nltk} was used for its stemming capabilities. The stemmers \texttt{PorterStemmer} and \texttt{SnowballStemmer} were tested over a sample of the documents, and the latter algorithm appeared to yield subjectively better-looking results.
+\subsubsection{\texttt{Packer}}
+The \texttt{Packer} class is responsible for encoding and decoding fixed-format binary data.
 
-\subsection{\texttt{lexer.Lexer}}
-The \texttt{Lexer} class utilizes 2 \texttt{collections.Counter} objects to store the term-frequency and document-frequency of the lexicon. The bag-type container is a part of the standard library and match in performance compared to default \texttt{dict}s, but with additional methods such as \texttt{Counter.total()}, \texttt{Counter.most\_common(n)}, etc. These methods are helpful in generating statistics required in the assignment.
+\subsubsection{\texttt{files} Classes}
+The \texttt{IO} class was split into 2 further classes, \texttt{Formatter} and \texttt{DataFile}. These classes provide support for file utility functions in the program, including reading and writing to plain files, JSON files, and binary files, formatting statistics outputs, generating file paths, etc.
 
 \section{Statistics and Observations}
-Since stopwords were not removed, they were prominent in the 100 most frequent terms in both of the files. "the" and "to" were present in the top 5 most frequent terms in both of the sets of documents. In the Yelp corpus, some of the most commonly occurring words were related to food and restaurant services. This theme is expected due to the source of the documents containing reviews of mostly food service establishments and its quality. The Headlines corpus did not appear to circulate a theme, although some of the frequent words appeared to be numerical or date values. This can be expected due to the source of the documents mostly discussing events with timelines. The numerical values can indicate money, percentage, weather, length of service, etc.
+With the modifications made to the text normalization process, the statistics generated from the input file have changed. The new top 10 more frequent tokens now include "market", "announc", and "report", which are terms that expected in headlines.
 
-Both of the corpora had an almost identical percentage of singly-occurring terms (~48.8\%). These are terms that appeared in only one document.
+In terms of the inverted files and dictionaries, the space they occupy on disk combined are significantly lower than the original document.
+
+\begin{table}[h]
+    \begin{center}
+        
+        \begin{tabular}{| l | l | l |}
+        \hline
+        \textbf{File} & \textbf{Size (in bytes)} & \textbf{Description} \\
+        \hline
+        headlines.txt & 39381610 & Input corpus file \\
+        headlines\_dict.json & 4275427 & Generated dictionary JSON file \\
+        headlines\_if.bin & 27774312 & Inverted binary file \\
+        \hline
+        \end{tabular}
+
+    \end{center}
+    \caption{Sizes of Files Computed Through the \texttt{stat} Command on a Debian Based Linux}
+
+\end{table}
+
+
+\section{Testing}
 
 The outputs are attached in Appendix \ref{appendix:outputs}.
 
@@ -92,15 +133,15 @@ The outputs are attached in Appendix \ref{appendix:outputs}.
 
 \section{Source Code} \label{appendix:src}
 
-\inputpython{./src/io.py}{./src/io.py}
-\inputpython{./src/normalize.py}{./src/normalize.py}
-\inputpython{./src/lexer.py}{./src/lexer.py}
+\inputpython{./ir/files.py}{./ir/files.py}
+\inputpython{./ir/normalize.py}{./ir/normalize.py}
+\inputpython{./ir/lexer.py}{./ir/lexer.py}
 
 \inputpython{./run.py}{./run.py}
 
 \section{Outputs} \label{appendix:outputs}
 
-\lstinputlisting[caption=Statistics of 'yelp.txt',basicstyle=\small]{./data/yelp_stats.txt}
-\lstinputlisting[caption=Statistics of 'headlines.txt',basicstyle=\small]{./data/headlines_stats.txt}
+% \lstinputlisting[caption=Statistics of 'yelp.txt',basicstyle=\small]{./data/yelp_stats.txt}
+\lstinputlisting[caption=Statistics of 'headlines.txt',basicstyle=\small]{./stats/headlines_stats.txt}
 
 \end{document}
