@@ -1,3 +1,4 @@
+from collections import Counter
 import re
 from typing import Iterator, Generator
 
@@ -80,6 +81,7 @@ class Normalizer:
         self.porter: nltk.stem.SnowballStemmer = nltk.stem.SnowballStemmer(
             "english"
         )
+        self.stopwords_dict = Counter(nltk.corpus.stopwords.words("english"))
 
     def set_document(self, document: str) -> None:
 
@@ -101,6 +103,11 @@ class Normalizer:
 
         return document.lower()
 
+    def __remove_stopwords(self, tokens: list[str]) -> str:
+        return " ".join(
+            word for word in tokens if word not in self.stopwords_dict
+        )
+
     def get_tokens(self) -> Generator[str, None, None]:
 
         return self.tokens
@@ -110,12 +117,10 @@ class Normalizer:
         self.document = self.__to_lower_case(self.document)
         self.tokens = self.__split_document(self.document)
 
-        temp_str: str = ""
+        no_contr: list[str] = []
         for token in self.tokens:
-            # print(token, self.__translate_contractions(token))
-            temp_str += self.__translate_contractions(token) + " "
+            no_contr.append(self.__translate_contractions(token))
 
-        # print(temp_str)
-        # no_puncs: list[str] = self.__remove_punc(temp_str)
-        no_empty: Iterator[str] = filter(None, self.__split_document(temp_str))
+        no_sw: str = self.__remove_stopwords(no_contr)
+        no_empty: Iterator[str] = filter(None, self.__split_document(no_sw))
         self.tokens = self.__basic_stem(no_empty)

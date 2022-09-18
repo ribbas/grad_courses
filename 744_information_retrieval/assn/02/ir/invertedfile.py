@@ -98,10 +98,10 @@ class InvertedFile:
 
     def lookup(self, term: str) -> dict[str, Any]:
 
-        if term not in self.dictionary:
-            return {"term": term}
-
         metadata: dict[str, Any] = {"term": term}
+
+        if term not in self.dictionary:
+            return metadata
 
         of: int = self.dictionary[term][OFFSET_IDX]
         width: int = self.dictionary[term][LEN_IDX]

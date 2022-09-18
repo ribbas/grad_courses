@@ -52,6 +52,7 @@ class DataFile:
     def __init__(self, filename: Path) -> None:
 
         self.filename = filename
+        self.num_docs: int = 0
 
         self.df_file_name: str = f"stats/{filename.stem}_df"
         self.tf_file_name: str = f"stats/{filename.stem}_tf"
@@ -67,12 +68,11 @@ class DataFile:
         prep: Normalizer,
         lex: Lexer,
         term_doc_tf: list[tuple[str, str, int]],
-    ) -> int:
+    ) -> None:
 
         doc_id: str = ""
         doc_id_re = re.compile(r"\d+")
         line_num: int = 0
-        num_docs: int = 0
 
         with open(self.filename) as fp:
             for line in fp:
@@ -81,7 +81,7 @@ class DataFile:
                     # line containing DocID
                     case 0:
                         doc_id = next(doc_id_re.finditer(line)).group()
-                        num_docs += 1
+                        self.num_docs += 1
 
                     # line containing document
                     case 1:
@@ -102,8 +102,7 @@ class DataFile:
 
                 line_num += 1
 
-        print("Processed", num_docs, "documents.")
-        return num_docs
+        print("Processed", self.num_docs, "documents.")
 
 
 class Formatter:
