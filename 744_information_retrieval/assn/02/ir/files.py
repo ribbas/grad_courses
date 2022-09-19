@@ -51,7 +51,7 @@ class IO:
 class DataFile:
     def __init__(self, filename: Path) -> None:
 
-        self.filename = filename
+        self.filename: Path = filename
         self.num_docs: int = 0
 
         self.df_file_name: str = f"stats/{filename.stem}_df"
@@ -108,7 +108,6 @@ class DataFile:
 class Formatter:
 
     hr: str = "------------------------------\n"
-
     table_header: str = f"{'Word':<12} | {'TF':<6} | {'DF':<6}\n{hr}"
 
     @staticmethod

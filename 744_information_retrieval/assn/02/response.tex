@@ -55,20 +55,20 @@ All of the source code is in Python 3.10. The program is split into several modu
 
 
 \begin{figure}[!ht]
-    \caption{Directory Hierarchy of Assignment 2}
     \centering
     \includegraphics[scale=0.2]{statics/dirtree.png}
+    \caption{Directory Hierarchy of Assignment 2}
 \end{figure}
 
 The source code for all of the files are attached in Appendix \ref{appendix:src}.
 
-The total number of non-empty lines of code for the program doubled to just under 400. However, with an average execution time to process the sample files reduced to 37 seconds. 
+The total number of non-empty lines of code for the program doubled to just under 400. However, the average execution time to process the sample files reduced to 37 seconds. 
 
-% \begin{figure}[!ht]
-%     \caption{UML of Corpus Statistics}
-%     \centering
-%     \includegraphics[scale=0.6]{statics/uml.png}
-% \end{figure}
+\begin{figure}[!ht]
+    \includegraphics[scale=0.43]{statics/uml.png}
+    \centering
+    \caption{UML of Information Retrieval}
+\end{figure}
 
 \subsection{Existing Classes}
 
@@ -87,7 +87,7 @@ The \texttt{Normalizer} class received the following modifications:
 \subsubsection{\texttt{lexer.Lexer}}
 The \texttt{Lexer} class received the following modifications:
 \begin{enumerate}
-    \item the Counter object \texttt{tf\_in\_doc} was added to maintain a term-frequency of the current document. This addition allows for the new method \texttt{term\_doc\_tf(self, doc\_id: str)} that generates tuples of \texttt{(term-string, doc-ID, term-document-frequency)}. These tuples are saved on disk in files named "sample\_tdt.txt" for further sorting and processing to generate the inverted files.
+    \item the Counter object \texttt{tf\_in\_doc} was added to maintain a term-frequency of the current document. This addition allows for the new method \texttt{term\_doc\_tf(doc\_id: str)} that generates tuples of \texttt{(term-string, doc-ID, term-document-frequency)}. These tuples are saved on disk in files named "sample\_tdt.txt" for further sorting and processing to generate the inverted files.
 \end{enumerate}
 
 \subsection{\texttt{New Classes}}
@@ -109,7 +109,7 @@ In terms of the inverted files and dictionaries, the space they occupy on disk c
 \begin{table}[h]
     \begin{center}
         
-        \begin{tabular}{| l | l | l |}
+        \begin{tabular}{| l | r | l |}
         \hline
         \textbf{File} & \textbf{Size (in bytes)} & \textbf{Description} \\
         \hline
@@ -124,24 +124,76 @@ In terms of the inverted files and dictionaries, the space they occupy on disk c
 
 \end{table}
 
-
 \section{Testing}
+The tests described by the prompt were performed via the \texttt{test.py} driver script. The tokens to look up had to first be normalized through the \texttt{Normalizer} class.
 
-The outputs are attached in Appendix \ref{appendix:outputs}.
+\begin{lstlisting}[style=mypython,
+    caption=Test 1: Document frequency and postings list for the terms: "Heidelberg"\, "cesium"\, "Trondheim"\, "crustacean"]
+# NOTE: the normalization stems "crustacean" to "crustacea"
+# and "crustaceans" to "crustacean"
+tokens1 = normalize_test_terms(
+    prep, ("Heidelberg", "cesium", "Trondheim", "crustaceans")
+)
+results1 = read_inverted_file(
+    invf,
+    tokens1,
+    ("term", "postings", "postings_len"),
+)
+\end{lstlisting}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[scale=0.15]{statics/test1.png}
+    \caption{Output of Test 1}
+\end{figure}
+\clearpage
+\newpage
+
+\begin{lstlisting}[style=mypython,caption=Test 2: Document frequency for the words: "Hopkins"\, "Stanford"\, "Brown"\, and "college"]
+tokens2 = normalize_test_terms(
+    prep, ("Hopkins", "Stanford", "Brown", "college")
+)
+results2 = read_inverted_file(invf, tokens2, ("term", "postings_len"))
+\end{lstlisting}
+% \clearpage
+% \newpage
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[scale=0.15]{statics/test2.png}
+    \caption{Output of Test 2}
+\end{figure}
+
+\begin{lstlisting}[style=mypython,caption=Test 3: docids for documents that have both "Elon" and "Musk"]
+# NOTE: the normalization stems "Musks" to "Musk"
+tokens3 = normalize_test_terms(prep, ("Elon", "Musks"))
+results3 = read_inverted_file(invf, tokens3, ("postings",))
+elon, musk = results3
+elon_postings, musk_postings = set(elon["postings"]), set(musk["postings"])
+elon_musk_postings = elon_postings & musk_postings
+\end{lstlisting}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[scale=0.15]{statics/test3.png}
+    \caption{Output of Test 3}
+\end{figure}
 
 \appendix
 
 \section{Source Code} \label{appendix:src}
 
 \inputpython{./ir/files.py}{./ir/files.py}
+\inputpython{./ir/invertedfile.py}{./ir/invertedfile.py}
 \inputpython{./ir/normalize.py}{./ir/normalize.py}
 \inputpython{./ir/lexer.py}{./ir/lexer.py}
+\inputpython{./ir/packer.py}{./ir/packer.py}
 
 \inputpython{./run.py}{./run.py}
+\inputpython{./test.py}{./test.py}
 
 \section{Outputs} \label{appendix:outputs}
 
-% \lstinputlisting[caption=Statistics of 'yelp.txt',basicstyle=\small]{./data/yelp_stats.txt}
 \lstinputlisting[caption=Statistics of 'headlines.txt',basicstyle=\small]{./stats/headlines_stats.txt}
 
 \end{document}

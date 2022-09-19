@@ -42,6 +42,8 @@ if __name__ == "__main__":
 
     # Print out the document frequency and postings list for terms:
     # "Heidelberg", "cesium", "Trondheim", "crustacean".
+    # NOTE: the normalization stems "crustacean" to "crustacea"
+    # and "crustaceans" to "crustacean"
     tokens1 = normalize_test_terms(
         prep, ("Heidelberg", "cesium", "Trondheim", "crustaceans")
     )
@@ -52,7 +54,7 @@ if __name__ == "__main__":
     )
     pprint(list(results1))
 
-    # Give document frequency, but do not print postings for the words:
+    # give document frequency, but do not print postings for the words:
     # "Hopkins", "Stanford", "Brown", and "college"
     tokens2 = normalize_test_terms(
         prep, ("Hopkins", "Stanford", "Brown", "college")
