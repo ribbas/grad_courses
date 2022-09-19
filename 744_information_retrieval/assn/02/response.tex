@@ -95,11 +95,11 @@ The \texttt{Lexer} class received the following modifications:
 \subsubsection{\texttt{invertedfile.InvertedFile}}
 The \texttt{InvertedFile} class is responsible for building the binary inverted files and dictionaries. The class ingests the "sample\_tdt.txt" files, sorts (in memory) the tuples as detailed in the prompt, and converts the values into 4-byte integer formats. The class also provides a method to look up tokens in the generated inverted files and dictionaries.
 
-\subsubsection{\texttt{Packer}}
+\subsubsection{\texttt{packer.Packer}}
 The \texttt{Packer} class is responsible for encoding and decoding fixed-format binary data.
 
 \subsubsection{\texttt{files} Classes}
-The \texttt{IO} class was split into 2 further classes, \texttt{Formatter} and \texttt{DataFile}. These classes provide support for file utility functions in the program, including reading and writing to plain files, JSON files, and binary files, formatting statistics outputs, generating file paths, etc.
+The \texttt{IO} class was decoupled from \texttt{Lexer} and \texttt{Normalizer} and further split into 2 additional classes, \texttt{Formatter} and \texttt{DataFile}. These classes provide support for file utility functions in the program, including reading and writing to plain files, JSON files, and binary files, formatting statistics outputs, generating file paths, etc.
 
 \section{Statistics and Observations}
 With the modifications made to the text normalization process, the statistics generated from the input file have changed. The new top 10 more frequent tokens now include "market", "announc", and "report", which are terms that expected in headlines.
