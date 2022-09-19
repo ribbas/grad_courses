@@ -1,9 +1,9 @@
 from pathlib import Path
 
 from ir.files import IO, Formatter, DataFile
-from ir.normalize import Normalizer
-from ir.lexer import Lexer
 from ir.invertedfile import InvertedFile
+from ir.lexer import Lexer
+from ir.normalize import Normalizer
 from ir.packer import Packer
 
 
@@ -24,7 +24,7 @@ def process_document(filename: Path) -> None:
     IO.dump(data.stats_file_name, contents)
 
     invf = InvertedFile()
-    invf.vocabulary(lex.get_df(), lex.get_tf())
+    invf.build_dict(lex.get_df(), lex.get_tf())
     invf.ingest(IO.read(data.tdt_file_name))
     inv_file = invf.get_inverted_file_raw()
     if_data = Packer.encode(inv_file)

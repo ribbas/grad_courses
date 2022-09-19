@@ -20,7 +20,7 @@ class InvertedFile:
         self.mapped_values: list[tuple[int, int, int, str]] = []
         self.inverted_file_raw: list[int] = []
 
-    def vocabulary(
+    def build_dict(
         self, df: Counter[str], tf: Counter[str]
     ) -> dict[str, list[int]]:
 

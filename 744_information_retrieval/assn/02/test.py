@@ -3,8 +3,8 @@ from pprint import pprint
 from typing import Generator
 
 from ir.files import IO, DataFile
-from ir.normalize import Normalizer
 from ir.invertedfile import InvertedFile
+from ir.normalize import Normalizer
 
 
 def read_inverted_file(
@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
     prep = Normalizer()
 
-    # Print out the document frequency and postings list for terms:
+    # print out the document frequency and postings list for terms:
     # "Heidelberg", "cesium", "Trondheim", "crustacean".
     # NOTE: the normalization stems "crustacean" to "crustacea"
     # and "crustaceans" to "crustacean"

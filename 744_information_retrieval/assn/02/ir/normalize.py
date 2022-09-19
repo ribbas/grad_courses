@@ -1,5 +1,5 @@
 import re
-from typing import Iterator, Generator
+from typing import Generator
 
 import nltk
 
@@ -61,7 +61,9 @@ class Normalizer:
     ) -> Generator[str, None, None]:
         return (word for word in tokens if word not in STOPWORDS)
 
-    def __stem(self, tokens: Iterator[str]) -> Generator[str, None, None]:
+    def __stem(
+        self, tokens: Generator[str, None, None]
+    ) -> Generator[str, None, None]:
 
         return (self.snow.stem(token) for token in tokens)
 

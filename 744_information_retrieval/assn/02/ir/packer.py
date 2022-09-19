@@ -1,7 +1,6 @@
 from struct import pack, unpack
 
-
-BYTE_FMT_CHAR = "i"
+BYTE_FMT_CHAR = "I"
 BYTE_FMT_SIZE = 4
 
 

@@ -43,7 +43,7 @@ namespace Information_Retrieval {
     - to_lower_case(document: str): str
     - split_document(document: str): Generator[str]
     - remove_stopwords(tokens: Generator[str]): Generator[str]
-    - basic_stem(tokens: Iterator[str]): Generator[str]
+    - stem(tokens: Generator[str]): Generator[str]
     + get_tokens(): Generator[str]
     + process(): None
   }
@@ -72,7 +72,7 @@ namespace Information_Retrieval {
     - dictionary: dict[str, list[int]]
     - mapped_values: list[tuple[int, int, int, str]]
     - inverted_file_raw: list[int]
-    + vocabulary(df: Counter[str], tf: Counter[str]): dict[str, list[int]]
+    + build_dict(df: Counter[str], tf: Counter[str]): dict[str, list[int]]
     - convert_tdt_types(col_split_list: list[str]): tuple[int, int, int, str]
     - map_to_int(term_doc_tf: str): list[tuple[int, int, int, str]]
     + ingest(term_doc_tf: str): None
