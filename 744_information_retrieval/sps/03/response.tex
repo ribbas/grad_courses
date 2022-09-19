@@ -68,7 +68,7 @@
 
             \item Is the mean posting list length longer or shorter after stemming is performed? Offer a brief explanation for the difference.
 
-            \textbf{Answer:} 
+            \textbf{Answer:} The mean posting list length stays the same after stemming is performed. Once stemming is performed, some words get normalized to their common roots. During the replacement, a token that was once pointing to one Doc-ID now gets referenced by all of the Doc-IDs that had their tokens stemmed to the common root. Using the same example from the previous answer, if the words "intern" and "internal" have existed in separated documents, their posting lists would only contain their corresponding Doc-ID. After being stemmed to "intern", its posting list now references that Doc-IDs of the posting list of "internal". However, the total number of Doc-IDs is preserved.
 
         \end{enumerate}
 
@@ -175,8 +175,8 @@
 
         \end{enumerate}
 
-        \item (20\%) Below is a bit sequence for a gamma encoded gap list (as described in Chapter 5 of IIR and the lecture materials). Decode the gap list and reconstruct the corresponding list of docids. Spaces are added for ease of reading.
-        Hint: there are six docids.
+        \item (20\%) Below is a bit sequence for a gamma encoded gap list (as described in Chapter 5 of IIR and the lecture materials). Decode the gap list and reconstruct the corresponding list of Doc-IDs. Spaces are added for ease of reading.
+        Hint: there are six Doc-IDs.
         \[ 1110 \ 0101 \ 1110 \ 1010 \ 1001 \ 1111 \ 1000 \ 0110 \ 1101 \ 1101 \]
 
         \textbf{Answer:} Regrouping the bit sequence using the following algorithm:
@@ -218,7 +218,7 @@
             \end{tabular}
         \end{center}
 
-        Using Simple-9 encode a posting list for the following nine docids. Please write the bits four at a time, with a space between each four. Recall that you will first have to create a gap list before encoding gaps. Work carefully and do show your work. Docids: \{4, 12, 15, 35, 36, 52, 102, 118, 218\}
+        Using Simple-9 encode a posting list for the following nine Doc-IDs. Please write the bits four at a time, with a space between each four. Recall that you will first have to create a gap list before encoding gaps. Work carefully and do show your work. Doc-IDs: \{4, 12, 15, 35, 36, 52, 102, 118, 218\}
 
         \textbf{Answer:} Gap list of \{4, 12, 15, 35, 36, 52, 102, 118, 218\}:
         
