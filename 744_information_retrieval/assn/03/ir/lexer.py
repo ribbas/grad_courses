@@ -28,6 +28,14 @@ class Lexer:
         for term in self.tf_in_doc:
             yield term, doc_id, self.tf_in_doc[term]
 
+    def set_tf(self, tf: Counter[str]) -> None:
+
+        self.tf = tf
+
+    def set_df(self, df: Counter[str]) -> None:
+
+        self.df = df
+
     def get_tf(self) -> Counter[str]:
 
         return self.tf

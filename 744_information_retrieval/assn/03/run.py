@@ -1,40 +1,68 @@
+import argparse
 from pathlib import Path
 
-from ir.files import IO, Formatter, DataFile
-from ir.invertedfile import InvertedFile
-from ir.lexer import Lexer
-from ir.normalize import Normalizer
-from ir.packer import Packer
-
-
-def process_document(filename: Path) -> None:
-
-    # prep = Normalizer()
-    # lex = Lexer()
-    data = DataFile(filename)
-
-    # term_doc_tf: list[tuple[str, str, int]] = []
-    # data.ingest(prep, lex, term_doc_tf)
-    # term_doc_tf_str: str = Formatter.format_term_doc_tf(term_doc_tf)
-    # IO.dump(data.tdt_file_name, term_doc_tf_str)
-    # IO.dump_json(data.df_file_name, lex.get_df())
-    # IO.dump_json(data.tf_file_name, lex.get_tf())
-
-    # contents: str = Formatter.format_stats(lex, data.num_docs)
-    # IO.dump(data.stats_file_name, contents)
-
-    df = IO.read_json(data.df_file_name)
-    tf = IO.read_json(data.tf_file_name)
-    invf = InvertedFile()
-    invf.build_dict(df, tf)
-    # invf.ingest(IO.read(data.tdt_file_name))
-    # inv_file = invf.get_inverted_file_raw()
-    # print("made it here")
-    # if_data = Packer.encode(inv_file)
-    # IO.dump_bin(data.inv_file_name, if_data)
-    # IO.dump_json(data.dict_name, invf.get_dictionary())
-
+from ir import InformationRetrieval
 
 if __name__ == "__main__":
 
-    process_document(Path(__file__).parent.parent / "data" / "cord19.txt")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("path", type=str, help="path of corpus file")
+    parser.add_argument(
+        "-f",
+        "--freq",
+        action=argparse.BooleanOptionalAction,
+        help="generate frequencies",
+    )
+    parser.add_argument(
+        "-s",
+        "--stat",
+        action=argparse.BooleanOptionalAction,
+        help="generate frequency statistics",
+    )
+    parser.add_argument(
+        "-d",
+        "--dump",
+        action=argparse.BooleanOptionalAction,
+        help="save frequencies data to file",
+    )
+    parser.add_argument(
+        "-lf",
+        "--load_freqs",
+        action=argparse.BooleanOptionalAction,
+        help="load pregenerated frequencies data",
+    )
+    parser.add_argument(
+        "-li",
+        "--load_invf",
+        action=argparse.BooleanOptionalAction,
+        help="load pregenerated frequencies data",
+    )
+    parser.add_argument(
+        "-i",
+        "--invf",
+        action=argparse.BooleanOptionalAction,
+        help="generate inverted files",
+    )
+
+    args = vars(parser.parse_args())
+
+    ir_obj = InformationRetrieval()
+    ir_obj.set_filename(Path(args["path"]))
+
+    if args["freq"]:
+        ir_obj.generate_freqs()
+
+    if args["stat"]:
+        ir_obj.generate_stats()
+
+    if args["dump"]:
+        ir_obj.dump_freqs()
+
+    if args["load_freqs"]:
+        ir_obj.load_freqs()
+
+    if args["load_invf"]:
+        ir_obj.load_inverted_file()
+
+    if args["invf"]:
+        ir_obj.build_inverted_file()

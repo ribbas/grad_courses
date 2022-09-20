@@ -71,17 +71,17 @@ class DataFile:
     ) -> None:
 
         doc_id: str = ""
-        doc_id_re = re.compile(r"\d+")
-        # line_num: int = 0
         doc: str = ""
-        done: bool = False
 
         with open(self.filename) as fp:
             for line in fp:
-                # print(line)
 
-                if line and line[0] == "<":
-                    if done:
+                if line:
+                    if "<P ID=" in line:
+                        doc_id = line[6:-2]
+                        self.num_docs += 1
+
+                    elif "</P>" in line:
 
                         if self.num_docs % 10000 == 0:
                             print("Processed", self.num_docs, "documents.")
@@ -94,17 +94,11 @@ class DataFile:
 
                         # save records of term-DocID-tf
                         term_doc_tf.extend(lex.term_doc_tf(doc_id))
-                        done = False
+
                         doc = ""
 
                     else:
-
-                        doc_id = next(doc_id_re.finditer(line)).group()
-                        self.num_docs += 1
-                        done = True
-
-                else:
-                    doc += line
+                        doc += line
 
         print("Processed", self.num_docs, "documents.")
 
