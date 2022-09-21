@@ -1,5 +1,5 @@
 from collections import Counter
-from typing import Any
+from typing import Any, Generator
 
 from .packer import Packer
 
@@ -17,8 +17,8 @@ class InvertedFile:
     def __init__(self) -> None:
 
         self.dictionary: dict[str, list[int]] = {}
-        self.mapped_values: list[tuple[int, int, int, str]] = []
-        self.mapped_values_sorted: list[tuple[int, int, int, str]] = []
+        # self.mapped_values: Generator[tuple[int, int, int, str], None, None]
+        # self.mapped_values_sorted: list[tuple[int, int, int, str]] = []
         self.inverted_file_raw: list[int] = []
 
     def build_dict(
@@ -42,25 +42,61 @@ class InvertedFile:
             col_split_list[TERM_ID_IDX],  # term
         )
 
-    def __map_to_int(self, term_doc_tf: str) -> list[tuple[int, int, int, str]]:
+    def __map_to_int(
+        self, term_doc_tf: str
+    ) -> Generator[tuple[int, int, int, str], None, None]:
 
-        return [
+        return (
             self.__convert_tdt_types(i.split(" "))
             for i in term_doc_tf.split("\n")[:-1]
-        ]
+        )
 
-    def ingest(self, term_doc_tf: str) -> None:
+    def __sort_mapped_tdt_chunk(
+        self, mapped_values: Generator[tuple[int, int, int, str], None, None]
+    ) -> Generator[tuple[int, int, int, str], None, None]:
 
-        self.mapped_values = self.__map_to_int(term_doc_tf)
+        # # builtin timsort implicitly performs radix sort
+        mapped_values = list(mapped_values)
+        mapped_values.sort()
 
-        # builtin timsort implicitly performs radix sort
-        self.mapped_values.sort()
+        return mapped_values
+
+    def sort_mapped_tdt(
+        self, term_doc_tf: str
+    ) -> Generator[list[tuple[int, int, int, str]], None, None]:
+
+        mapped_values = self.__map_to_int(term_doc_tf)
+
+        chunk_size: int = 1_000_000
+        chunk: list[tuple[int, int, int, str]] = []
+        cur_cs: int = 0
+
+        for mapped_value in mapped_values:
+            cur_cs += 1
+            chunk.append(mapped_value)
+            if cur_cs % chunk_size == 0:
+                chunk.sort()
+                print("here's a chunk", cur_cs, chunk[0], chunk[-1])
+                yield chunk
+                chunk = []
+
+        if chunk:
+            chunk.sort()
+            print("here's a chunk", cur_cs, chunk[0], chunk[-1])
+            yield chunk
+            chunk = []
+
+        # return self.__sort_mapped_tdt_chunk(mapped_values)
+
+    def ingest(
+        self, mapped_values: Generator[tuple[int, int, int, str], None, None]
+    ) -> None:
 
         cur: int = -1
         offset: int = 0
         width: int = 0
 
-        for val in self.mapped_values:
+        for val in mapped_values:
 
             term_str: str = val[TERM_STR_IDX]
 
@@ -70,6 +106,7 @@ class InvertedFile:
                 # width between the current term and the next
                 width = self.dictionary[term_str][DF_IDX] * 2
                 self.dictionary[term_str][LEN_IDX] = width  # update width
+
             offset += 2
             self.inverted_file_raw.extend(val[DOC_ID_IDX:TERM_STR_IDX])
 

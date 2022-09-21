@@ -1,4 +1,5 @@
 from collections import Counter
+import heapq
 from pathlib import Path
 from typing import Generator
 
@@ -68,7 +69,29 @@ class InformationRetrieval:
         if self.loaded:
             invf = InvertedFile()
             invf.build_dict(self.df, self.tf)
-            invf.ingest(self.term_doc_tf_str)
+            mapped_tdt = []
+            mapped_tdt_chunks = invf.sort_mapped_tdt(self.term_doc_tf_str)
+            chunk_filenames: list[str] = []
+            for idx, i in enumerate(mapped_tdt_chunks):
+                chunk_filenames.append(f"{self.data.sort_tdt_chunk}{idx}")
+                IO.dump(
+                    chunk_filenames[-1],
+                    "\n".join(" ".join(str(s) for s in l) for l in i),
+                )
+                print(f"chunk# {idx}")
+
+            chunks = []
+            for filename in chunk_filenames:
+                chunks += [open(f"{filename}.txt", "r")]
+
+            IO.dumplines(
+                self.data.sort_tdt,
+                heapq.merge(*chunks, key=lambda k: int(k.split()[0])),
+            )
+
+            # mapped_tdt = list(mapped_tdt)
+            # mapped_tdt.sort()
+            invf.ingest(mapped_tdt)
 
             inv_file = invf.get_inverted_file_raw()
             if_data = Packer.encode(inv_file)

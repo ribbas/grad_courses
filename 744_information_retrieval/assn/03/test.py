@@ -3,7 +3,6 @@ from pprint import pprint
 
 from ir import InformationRetrieval
 
-
 if __name__ == "__main__":
 
     ir_obj = InformationRetrieval()

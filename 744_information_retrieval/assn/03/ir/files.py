@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-import re
 from typing import Any
 
 from .lexer import Lexer
@@ -13,6 +12,13 @@ class IO:
 
         with open(f"{filename}.txt") as fp:
             return fp.read()
+
+    @staticmethod
+    def dumplines(filename: str, data: str) -> None:
+
+        with open(f"{filename}.txt", "w") as fp:
+            fp.writelines(data)
+        print(f"Dumped to '{filename}.txt'")
 
     @staticmethod
     def dump(filename: str, data: str) -> None:
@@ -59,6 +65,8 @@ class DataFile:
         self.stats_file_name: str = f"stats/{filename.stem}_stats"
 
         self.tdt_file_name: str = f"tmp/{filename.stem}_tdt"
+        self.sort_tdt_chunk: str = f"tmp/{filename.stem}_chunk_"
+        self.sort_tdt: str = f"tmp/{filename.stem}_sort"
 
         self.inv_file_name: str = f"bin/{filename.stem}_if"
         self.dict_name: str = f"bin/{filename.stem}_dict"
