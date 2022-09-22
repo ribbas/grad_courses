@@ -29,17 +29,23 @@ if __name__ == "__main__":
         "-lf",
         "--load_freqs",
         action=argparse.BooleanOptionalAction,
-        help="load pregenerated frequencies data",
+        help="load pre-generated frequencies data",
     )
     parser.add_argument(
         "-li",
         "--load_invf",
         action=argparse.BooleanOptionalAction,
-        help="load pregenerated frequencies data",
+        help="load pre-generated frequencies data",
     )
     parser.add_argument(
-        "-i",
-        "--invf",
+        "-t",
+        "--sort",
+        action=argparse.BooleanOptionalAction,
+        help="sort term-docID-tf",
+    )
+    parser.add_argument(
+        "-e",
+        "--encode",
         action=argparse.BooleanOptionalAction,
         help="generate inverted files",
     )
@@ -64,5 +70,8 @@ if __name__ == "__main__":
     if args["load_invf"]:
         ir_obj.load_inverted_file()
 
-    if args["invf"]:
-        ir_obj.build_inverted_file()
+    if args["sort"]:
+        ir_obj.build_sorted_tdt()
+
+    if args["encode"]:
+        ir_obj.encode_inverted_file()

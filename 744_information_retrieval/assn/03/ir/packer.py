@@ -1,7 +1,6 @@
 from struct import pack, unpack
 
-BYTE_FMT_CHAR = "I"
-BYTE_FMT_SIZE = 4
+from .const import BYTE_FMT_CHAR, BYTE_FMT_SIZE
 
 
 class Packer:

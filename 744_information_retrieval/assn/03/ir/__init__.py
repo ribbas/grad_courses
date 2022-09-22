@@ -1,7 +1,7 @@
 from collections import Counter
 import heapq
 from pathlib import Path
-from typing import Generator
+from typing import Any, Generator
 
 from .files import DataFile, Formatter, IO
 from .invertedfile import InvertedFile
@@ -64,39 +64,54 @@ class InformationRetrieval:
         else:
             raise AttributeError("Data not generated yet")
 
-    def build_inverted_file(self) -> None:
+    def build_sorted_tdt(self) -> None:
 
         if self.loaded:
             invf = InvertedFile()
             invf.build_dict(self.df, self.tf)
-            mapped_tdt = []
             mapped_tdt_chunks = invf.sort_mapped_tdt(self.term_doc_tf_str)
             chunk_filenames: list[str] = []
-            for idx, i in enumerate(mapped_tdt_chunks):
-                chunk_filenames.append(f"{self.data.sort_tdt_chunk}{idx}")
-                IO.dump(
-                    chunk_filenames[-1],
-                    "\n".join(" ".join(str(s) for s in l) for l in i),
-                )
-                print(f"chunk# {idx}")
+            for idx, mapped_tdt_chunk in enumerate(mapped_tdt_chunks):
 
-            chunks = []
+                chunk_filenames.append(f"{self.data.sort_tdt_chunk}{idx}")
+                IO.dumplines(
+                    chunk_filenames[-1],
+                    (
+                        " ".join(str(s) for s in l) + "\n"
+                        for l in mapped_tdt_chunk
+                    ),
+                )
+
+            chunks: Any = []
             for filename in chunk_filenames:
-                chunks += [open(f"{filename}.txt", "r")]
+                chunks.append(open(f"{filename}.txt", "r"))
 
             IO.dumplines(
                 self.data.sort_tdt,
                 heapq.merge(*chunks, key=lambda k: int(k.split()[0])),
             )
 
-            # mapped_tdt = list(mapped_tdt)
-            # mapped_tdt.sort()
-            invf.ingest(mapped_tdt)
+            for chunk_files in chunks:
+                chunk_files.close()
+
+    def encode_inverted_file(self) -> None:
+
+        if self.loaded:
+            invf = InvertedFile()
+            invf.build_dict(self.df, self.tf)
+
+            mapped_tdt_str = IO.read(self.data.sort_tdt)[:-1]
+            mapped_tdt = (v.split(" ") for v in mapped_tdt_str.split("\n"))
+            mapped_tdt = (
+                (int(i[0]), int(i[1]), int(i[2]), str(i[3])) for i in mapped_tdt
+            )
+            invf.convert(mapped_tdt)
 
             inv_file = invf.get_inverted_file_raw()
             if_data = Packer.encode(inv_file)
             IO.dump_bin(self.data.inv_file_name, if_data)
             IO.dump_json(self.data.dict_name, invf.get_dictionary())
+
         else:
             raise AttributeError("Data not generated yet")
 

@@ -1,6 +1,7 @@
 from collections import Counter
 from typing import Any, Generator
 
+from .const import CHUNK_SIZE
 from .packer import Packer
 
 # shared indices
@@ -51,15 +52,15 @@ class InvertedFile:
             for i in term_doc_tf.split("\n")[:-1]
         )
 
-    def __sort_mapped_tdt_chunk(
-        self, mapped_values: Generator[tuple[int, int, int, str], None, None]
-    ) -> Generator[tuple[int, int, int, str], None, None]:
+    # def __sort_mapped_tdt_chunk(
+    #     self, mapped_values: Generator[tuple[int, int, int, str], None, None]
+    # ) -> Generator[tuple[int, int, int, str], None, None]:
 
-        # # builtin timsort implicitly performs radix sort
-        mapped_values = list(mapped_values)
-        mapped_values.sort()
+    #     # # builtin timsort implicitly performs radix sort
+    #     mapped_values = list(mapped_values)
+    #     mapped_values.sort()
 
-        return mapped_values
+    #     return mapped_values
 
     def sort_mapped_tdt(
         self, term_doc_tf: str
@@ -67,28 +68,23 @@ class InvertedFile:
 
         mapped_values = self.__map_to_int(term_doc_tf)
 
-        chunk_size: int = 1_000_000
         chunk: list[tuple[int, int, int, str]] = []
         cur_cs: int = 0
 
         for mapped_value in mapped_values:
             cur_cs += 1
             chunk.append(mapped_value)
-            if cur_cs % chunk_size == 0:
+            if cur_cs % CHUNK_SIZE == 0:
                 chunk.sort()
-                print("here's a chunk", cur_cs, chunk[0], chunk[-1])
                 yield chunk
                 chunk = []
 
         if chunk:
             chunk.sort()
-            print("here's a chunk", cur_cs, chunk[0], chunk[-1])
             yield chunk
             chunk = []
 
-        # return self.__sort_mapped_tdt_chunk(mapped_values)
-
-    def ingest(
+    def convert(
         self, mapped_values: Generator[tuple[int, int, int, str], None, None]
     ) -> None:
 

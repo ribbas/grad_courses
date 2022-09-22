@@ -1,7 +1,8 @@
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable
 
+from .const import DOC_PROC
 from .lexer import Lexer
 from .normalize import Normalizer
 
@@ -14,7 +15,7 @@ class IO:
             return fp.read()
 
     @staticmethod
-    def dumplines(filename: str, data: str) -> None:
+    def dumplines(filename: str, data: Iterable[Any]) -> None:
 
         with open(f"{filename}.txt", "w") as fp:
             fp.writelines(data)
@@ -67,6 +68,7 @@ class DataFile:
         self.tdt_file_name: str = f"tmp/{filename.stem}_tdt"
         self.sort_tdt_chunk: str = f"tmp/{filename.stem}_chunk_"
         self.sort_tdt: str = f"tmp/{filename.stem}_sort"
+        # self.meta: str = f"tmp/{filename.stem}_meta"
 
         self.inv_file_name: str = f"bin/{filename.stem}_if"
         self.dict_name: str = f"bin/{filename.stem}_dict"
@@ -91,7 +93,7 @@ class DataFile:
 
                     elif "</P>" in line:
 
-                        if self.num_docs % 10000 == 0:
+                        if self.num_docs % DOC_PROC == 0:
                             print("Processed", self.num_docs, "documents.")
 
                         prep.set_document(doc)
