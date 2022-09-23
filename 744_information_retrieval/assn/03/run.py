@@ -8,6 +8,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("path", type=str, help="path of corpus file")
     parser.add_argument(
+        "-a",
+        "--all",
+        action=argparse.BooleanOptionalAction,
+        help="run through the entire list of default pipeline tasks",
+    )
+    parser.add_argument(
         "-f",
         "--freq",
         action=argparse.BooleanOptionalAction,
@@ -55,23 +61,31 @@ if __name__ == "__main__":
     ir_obj = InformationRetrieval()
     ir_obj.set_filename(Path(args["path"]))
 
-    if args["freq"]:
+    if args["all"]:
         ir_obj.generate_freqs()
-
-    if args["stat"]:
         ir_obj.generate_stats()
-
-    if args["dump"]:
         ir_obj.dump_freqs()
-
-    if args["load_freqs"]:
-        ir_obj.load_freqs()
-
-    if args["load_invf"]:
-        ir_obj.load_inverted_file()
-
-    if args["sort"]:
         ir_obj.build_sorted_tdt()
 
-    if args["encode"]:
-        ir_obj.encode_inverted_file()
+    else:
+
+        if args["freq"]:
+            ir_obj.generate_freqs()
+
+        if args["stat"]:
+            ir_obj.generate_stats()
+
+        if args["dump"]:
+            ir_obj.dump_freqs()
+
+        if args["load_freqs"]:
+            ir_obj.load_freqs()
+
+        if args["load_invf"]:
+            ir_obj.load_inverted_file()
+
+        if args["sort"]:
+            ir_obj.build_sorted_tdt()
+
+        if args["encode"]:
+            ir_obj.encode_inverted_file()

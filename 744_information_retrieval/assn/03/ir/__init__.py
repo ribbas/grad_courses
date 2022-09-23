@@ -115,6 +115,8 @@ class InformationRetrieval:
         else:
             raise AttributeError("Data not generated yet")
 
+    # def clean_temp_files(self) -> None:
+
     def load_inverted_file(self) -> None:
 
         self.invf = InvertedFile()

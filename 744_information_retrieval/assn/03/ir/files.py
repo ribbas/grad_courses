@@ -68,7 +68,6 @@ class DataFile:
         self.tdt_file_name: str = f"tmp/{filename.stem}_tdt"
         self.sort_tdt_chunk: str = f"tmp/{filename.stem}_chunk_"
         self.sort_tdt: str = f"tmp/{filename.stem}_sort"
-        # self.meta: str = f"tmp/{filename.stem}_meta"
 
         self.inv_file_name: str = f"bin/{filename.stem}_if"
         self.dict_name: str = f"bin/{filename.stem}_dict"
@@ -93,9 +92,6 @@ class DataFile:
 
                     elif "</P>" in line:
 
-                        if self.num_docs % DOC_PROC == 0:
-                            print("Processed", self.num_docs, "documents.")
-
                         prep.set_document(doc)
                         prep.process()
 
@@ -107,10 +103,13 @@ class DataFile:
 
                         doc = ""
 
+                        if self.num_docs % DOC_PROC == 0:
+                            print("Normalized", self.num_docs, "documents")
+
                     else:
                         doc += line
 
-        print("Processed", self.num_docs, "documents.")
+        print("Normalized", self.num_docs, "documents")
 
 
 class Formatter:

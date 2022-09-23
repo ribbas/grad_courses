@@ -1,0 +1,148 @@
+\documentclass[11pt]{article}
+
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{array}
+\usepackage[autostyle, english = american]{csquotes}
+\MakeOuterQuote{"}
+
+% Margins
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+% \setlength{\mathindent}{0pt}
+
+\title{605.744: Information Retrieval \\ Problem Set (Module 4)}
+\author{Sabbir Ahmed}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+    Note: for any problem or calculation requiring a logarithm use base-2 logs.
+    \begin{enumerate}
+
+        \item (15\%) What do Salton and Buckley mean by \textit{tfc} term weighting? What is the difference between \textit{tfc} and \textit{nfc} term weighting?
+        
+        \textbf{Answer:} Term weighting is terms get scaled using their corresponding frequencies, relative frequencies, relevance, etc. or other attributes. \textit{tfc} is considered the original TF-IDF method with cosine normalization. \textit{nfc} uses a normalized TF component in its TF-IDF approach for the term weights.
+
+        \item (15\%) The Porter stemmer conflates the words \textit{program}, \textit{programs}, and \textit{programming} into the same stem (program). For a given document collection, how would both document term frequency (TF) and inverse document frequency (IDF) weights change in an IR system using the Porter stemmer compared to an IR system that uses plain words as indexing terms? Provide examples with your explanation.
+
+        \textbf{Answer:} 
+
+        \item (20\%) \textit{Impact Ordering} and \textit{Index Elimination} are two separate techniques that each reduce computation when calculating document similarity by approximating normal vector cosine. In your own words give a short explanation of each method.
+
+        \textbf{Answer:}
+
+        \item (50\%) Calculate cosine similarities for query \textit{Q} against just documents \textit{D1} and \textit{D2} from the following term-document matrix using the vector cosine model with TF/IDF weighting. Query \textit{Q} contains the four words: \textbf{bear bear cougar dolphin}. The numbers in the table below are term frequencies. The document collection consists of only these eight documents, and the five terms listed below are the only ones found in any document.
+
+        Recall that for the TF-IDF scheme, the weights for terms in a query or in a document should be the term frequency times the inverse document frequency for that term. Compute accurate cosine scores that do consider the vector length of the query. Show the work in your calculations.
+
+        \begin{table}[htbp]
+            \begin{center}
+                \caption{Word Frequencies per Documents}
+                \begin{tabular}{| c | c | c | c | c | c | c | c | c |}
+                \hline
+                \textbf{Word} & \textbf{D1} & \textbf{D2} & D3 & D4 & D5 & D6 & D7 & D8  \\
+                \hline
+                alligator   & 0 & 2 & 0 & 0 & 2 & 0 & 0 & 0 \\
+                \hline
+                bear        & 1 & 1 & 0 & 0 & 0 & 1 & 0 & 1 \\
+                \hline
+                cougar      & 2 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+                \hline
+                dolphin     & 2 & 2 & 3 & 2 & 1 & 1 & 2 & 3 \\
+                \hline
+                eagle       & 3 & 0 & 3 & 4 & 0 & 0 & 4 & 0 \\
+                \hline
+                \end{tabular}
+            \end{center}
+        \end{table}
+        \clearpage
+        \newpage
+
+        \textbf{Answer:} Adding the query \textit{Q} vector to the table:
+        \begin{table}[htbp]
+            \begin{center}
+                \caption{Word Frequencies per Documents and Query}
+                \begin{tabular}{| c | c | c | c |}
+                \hline
+                \textbf{Word} & \textbf{D1} & \textbf{D2} & Q  \\
+                \hline
+                alligator   & 0 & 2 & 0 \\
+                \hline
+                bear        & 1 & 1 & 2 \\
+                \hline
+                cougar      & 2 & 0 & 1 \\
+                \hline
+                dolphin     & 2 & 2 & 1 \\
+                \hline
+                eagle       & 3 & 0 & 0 \\
+                \hline
+                \end{tabular}
+            \end{center}
+        \end{table}
+        % \clearpage
+        % \newpage
+
+        The TF and IDF of the vocabulary were computed using the following values:
+        \begin{align*}
+            TF(t) &= \text{term frequency in the corpus} \\
+            IDF(t) &= \text{inverse document frequency} \\
+            &= log_2\left(\frac{N}{df(t)}\right), \\
+            &\text{where:} \\
+            &N=\text{length of corpus}=40, \\
+            &df(t)=\text{document frequency}
+        \end{align*}
+        {\renewcommand{\arraystretch}{1.5}
+        \begin{table}[htbp]
+            \begin{center}
+                \caption{TF(t) and IDF(t) of Vocabulary}
+                \begin{tabular}{| c | c | c |}
+                \hline
+                \textbf{term} & \textbf{TF} & \textbf{IDF}  \\
+                \hline
+                alligator   & 4 & $log_2\left(\frac{40}{2}\right)=4.92$ \\
+                \hline
+                bear        & 1 & $log_2\left(\frac{40}{4}\right)=3.32$ \\
+                \hline
+                cougar      & 2 & $log_2\left(\frac{40}{1}\right)=5.32$ \\
+                \hline
+                dolphin     & 2 & $log_2\left(\frac{40}{8}\right)=2.32$ \\
+                \hline
+                eagle       & 3 & $log_2\left(\frac{40}{4}\right)=3.32$ \\
+                \hline
+                \end{tabular}
+            \end{center}
+        \end{table}}
+        % \clearpage
+        % \newpage
+
+        {\renewcommand{\arraystretch}{3}
+        \begin{table}[htbp]
+            \begin{center}
+                \caption{Cosine Similarities of D1 and D2}
+                \begin{tabular}{| c | c | c | c |}
+                \hline
+                \textbf{value} & \textbf{D1} & \textbf{D2} & \textbf{Q} \\
+                \hline
+                sum of squares  & 18 & 9 & 6 \\
+                \hline
+                length, $||D|| = \sqrt{\sum_{i=1}^{t}{w_i^2}}$  & 4.24 & 3 & 2.45 \\
+                \hline
+                dot product     & 6 & 4 & 6 \\
+                \hline
+                cosine similarity, $\frac{d \cdot q}{||d||*||q||}$ & $\frac{6}{4.24*2.45}=3.47$ & $\frac{4}{3*2.45}=3.27$ & 1 \\
+                \hline
+                \end{tabular}
+            \end{center}
+        \end{table}}
+
+    \end{enumerate}
+
+\end{document}
