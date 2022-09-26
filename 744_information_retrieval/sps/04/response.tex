@@ -29,15 +29,17 @@
 
         \item (15\%) What do Salton and Buckley mean by \textit{tfc} term weighting? What is the difference between \textit{tfc} and \textit{nfc} term weighting?
         
-        \textbf{Answer:} Term weighting is terms get scaled using their corresponding frequencies, relative frequencies, relevance, etc. or other attributes. \textit{tfc} is considered the original TF-IDF method with cosine normalization. \textit{nfc} uses a normalized TF component in its TF-IDF approach for the term weights.
+        \textbf{Answer:} Term weighting is terms that get scaled using their corresponding frequencies, relative frequencies, relevance, etc., or other attributes. \textit{tfc} is considered the original TF-IDF method with cosine normalization. \textit{nfc} uses a normalized TF component in its TF-IDF approach for the term weights.
 
         \item (15\%) The Porter stemmer conflates the words \textit{program}, \textit{programs}, and \textit{programming} into the same stem (program). For a given document collection, how would both document term frequency (TF) and inverse document frequency (IDF) weights change in an IR system using the Porter stemmer compared to an IR system that uses plain words as indexing terms? Provide examples with your explanation.
 
-        \textbf{Answer:} 
+        \textbf{Answer:} Different words getting stemmed to the same root replace the words in the dictionary with the stem word. This increases the term frequencies of the stem words and zeroes the values for the original words. The words \textit{program}, \textit{programs}, and \textit{programming} getting stemmed to \textit{program} increases the TF of \textit{program} and zeros the values for the other words. Since the original words no longer exist in the dictionary, IDF values cannot be computed for them. The document frequency (DF) for the stem word, in this case, \textit{program}, increases. Since the IDF is inversely proportional to this metric, it gets decreased.
 
         \item (20\%) \textit{Impact Ordering} and \textit{Index Elimination} are two separate techniques that each reduce computation when calculating document similarity by approximating normal vector cosine. In your own words give a short explanation of each method.
 
-        \textbf{Answer:}
+        \textbf{Answer:} Impact ordering refers to the order of the postings list being determined by other metrics besides the doc-IDs. The default method of computing cosine similarities was to traverse through each of the postings lists sorted by their doc-IDs, computing their cosine similarities, and accumulating their values at the end. This method can be inefficient due to computing the metrics for words not in the top-k. Instead of sorting the postings list by doc-IDs, they can instead be sorted by a different metric that can impose a greater impact, such as the term frequency.
+
+        Index elimination is the process of setting an IDF threshold for terms to consider. Terms with low IDF values would not be considered as relevant and may consist of stopwords. This approach would narrow down the documents list to those with many (or all) of the query terms.
 
         \item (50\%) Calculate cosine similarities for query \textit{Q} against just documents \textit{D1} and \textit{D2} from the following term-document matrix using the vector cosine model with TF/IDF weighting. Query \textit{Q} contains the four words: \textbf{bear bear cougar dolphin}. The numbers in the table below are term frequencies. The document collection consists of only these eight documents, and the five terms listed below are the only ones found in any document.
 
@@ -63,8 +65,6 @@
                 \end{tabular}
             \end{center}
         \end{table}
-        \clearpage
-        \newpage
 
         \textbf{Answer:} Adding the query \textit{Q} vector to the table:
         \begin{table}[htbp]
@@ -87,8 +87,8 @@
                 \end{tabular}
             \end{center}
         \end{table}
-        % \clearpage
-        % \newpage
+        \clearpage
+        \newpage
 
         The TF and IDF of the vocabulary were computed using the following values:
         \begin{align*}
@@ -120,9 +120,8 @@
                 \end{tabular}
             \end{center}
         \end{table}}
-        % \clearpage
-        % \newpage
 
+        Finally, computing the cosine similarities.
         {\renewcommand{\arraystretch}{3}
         \begin{table}[htbp]
             \begin{center}
