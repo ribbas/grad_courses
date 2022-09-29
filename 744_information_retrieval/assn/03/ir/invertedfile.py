@@ -27,6 +27,7 @@ class InvertedFile:
     ) -> dict[str, list[int]]:
 
         for idx, term in enumerate(sorted(tf.keys())):
+            # term: [term index, offset, length, df, tf]
             self.dictionary[term] = [idx, 0, 0, df[term], tf[term]]
 
         return self.dictionary
@@ -51,16 +52,6 @@ class InvertedFile:
             self.__convert_tdt_types(i.split(" "))
             for i in term_doc_tf.split("\n")[:-1]
         )
-
-    # def __sort_mapped_tdt_chunk(
-    #     self, mapped_values: Generator[tuple[int, int, int, str], None, None]
-    # ) -> Generator[tuple[int, int, int, str], None, None]:
-
-    #     # # builtin timsort implicitly performs radix sort
-    #     mapped_values = list(mapped_values)
-    #     mapped_values.sort()
-
-    #     return mapped_values
 
     def sort_mapped_tdt(
         self, term_doc_tf: str
@@ -90,18 +81,22 @@ class InvertedFile:
 
         cur: int = -1
         offset: int = 0
-        width: int = 0
 
         for val in mapped_values:
 
             term_str: str = val[TERM_STR_IDX]
 
             if cur != val[TERM_ID_IDX]:
+
                 cur = val[TERM_ID_IDX]
-                self.dictionary[term_str][OFFSET_IDX] = offset  # update offset
-                # width between the current term and the next
-                width = self.dictionary[term_str][DF_IDX] * 2
-                self.dictionary[term_str][LEN_IDX] = width  # update width
+
+                # update offset
+                self.dictionary[term_str][OFFSET_IDX] = offset
+
+                # update width between the current term and the next
+                self.dictionary[term_str][LEN_IDX] = (
+                    self.dictionary[term_str][DF_IDX] * 2
+                )
 
             offset += 2
             self.inverted_file_raw.extend(val[DOC_ID_IDX:TERM_STR_IDX])

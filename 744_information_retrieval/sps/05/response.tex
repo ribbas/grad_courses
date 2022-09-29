@@ -1,29 +1,26 @@
 \documentclass[11pt]{article}
 
-\usepackage{caption}
-\usepackage{graphicx}
 \usepackage{amsmath}
-\usepackage{listings}
 \usepackage{array}
+\usepackage{caption}
+\usepackage{colortbl}
+\usepackage{graphicx}
+\usepackage{listings}
+
 \usepackage[autostyle, english = american]{csquotes}
 \MakeOuterQuote{"}
 
-\usepackage{xcolor,colortbl}
-
-\newcommand{\mc}[2]{\multicolumn{#1}{c}{#2}}
-\definecolor{Gray}{gray}{0.85}
-
 \newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+\definecolor{Gray}{gray}{0.85}
 \newcolumntype{a}{>{\columncolor{Gray}}M}
 
-% Margins
+% margins
 \topmargin=-0.45in
 \evensidemargin=0in
 \oddsidemargin=0in
 \textwidth=6.5in
 \textheight=9.0in
 \headsep=0.25in
-% \setlength{\mathindent}{0pt}
 
 \title{605.744: Information Retrieval \\ Problem Set (Module 5)}
 \author{Sabbir Ahmed}
@@ -41,11 +38,12 @@
         \item (10\%) What is pooling and why is it used in large-scale text retrieval evaluations?
 
         \textbf{Answer:}
+        % Given information needs and documents, you need to collect relevance assessments. This is a time-consuming and expensive process involving human beings. For tiny collections like Cranfield, exhaustive judgments of relevance for each query and document pair were obtained. For large modern collections, it is usual for relevance to be assessed only for a subset of the documents for each query. The most standard approach POOLING is pooling, where relevance is assessed over a subset of the collection that is formed from the top k documents returned by a number of different IR systems (usually the ones to be evaluated), and perhaps other sources such as the results of Boolean keyword searches or documents found by expert searchers in an interactive process.        
 
-        \item (50\%) Consider a query with 10 relevant documents whose docids are: D3, D27, D30, D39, D51, D54, D69, D72,
-        D81, and D96. Assume that all other documents are not relevant. On this query two retrieval systems \textit{FastSearch} and \textit{Telescope} produce the following ranked lists. (Note: D17 is the 1st ranked doc by \textit{FastSearch}; D4 is its 2nd ranked doc, etc ...)
+        \item (50\%) Consider a query with 10 relevant documents whose docids are: D3, D27, D30, D39, D51, D54, D69, D72, D81, and D96. Assume that all other documents are not relevant. On this query two retrieval systems \textit{FastSearch} and \textit{Telescope} produce the following ranked lists. (Note: D17 is the 1st ranked doc by \textit{FastSearch}; D4 is its 2nd ranked doc, etc ...)
 
         \textit{FastSearch}: D17, D4, D69, D54, D37, D41, D89, D85, D3, D5, D91, D39
+
         \textit{Telescope}: D3, D1, D94, D27, D50, D54, D16, D7, D72, D39, D95, D62
 
         \begin{enumerate}

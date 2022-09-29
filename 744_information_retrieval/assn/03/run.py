@@ -33,13 +33,13 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "-lf",
-        "--load_freqs",
+        "--loadfreqs",
         action=argparse.BooleanOptionalAction,
         help="load pre-generated frequencies data",
     )
     parser.add_argument(
         "-li",
-        "--load_invf",
+        "--loadinvf",
         action=argparse.BooleanOptionalAction,
         help="load pre-generated frequencies data",
     )
@@ -78,10 +78,10 @@ if __name__ == "__main__":
         if args["dump"]:
             ir_obj.dump_freqs()
 
-        if args["load_freqs"]:
+        if args["loadfreqs"]:
             ir_obj.load_freqs()
 
-        if args["load_invf"]:
+        if args["loadinvf"]:
             ir_obj.load_inverted_file()
 
         if args["sort"]:
