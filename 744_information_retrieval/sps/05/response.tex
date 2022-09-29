@@ -8,6 +8,14 @@
 \usepackage[autostyle, english = american]{csquotes}
 \MakeOuterQuote{"}
 
+\usepackage{xcolor,colortbl}
+
+\newcommand{\mc}[2]{\multicolumn{#1}{c}{#2}}
+\definecolor{Gray}{gray}{0.85}
+
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+\newcolumntype{a}{>{\columncolor{Gray}}M}
+
 % Margins
 \topmargin=-0.45in
 \evensidemargin=0in
@@ -17,130 +25,96 @@
 \headsep=0.25in
 % \setlength{\mathindent}{0pt}
 
-\title{605.744: Information Retrieval \\ Problem Set (Module 4)}
+\title{605.744: Information Retrieval \\ Problem Set (Module 5)}
 \author{Sabbir Ahmed}
 \date{\today}
 
 \begin{document}
 \maketitle
 
-    Note: for any problem or calculation requiring a logarithm use base-2 logs.
     \begin{enumerate}
 
-        \item (15\%) What do Salton and Buckley mean by \textit{tfc} term weighting? What is the difference between \textit{tfc} and \textit{nfc} term weighting?
-        
-        \textbf{Answer:} Term weighting is terms that get scaled using their corresponding frequencies, relative frequencies, relevance, etc., or other attributes. \textit{tfc} is considered the original TF-IDF method with cosine normalization. \textit{nfc} uses a normalized TF component in its TF-IDF approach for the term weights.
+        \item (10\%) Briefly describe the three key assumptions of the Cranfield paradigm for information retrieval evaluation.
 
-        \item (15\%) The Porter stemmer conflates the words \textit{program}, \textit{programs}, and \textit{programming} into the same stem (program). For a given document collection, how would both document term frequency (TF) and inverse document frequency (IDF) weights change in an IR system using the Porter stemmer compared to an IR system that uses plain words as indexing terms? Provide examples with your explanation.
+        \textbf{Answer:}
 
-        \textbf{Answer:} Different words getting stemmed to the same root replace the words in the dictionary with the stem word. This increases the term frequencies of the stem words and zeroes the values for the original words. The words \textit{program}, \textit{programs}, and \textit{programming} getting stemmed to \textit{program} increases the TF of \textit{program} and zeros the values for the other words. Since the original words no longer exist in the dictionary, IDF values cannot be computed for them. The document frequency (DF) for the stem word, in this case, \textit{program}, increases. Since the IDF is inversely proportional to this metric, it gets decreased.
+        \item (10\%) What is pooling and why is it used in large-scale text retrieval evaluations?
 
-        \item (20\%) \textit{Impact Ordering} and \textit{Index Elimination} are two separate techniques that each reduce computation when calculating document similarity by approximating normal vector cosine. In your own words give a short explanation of each method.
+        \textbf{Answer:}
 
-        \textbf{Answer:} Impact ordering refers to the order of the postings list being determined by other metrics besides the doc-IDs. The default method of computing cosine similarities was to traverse through each of the postings lists sorted by their doc-IDs, computing their cosine similarities, and accumulating their values at the end. This method can be inefficient due to computing the metrics for words not in the top-k. Instead of sorting the postings list by doc-IDs, they can instead be sorted by a different metric that can impose a greater impact, such as the term frequency.
+        \item (50\%) Consider a query with 10 relevant documents whose docids are: D3, D27, D30, D39, D51, D54, D69, D72,
+        D81, and D96. Assume that all other documents are not relevant. On this query two retrieval systems \textit{FastSearch} and \textit{Telescope} produce the following ranked lists. (Note: D17 is the 1st ranked doc by \textit{FastSearch}; D4 is its 2nd ranked doc, etc ...)
 
-        Index elimination is the process of setting an IDF threshold for terms to consider. Terms with low IDF values would not be considered as relevant and may consist of stopwords. This approach would narrow down the documents list to those with many (or all) of the query terms.
+        \textit{FastSearch}: D17, D4, D69, D54, D37, D41, D89, D85, D3, D5, D91, D39
+        \textit{Telescope}: D3, D1, D94, D27, D50, D54, D16, D7, D72, D39, D95, D62
 
-        \item (50\%) Calculate cosine similarities for query \textit{Q} against just documents \textit{D1} and \textit{D2} from the following term-document matrix using the vector cosine model with TF/IDF weighting. Query \textit{Q} contains the four words: \textbf{bear bear cougar dolphin}. The numbers in the table below are term frequencies. The document collection consists of only these eight documents, and the five terms listed below are the only ones found in any document.
+        \begin{enumerate}
 
-        Recall that for the TF-IDF scheme, the weights for terms in a query or in a document should be the term frequency times the inverse document frequency for that term. Compute accurate cosine scores that do consider the vector length of the query. Show the work in your calculations.
+            \item How many relevant documents are found by each system?
 
-        \begin{table}[htbp]
-            \begin{center}
-                \caption{Word Frequencies per Documents}
-                \begin{tabular}{| c | c | c | c | c | c | c | c | c |}
+            \textbf{Answer:}
+
+            \item For both systems what is P@10 (precision at 10 documents) for this query?
+
+            \textbf{Answer:}
+
+            \item For \textit{FastSearch} what is the uninterpolated precision at 30\% Recall?
+
+            \textbf{Answer:}
+
+            \item Assuming that \textit{FastSearch} returns no other documents other than this top-12 ranked list, what is \textit{FastSearch}'s Recall for this query?
+
+            \textbf{Answer:}
+
+            \item For both systems what is average precision on this query?
+
+            \textbf{Answer:}
+
+        \end{enumerate}
+
+        \item (15\%) Given two retrieval systems (called A and B), is it possible for System A to be better than System B in
+        average precision, but for System B to have higher P@10 than System A? Briefly justify your response.
+
+        \textbf{Answer:}
+
+        \item (15\%) Consider the contingency tables below for the word pairs (bicycle, helmet) and (bicycle, repairs). Suppose we are looking to expand a query containing the word bicycle by adding some potentially useful search terms. Using pointwise mutual information (PMI) to score candidate terms, calculate scores for both helmet and repairs, and indicate which of the two would be the better expansion term. N = 15,000 documents. Use base 2 logs.
+
+        \begin{equation*}
+            PMI(x,y)=log_2\left(\frac{P(x,y)}{P(x)P(y)}\right)=log_2\left(\frac{N\times a}{(a+b)(a+c)}\right)
+        \end{equation*}
+
+        \begin{table}[ht]
+            \footnotesize
+            \begin{tabular}[t]{|a{1.6cm}|a{1.6cm}|}
                 \hline
-                \textbf{Word} & \textbf{D1} & \textbf{D2} & D3 & D4 & D5 & D6 & D7 & D8  \\
+                A: docs with both terms together & B: docs with first term, but not second
+                \\ \hline
+                C: docs with second term, but not first & D: docs that contain neither term
+                \\ \hline
+            \end{tabular}
+            \hfill
+            \begin{tabular}[t]{|M{1.15cm}|M{1.15cm}|M{1.15cm}|}
                 \hline
-                alligator   & 0 & 2 & 0 & 0 & 2 & 0 & 0 & 0 \\
+                & has helmet & missing helmet
+                \\ \hline
+                has bicycle & 22 & 54
+                \\ \hline
+                missing bicycle & 87 & 14837
+                \\ \hline
+            \end{tabular}
+            \hfill
+            \begin{tabular}[t]{|M{1.15cm}|M{1.15cm}|M{1.15cm}|}
                 \hline
-                bear        & 1 & 1 & 0 & 0 & 0 & 1 & 0 & 1 \\
-                \hline
-                cougar      & 2 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-                \hline
-                dolphin     & 2 & 2 & 3 & 2 & 1 & 1 & 2 & 3 \\
-                \hline
-                eagle       & 3 & 0 & 3 & 4 & 0 & 0 & 4 & 0 \\
-                \hline
-                \end{tabular}
-            \end{center}
+                & has helmet & missing helmet
+                \\ \hline
+                has bicycle & 31 & 45
+                \\ \hline
+                missing bicycle & 164 & 14760
+                \\ \hline
+            \end{tabular}
         \end{table}
 
-        \textbf{Answer:} Adding the query \textit{Q} vector to the table:
-        \begin{table}[htbp]
-            \begin{center}
-                \caption{Word Frequencies per Documents and Query}
-                \begin{tabular}{| c | c | c | c |}
-                \hline
-                \textbf{Word} & \textbf{D1} & \textbf{D2} & Q  \\
-                \hline
-                alligator   & 0 & 2 & 0 \\
-                \hline
-                bear        & 1 & 1 & 2 \\
-                \hline
-                cougar      & 2 & 0 & 1 \\
-                \hline
-                dolphin     & 2 & 2 & 1 \\
-                \hline
-                eagle       & 3 & 0 & 0 \\
-                \hline
-                \end{tabular}
-            \end{center}
-        \end{table}
-        \clearpage
-        \newpage
-
-        The TF and IDF of the vocabulary were computed using the following values:
-        \begin{align*}
-            TF(t) &= \text{term frequency in the corpus} \\
-            IDF(t) &= \text{inverse document frequency} \\
-            &= log_2\left(\frac{N}{df(t)}\right), \\
-            &\text{where:} \\
-            &N=\text{length of corpus}=40, \\
-            &df(t)=\text{document frequency}
-        \end{align*}
-        {\renewcommand{\arraystretch}{1.5}
-        \begin{table}[htbp]
-            \begin{center}
-                \caption{TF(t) and IDF(t) of Vocabulary}
-                \begin{tabular}{| c | c | c |}
-                \hline
-                \textbf{term} & \textbf{TF} & \textbf{IDF}  \\
-                \hline
-                alligator   & 4 & $log_2\left(\frac{40}{2}\right)=4.92$ \\
-                \hline
-                bear        & 1 & $log_2\left(\frac{40}{4}\right)=3.32$ \\
-                \hline
-                cougar      & 2 & $log_2\left(\frac{40}{1}\right)=5.32$ \\
-                \hline
-                dolphin     & 2 & $log_2\left(\frac{40}{8}\right)=2.32$ \\
-                \hline
-                eagle       & 3 & $log_2\left(\frac{40}{4}\right)=3.32$ \\
-                \hline
-                \end{tabular}
-            \end{center}
-        \end{table}}
-
-        Finally, computing the cosine similarities.
-        {\renewcommand{\arraystretch}{3}
-        \begin{table}[htbp]
-            \begin{center}
-                \caption{Cosine Similarities of D1 and D2}
-                \begin{tabular}{| c | c | c | c |}
-                \hline
-                \textbf{value} & \textbf{D1} & \textbf{D2} & \textbf{Q} \\
-                \hline
-                sum of squares  & 18 & 9 & 6 \\
-                \hline
-                length, $||D|| = \sqrt{\sum_{i=1}^{t}{w_i^2}}$  & 4.24 & 3 & 2.45 \\
-                \hline
-                dot product     & 6 & 4 & 6 \\
-                \hline
-                cosine similarity, $\frac{d \cdot q}{||d||*||q||}$ & $\frac{6}{4.24*2.45}=3.47$ & $\frac{4}{3*2.45}=3.27$ & 1 \\
-                \hline
-                \end{tabular}
-            \end{center}
-        \end{table}}
+        \textbf{Answer:}
 
     \end{enumerate}
 
