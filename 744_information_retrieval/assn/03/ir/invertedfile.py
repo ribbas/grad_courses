@@ -1,7 +1,5 @@
-from collections import Counter
-
 from .const import DICT_IDX, INVF_IDX, CHUNK_SIZE, TID_IDX
-from .types import generator
+from .types import generator, counter
 
 
 class InvertedFile:
@@ -10,9 +8,7 @@ class InvertedFile:
         self.dictionary: dict[str, list[int]] = {}
         self.inverted_file_raw: list[int] = []
 
-    def build_dict(
-        self, df: Counter[str], tf: Counter[str]
-    ) -> dict[str, list[int]]:
+    def build_dict(self, df: counter, tf: counter) -> dict[str, list[int]]:
 
         for idx, term in enumerate(sorted(tf.keys())):
             # term: [term index, offset, length, df, tf]

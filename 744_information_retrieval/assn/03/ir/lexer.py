@@ -1,14 +1,14 @@
 from collections import Counter
 
-from .types import generator
+from .types import generator, counter
 
 
 class Lexer:
     def __init__(self) -> None:
 
-        self.tf: Counter[str] = Counter()
-        self.df: Counter[str] = Counter()
-        self.tf_in_doc: Counter[str] = Counter()
+        self.tf: counter = Counter()
+        self.df: counter = Counter()
+        self.tf_in_doc: counter = Counter()
 
     def add(self, tokens: generator[str]) -> None:
 
@@ -27,19 +27,19 @@ class Lexer:
         for term in self.tf_in_doc:
             yield term, doc_id, self.tf_in_doc[term]
 
-    def set_tf(self, tf: Counter[str]) -> None:
+    def set_tf(self, tf: counter) -> None:
 
         self.tf = tf
 
-    def set_df(self, df: Counter[str]) -> None:
+    def set_df(self, df: counter) -> None:
 
         self.df = df
 
-    def get_tf(self) -> Counter[str]:
+    def get_tf(self) -> counter:
 
         return self.tf
 
-    def get_df(self) -> Counter[str]:
+    def get_df(self) -> counter:
 
         return self.df
 

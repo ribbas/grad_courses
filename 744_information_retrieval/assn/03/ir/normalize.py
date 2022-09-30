@@ -1,6 +1,6 @@
 import re
 
-import nltk
+from nltk import stem
 
 from .types import generator
 
@@ -41,9 +41,7 @@ class Normalizer:
         self.tokens: generator[str]
 
         self.ws_re: re.Pattern[str] = re.compile(r"([A-Za-z]+'?[A-Za-z]+)")
-        self.snow: nltk.stem.SnowballStemmer = nltk.stem.SnowballStemmer(
-            "english"
-        )
+        self.snow: stem.SnowballStemmer = stem.SnowballStemmer("english")
 
     def set_document(self, document: str) -> None:
 
