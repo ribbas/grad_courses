@@ -1,5 +1,6 @@
 from collections import Counter
-from typing import Generator
+
+from .types import generator
 
 
 class Lexer:
@@ -9,7 +10,7 @@ class Lexer:
         self.df: Counter[str] = Counter()
         self.tf_in_doc: Counter[str] = Counter()
 
-    def add(self, tokens: Generator[str, None, None]) -> None:
+    def add(self, tokens: generator[str]) -> None:
 
         # create a Counter for the document
         self.tf_in_doc.clear()
@@ -21,9 +22,7 @@ class Lexer:
         # increment the document-frequency values
         self.df.update(self.tf_in_doc.keys())
 
-    def term_doc_tf(
-        self, doc_id: str
-    ) -> Generator[tuple[str, str, int], None, None]:
+    def term_doc_tf(self, doc_id: str) -> generator[tuple[str, str, int]]:
 
         for term in self.tf_in_doc:
             yield term, doc_id, self.tf_in_doc[term]
@@ -52,9 +51,7 @@ class Lexer:
 
         return len(self.tf)
 
-    def get_top_n_tf_df(
-        self, n: int
-    ) -> Generator[tuple[str, int, int], None, None]:
+    def get_top_n_tf_df(self, n: int) -> generator[tuple[str, int, int]]:
 
         top_n_tf = self.tf.most_common(n)
         for tf in top_n_tf:

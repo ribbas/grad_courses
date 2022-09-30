@@ -1,7 +1,8 @@
 import re
-from typing import Generator
 
 import nltk
+
+from .types import generator
 
 # fmt: off
 STOPWORDS: set[str] = {
@@ -37,7 +38,7 @@ class Normalizer:
     def __init__(self) -> None:
 
         self.document: str = ""
-        self.tokens: Generator[str, None, None]
+        self.tokens: generator[str]
 
         self.ws_re: re.Pattern[str] = re.compile(r"([A-Za-z]+'?[A-Za-z]+)")
         self.snow: nltk.stem.SnowballStemmer = nltk.stem.SnowballStemmer(
@@ -52,22 +53,18 @@ class Normalizer:
 
         return document.lower()
 
-    def __split_document(self, document: str) -> Generator[str, None, None]:
+    def __split_document(self, document: str) -> generator[str]:
 
         return (x.group(0) for x in self.ws_re.finditer(document))
 
-    def __remove_stopwords(
-        self, tokens: Generator[str, None, None]
-    ) -> Generator[str, None, None]:
+    def __remove_stopwords(self, tokens: generator[str]) -> generator[str]:
         return (word for word in tokens if word not in STOPWORDS)
 
-    def __stem(
-        self, tokens: Generator[str, None, None]
-    ) -> Generator[str, None, None]:
+    def __stem(self, tokens: generator[str]) -> generator[str]:
 
         return (self.snow.stem(token) for token in tokens)
 
-    def get_tokens(self) -> Generator[str, None, None]:
+    def get_tokens(self) -> generator[str]:
 
         return self.tokens
 
@@ -77,10 +74,10 @@ class Normalizer:
         doc_lc: str = self.__to_lower_case(self.document)
 
         # split the document on its whitespace
-        tokens: Generator[str, None, None] = self.__split_document(doc_lc)
+        self.tokens = self.__split_document(doc_lc)
 
         # remove contractions and stopwords
-        no_sw: Generator[str, None, None] = self.__remove_stopwords(tokens)
+        self.tokens = self.__remove_stopwords(self.tokens)
 
         # stem tokens
-        self.tokens = self.__stem(no_sw)
+        self.tokens = self.__stem(self.tokens)

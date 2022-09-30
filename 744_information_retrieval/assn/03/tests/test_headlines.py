@@ -28,7 +28,7 @@ class TestHeadlines(unittest.TestCase):
         )
         results1 = self.ir_obj.read_inverted_file(
             tokens1,
-            ("term", "postings", "postings_len"),
+            ("term", "postings", "term_counts", "postings_len"),
         )
         for test in results1:
             for real in self.golden_file[0]:

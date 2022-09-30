@@ -1,13 +1,14 @@
 from collections import Counter
 import heapq
 from pathlib import Path
-from typing import Any, Generator
 
 from .files import DataFile, Formatter, IO
 from .invertedfile import InvertedFile
 from .lexer import Lexer
 from .normalize import Normalizer
 from .packer import Packer
+from .retriever import Retriever
+from .types import Any, generator
 
 
 class InformationRetrieval:
@@ -115,8 +116,6 @@ class InformationRetrieval:
         else:
             raise AttributeError("Data not generated yet")
 
-    # def clean_temp_files(self) -> None:
-
     def load_inverted_file(self) -> None:
 
         self.invf = InvertedFile()
@@ -127,17 +126,19 @@ class InformationRetrieval:
 
     def read_inverted_file(
         self,
-        tokens: Generator[str, None, None],
-        keys: tuple[str, ...] = ("term",),
-    ) -> Generator[dict[str, int | tuple[int, ...]], None, None]:
+        tokens: generator[str],
+        keys: tuple[str, ...] = (),
+    ) -> generator[dict[str, int | tuple[int, ...]]]:
 
+        retr = Retriever(self.invf)
         for token in tokens:
-            metadata = self.invf.lookup(token)
-            yield {key: metadata.get(key, -1) for key in keys}
+            metadata = retr.lookup(token)
+            if not len(keys):
+                yield metadata
+            else:
+                yield {key: metadata.get(key, -1) for key in keys}
 
-    def normalize_test_terms(
-        self, terms: tuple[str, ...]
-    ) -> Generator[str, None, None]:
+    def normalize_test_terms(self, terms: tuple[str, ...]) -> generator[str]:
 
         prep = Normalizer()
         prep.set_document(" ".join(terms))

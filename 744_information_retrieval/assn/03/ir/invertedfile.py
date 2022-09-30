@@ -1,25 +1,13 @@
 from collections import Counter
-from typing import Any, Generator
 
-from .const import CHUNK_SIZE
-from .packer import Packer
-
-# shared indices
-TERM_ID_IDX = 0
-
-# dictionary indices
-OFFSET_IDX, LEN_IDX, DF_IDX, TF_IDX = (1, 2, 3, 4)
-
-# inverted file indices
-DOC_ID_IDX, TC_IDX, TERM_STR_IDX = (1, 2, 3)
+from .const import DICT_IDX, INVF_IDX, CHUNK_SIZE, TID_IDX
+from .types import generator
 
 
 class InvertedFile:
     def __init__(self) -> None:
 
         self.dictionary: dict[str, list[int]] = {}
-        # self.mapped_values: Generator[tuple[int, int, int, str], None, None]
-        # self.mapped_values_sorted: list[tuple[int, int, int, str]] = []
         self.inverted_file_raw: list[int] = []
 
     def build_dict(
@@ -36,17 +24,15 @@ class InvertedFile:
         self, col_split_list: list[str]
     ) -> tuple[int, int, int, str]:
         return (
-            self.dictionary[col_split_list[TERM_ID_IDX]][
-                TERM_ID_IDX
-            ],  # term ID
-            int(col_split_list[DOC_ID_IDX]),  # doc ID
-            int(col_split_list[TC_IDX]),  # term count,
-            col_split_list[TERM_ID_IDX],  # term
+            self.dictionary[col_split_list[TID_IDX]][TID_IDX],  # term ID
+            int(col_split_list[INVF_IDX.DID]),  # doc ID
+            int(col_split_list[INVF_IDX.TC]),  # term count,
+            col_split_list[TID_IDX],  # term
         )
 
     def __map_to_int(
         self, term_doc_tf: str
-    ) -> Generator[tuple[int, int, int, str], None, None]:
+    ) -> generator[tuple[int, int, int, str]]:
 
         return (
             self.__convert_tdt_types(i.split(" "))
@@ -55,7 +41,7 @@ class InvertedFile:
 
     def sort_mapped_tdt(
         self, term_doc_tf: str
-    ) -> Generator[list[tuple[int, int, int, str]], None, None]:
+    ) -> generator[list[tuple[int, int, int, str]]]:
 
         mapped_values = self.__map_to_int(term_doc_tf)
 
@@ -76,7 +62,7 @@ class InvertedFile:
             chunk = []
 
     def convert(
-        self, mapped_values: Generator[tuple[int, int, int, str], None, None]
+        self, mapped_values: generator[tuple[int, int, int, str]]
     ) -> None:
 
         cur: int = -1
@@ -84,22 +70,22 @@ class InvertedFile:
 
         for val in mapped_values:
 
-            term_str: str = val[TERM_STR_IDX]
+            term_str: str = val[INVF_IDX.STR]
 
-            if cur != val[TERM_ID_IDX]:
+            if cur != val[TID_IDX]:
 
-                cur = val[TERM_ID_IDX]
+                cur = val[TID_IDX]
 
                 # update offset
-                self.dictionary[term_str][OFFSET_IDX] = offset
+                self.dictionary[term_str][DICT_IDX.OF] = offset
 
                 # update width between the current term and the next
-                self.dictionary[term_str][LEN_IDX] = (
-                    self.dictionary[term_str][DF_IDX] * 2
+                self.dictionary[term_str][DICT_IDX.LEN] = (
+                    self.dictionary[term_str][DICT_IDX.DF] * 2
                 )
 
             offset += 2
-            self.inverted_file_raw.extend(val[DOC_ID_IDX:TERM_STR_IDX])
+            self.inverted_file_raw.extend(val[INVF_IDX.DID : INVF_IDX.STR])
 
     def set_inverted_file_raw(self, inverted_file_raw: list[int]) -> None:
 
@@ -124,24 +110,3 @@ class InvertedFile:
     def get_dictionary(self) -> dict[str, list[int]]:
 
         return self.dictionary
-
-    def lookup(self, term: str) -> dict[str, Any]:
-
-        metadata: dict[str, Any] = {"term": term}
-
-        if term not in self.dictionary:
-            return metadata
-
-        of: int = self.dictionary[term][OFFSET_IDX]
-        width: int = self.dictionary[term][LEN_IDX]
-        postings: tuple[int, ...] = Packer.decode(self.inverted_file)[
-            of : of + width : 2
-        ]
-        pos_len: int = len(postings)
-
-        metadata["offset"] = of
-        metadata["width"] = width
-        metadata["postings"] = postings
-        metadata["postings_len"] = pos_len
-
-        return metadata

@@ -1,10 +1,10 @@
 import json
 from pathlib import Path
-from typing import Any, Iterable
 
 from .const import DOC_PROC
 from .lexer import Lexer
 from .normalize import Normalizer
+from .types import Any, iterable
 
 
 class IO:
@@ -15,7 +15,7 @@ class IO:
             return fp.read()
 
     @staticmethod
-    def dumplines(filename: str, data: Iterable[Any]) -> None:
+    def dumplines(filename: str, data: iterable) -> None:
 
         with open(f"{filename}.txt", "w") as fp:
             fp.writelines(data)
