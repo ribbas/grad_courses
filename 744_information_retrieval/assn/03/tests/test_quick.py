@@ -1,5 +1,7 @@
 from pathlib import Path
+from pprint import pprint
 import unittest
+
 
 from ir import InformationRetrieval
 
@@ -17,6 +19,11 @@ class TestQuick(unittest.TestCase):
 
     def test1(self):
 
-        tokens1 = self.ir_obj.normalize_test_terms(("all ",))
+        tokens1 = self.ir_obj.normalize_test_terms(
+            (
+                "apple",
+                "orange",
+            )
+        )
         results1 = self.ir_obj.read_inverted_file(tokens1)
-        print(list(results1))
+        pprint(list(results1))

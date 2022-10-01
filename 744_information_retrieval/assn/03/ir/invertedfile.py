@@ -1,4 +1,4 @@
-from .const import DICT_IDX, INVF_IDX, CHUNK_SIZE, TID_IDX
+from .const import IDX, CHUNK_SIZE
 from .types import generator, counter
 
 
@@ -20,10 +20,10 @@ class InvertedFile:
         self, col_split_list: list[str]
     ) -> tuple[int, int, int, str]:
         return (
-            self.dictionary[col_split_list[TID_IDX]][TID_IDX],  # term ID
-            int(col_split_list[INVF_IDX.DID]),  # doc ID
-            int(col_split_list[INVF_IDX.TC]),  # term count,
-            col_split_list[TID_IDX],  # term
+            self.dictionary[col_split_list[IDX.TID]][IDX.TID],  # term ID
+            int(col_split_list[IDX.INVF.DID]),  # doc ID
+            int(col_split_list[IDX.INVF.TC]),  # term count,
+            col_split_list[IDX.TID],  # term
         )
 
     def __map_to_int(
@@ -66,22 +66,22 @@ class InvertedFile:
 
         for val in mapped_values:
 
-            term_str: str = val[INVF_IDX.STR]
+            term_str: str = val[IDX.INVF.STR]
 
-            if cur != val[TID_IDX]:
+            if cur != val[IDX.TID]:
 
-                cur = val[TID_IDX]
+                cur = val[IDX.TID]
 
                 # update offset
-                self.dictionary[term_str][DICT_IDX.OF] = offset
+                self.dictionary[term_str][IDX.DICT.OF] = offset
 
                 # update width between the current term and the next
-                self.dictionary[term_str][DICT_IDX.LEN] = (
-                    self.dictionary[term_str][DICT_IDX.DF] * 2
+                self.dictionary[term_str][IDX.DICT.LEN] = (
+                    self.dictionary[term_str][IDX.DICT.DF] * 2
                 )
 
             offset += 2
-            self.inverted_file_raw.extend(val[INVF_IDX.DID : INVF_IDX.STR])
+            self.inverted_file_raw.extend(val[IDX.INVF.DID : IDX.INVF.STR])
 
     def set_inverted_file_raw(self, inverted_file_raw: list[int]) -> None:
 
@@ -91,13 +91,13 @@ class InvertedFile:
 
         return self.inverted_file_raw
 
-    def set_inverted_file(self, inverted_file: bytes) -> None:
+    def set_inverted_file_bytes(self, inverted_file_bytes: bytes) -> None:
 
-        self.inverted_file = inverted_file
+        self.inverted_file_bytes = inverted_file_bytes
 
-    def get_inverted_file(self) -> bytes:
+    def get_inverted_file_bytes(self) -> bytes:
 
-        return self.inverted_file
+        return self.inverted_file_bytes
 
     def set_dictionary(self, dictionary: dict[str, list[int]]) -> None:
 

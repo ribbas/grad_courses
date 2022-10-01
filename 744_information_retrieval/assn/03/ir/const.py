@@ -4,22 +4,23 @@ CHUNK_SIZE = 1_000_000
 BYTE_FMT_CHAR = "I"
 BYTE_FMT_SIZE = 4
 
-# shared indices
-TID_IDX = 0
 
+class IDX:
 
-class DICT_IDX:
+    # shared indices
+    TID = 0
 
-    # dictionary indices
-    OF = 1
-    LEN = 2
-    DF = 3
-    TF = 4
+    class DICT:
 
+        # dictionary indices
+        OF = 1
+        LEN = 2
+        DF = 3
+        TF = 4
 
-class INVF_IDX:
+    class INVF:
 
-    # inverted file indices
-    DID = 1
-    TC = 2
-    STR = 3
+        # inverted file indices
+        DID = 1
+        TC = 2
+        STR = 3

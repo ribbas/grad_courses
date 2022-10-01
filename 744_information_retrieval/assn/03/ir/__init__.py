@@ -1,4 +1,3 @@
-from collections import Counter
 import heapq
 from pathlib import Path
 
@@ -8,17 +7,21 @@ from .lexer import Lexer
 from .normalize import Normalizer
 from .packer import Packer
 from .retriever import Retriever
-from .types import Any, generator
+from .types import Any, generator, counter
+
+from itertools import groupby
 
 
 class InformationRetrieval:
     def __init__(self) -> None:
 
         self.data: DataFile
-        self.df: Counter[str]
-        self.tf: Counter[str]
+        self.df: counter
+        self.tf: counter
+        self.num_docs: int = 0
         self.loaded = False
         self.term_doc_tf_str: str = ""
+        self.term_docs: str = ""
         self.invf: InvertedFile
 
     def set_filename(self, filename: Path) -> None:
@@ -29,6 +32,7 @@ class InformationRetrieval:
 
         self.df = IO.read_json(self.data.df_file_name)
         self.tf = IO.read_json(self.data.tf_file_name)
+
         self.term_doc_tf_str = IO.read(self.data.tdt_file_name)
         self.loaded = True
 
@@ -39,6 +43,10 @@ class InformationRetrieval:
 
         term_doc_tf: list[tuple[str, str, int]] = []
         self.data.ingest(prep, lex, term_doc_tf)
+        self.term_docs = "\n".join(
+            " ".join(i[0] for i in g)
+            for _, g in groupby(term_doc_tf, lambda x: x[1])
+        )
 
         self.df = lex.get_df()
         self.tf = lex.get_tf()
@@ -60,8 +68,12 @@ class InformationRetrieval:
 
         if self.loaded:
             IO.dump(self.data.tdt_file_name, self.term_doc_tf_str)
+            IO.dump(self.data.doc_terms, self.term_docs)
             IO.dump_json(self.data.df_file_name, self.df)
             IO.dump_json(self.data.tf_file_name, self.tf)
+            IO.dump_json(
+                self.data.meta_file_name, {"num_docs": self.data.num_docs}
+            )
         else:
             raise AttributeError("Data not generated yet")
 
@@ -121,7 +133,8 @@ class InformationRetrieval:
         self.invf = InvertedFile()
         inv_file = IO.read_bin(self.data.inv_file_name)
         dictionary = IO.read_json(self.data.dict_name)
-        self.invf.set_inverted_file(inv_file)
+        self.num_docs = IO.read_json(self.data.meta_file_name)["num_docs"]
+        self.invf.set_inverted_file_bytes(inv_file)
         self.invf.set_dictionary(dictionary)
 
     def read_inverted_file(
@@ -130,18 +143,23 @@ class InformationRetrieval:
         keys: tuple[str, ...] = (),
     ) -> generator[dict[str, int | tuple[int, ...]]]:
 
-        retr = Retriever(self.invf)
-        for token in tokens:
-            metadata = retr.lookup(token)
+        doc_vocabs: str = IO.read(self.data.doc_terms)
+
+        retr = Retriever(self.invf, self.num_docs, doc_vocabs)
+
+        metadata = retr.query(list(tokens))
+        # print(metadata)
+        return metadata
+        for token in metadata:
             if not len(keys):
-                yield metadata
+                yield token
             else:
-                yield {key: metadata.get(key, -1) for key in keys}
+                yield {key: token.get(key, -1) for key in keys}
 
     def normalize_test_terms(self, terms: tuple[str, ...]) -> generator[str]:
 
         prep = Normalizer()
-        prep.set_document(" ".join(terms))
+        prep.set_document(" ".join(terms) + " ")
         prep.process()
 
         return prep.get_tokens()
