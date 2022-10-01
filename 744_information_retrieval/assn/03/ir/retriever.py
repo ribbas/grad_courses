@@ -93,7 +93,7 @@ class Retriever:
 
         dot: float = 0
         for term in query.keys():
-            dot += query[term] * document[term]
+            dot += query[term] * document.get(term, 0)
 
         return dot
 
@@ -117,7 +117,8 @@ class Retriever:
 
         for retr in self.retrievals.values():
             for posting in retr["postings"]:
-                self.doc_ids.add(posting)
+                if retr["idf"]:
+                    self.doc_ids.add(posting)
 
     def retrieve_all_terms(self) -> None:
 
@@ -140,12 +141,19 @@ class Retriever:
     def generate_metrics_table(self) -> None:
 
         self.metrics_table = {
-            doc_id: {"dot": 0.0, "sum_of_squares": 0.0, "len": 0.0, "sim": 0.0}
+            doc_id: {
+                "doc_id": 0.0,
+                "dot": 0.0,
+                "sum_of_squares": 0.0,
+                "len": 0.0,
+                "sim": 0.0,
+            }
             for doc_id in (QUERY_DOC_ID, *self.doc_ids)
         }
 
         for doc_id in (QUERY_DOC_ID, *self.doc_ids):
             tfidfs = self.tfidf_table[doc_id]
+            self.metrics_table[doc_id]["doc_id"] = doc_id
             self.metrics_table[doc_id]["sum_of_squares"] = sum(
                 tfidf * tfidf for tfidf in tfidfs.values()
             )
