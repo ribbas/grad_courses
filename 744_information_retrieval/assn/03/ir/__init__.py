@@ -138,23 +138,15 @@ class InformationRetrieval:
         self.invf.set_dictionary(dictionary)
 
     def read_inverted_file(
-        self,
-        tokens: generator[str],
-        keys: tuple[str, ...] = (),
-    ) -> generator[dict[str, int | tuple[int, ...]]]:
+        self, tokens: generator[str]
+    ) -> list[dict[str, float]]:
 
         doc_vocabs: str = IO.read(self.data.doc_terms)
 
         retr = Retriever(self.invf, self.num_docs, doc_vocabs)
 
-        metadata = retr.query(list(tokens))
-        # print(metadata)
-        return metadata
-        for token in metadata:
-            if not len(keys):
-                yield token
-            else:
-                yield {key: token.get(key, -1) for key in keys}
+        retr.query(list(tokens))
+        return retr.get_rankings()
 
     def normalize_test_terms(self, terms: tuple[str, ...]) -> generator[str]:
 

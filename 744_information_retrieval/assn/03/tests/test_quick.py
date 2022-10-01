@@ -19,11 +19,6 @@ class TestQuick(unittest.TestCase):
 
     def test1(self):
 
-        tokens1 = self.ir_obj.normalize_test_terms(
-            (
-                "apple",
-                "orange",
-            )
-        )
+        tokens1 = self.ir_obj.normalize_test_terms(("apple", "orange"))
         results1 = self.ir_obj.read_inverted_file(tokens1)
-        pprint(list(results1))
+        pprint(results1)

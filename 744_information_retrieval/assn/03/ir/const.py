@@ -4,6 +4,8 @@ CHUNK_SIZE = 1_000_000
 BYTE_FMT_CHAR = "I"
 BYTE_FMT_SIZE = 4
 
+QUERY_DOC_ID = -1
+
 
 class IDX:
 
