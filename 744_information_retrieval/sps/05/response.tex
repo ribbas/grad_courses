@@ -54,7 +54,7 @@
 
             \item For both systems what is P@10 (precision at 10 documents) for this query?
 
-            \textbf{Answer:} P@10 can be computed by the expression $\frac{r}{10}$, where $r$ is the number of relevant documents retrieved. \textit{FastSearch} scores 0.4 while \textit{Telescope} scores 0.5 on this metric.
+            \textbf{Answer:} P@10 can be computed by the expression $\frac{r}{10}$, where $r$ is the number of relevant documents retrieved at 10. \textit{FastSearch} scores 0.3 with \{D69, D54, D3\} while \textit{Telescope} scores 0.5 on this metric.
 
             \item For \textit{FastSearch} what is the uninterpolated precision at 30\% Recall?
 
@@ -66,7 +66,7 @@
 
             \item For both systems what is average precision on this query?
 
-            \textbf{Answer:} The average precision is computed by summing the precisions at the retrieved relevant documents in the system. For \textit{FastSearch} the retrieved documents are ranked \{3, 4, 9, 12\} with precisions of \{1/3=0.33, 2/4=0.5, 3/9=0.33, 12/12=1\}. This totals to 2.16 for \textit{FastSearch}.
+            \textbf{Answer:} The average precision is computed by summing the precisions at the retrieved relevant documents in the system. For \textit{FastSearch} the retrieved documents are ranked \{3, 4, 9, 12\} with precisions of \{1/3=0.33, 2/4=0.5, 3/9=0.33, 4/12=0.25\}. This totals to 1.41 for \textit{FastSearch}.
 
             For \textit{Telescope}, the retrieved documents are ranked \{1,4,6,9,10\} with precisions of \{1/1=1, 2/4=0.5, 3/6=0.5, 4/9=0.44, 5/10=0.5\} which totals to 2.94.
 
@@ -74,7 +74,9 @@
 
         \item (15\%) Given two retrieval systems (called A and B), is it possible for System A to be better than System B in average precision, but for System B to have higher P@10 than System A? Briefly justify your response.
 
-        \textbf{Answer:}
+        \textbf{Answer:} Yes, it is possible for a system to have a higher P@10 even with a lower average precision. For example, System B may have retrieved 5 relevant documents in its top 10 ranks where System A retrieved 4, setting the P@10 scores to $0.5$ and $0.4$ respectively.
+        
+        For simplicity, we can let all the relevant documents retrieved by System B be placed on even ranks until the top 10 ranks. This placement will attribute an average precision of System B to $0.5\times 5=2.5$. If we let the 4 relevant documents retrieved by System A be placed on its top 4 ranks, then the average precision will total to $1\times 4=4$.
 
         \item (15\%) Consider the contingency tables below for the word pairs (bicycle, helmet) and (bicycle, repairs). Suppose we are looking to expand a query containing the word bicycle by adding some potentially useful search terms. Using pointwise mutual information (PMI) to score candidate terms, calculate scores for both helmet and repairs, and indicate which of the two would be the better expansion term. N = 15,000 documents. Use base 2 logs.
 
@@ -104,7 +106,7 @@
             \hfill
             \begin{tabular}[t]{|M{1.15cm}|M{1.15cm}|M{1.15cm}|}
                 \hline
-                & has helmet & missing helmet
+                & has repairs & missing repairs
                 \\ \hline
                 has bicycle & 31 & 45
                 \\ \hline
@@ -113,7 +115,21 @@
             \end{tabular}
         \end{table}
 
-        \textbf{Answer:}
+        \textbf{Answer:} The PMI for the first table is:
+        \begin{align*}
+            log_2\left(\frac{N\times a}{(a+b)(a+c)}\right) &= log_2\left(\frac{15000\times 22}{(22+54)(22+87)}\right) \\
+            &= log_2\left(\frac{82500}{2071}\right) \\
+            &= 5.316
+        \end{align*}
+
+        \textbf{Answer:} The PMI for the second table is:
+        \begin{align*}
+            log_2\left(\frac{N\times a}{(a+b)(a+c)}\right) &= log_2\left(\frac{15000\times 31}{(31+45)(31+164)}\right) \\
+            &= log_2\left(\frac{7750}{247}\right) \\
+            &= 4.972
+        \end{align*}
+
+        Since the PMI for the contingency table of the word pairs (bicycle, helmet) is higher, "helmet" should be considered as the better expansion term.
 
     \end{enumerate}
 
