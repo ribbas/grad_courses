@@ -33,14 +33,14 @@
 
         \item (10\%) Briefly describe the three key assumptions of the Cranfield paradigm for information retrieval evaluation.
 
-        \textbf{Answer:}
+        \textbf{Answer:} The three key assumptions 
 
         \item (10\%) What is pooling and why is it used in large-scale text retrieval evaluations?
 
-        \textbf{Answer:}
-        % Given information needs and documents, you need to collect relevance assessments. This is a time-consuming and expensive process involving human beings. For tiny collections like Cranfield, exhaustive judgments of relevance for each query and document pair were obtained. For large modern collections, it is usual for relevance to be assessed only for a subset of the documents for each query. The most standard approach POOLING is pooling, where relevance is assessed over a subset of the collection that is formed from the top k documents returned by a number of different IR systems (usually the ones to be evaluated), and perhaps other sources such as the results of Boolean keyword searches or documents found by expert searchers in an interactive process.        
+        \textbf{Answer:} Pooling is a method used to assess the relevance of documents where only a subset of the corpus are considered for review. The subset is created by gathering the top $k$ ranked documents by a number of different IR systems. This method of evaluation is usually performed on large corpuses where evaluating the number of documents may become infeasible.
 
-        \item (50\%) Consider a query with 10 relevant documents whose docids are: D3, D27, D30, D39, D51, D54, D69, D72, D81, and D96. Assume that all other documents are not relevant. On this query two retrieval systems \textit{FastSearch} and \textit{Telescope} produce the following ranked lists. (Note: D17 is the 1st ranked doc by \textit{FastSearch}; D4 is its 2nd ranked doc, etc ...)
+        \item (50\%) Consider a query with 10 relevant documents whose docids are: 
+        D3, D27, D30, D39, D51, D54, D69, D72, D81, and D96. Assume that all other documents are not relevant. On this query two retrieval systems \textit{FastSearch} and \textit{Telescope} produce the following ranked lists. (Note: D17 is the 1st ranked doc by \textit{FastSearch}; D4 is its 2nd ranked doc, etc ...)
 
         \textit{FastSearch}: D17, D4, D69, D54, D37, D41, D89, D85, D3, D5, D91, D39
 
@@ -50,28 +50,29 @@
 
             \item How many relevant documents are found by each system?
 
-            \textbf{Answer:}
+            \textbf{Answer:} \textit{FastSearch} retrieved 4 relevant documents (\{D69, D54, D3, D39\}) and \textit{Telescope} retrieved 5 relevant documents (\{D3, D27, D54, D72, D39\}).
 
             \item For both systems what is P@10 (precision at 10 documents) for this query?
 
-            \textbf{Answer:}
+            \textbf{Answer:} P@10 can be computed by the expression $\frac{r}{10}$, where $r$ is the number of relevant documents retrieved. \textit{FastSearch} scores 0.4 while \textit{Telescope} scores 0.5 on this metric.
 
             \item For \textit{FastSearch} what is the uninterpolated precision at 30\% Recall?
 
-            \textbf{Answer:}
+            \textbf{Answer:} At 30\% recall in \textit{FastSearch}, the retrieved documents are \{D17, D4, D69, D54, D37, D41, D89, D85, D3\}, which is 9 documents. This scores the precision to $\frac{9}{12}$ or 75\%.
 
             \item Assuming that \textit{FastSearch} returns no other documents other than this top-12 ranked list, what is \textit{FastSearch}'s Recall for this query?
 
-            \textbf{Answer:}
+            \textbf{Answer:} Recall is computed with the expression: $\frac{A}{A+C}$ where $A$ is the number of retrieved relevant documents and $C$ is the number of relevant documents not retrieved. \textit{FastSearch} retrieved 4 relevant documents and did not retrieve the other 6 documents, which scores its recall to $\frac{4}{10}$ or 0.4.
 
             \item For both systems what is average precision on this query?
 
-            \textbf{Answer:}
+            \textbf{Answer:} The average precision is computed by summing the precisions at the retrieved relevant documents in the system. For \textit{FastSearch} the retrieved documents are ranked \{3, 4, 9, 12\} with precisions of \{1/3=0.33, 2/4=0.5, 3/9=0.33, 12/12=1\}. This totals to 2.16 for \textit{FastSearch}.
+
+            For \textit{Telescope}, the retrieved documents are ranked \{1,4,6,9,10\} with precisions of \{1/1=1, 2/4=0.5, 3/6=0.5, 4/9=0.44, 5/10=0.5\} which totals to 2.94.
 
         \end{enumerate}
 
-        \item (15\%) Given two retrieval systems (called A and B), is it possible for System A to be better than System B in
-        average precision, but for System B to have higher P@10 than System A? Briefly justify your response.
+        \item (15\%) Given two retrieval systems (called A and B), is it possible for System A to be better than System B in average precision, but for System B to have higher P@10 than System A? Briefly justify your response.
 
         \textbf{Answer:}
 
