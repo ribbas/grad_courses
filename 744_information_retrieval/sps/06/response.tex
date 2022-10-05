@@ -14,6 +14,9 @@
 \definecolor{Gray}{gray}{0.85}
 \newcolumntype{a}{>{\columncolor{Gray}}M}
 
+\newcommand{\super}{\textsuperscript}
+\newcommand{\mult}{$\times$}
+
 % margins
 \topmargin=-0.45in
 \evensidemargin=0in
@@ -30,106 +33,84 @@
 \maketitle
 
     \begin{enumerate}
+        \item (30\%) For this problem we will use Cover Density Ranking for the following document which is two verses from an 18th century English nursery rhyme. The numeric superscripts indicate the word order in the document. For this problem we have this one document and a query consisting of the two words \textbf{"sing pie"}.
 
-        \item (10\%) Briefly describe the three key assumptions of the Cranfield paradigm for information retrieval evaluation.
+        \begin{center}
+            \begin{tabular}{l}
+            sing\super{1} \ a\super{2} \ song\super{3} \ of\super{4} \ sixpence\super{5} \ \\
+            a\super{6} \ pocket\super{7} \ full\super{8} \ of\super{9} \ rye\super{10} \ \\
+            four\super{11} \ and\super{12} \ twenty\super{13} \ blackbirds\super{14} \ \\
+            baked\super{15} \ in\super{16} \ a\super{17} \ pie\super{18}
+            \end{tabular}
+        \end{center}
 
-        \textbf{Answer:} Relevance judgments may vary due to different systems with different pools where some systems or variants may not have even contributed to pools. However, these potential errors may not be significant if the pool size is sufficient, the collection is of a fixed size, and the evaluation is done to score relative rankings as opposed to absolute measures of performance.
-
-        \item (10\%) What is pooling and why is it used in large-scale text retrieval evaluations?
-
-        \textbf{Answer:} Pooling is a method used to assess the relevance of documents where only a subset of the corpus are considered for review. The subset is created by gathering the top $k$ ranked documents by a number of different IR systems. This method of evaluation is usually performed on large corpuses where evaluating the number of documents may become infeasible.
-
-        \item (50\%) Consider a query with 10 relevant documents whose docids are: 
-        D3, D27, D30, D39, D51, D54, D69, D72, D81, and D96. Assume that all other documents are not relevant. On this query two retrieval systems \textit{FastSearch} and \textit{Telescope} produce the following ranked lists. (Note: D17 is the 1st ranked doc by \textit{FastSearch}; D4 is its 2nd ranked doc, etc ...)
-
-        \textit{FastSearch}: D17, D4, D69, D54, D37, D41, D89, D85, D3, D5, D91, D39
-
-        \textit{Telescope}: D3, D1, D94, D27, D50, D54, D16, D7, D72, D39, D95, D62
+        \begin{center}
+            \begin{tabular}{l}
+            when\super{19} \ the\super{20} \ pie\super{21} \ was\super{22} \ opened\super{23} \ \\
+            the\super{24} \ birds\super{25} \ began\super{26} \ to\super{27} \ sing\super{28} \ \\
+            wasn't\super{29} \ that\super{30} \ a\super{31} \ dainty\super{32} \ dish\super{33} \ \\
+            to\super{34} \ set\super{35} \ before\super{36} \ the\super{37} \ king\super{38}
+            \end{tabular}
+        \end{center}
 
         \begin{enumerate}
+            \item Is (1,21) a cover for this query? Explain why or why not?
+            
+            \textbf{Answer:}
 
-            \item How many relevant documents are found by each system?
+            \item List the covers for this query.
+            
+            \textbf{Answer:}
 
-            \textbf{Answer:} \textit{FastSearch} retrieved 4 relevant documents (\{D69, D54, D3, D39\}) and \textit{Telescope} retrieved 5 relevant documents (\{D3, D27, D54, D72, D39\}).
-
-            \item For both systems what is P@10 (precision at 10 documents) for this query?
-
-            \textbf{Answer:} P@10 can be computed by the expression $\frac{r}{10}$, where $r$ is the number of relevant documents retrieved at 10. \textit{FastSearch} scores 0.3 with \{D69, D54, D3\} while \textit{Telescope} scores 0.5 on this metric.
-
-            \item For \textit{FastSearch} what is the uninterpolated precision at 30\% Recall?
-
-            \textbf{Answer:} At 30\% recall in \textit{FastSearch}, the retrieved documents are \{D17, D4, D69, D54, D37, D41, D89, D85, D3\}, which is 9 documents. This scores the precision to $\frac{9}{12}$ or 75\%.
-
-            \item Assuming that \textit{FastSearch} returns no other documents other than this top-12 ranked list, what is \textit{FastSearch}'s Recall for this query?
-
-            \textbf{Answer:} Recall is computed with the expression: $\frac{A}{A+C}$ where $A$ is the number of retrieved relevant documents and $C$ is the number of relevant documents not retrieved. \textit{FastSearch} retrieved 4 relevant documents and did not retrieve the other 6 documents, which scores its recall to $\frac{4}{10}$ or 0.4.
-
-            \item For both systems what is average precision on this query?
-
-            \textbf{Answer:} The average precision is computed by summing the precisions at the retrieved relevant documents in the system. For \textit{FastSearch} the retrieved documents are ranked \{3, 4, 9, 12\} with precisions of \{1/3=0.33, 2/4=0.5, 3/9=0.33, 4/12=0.25\}. This totals to 1.41 for \textit{FastSearch}.
-
-            For \textit{Telescope}, the retrieved documents are ranked \{1,4,6,9,10\} with precisions of \{1/1=1, 2/4=0.5, 3/6=0.5, 4/9=0.44, 5/10=0.5\} which totals to 2.94.
+            \item Using a window size of K=8, calculate the similarity score for the document.
+            
+            \textbf{Answer:}
 
         \end{enumerate}
 
-        \item (15\%) Given two retrieval systems (called A and B), is it possible for System A to be better than System B in average precision, but for System B to have higher P@10 than System A? Briefly justify your response.
+        Cover Density Ranking is not discussed in the course text. However, there is an example in the lecture slides, and you can find the paper \textit{"Relevance ranking for one to three term queries"} by Clarke et al., in the EReserves in Blackboard. That paper formally defines a cover and gives several examples that you may find useful.
 
-        \textbf{Answer:} Yes, it is possible for a system to have a higher P@10 even with a lower average precision. For example, System B may have retrieved 5 relevant documents in its top 10 ranks where System A retrieved 4, setting the P@10 scores to $0.5$ and $0.4$ respectively.
+        \item (20\%) In the statistical language model presented in the lecture and in Chapter 12 of the text we use linear interpolation (also called a "mixture model" or "Jelinek-Mercer smoothing") to make a probability estimate of a term. This estimate is based both on the term frequency in a document, and on the collection frequency of the term. See Equation 12.12 in IIR.
 
-        For simplicity, we can let all the relevant documents retrieved by System B be placed on even ranks until the top 10 ranks. This placement will attribute an average precision of System B to $0.5\times 5=2.5$. If we let the 4 relevant documents retrieved by System A be placed on its top 4 ranks, then the average precision will total to $1\times 4=4$.
+        \begin{enumerate}
+            \item What is the purpose of the parameter $\lambda$?
 
-        \item (15\%) Consider the contingency tables below for the word pairs (bicycle, helmet) and (bicycle, repairs). Suppose we are looking to expand a query containing the word bicycle by adding some potentially useful search terms. Using pointwise mutual information (PMI) to score candidate terms, calculate scores for both helmet and repairs, and indicate which of the two would be the better expansion term. N = 15,000 documents. Use base 2 logs.
+            \textbf{Answer:}
 
-        \begin{equation*}
-            PMI(x,y)=log_2\left(\frac{P(x,y)}{P(x)P(y)}\right)=log_2\left(\frac{N\times a}{(a+b)(a+c)}\right)
-        \end{equation*}
+            \item What would be the effect of setting $\lambda$ to a value of 1?
+
+            \textbf{Answer:}
+
+        \end{enumerate}
+
+        \item (50\%) Compute similarity scores for and rank documents D1 and D2 using query Q with a unigram statistical language model. Query Q contains the four words "aardvark bird dog dog". The corpus consists of only these eight documents and only these six indexing terms are found in the collection. The cells in the table below indicate the number of times a word appears in a document. You should use a mixture model with parameter l = 0.40. Assume that the prior probability of relevance is equal for all documents.
+
+        Plainly show your work. It is fine to check your work with a program or spreadsheet, but I expect you to show how you derive probability estimates and to see the equations that you use to calculate document similarity.
 
         \begin{table}[ht]
-            \footnotesize
-            \begin{tabular}[t]{|a{1.6cm}|a{1.6cm}|}
+            \centering
+            \begin{tabular}[t]{|c|c|c|c|c|c|c|c|c|}
                 \hline
-                A: docs with both terms together & B: docs with first term, but not second
+                & \textbf{D1} & \textbf{D2} & D3 & D4 & D5 & D6 & D7 & D8
                 \\ \hline
-                C: docs with second term, but not first & D: docs that contain neither term
+                aardvark    & 5 & 2 &   & 1 &   &   &   & 2
                 \\ \hline
-            \end{tabular}
-            \hfill
-            \begin{tabular}[t]{|M{1.15cm}|M{1.15cm}|M{1.15cm}|}
-                \hline
-                & has helmet & missing helmet
+                bird        & 1 & 1 & 1 & 2 & 1 & 1 & 5 & 8
                 \\ \hline
-                has bicycle & 22 & 54
+                cat         &   &   &   & 2 &   & 3 &   &
                 \\ \hline
-                missing bicycle & 87 & 14837
+                dog         &   & 1 & 3 &   & 2 &   & 2 &
                 \\ \hline
-            \end{tabular}
-            \hfill
-            \begin{tabular}[t]{|M{1.15cm}|M{1.15cm}|M{1.15cm}|}
-                \hline
-                & has repairs & missing repairs
+                egret       & 1 &   &   & 1 &   &   &   &
                 \\ \hline
-                has bicycle & 31 & 45
-                \\ \hline
-                missing bicycle & 164 & 14760
+                fish        & 3 & 2 &   &   &   &   &   &
                 \\ \hline
             \end{tabular}
         \end{table}
 
-        \textbf{Answer:} The PMI for the first table is:
-        \begin{align*}
-            log_2\left(\frac{N\times a}{(a+b)(a+c)}\right) &= log_2\left(\frac{15000\times 22}{(22+54)(22+87)}\right) \\
-            &= log_2\left(\frac{82500}{2071}\right) \\
-            &= 5.316
-        \end{align*}
+        Report scores using scientific notation with three digits after the decimal point (e.g., 1.234 \mult 10\super{-8}).
 
-        \textbf{Answer:} The PMI for the second table is:
-        \begin{align*}
-            log_2\left(\frac{N\times a}{(a+b)(a+c)}\right) &= log_2\left(\frac{15000\times 31}{(31+45)(31+164)}\right) \\
-            &= log_2\left(\frac{7750}{247}\right) \\
-            &= 4.972
-        \end{align*}
-
-        Since the PMI for the contingency table of the word pairs (bicycle, helmet) is higher, "helmet" should be considered as the better expansion term.
+        \textbf{Answer:}
 
     \end{enumerate}
 
