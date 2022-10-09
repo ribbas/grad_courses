@@ -16,13 +16,13 @@ class InformationRetrieval:
     def __init__(self) -> None:
 
         self.data: DataFile
+        self.invf: InvertedFile
         self.df: counter
         self.tf: counter
         self.num_docs: int = 0
         self.loaded = False
         self.term_doc_tf_str: str = ""
         self.term_docs: str = ""
-        self.invf: InvertedFile
 
     def set_filename(self, filename: Path) -> None:
 

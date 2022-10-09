@@ -66,6 +66,7 @@ if __name__ == "__main__":
         ir_obj.generate_stats()
         ir_obj.dump_freqs()
         ir_obj.build_sorted_tdt()
+        ir_obj.encode_inverted_file()
 
     else:
 

@@ -39,16 +39,11 @@ class Retriever:
 
         invf_data["of"] = of
         invf_data["width"] = width
-        invf_data["decoded_chunk"] = decoded_chunk
 
-        return invf_data
-
-    def compute_invf_freqs(self, invf_data: dict[str, Any]) -> dict[str, Any]:
-
-        postings: tuple[int, ...] = invf_data["decoded_chunk"][
+        postings: tuple[int, ...] = decoded_chunk[
             invf_data["of"] : invf_data["of"] + invf_data["width"] : 2
         ]
-        tf: tuple[int, ...] = invf_data["decoded_chunk"][
+        tf: tuple[int, ...] = decoded_chunk[
             invf_data["of"] + 1 : invf_data["of"] + invf_data["width"] + 1 : 2
         ]
         df: int = len(postings)
@@ -102,9 +97,6 @@ class Retriever:
         for term in terms:
             if term not in self.retrievals:
                 self.retrievals[term] = self.lookup(term)
-                self.retrievals[term] = self.compute_invf_freqs(
-                    self.retrievals[term]
-                )
 
     def get_retrievals(self) -> dict[str, dict[str, Any]]:
 
@@ -144,7 +136,7 @@ class Retriever:
             doc_id: {
                 "doc_id": 0.0,
                 "dot": 0.0,
-                "sum_of_squares": 0.0,
+                "sum_sq": 0.0,
                 "len": 0.0,
                 "sim": 0.0,
             }
@@ -154,11 +146,11 @@ class Retriever:
         for doc_id in (QUERY_DOC_ID, *self.doc_ids):
             tfidfs = self.tfidf_table[doc_id]
             self.metrics_table[doc_id]["doc_id"] = doc_id
-            self.metrics_table[doc_id]["sum_of_squares"] = sum(
+            self.metrics_table[doc_id]["sum_sq"] = sum(
                 tfidf * tfidf for tfidf in tfidfs.values()
             )
             self.metrics_table[doc_id]["len"] = sqrt(
-                self.metrics_table[doc_id]["sum_of_squares"]
+                self.metrics_table[doc_id]["sum_sq"]
             )
             self.metrics_table[doc_id]["dot"] = self.dot_product(
                 tfidfs, self.tfidf_table[QUERY_DOC_ID]
