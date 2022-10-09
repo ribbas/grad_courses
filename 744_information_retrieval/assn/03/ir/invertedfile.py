@@ -8,11 +8,11 @@ class InvertedFile:
         self.dictionary: dict[str, list[int]] = {}
         self.inverted_file_raw: list[int] = []
 
-    def build_dict(self, df: counter, tf: counter) -> dict[str, list[int]]:
+    def build_dict(self, df: counter, cf: counter) -> dict[str, list[int]]:
 
-        for idx, term in enumerate(sorted(tf.keys())):
-            # term: [term index, offset, length, df, tf]
-            self.dictionary[term] = [idx, 0, 0, df[term], tf[term]]
+        for idx, term in enumerate(sorted(cf.keys())):
+            # term: [term index, offset, length, df, cf]
+            self.dictionary[term] = [idx, 0, 0, df[term], 0]
 
         return self.dictionary
 

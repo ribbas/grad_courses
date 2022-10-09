@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 from .const import DOC_PROC
-from .lexer import Lexer
+from .lexer import Lexer, LexerStatistics
 from .normalize import Normalizer
 from .types import Any, iterable
 
@@ -61,18 +61,20 @@ class DataFile:
         self.filename: Path = filename
         self.num_docs: int = 0
 
-        self.df_file_name: str = f"stats/{filename.stem}_df"
-        self.tf_file_name: str = f"stats/{filename.stem}_tf"
-        self.stats_file_name: str = f"stats/{filename.stem}_stats"
-        self.meta_file_name: str = f"stats/{filename.stem}_meta"
+        self.df_file: str = f"stats/{filename.stem}_df"
+        self.tf_file: str = f"stats/{filename.stem}_tf"
+        self.cf_file: str = f"stats/{filename.stem}_cf"
+        self.stats_file: str = f"stats/{filename.stem}_stats"
+        self.meta_file: str = f"stats/{filename.stem}_meta"
 
-        self.doc_terms: str = f"tmp/{filename.stem}_doc_terms"
-        self.tdt_file_name: str = f"tmp/{filename.stem}_tdt"
-        self.sort_tdt_chunk: str = f"tmp/{filename.stem}_chunk_"
-        self.sort_tdt: str = f"tmp/{filename.stem}_sort"
+        self.tid_file: str = f"tmp/{filename.stem}_tid"
+        self.doc_terms_file: str = f"tmp/{filename.stem}_doc_terms"
+        self.tdt_file: str = f"tmp/{filename.stem}_tdt"
+        self.sorted_tdt_chunk_file: str = f"tmp/{filename.stem}_chunk_"
+        self.sorted_tdt_file: str = f"tmp/{filename.stem}_sort"
 
-        self.inv_file_name: str = f"bin/{filename.stem}_if"
-        self.dict_name: str = f"bin/{filename.stem}_dict"
+        self.inv_file: str = f"bin/{filename.stem}_if"
+        self.dict_file: str = f"bin/{filename.stem}_dict"
 
     def ingest(
         self,
@@ -101,7 +103,7 @@ class DataFile:
                         lex.add(prep.get_tokens())
 
                         # save records of term-DocID-tf
-                        term_doc_tf.extend(lex.term_doc_tf(doc_id))
+                        term_doc_tf.extend(lex.get_term_docid_tf(doc_id))
 
                         doc = ""
 
@@ -127,40 +129,42 @@ class Formatter:
     @staticmethod
     def format_stats(lex: Lexer, num_docs: int = 0) -> str:
 
+        lex_stats = LexerStatistics(lex)
+
         contents: str = ""
 
         contents += f"{Formatter.hr}"
         contents += f"{num_docs} documents.\n"
 
         contents += f"{Formatter.hr}"
-        contents += f"Collections size: {lex.get_collection_size()}\n"
-        contents += f"Vocabulary size: {lex.get_vocab_size()}\n"
+        contents += f"Collections size: {lex_stats.get_collection_size()}\n"
+        contents += f"Vocabulary size: {lex_stats.get_vocab_size()}\n"
         contents += f"\n{Formatter.hr}"
 
         contents += "Top 100 most frequent words:\n"
         contents += Formatter.table_header
-        for term in lex.get_top_n_tf_df(100):
+        for term in lex_stats.get_top_n_cf_df(100):
             contents += Formatter.__format_tf_df(*term)
 
         contents += f"\n{Formatter.hr}"
         contents += "500th word:\n"
         contents += Formatter.table_header
-        contents += Formatter.__format_tf_df(*lex.get_nth_freq_term(500))
+        contents += Formatter.__format_tf_df(*lex_stats.get_nth_freq_term(500))
 
         contents += f"\n{Formatter.hr}"
         contents += "1000th word:\n"
         contents += Formatter.table_header
-        contents += Formatter.__format_tf_df(*lex.get_nth_freq_term(1000))
+        contents += Formatter.__format_tf_df(*lex_stats.get_nth_freq_term(1000))
 
         contents += f"\n{Formatter.hr}"
         contents += "5000th word:\n"
         contents += Formatter.table_header
-        contents += Formatter.__format_tf_df(*lex.get_nth_freq_term(5000))
+        contents += Formatter.__format_tf_df(*lex_stats.get_nth_freq_term(5000))
 
         contents += f"\n{Formatter.hr}"
-        single_occs: int = lex.get_single_occs()
+        single_occs: int = lex_stats.get_single_occs()
         contents += "Number of words that occur in exactly one document:\n"
-        contents += f"{single_occs} ({round(single_occs / lex.get_vocab_size() * 100, 2)}%)\n"
+        contents += f"{single_occs} ({round(single_occs / lex_stats.get_vocab_size() * 100, 2)}%)\n"
 
         return contents
 

@@ -8,12 +8,17 @@ from .types import Any
 
 class Retriever:
     def __init__(
-        self, invf: InvertedFile, num_docs: int, doc_vocabs: str
+        self,
+        invf: InvertedFile,
+        num_docs: int,
+        doc_terms: dict[str, list[int]],
+        tid: dict[str, int | str],
     ) -> None:
 
         self.invf = invf
         self.num_docs = num_docs
-        self.doc_vocabs = doc_vocabs.split("\n")
+        self.tid = tid
+        self.doc_terms = doc_terms
 
         self.dictionary: dict[str, list[int]] = invf.get_dictionary()
         self.inverted_file: bytes = invf.get_inverted_file_bytes()
@@ -60,7 +65,8 @@ class Retriever:
         return invf_data
 
     def get_document(self, doc_id: int) -> list[str]:
-        return self.doc_vocabs[doc_id - 1].split(" ")
+        terms: list[int] = self.doc_terms[str(doc_id)]
+        return [self.tid[str(term)] for term in terms]
 
     @staticmethod
     def get_term_tfidf(
