@@ -52,7 +52,6 @@ class InformationRetrieval:
             k: [self.tid[i[0]] for i in g]
             for k, g in groupby(term_doc_tf, lambda x: x[1])
         }
-        print(self.doc_terms)
 
         self.df = lex.get_df()
         self.cf = lex.get_cf()

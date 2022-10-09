@@ -42,18 +42,14 @@ class Retriever:
         width: int = self.dictionary[term][IDX.DICT.LEN]
         decoded_chunk: tuple[int, ...] = Packer.decode(self.inverted_file)
 
-        invf_data["of"] = of
-        invf_data["width"] = width
-
-        postings: tuple[int, ...] = decoded_chunk[
-            invf_data["of"] : invf_data["of"] + invf_data["width"] : 2
-        ]
-        tf: tuple[int, ...] = decoded_chunk[
-            invf_data["of"] + 1 : invf_data["of"] + invf_data["width"] + 1 : 2
-        ]
+        postings: tuple[int, ...] = decoded_chunk[of : of + width : 2]
+        tf: tuple[int, ...] = decoded_chunk[of + 1 : of + width + 1 : 2]
         df: int = len(postings)
         idf: float = log2(self.num_docs / df)
-        tfidf: tuple[float, ...] = tuple(tf_ * idf for tf_ in tf)
+        tfidf: tuple[float, ...] = tuple(i * idf for i in tf)
+
+        invf_data["of"] = of
+        invf_data["width"] = width
 
         invf_data["postings"] = postings
         invf_data["tf"] = tf
@@ -64,9 +60,8 @@ class Retriever:
 
         return invf_data
 
-    def get_document(self, doc_id: int) -> list[str]:
-        terms: list[int] = self.doc_terms[str(doc_id)]
-        return [self.tid[str(term)] for term in terms]
+    def get_document_terms(self, doc_id: int) -> list[str | int]:
+        return [self.tid[str(term)] for term in self.doc_terms[str(doc_id)]]
 
     @staticmethod
     def get_term_tfidf(
@@ -121,7 +116,7 @@ class Retriever:
     def retrieve_all_terms(self) -> None:
 
         for doc_id in self.doc_ids:
-            self.all_terms[doc_id] = self.get_document(doc_id)
+            self.all_terms[doc_id] = self.get_document_terms(doc_id)
             self.update_retrievals(self.all_terms[doc_id])
 
     def map_tfidf_table(self) -> None:
