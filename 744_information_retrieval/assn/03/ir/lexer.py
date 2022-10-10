@@ -1,5 +1,4 @@
 from collections import Counter
-from itertools import groupby
 
 from .types import generator, counter
 
@@ -10,7 +9,6 @@ class Lexer:
         self.cf: counter = Counter()
         self.df: counter = Counter()
         self.tf: counter = Counter()
-        self.term_idx: dict[int | str, int | str] = {}
         self.dictionary: dict[str, list[int]] = {}
 
     def add(self, tokens: generator[str]) -> None:
@@ -30,11 +28,6 @@ class Lexer:
         for term in self.tf:
             yield term, doc_id, self.tf[term]
 
-    def build_term_idx(self) -> None:
-
-        self.term_idx = dict(enumerate(sorted(self.df.keys())))
-        self.term_idx.update({v: k for k, v in self.term_idx.items()})
-
     def set_cf(self, cf: counter) -> None:
 
         self.cf = cf
@@ -50,21 +43,6 @@ class Lexer:
     def get_df(self) -> counter:
 
         return self.df
-
-    def set_term_idx(self, term_idx: dict[int | str, int | str]) -> None:
-
-        self.term_idx = term_idx
-
-    def get_term_idx(self) -> dict[int | str, int | str]:
-
-        return self.term_idx
-
-    def get_doc_terms(self, term_doc_tf: list[tuple[str, str, int]]):
-
-        return {
-            k: [self.term_idx[i[0]] for i in g]
-            for k, g in groupby(term_doc_tf, lambda x: x[1])
-        }
 
 
 class LexerStatistics:

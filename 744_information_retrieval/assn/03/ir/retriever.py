@@ -7,18 +7,10 @@ from .types import Any
 
 
 class Retriever:
-    def __init__(
-        self,
-        invf: InvertedFile,
-        num_docs: int,
-        doc_terms: dict[str, list[int]],
-        tid: dict[str, int | str],
-    ) -> None:
+    def __init__(self, invf: InvertedFile, num_docs: int) -> None:
 
         self.invf = invf
         self.num_docs = num_docs
-        self.tid = tid
-        self.doc_terms = doc_terms
 
         self.partial_len: dict[int | str, float] = {
             doc_id: 0.0 for doc_id in range(1, self.num_docs + 1)
@@ -29,11 +21,11 @@ class Retriever:
         self.decoded_invf: tuple[int, ...]
 
         self.retrievals: dict[str, dict[str, Any]] = {}
-        # self.all_terms: dict[int, Any] = {}
+        self.query_tfidfs: dict[str, float] = {}
         self.doc_ids: set[int] = set()
 
         self.tfidf_table: dict[int, dict[str, float]] = {}
-        self.metrics_table: dict[int, dict[str, float]] = {}
+        self.metrics: dict[int, dict[str, float]] = {}
 
     def decode_inverted_file(self):
 
@@ -146,14 +138,11 @@ class Retriever:
         self.partial_len[QUERY_DOC_ID] = sqrt(self.partial_len[QUERY_DOC_ID])
         return tfs
 
-    @staticmethod
-    def dot_product(
-        document: dict[str, float], query: dict[str, float]
-    ) -> float:
+    def dot_product(self, document: dict[str, float]) -> float:
 
         dot: float = 0
-        for term in query.keys():
-            dot += query[term] * document.get(term, 0)
+        for term in self.query_tfidfs.keys():
+            dot += self.query_tfidfs[term] * document.get(term, 0)
 
         return dot
 
@@ -165,8 +154,8 @@ class Retriever:
 
         return self.retrievals
 
-    def get_metrics_table(self) -> dict[int, dict[str, float]]:
-        return self.metrics_table
+    def get_metrics(self) -> dict[int, dict[str, float]]:
+        return self.metrics
 
     def update_doc_ids(self) -> None:
 
@@ -187,34 +176,26 @@ class Retriever:
                 )
             self.tfidf_table[doc_id] = tfidfs
 
+    def similarity(self, doc_id: int) -> float:
+
+        dot: float = self.dot_product(self.tfidf_table[doc_id])
+        doc_len: float = self.partial_len[str(doc_id)]
+        return dot / (doc_len * self.partial_len[QUERY_DOC_ID])
+
     def generate_metrics_table(self) -> None:
 
-        self.metrics_table = {
+        self.metrics = {
             doc_id: {
                 "doc_id": 0,
-                "dot": 0.0,
-                "len": 0.0,
                 "sim": 0.0,
             }
-            for doc_id in (QUERY_DOC_ID, *self.doc_ids)
+            for doc_id in self.doc_ids
         }
 
-        for doc_id in (QUERY_DOC_ID, *self.doc_ids):
-            tfidfs = self.tfidf_table[doc_id]
-            self.metrics_table[doc_id]["doc_id"] = doc_id
-            self.metrics_table[doc_id]["len"] = self.partial_len[str(doc_id)]
-            # self.metrics_table[doc_id]["len"] = sqrt(
-            #     self.metrics_table[doc_id]["sum_sq"]
-            # )
-            self.metrics_table[doc_id]["dot"] = self.dot_product(
-                tfidfs, self.tfidf_table[QUERY_DOC_ID]
-            )
-            self.metrics_table[doc_id]["sim"] = self.metrics_table[doc_id][
-                "dot"
-            ] / (
-                self.metrics_table[doc_id]["len"]
-                * self.metrics_table[QUERY_DOC_ID]["len"]
-            )
+        for doc_id in self.doc_ids:
+            self.metrics[doc_id]["doc_id"] = doc_id
+            self.metrics[doc_id]["sim"] = self.similarity(doc_id)
+            del self.tfidf_table[doc_id]
 
     def query(self, query_terms: list[str]) -> None:
 
@@ -228,18 +209,15 @@ class Retriever:
 
         # table of docID mapped to maps of term-TFIDF
         self.map_tfidf_table(query_terms)
-        self.tfidf_table[QUERY_DOC_ID] = self.get_query_tfs(query_terms)
+        self.query_tfidfs = self.get_query_tfs(query_terms)
+        self.retrievals.clear()
 
         self.generate_metrics_table()
 
-    def get_rankings(self, top_n: int = 5) -> list[dict[str, float]]:
+    def get_rankings(self, top_n: int = 100) -> list[dict[str, float]]:
 
         rankings = sorted(
-            (
-                retrieval
-                for doc_id, retrieval in self.metrics_table.items()
-                if str(doc_id) != QUERY_DOC_ID
-            ),
+            (retrieval for retrieval in self.metrics.values()),
             key=lambda x: x["sim"],
             reverse=True,
         )

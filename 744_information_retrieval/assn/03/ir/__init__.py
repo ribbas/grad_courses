@@ -18,8 +18,6 @@ class InformationRetrieval:
 
         self.df: counter
         self.cf: counter
-        self.tid: dict[int | str, int | str] = {}
-        self.doc_terms: dict[int, list[int]] = {}
 
         self.num_docs: int = 0
         self.freq_loaded = False
@@ -34,7 +32,6 @@ class InformationRetrieval:
 
         self.df = IO.read_json(self.data.df_file)
         self.cf = IO.read_json(self.data.tf_file)
-        self.tid = IO.read_json(self.data.tid_file)
 
         self.term_doc_tf_str = IO.read(self.data.tdt_file)
         self.freq_loaded = True
@@ -46,9 +43,6 @@ class InformationRetrieval:
 
         term_doc_tf: list[tuple[str, str, int]] = []
         self.data.ingest(prep, lex, term_doc_tf)
-        lex.build_term_idx()
-        self.tid = lex.get_term_idx()
-        self.doc_terms = lex.get_doc_terms(term_doc_tf)
 
         self.df = lex.get_df()
         self.cf = lex.get_cf()
@@ -72,8 +66,6 @@ class InformationRetrieval:
             IO.dump(self.data.tdt_file, self.term_doc_tf_str)
             IO.dump_json(self.data.df_file, self.df)
             IO.dump_json(self.data.tf_file, self.cf)
-            IO.dump_json(self.data.tid_file, self.tid)
-            IO.dump_json(self.data.doc_terms_file, self.doc_terms)
             IO.dump_json(self.data.meta_file, {"num_docs": self.data.num_docs})
         else:
             raise AttributeError("Corpus frequencies not generated yet")
@@ -142,10 +134,8 @@ class InformationRetrieval:
     def precompute_lengths(self) -> None:
 
         if self.invf_loaded:
-            self.doc_terms = IO.read_json(self.data.doc_terms_file)
-            self.tid = IO.read_json(self.data.tid_file)
 
-            retr = Retriever(self.invf, self.num_docs, self.doc_terms, self.tid)
+            retr = Retriever(self.invf, self.num_docs)
             retr.decode_inverted_file()
             retr.compute_sum_of_squares()
             retr.compute_lengths()
@@ -160,11 +150,9 @@ class InformationRetrieval:
     ) -> list[dict[str, float]]:
 
         if self.invf_loaded:
-            self.doc_terms = IO.read_json(self.data.doc_terms_file)
-            self.tid = IO.read_json(self.data.tid_file)
             lengths = IO.read_json(self.data.len_file)
 
-            retr = Retriever(self.invf, self.num_docs, self.doc_terms, self.tid)
+            retr = Retriever(self.invf, self.num_docs)
             retr.set_lengths(lengths)
             retr.query(list(tokens))
 
