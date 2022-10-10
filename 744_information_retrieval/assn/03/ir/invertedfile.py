@@ -91,7 +91,7 @@ class InvertedFile:
                 self.dictionary[term_str][IDX.DICT.OF] = offset
 
                 # update width between the current term and the next
-                self.dictionary[term_str][IDX.DICT.LEN] = (
+                self.dictionary[term_str][IDX.DICT.WID] = (
                     self.dictionary[term_str][IDX.DICT.DF] * 2
                 )
 

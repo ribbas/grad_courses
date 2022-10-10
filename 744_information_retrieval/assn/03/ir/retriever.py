@@ -22,6 +22,7 @@ class Retriever:
 
         self.dictionary: dict[str, list[int]] = invf.get_dictionary()
         self.inverted_file: bytes = invf.get_inverted_file_bytes()
+        self.decoded_invf: tuple[int, ...]
 
         self.retrievals: dict[str, dict[str, Any]] = {}
         self.all_terms: dict[int, Any] = {}
@@ -29,6 +30,10 @@ class Retriever:
 
         self.tfidf_table: dict[int, dict[str, float]] = {}
         self.metrics_table: dict[int, dict[str, float]] = {}
+
+    def decode_chunk(self):
+
+        self.decoded_invf = Packer.decode(self.inverted_file)
 
     def lookup(self, term: str) -> dict[str, Any]:
 
@@ -39,11 +44,11 @@ class Retriever:
             return invf_data
 
         of: int = self.dictionary[term][IDX.DICT.OF]
-        width: int = self.dictionary[term][IDX.DICT.LEN]
-        decoded_chunk: tuple[int, ...] = Packer.decode(self.inverted_file)
+        width: int = self.dictionary[term][IDX.DICT.WID]
+        decoded_chunk: tuple[int, ...] = self.decoded_invf[of : of + width + 1]
 
-        postings: tuple[int, ...] = decoded_chunk[of : of + width : 2]
-        tf: tuple[int, ...] = decoded_chunk[of + 1 : of + width + 1 : 2]
+        postings: tuple[int, ...] = decoded_chunk[:width:2]
+        tf: tuple[int, ...] = decoded_chunk[1 : width + 1 : 2]
         df: int = len(postings)
         idf: float = log2(self.num_docs / df)
         tfidf: tuple[float, ...] = tuple(i * idf for i in tf)
@@ -164,6 +169,8 @@ class Retriever:
             )
 
     def query(self, query_terms: list[str]) -> None:
+
+        self.decode_chunk()
 
         # initialize retrievals with terms from query
         self.update_retrievals(query_terms)

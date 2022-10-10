@@ -15,10 +15,9 @@ class IDX:
     class DICT:
 
         # dictionary indices
-        OF = 1
-        LEN = 2
+        OF = 1  # offset
+        WID = 2  # length
         DF = 3
-        TF = 4
 
     class INVF:
 
