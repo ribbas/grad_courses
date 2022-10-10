@@ -13,12 +13,16 @@ class TestQuick(unittest.TestCase):
 
         self.ir_obj = InformationRetrieval()
         self.ir_obj.set_filename(
-            Path(__file__).parent.parent / "data" / "headlines.txt"
+            Path(__file__).parent.parent / "data" / "cord19.txt"
         )
         self.ir_obj.load_inverted_file()
 
     def test1(self):
 
-        tokens1 = self.ir_obj.normalize_test_terms(("Elon", "Musks"))
+        # # takes 193.823s
+        # tokens1 = self.ir_obj.normalize_query(
+        #     "coronavirus response to weather changes"
+        # )
+        tokens1 = self.ir_obj.normalize_query("dexamethasone coronavirus")
         results1 = self.ir_obj.read_inverted_file(tokens1)
         pprint(results1)

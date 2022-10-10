@@ -150,9 +150,10 @@ class InformationRetrieval:
     ) -> list[dict[str, float]]:
 
         if self.invf_loaded:
-            lengths = IO.read_json(self.data.len_file)
 
             retr = Retriever(self.invf, self.num_docs)
+
+            lengths = IO.read_json(self.data.len_file)
             retr.set_lengths(lengths)
             retr.query(list(tokens))
 
@@ -161,10 +162,10 @@ class InformationRetrieval:
         else:
             raise AttributeError("Inverted file not generated yet")
 
-    def normalize_test_terms(self, terms: tuple[str, ...]) -> generator[str]:
+    def normalize_query(self, query: str) -> generator[str]:
 
         prep = Normalizer()
-        prep.set_document(" ".join(terms) + " ")
+        prep.set_document(query)
         prep.process()
 
         return prep.get_tokens()

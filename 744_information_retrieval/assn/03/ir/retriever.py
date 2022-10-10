@@ -198,23 +198,36 @@ class Retriever:
             self.metrics[doc_id]["doc_id"] = doc_id
             self.metrics[doc_id]["sim"] = self.similarity(doc_id)
             del self.tfidf_table[doc_id]
+            # print("computed similarity for", doc_id)
 
     def query(self, query_terms: list[str]) -> None:
 
+        print(f"Querying '{query_terms}'...")
+
+        # decode inverted file into memory
         self.decode_inverted_file()
+        print("Decoded inverted file...")
 
         # initialize retrievals with terms from query
         self.update_retrievals(query_terms)
+        print("Initialized retrievals...")
 
         # initialize set of all documents with at least one query term
         self.update_doc_ids()
+        print(f"Found {len(self.doc_ids)} relevant documents...")
 
         # table of docID mapped to maps of term-TFIDF
         self.map_tfidf_table(query_terms)
+        print("Mapped weights to terms in documents retrieved...")
+
         self.query_tfidfs = self.get_query_tfs(query_terms)
+        print("Computed weights for query terms...")
+
         self.retrievals.clear()
+        print("Cleared unnecessary containers...")
 
         self.generate_metrics_table()
+        print("Generated metrics...")
 
     def get_rankings(self, top_n: int = 100) -> list[dict[str, float]]:
 
