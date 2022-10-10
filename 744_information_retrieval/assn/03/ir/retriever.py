@@ -12,13 +12,11 @@ class Retriever:
         self.invf = invf
         self.num_docs = num_docs
 
-        self.partial_len: dict[int | str, float] = {
-            doc_id: 0.0 for doc_id in range(1, self.num_docs + 1)
-        }
+        self.partial_len: list[float] = [0.0] * (self.num_docs + 1)
 
         self.dictionary: dict[str, list[int]] = invf.get_dictionary()
         self.inverted_file: bytes = invf.get_inverted_file_bytes()
-        self.decoded_invf: tuple[int, ...]
+        self.decoded_inverted_file: tuple[int, ...]
 
         self.retrievals: dict[str, dict[str, Any]] = {}
         self.query_tfidfs: dict[str, float] = {}
@@ -29,7 +27,7 @@ class Retriever:
 
     def decode_inverted_file(self):
 
-        self.decoded_invf = Packer.decode(self.inverted_file)
+        self.decoded_inverted_file = Packer.decode(self.inverted_file)
 
     def lookup_all(self, term: str) -> dict[str, Any]:
 
@@ -41,7 +39,9 @@ class Retriever:
 
         of: int = self.dictionary[term][IDX.DICT.OF]
         width: int = self.dictionary[term][IDX.DICT.WID]
-        decoded_chunk: tuple[int, ...] = self.decoded_invf[of : of + width + 1]
+        decoded_chunk: tuple[int, ...] = self.decoded_inverted_file[
+            of : of + width + 1
+        ]
 
         postings: tuple[int, ...] = decoded_chunk[:width:2]
         tf: tuple[int, ...] = decoded_chunk[1 : width + 1 : 2]
@@ -71,7 +71,9 @@ class Retriever:
 
         of: int = self.dictionary[term][IDX.DICT.OF]
         width: int = self.dictionary[term][IDX.DICT.WID]
-        decoded_chunk: tuple[int, ...] = self.decoded_invf[of : of + width + 1]
+        decoded_chunk: tuple[int, ...] = self.decoded_inverted_file[
+            of : of + width + 1
+        ]
 
         postings: tuple[int, ...] = decoded_chunk[:width:2]
         tf: tuple[int, ...] = decoded_chunk[1 : width + 1 : 2]
@@ -91,7 +93,7 @@ class Retriever:
         for val in self.dictionary.values():
             of: int = val[IDX.DICT.OF]
             width: int = val[IDX.DICT.WID]
-            decoded_chunk = self.decoded_invf[of : of + width + 1]
+            decoded_chunk = self.decoded_inverted_file[of : of + width + 1]
 
             postings: tuple[int, ...] = decoded_chunk[:width:2]
             tfs: tuple[int, ...] = decoded_chunk[1 : width + 1 : 2]
@@ -105,14 +107,14 @@ class Retriever:
 
     def compute_lengths(self) -> None:
 
-        for doc_id, sum_sq in self.partial_len.items():
-            self.partial_len[doc_id] = sqrt(sum_sq)
+        for doc_id in range(1, len(self.partial_len)):
+            self.partial_len[doc_id] = sqrt(self.partial_len[doc_id])
 
-    def get_lengths(self) -> dict[int | str, float]:
+    def get_lengths(self) -> list[float]:
 
         return self.partial_len
 
-    def set_lengths(self, lengths: dict[int | str, float]) -> None:
+    def set_lengths(self, lengths: list[float]) -> None:
 
         self.partial_len = lengths
 
@@ -179,7 +181,7 @@ class Retriever:
     def similarity(self, doc_id: int) -> float:
 
         dot: float = self.dot_product(self.tfidf_table[doc_id])
-        doc_len: float = self.partial_len[str(doc_id)]
+        doc_len: float = self.partial_len[doc_id]
         return dot / (doc_len * self.partial_len[QUERY_DOC_ID])
 
     def generate_metrics_table(self) -> None:
