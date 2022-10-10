@@ -1,4 +1,5 @@
 from collections import Counter
+from itertools import groupby
 
 from .types import generator, counter
 
@@ -57,6 +58,13 @@ class Lexer:
     def get_term_idx(self) -> dict[int | str, int | str]:
 
         return self.term_idx
+
+    def get_doc_terms(self, term_doc_tf: list[tuple[str, str, int]]):
+
+        return {
+            k: [self.term_idx[i[0]] for i in g]
+            for k, g in groupby(term_doc_tf, lambda x: x[1])
+        }
 
 
 class LexerStatistics:

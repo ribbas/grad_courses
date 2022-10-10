@@ -1,6 +1,5 @@
 import heapq
 from pathlib import Path
-from itertools import groupby
 
 from .files import DataFile, Formatter, IO
 from .invertedfile import InvertedFile
@@ -8,7 +7,7 @@ from .lexer import Lexer
 from .normalize import Normalizer
 from .packer import Packer
 from .retriever import Retriever
-from .types import Any, generator, counter
+from .types import text_io, generator, counter
 
 
 class InformationRetrieval:
@@ -48,10 +47,7 @@ class InformationRetrieval:
         self.data.ingest(prep, lex, term_doc_tf)
         lex.build_term_idx()
         self.tid = lex.get_term_idx()
-        self.doc_terms = {
-            k: [self.tid[i[0]] for i in g]
-            for k, g in groupby(term_doc_tf, lambda x: x[1])
-        }
+        self.doc_terms = lex.get_doc_terms(term_doc_tf)
 
         self.df = lex.get_df()
         self.cf = lex.get_cf()
@@ -101,9 +97,9 @@ class InformationRetrieval:
                     ),
                 )
 
-            chunks: Any = []
+            chunks: list[text_io] = []
             for filename in chunk_filenames:
-                chunks.append(open(f"{filename}.txt", "r"))
+                chunks.append(IO.open_file(filename))
 
             IO.dumplines(
                 self.data.sorted_tdt_file,
@@ -119,10 +115,8 @@ class InformationRetrieval:
             invf = InvertedFile()
             invf.build_dict(self.df, self.cf)
 
-            mapped_tdt_str = IO.read(self.data.sorted_tdt_file)[:-1]
-            mapped_tdt = (v.split(" ") for v in mapped_tdt_str.split("\n"))
-            mapped_tdt = (
-                (int(i[0]), int(i[1]), int(i[2]), str(i[3])) for i in mapped_tdt
+            mapped_tdt = invf.parse_sorted_tdt(
+                IO.open_file(self.data.sorted_tdt_file)
             )
             invf.convert(mapped_tdt)
 
@@ -151,8 +145,8 @@ class InformationRetrieval:
         self.tid = IO.read_json(self.data.tid_file)
 
         retr = Retriever(self.invf, self.num_docs, self.doc_terms, self.tid)
-
         retr.query(list(tokens))
+
         return retr.get_rankings()
 
     def normalize_test_terms(self, terms: tuple[str, ...]) -> generator[str]:

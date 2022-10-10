@@ -1,5 +1,5 @@
 from .const import IDX, CHUNK_SIZE
-from .types import generator, counter
+from .types import generator, counter, text_io
 
 
 class InvertedFile:
@@ -56,6 +56,21 @@ class InvertedFile:
             chunk.sort()
             yield chunk
             chunk = []
+
+    def parse_sorted_tdt(
+        self, mapped_tdt_fp: text_io
+    ) -> generator[tuple[int, int, int, str]]:
+
+        with mapped_tdt_fp:
+            for line in mapped_tdt_fp:
+                if line:
+                    mapped_tdt = line[:-1].split(" ")
+                    yield (
+                        int(mapped_tdt[IDX.TID]),
+                        int(mapped_tdt[IDX.INVF.DID]),
+                        int(mapped_tdt[IDX.INVF.TC]),
+                        str(mapped_tdt[IDX.INVF.STR]),
+                    )
 
     def convert(
         self, mapped_values: generator[tuple[int, int, int, str]]

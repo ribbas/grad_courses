@@ -4,10 +4,15 @@ from pathlib import Path
 from .const import DOC_PROC
 from .lexer import Lexer, LexerStatistics
 from .normalize import Normalizer
-from .types import Any, iterable
+from .types import Any, iterable, text_io
 
 
 class IO:
+    @staticmethod
+    def open_file(filename: str) -> text_io:
+
+        return open(f"{filename}.txt")
+
     @staticmethod
     def read(filename: str) -> str:
 
