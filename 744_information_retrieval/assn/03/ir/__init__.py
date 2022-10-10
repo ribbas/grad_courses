@@ -81,7 +81,7 @@ class InformationRetrieval:
 
         if self.loaded:
             invf = InvertedFile()
-            invf.build_dict(self.df, self.cf)
+            invf.build_dict(self.df)
             mapped_tdt_chunks = invf.sort_mapped_tdt(self.term_doc_tf_str)
             chunk_filenames: list[str] = []
             for idx, mapped_tdt_chunk in enumerate(mapped_tdt_chunks):
@@ -113,7 +113,7 @@ class InformationRetrieval:
 
         if self.loaded:
             invf = InvertedFile()
-            invf.build_dict(self.df, self.cf)
+            invf.build_dict(self.df)
 
             mapped_tdt = invf.parse_sorted_tdt(
                 IO.open_file(self.data.sorted_tdt_file)
