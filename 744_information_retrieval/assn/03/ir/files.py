@@ -68,12 +68,14 @@ class DataFile:
 
         self.df_file: str = f"stats/{filename.stem}_df"
         self.tf_file: str = f"stats/{filename.stem}_tf"
+        self.len_file: str = f"stats/{filename.stem}_len"
         self.cf_file: str = f"stats/{filename.stem}_cf"
         self.stats_file: str = f"stats/{filename.stem}_stats"
         self.meta_file: str = f"stats/{filename.stem}_meta"
 
-        self.tid_file: str = f"tmp/{filename.stem}_tid"
         self.doc_terms_file: str = f"tmp/{filename.stem}_doc_terms"
+
+        self.tid_file: str = f"tmp/{filename.stem}_tid"
         self.tdt_file: str = f"tmp/{filename.stem}_tdt"
         self.sorted_tdt_chunk_file: str = f"tmp/{filename.stem}_chunk_"
         self.sorted_tdt_file: str = f"tmp/{filename.stem}_sort"

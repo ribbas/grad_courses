@@ -22,7 +22,8 @@ class InformationRetrieval:
         self.doc_terms: dict[int, list[int]] = {}
 
         self.num_docs: int = 0
-        self.loaded = False
+        self.freq_loaded = False
+        self.invf_loaded = False
         self.term_doc_tf_str: str = ""
 
     def set_filename(self, filename: Path) -> None:
@@ -36,7 +37,7 @@ class InformationRetrieval:
         self.tid = IO.read_json(self.data.tid_file)
 
         self.term_doc_tf_str = IO.read(self.data.tdt_file)
-        self.loaded = True
+        self.freq_loaded = True
 
     def generate_freqs(self) -> None:
 
@@ -52,22 +53,22 @@ class InformationRetrieval:
         self.df = lex.get_df()
         self.cf = lex.get_cf()
         self.term_doc_tf_str: str = Formatter.format_term_doc_tf(term_doc_tf)
-        self.loaded = True
+        self.freq_loaded = True
 
     def generate_stats(self) -> None:
 
-        if self.loaded:
+        if self.freq_loaded:
             lex = Lexer()
             lex.set_df(self.df)
             lex.set_cf(self.cf)
             contents: str = Formatter.format_stats(lex, self.data.num_docs)
             IO.dump(self.data.stats_file, contents)
         else:
-            raise AttributeError("Data not generated yet")
+            raise AttributeError("Corpus frequencies not generated yet")
 
     def dump_freqs(self) -> None:
 
-        if self.loaded:
+        if self.freq_loaded:
             IO.dump(self.data.tdt_file, self.term_doc_tf_str)
             IO.dump_json(self.data.df_file, self.df)
             IO.dump_json(self.data.tf_file, self.cf)
@@ -75,11 +76,11 @@ class InformationRetrieval:
             IO.dump_json(self.data.doc_terms_file, self.doc_terms)
             IO.dump_json(self.data.meta_file, {"num_docs": self.data.num_docs})
         else:
-            raise AttributeError("Data not generated yet")
+            raise AttributeError("Corpus frequencies not generated yet")
 
     def build_sorted_tdt(self) -> None:
 
-        if self.loaded:
+        if self.freq_loaded:
             invf = InvertedFile()
             invf.build_dict(self.df)
             mapped_tdt_chunks = invf.sort_mapped_tdt(self.term_doc_tf_str)
@@ -111,7 +112,7 @@ class InformationRetrieval:
 
     def encode_inverted_file(self) -> None:
 
-        if self.loaded:
+        if self.freq_loaded:
             invf = InvertedFile()
             invf.build_dict(self.df)
 
@@ -126,7 +127,7 @@ class InformationRetrieval:
             IO.dump_json(self.data.dict_file, invf.get_dictionary())
 
         else:
-            raise AttributeError("Data not generated yet")
+            raise AttributeError("Corpus frequencies not generated yet")
 
     def load_inverted_file(self) -> None:
 
@@ -136,18 +137,41 @@ class InformationRetrieval:
         self.num_docs = IO.read_json(self.data.meta_file)["num_docs"]
         self.invf.set_inverted_file_bytes(inv_file)
         self.invf.set_dictionary(dictionary)
+        self.invf_loaded = True
+
+    def precompute_lengths(self) -> None:
+
+        if self.invf_loaded:
+            self.doc_terms = IO.read_json(self.data.doc_terms_file)
+            self.tid = IO.read_json(self.data.tid_file)
+
+            retr = Retriever(self.invf, self.num_docs, self.doc_terms, self.tid)
+            retr.decode_inverted_file()
+            retr.compute_sum_of_squares()
+            retr.compute_lengths()
+
+            IO.dump_json(self.data.len_file, retr.get_lengths())
+
+        else:
+            raise AttributeError("Inverted file not generated yet")
 
     def read_inverted_file(
         self, tokens: generator[str]
     ) -> list[dict[str, float]]:
 
-        self.doc_terms = IO.read_json(self.data.doc_terms_file)
-        self.tid = IO.read_json(self.data.tid_file)
+        if self.invf_loaded:
+            self.doc_terms = IO.read_json(self.data.doc_terms_file)
+            self.tid = IO.read_json(self.data.tid_file)
+            lengths = IO.read_json(self.data.len_file)
 
-        retr = Retriever(self.invf, self.num_docs, self.doc_terms, self.tid)
-        retr.query(list(tokens))
+            retr = Retriever(self.invf, self.num_docs, self.doc_terms, self.tid)
+            retr.set_lengths(lengths)
+            retr.query(list(tokens))
 
-        return retr.get_rankings()
+            return retr.get_rankings()
+
+        else:
+            raise AttributeError("Inverted file not generated yet")
 
     def normalize_test_terms(self, terms: tuple[str, ...]) -> generator[str]:
 

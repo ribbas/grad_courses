@@ -55,6 +55,12 @@ if __name__ == "__main__":
         action=argparse.BooleanOptionalAction,
         help="generate inverted files",
     )
+    parser.add_argument(
+        "-p",
+        "--precompute",
+        action=argparse.BooleanOptionalAction,
+        help="precompute document lengths",
+    )
 
     args = vars(parser.parse_args())
 
@@ -67,6 +73,8 @@ if __name__ == "__main__":
         ir_obj.dump_freqs()
         ir_obj.build_sorted_tdt()
         ir_obj.encode_inverted_file()
+        ir_obj.load_inverted_file()
+        ir_obj.precompute_lengths()
 
     else:
 
@@ -90,3 +98,6 @@ if __name__ == "__main__":
 
         if args["encode"]:
             ir_obj.encode_inverted_file()
+
+        if args["precompute"]:
+            ir_obj.precompute_lengths()

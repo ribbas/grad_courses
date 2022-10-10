@@ -22,7 +22,7 @@ class InvertedFile:
         return (
             self.dictionary[col_split_list[IDX.TID]][IDX.TID],  # term ID
             int(col_split_list[IDX.INVF.DID]),  # doc ID
-            int(col_split_list[IDX.INVF.TC]),  # term count,
+            int(col_split_list[IDX.INVF.TF]),  # term frequency,
             col_split_list[IDX.TID],  # term
         )
 
@@ -68,7 +68,7 @@ class InvertedFile:
                     yield (
                         int(mapped_tdt[IDX.TID]),
                         int(mapped_tdt[IDX.INVF.DID]),
-                        int(mapped_tdt[IDX.INVF.TC]),
+                        int(mapped_tdt[IDX.INVF.TF]),
                         str(mapped_tdt[IDX.INVF.STR]),
                     )
 
