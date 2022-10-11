@@ -1,9 +1,13 @@
 from math import log2, sqrt
+from multiprocessing import Pool
 
 from .const import IDX, QUERY_DOC_ID
 from .invertedfile import InvertedFile
 from .packer import Packer
 from .types import Any
+
+
+Decoded_Inverted_File: tuple[int, ...]
 
 
 class Retriever:
@@ -16,21 +20,24 @@ class Retriever:
 
         self.dictionary: dict[str, list[int]] = invf.get_dictionary()
         self.inverted_file: bytes = invf.get_inverted_file_bytes()
-        self.decoded_inverted_file: tuple[int, ...]
 
         self.retrievals: dict[str, dict[str, Any]] = {}
         self.query_tfidfs: dict[str, float] = {}
         self.doc_ids: set[int] = set()
+        self.num_doc_ids: int = 0
 
         self.metrics: list[tuple[int, float]] = []
+        self.query_terms = []
 
     def decode_inverted_file(self):
 
-        self.decoded_inverted_file = Packer.decode(self.inverted_file)
+        global Decoded_Inverted_File
+        Decoded_Inverted_File = Packer.decode(self.inverted_file)
 
     def delete_inverted_file(self):
 
-        self.decoded_inverted_file = tuple()
+        global Decoded_Inverted_File
+        Decoded_Inverted_File = tuple()
 
     def retrieve(self, term: str) -> dict[str, Any]:
 
@@ -42,7 +49,7 @@ class Retriever:
 
         of: int = self.dictionary[term][IDX.DICT.OF]
         width: int = self.dictionary[term][IDX.DICT.WID]
-        decoded_chunk: tuple[int, ...] = self.decoded_inverted_file[
+        decoded_chunk: tuple[int, ...] = Decoded_Inverted_File[
             of : of + width + 1
         ]
 
@@ -64,7 +71,7 @@ class Retriever:
         for val in self.dictionary.values():
             of: int = val[IDX.DICT.OF]
             width: int = val[IDX.DICT.WID]
-            decoded_chunk = self.decoded_inverted_file[of : of + width + 1]
+            decoded_chunk = Decoded_Inverted_File[of : of + width + 1]
 
             postings: tuple[int, ...] = decoded_chunk[:width:2]
             tfs: tuple[int, ...] = decoded_chunk[1 : width + 1 : 2]
@@ -99,12 +106,14 @@ class Retriever:
 
         return 0
 
-    def get_query_tfs(self, query_terms: list[str]) -> dict[str, float]:
+    def get_query_tfs(self) -> dict[str, float]:
 
         tfs: dict[str, float] = {}
         self.partial_len[QUERY_DOC_ID] = 0.0
-        for term in query_terms:
-            tfs[term] = query_terms.count(term) * self.retrievals[term]["idf"]
+        for term in self.query_terms:
+            tfs[term] = (
+                self.query_terms.count(term) * self.retrievals[term]["idf"]
+            )
             self.partial_len[QUERY_DOC_ID] += tfs[term] * tfs[term]
 
         self.partial_len[QUERY_DOC_ID] = sqrt(self.partial_len[QUERY_DOC_ID])
@@ -117,9 +126,11 @@ class Retriever:
             for term in self.query_tfidfs.keys()
         )
 
-    def update_retrievals(self, terms: list[str]) -> None:
+    def update_retrievals(self) -> None:
 
-        self.retrievals = {term: self.retrieve(term) for term in terms}
+        self.retrievals = {
+            term: self.retrieve(term) for term in self.query_terms
+        }
 
     def get_retrievals(self) -> dict[str, dict[str, Any]]:
 
@@ -135,23 +146,41 @@ class Retriever:
                 if retr["idf"]:
                     self.doc_ids.add(posting)
 
-    def generate_metrics(self, query_terms: list[str]) -> None:
+    def get_document_weights(self, doc_id: int) -> dict[str, float]:
 
-        self.metrics = [None] * len(self.doc_ids)
+        tfidfs: dict[str, float] = {}
+        for term in self.query_terms:
+            if term not in tfidfs:
+                tfidfs[term] = self.get_term_tfidf(
+                    doc_id,
+                    self.retrievals[term]["postings"],
+                    self.retrievals[term]["tfidf"],
+                )
+        return tfidfs
+
+    def generate_metrics(self) -> None:
+
+        self.metrics = [None] * self.num_doc_ids
         cur: int = 0
 
-        for doc_id in self.doc_ids:
-            tfidfs: dict[str, float] = {}
-            for term in query_terms:
-                if term not in tfidfs:
-                    tfidfs[term] = self.get_term_tfidf(
-                        doc_id,
-                        self.retrievals[term]["postings"],
-                        self.retrievals[term]["tfidf"],
-                    )
-
+        for doc_id, tfidfs in zip(
+            self.doc_ids, map(self.get_document_weights, self.doc_ids)
+        ):
             self.metrics[cur] = (doc_id, self.similarity(doc_id, tfidfs))
             cur += 1
+
+    def generate_metrics_p(self):
+
+        self.metrics = [None] * self.num_doc_ids
+        cur = 0
+
+        with Pool() as executor:
+            for doc_id, tfidfs in zip(
+                self.doc_ids,
+                executor.map(self.get_document_weights, self.doc_ids),
+            ):
+                self.metrics[cur] = (doc_id, self.similarity(doc_id, tfidfs))
+                cur += 1
 
     def similarity(self, doc_id: int, doc_weights: dict[str, float]) -> float:
 
@@ -162,26 +191,33 @@ class Retriever:
     def query(self, query_terms: list[str]) -> None:
 
         print(f"Querying '{query_terms}'...")
+        self.query_terms = query_terms
 
         # decode inverted file into memory
         self.decode_inverted_file()
         print("Decoded inverted file...")
 
         # initialize retrievals with terms from query
-        self.update_retrievals(query_terms)
+        self.update_retrievals()
         self.delete_inverted_file()
         print("Initialized retrievals...")
 
         # initialize set of all documents with at least one query term
         self.update_doc_ids()
-        print(f"Found {len(self.doc_ids)} relevant documents...")
+        self.num_doc_ids = len(self.doc_ids)
+        print(f"Found {self.num_doc_ids} relevant documents...")
 
-        self.query_tfidfs = self.get_query_tfs(query_terms)
+        self.query_tfidfs = self.get_query_tfs()
         print("Computed weights for query terms...")
 
-        # table of docID mapped to maps of term-TFIDF
-        self.generate_metrics(query_terms)
-        print("Generated metrics...")
+        # generate metrics of all the retrieved documents
+        if len(self.doc_ids) > 1000:
+            print("Generating metrics in parallel...")
+            self.generate_metrics_p()
+        else:
+            print("Generating metrics...")
+            self.generate_metrics()
+        print("Generated metrics")
 
         self.retrievals.clear()
 

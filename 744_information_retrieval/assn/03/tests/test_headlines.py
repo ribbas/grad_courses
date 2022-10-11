@@ -21,7 +21,7 @@ class TestQuick(unittest.TestCase):
 
         # takes 193.823s
         tokens1 = self.ir_obj.normalize_query(
-            "coronavirus response to weather changes"
+            "How has the COVID-19 pandemic impacted mental health?"
         )
         # # takes 186.949s
         # tokens1 = self.ir_obj.normalize_query(
