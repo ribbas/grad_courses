@@ -22,46 +22,13 @@ class Retriever:
         self.query_tfidfs: dict[str, float] = {}
         self.doc_ids: set[int] = set()
 
-        self.tfidf_table: dict[int, dict[str, float]] = {}
-        self.metrics: dict[int, dict[str, float]] = {}
+        self.metrics: list[tuple[int, float]] = []
 
     def decode_inverted_file(self):
 
         self.decoded_inverted_file = Packer.decode(self.inverted_file)
 
-    def lookup_all(self, term: str) -> dict[str, Any]:
-
-        invf_data: dict[str, Any] = {"term": term}
-
-        # term not in dictionary
-        if term not in self.dictionary:
-            return invf_data
-
-        of: int = self.dictionary[term][IDX.DICT.OF]
-        width: int = self.dictionary[term][IDX.DICT.WID]
-        decoded_chunk: tuple[int, ...] = self.decoded_inverted_file[
-            of : of + width + 1
-        ]
-
-        postings: tuple[int, ...] = decoded_chunk[:width:2]
-        tf: tuple[int, ...] = decoded_chunk[1 : width + 1 : 2]
-        df: int = len(postings)
-        idf: float = log2(self.num_docs / df)
-        tfidf: tuple[float, ...] = tuple(i * idf for i in tf)
-
-        invf_data["of"] = of
-        invf_data["width"] = width
-
-        invf_data["postings"] = postings
-        invf_data["tf"] = tf
-
-        invf_data["df"] = df
-        invf_data["idf"] = idf
-        invf_data["tfidf"] = tfidf
-
-        return invf_data
-
-    def lookup(self, term: str) -> dict[str, Any]:
+    def retrieve(self, term: str) -> dict[str, Any]:
 
         invf_data: dict[str, Any] = {"term": term}
 
@@ -123,9 +90,8 @@ class Retriever:
         doc_id: int, postings: tuple[int], tfidfs: tuple[int]
     ) -> float:
 
-        for posting, term_count in zip(postings, tfidfs):
-            if posting == doc_id:
-                return term_count
+        if doc_id in postings:
+            return tfidfs[postings.index(doc_id)]
 
         return 0
 
@@ -142,21 +108,20 @@ class Retriever:
 
     def dot_product(self, document: dict[str, float]) -> float:
 
-        dot: float = 0
-        for term in self.query_tfidfs.keys():
-            dot += self.query_tfidfs[term] * document.get(term, 0)
-
-        return dot
+        return sum(
+            self.query_tfidfs[term] * document[term]
+            for term in self.query_tfidfs.keys()
+        )
 
     def update_retrievals(self, terms: list[str]) -> None:
 
-        self.retrievals = {term: self.lookup(term) for term in terms}
+        self.retrievals = {term: self.retrieve(term) for term in terms}
 
     def get_retrievals(self) -> dict[str, dict[str, Any]]:
 
         return self.retrievals
 
-    def get_metrics(self) -> dict[int, dict[str, float]]:
+    def get_metrics(self) -> list[tuple[int, float]]:
         return self.metrics
 
     def update_doc_ids(self) -> None:
@@ -166,39 +131,29 @@ class Retriever:
                 if retr["idf"]:
                     self.doc_ids.add(posting)
 
-    def map_tfidf_table(self, query_terms: list[str]) -> None:
+    def generate_metrics(self, query_terms: list[str]) -> None:
+
+        self.metrics = [None] * len(self.doc_ids)
+        cur: int = 0
 
         for doc_id in self.doc_ids:
             tfidfs: dict[str, float] = {}
             for term in query_terms:
-                tfidfs[term] = self.get_term_tfidf(
-                    doc_id,
-                    self.retrievals[term]["postings"],
-                    self.retrievals[term]["tfidf"],
-                )
-            self.tfidf_table[doc_id] = tfidfs
+                if term not in tfidfs:
+                    tfidfs[term] = self.get_term_tfidf(
+                        doc_id,
+                        self.retrievals[term]["postings"],
+                        self.retrievals[term]["tfidf"],
+                    )
 
-    def similarity(self, doc_id: int) -> float:
+            self.metrics[cur] = (doc_id, self.similarity(doc_id, tfidfs))
+            cur += 1
 
-        dot: float = self.dot_product(self.tfidf_table[doc_id])
+    def similarity(self, doc_id: int, doc_weights: dict[str, float]) -> float:
+
+        dot: float = self.dot_product(doc_weights)
         doc_len: float = self.partial_len[doc_id]
         return dot / (doc_len * self.partial_len[QUERY_DOC_ID])
-
-    def generate_metrics_table(self) -> None:
-
-        self.metrics = {
-            doc_id: {
-                "doc_id": 0,
-                "sim": 0.0,
-            }
-            for doc_id in self.doc_ids
-        }
-
-        for doc_id in self.doc_ids:
-            self.metrics[doc_id]["doc_id"] = doc_id
-            self.metrics[doc_id]["sim"] = self.similarity(doc_id)
-            del self.tfidf_table[doc_id]
-            # print("computed similarity for", doc_id)
 
     def query(self, query_terms: list[str]) -> None:
 
@@ -216,24 +171,20 @@ class Retriever:
         self.update_doc_ids()
         print(f"Found {len(self.doc_ids)} relevant documents...")
 
-        # table of docID mapped to maps of term-TFIDF
-        self.map_tfidf_table(query_terms)
-        print("Mapped weights to terms in documents retrieved...")
-
         self.query_tfidfs = self.get_query_tfs(query_terms)
         print("Computed weights for query terms...")
+
+        # table of docID mapped to maps of term-TFIDF
+        self.generate_metrics(query_terms)
+        print("Generated metrics...")
 
         self.retrievals.clear()
         print("Cleared unnecessary containers...")
 
-        self.generate_metrics_table()
-        print("Generated metrics...")
+    def get_rankings(self, top_n: int = 100) -> list[tuple[int, float]]:
 
-    def get_rankings(self, top_n: int = 100) -> list[dict[str, float]]:
-
-        rankings = sorted(
-            (retrieval for retrieval in self.metrics.values()),
-            key=lambda x: x["sim"],
+        return sorted(
+            (retrieval for retrieval in self.metrics),
+            key=lambda x: x[1],
             reverse=True,
-        )
-        return rankings[:top_n]
+        )[:top_n]

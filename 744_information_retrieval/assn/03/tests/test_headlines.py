@@ -19,10 +19,13 @@ class TestQuick(unittest.TestCase):
 
     def test1(self):
 
-        # # takes 193.823s
+        # takes 193.823s
+        tokens1 = self.ir_obj.normalize_query(
+            "coronavirus response to weather changes"
+        )
+        # # takes 186.949s
         # tokens1 = self.ir_obj.normalize_query(
-        #     "coronavirus response to weather changes"
+        #     "which SARS-CoV-2 proteins-human proteins interactions indicate potential for drug targets. Are there approved drugs that can be repurposed based on this information?"
         # )
-        tokens1 = self.ir_obj.normalize_query("dexamethasone coronavirus")
         results1 = self.ir_obj.read_inverted_file(tokens1)
         pprint(results1)

@@ -45,7 +45,7 @@ class Normalizer:
 
     def set_document(self, document: str) -> None:
 
-        self.document = document[:-1]
+        self.document = document
 
     def __to_lower_case(self, document: str) -> str:
 
