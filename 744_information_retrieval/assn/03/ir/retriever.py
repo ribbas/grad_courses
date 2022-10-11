@@ -28,6 +28,10 @@ class Retriever:
 
         self.decoded_inverted_file = Packer.decode(self.inverted_file)
 
+    def delete_inverted_file(self):
+
+        self.decoded_inverted_file = tuple()
+
     def retrieve(self, term: str) -> dict[str, Any]:
 
         invf_data: dict[str, Any] = {"term": term}
@@ -165,6 +169,7 @@ class Retriever:
 
         # initialize retrievals with terms from query
         self.update_retrievals(query_terms)
+        self.delete_inverted_file()
         print("Initialized retrievals...")
 
         # initialize set of all documents with at least one query term
@@ -179,7 +184,6 @@ class Retriever:
         print("Generated metrics...")
 
         self.retrievals.clear()
-        print("Cleared unnecessary containers...")
 
     def get_rankings(self, top_n: int = 100) -> list[tuple[int, float]]:
 
