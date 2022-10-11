@@ -1,5 +1,4 @@
 from pathlib import Path
-from pprint import pprint
 import unittest
 
 
@@ -16,9 +15,12 @@ class TestQuick(unittest.TestCase):
             Path(__file__).parent.parent / "data" / "test.txt"
         )
         self.ir_obj.load_inverted_file()
+        self.ir_obj.load_retriever()
 
     def test1(self):
 
-        tokens1 = self.ir_obj.normalize_query("apple orange")
-        results1 = self.ir_obj.read_inverted_file(tokens1)
-        pprint(results1)
+        self.ir_obj.decode_inverted_file()
+        tokens = self.ir_obj.normalize_query("apple orange")
+        rankings = self.ir_obj.read_inverted_file(tokens)
+
+        self.ir_obj.ingest_rankings({1: rankings, 3: rankings})

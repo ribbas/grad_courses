@@ -1,7 +1,7 @@
 import heapq
 from pathlib import Path
 
-from .files import DataFile, Formatter, IO
+from .files import DataFile, Formatter, IO, QueryFile
 from .invertedfile import InvertedFile
 from .lexer import Lexer
 from .normalize import Normalizer
@@ -15,6 +15,7 @@ class InformationRetrieval:
 
         self.data: DataFile
         self.invf: InvertedFile
+        self.retr: Retriever
 
         self.df: counter
         self.cf: counter
@@ -27,6 +28,10 @@ class InformationRetrieval:
     def set_filename(self, filename: Path) -> None:
 
         self.data = DataFile(filename)
+
+    def set_query_filename(self, filename: Path) -> None:
+
+        self.query_file = QueryFile(filename)
 
     def load_freqs(self) -> None:
 
@@ -131,33 +136,43 @@ class InformationRetrieval:
         self.invf.set_dictionary(dictionary)
         self.invf_loaded = True
 
+    def load_retriever(self) -> None:
+        self.retr = Retriever(self.invf, self.num_docs)
+
+        lengths = IO.read_json(self.data.len_file)
+        self.retr.set_lengths(lengths)
+
+    def reset_retriever(self) -> None:
+
+        self.retr.reset()
+
     def precompute_lengths(self) -> None:
 
         if self.invf_loaded:
 
-            retr = Retriever(self.invf, self.num_docs)
-            retr.decode_inverted_file()
-            retr.compute_sum_of_squares()
-            retr.compute_lengths()
+            self.retr = Retriever(self.invf, self.num_docs)
+            self.retr.decode_inverted_file()
+            self.retr.compute_sum_of_squares()
+            self.retr.compute_lengths()
 
-            IO.dump_json(self.data.len_file, retr.get_lengths())
+            IO.dump_json(self.data.len_file, self.retr.get_lengths())
 
         else:
             raise AttributeError("Inverted file not generated yet")
 
+    def decode_inverted_file(self):
+
+        self.retr.decode_inverted_file()
+
     def read_inverted_file(
         self, tokens: generator[str]
-    ) -> list[dict[str, float]]:
+    ) -> list[tuple[int, float]]:
 
         if self.invf_loaded:
 
-            retr = Retriever(self.invf, self.num_docs)
+            self.retr.query(list(tokens))
 
-            lengths = IO.read_json(self.data.len_file)
-            retr.set_lengths(lengths)
-            retr.query(list(tokens))
-
-            return retr.get_rankings()
+            return self.retr.get_rankings()
 
         else:
             raise AttributeError("Inverted file not generated yet")
@@ -169,3 +184,12 @@ class InformationRetrieval:
         prep.process()
 
         return prep.get_tokens()
+
+    def ingest_query_file(self):
+
+        prep = Normalizer()
+        return self.query_file.ingest(prep)
+
+    def ingest_rankings(self, rankings: dict[int, list[tuple[int, float]]]):
+
+        print(Formatter.format_rankings(rankings))

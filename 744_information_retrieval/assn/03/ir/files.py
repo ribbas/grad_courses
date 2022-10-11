@@ -4,7 +4,7 @@ from pathlib import Path
 from .const import DOC_PROC
 from .lexer import Lexer, LexerStatistics
 from .normalize import Normalizer
-from .types import Any, iterable, text_io
+from .types import Any, iterable, text_io, generator
 
 
 class IO:
@@ -58,6 +58,44 @@ class IO:
         with open(f"{filename}.bin", "wb") as fp:
             fp.write(data)
         print(f"Dumped binary to '{filename}.bin'")
+
+
+class QueryFile:
+    def __init__(self, filename: Path) -> None:
+
+        self.filename: Path = filename
+        self.num_docs: int = 0
+
+    def ingest(self, prep: Normalizer) -> dict[int, generator[str]]:
+
+        doc_id: str = ""
+        doc: str = ""
+        tokens: dict[int, generator[str]] = {}
+
+        with open(self.filename) as fp:
+            for line in fp:
+
+                if line:
+                    if "<Q ID=" in line:
+                        doc_id = int(line[6:-2])
+                        self.num_docs += 1
+
+                    elif "</Q>" in line:
+
+                        prep.set_document(doc)
+                        prep.process()
+                        tokens[doc_id] = prep.get_tokens()
+
+                        doc = ""
+
+                        if self.num_docs % DOC_PROC == 0:
+                            print("Normalized", self.num_docs, "documents")
+
+                    else:
+                        doc += line
+
+        print("Normalized", self.num_docs, "documents")
+        return tokens
 
 
 class DataFile:
@@ -178,5 +216,20 @@ class Formatter:
         contents: str = ""
         for line in term_doc_tf:
             contents += " ".join(str(i) for i in line) + "\n"
+
+        return contents
+
+    @staticmethod
+    def format_rankings(rankings: dict[int, list[tuple[int, float]]]) -> str:
+
+        contents: str = ""
+        for query_id, rankings in rankings.items():
+            contents += (
+                "\n".join(
+                    f"{query_id} Q0 {doc_id} {rank + 1} {score:.6f} ED5859"
+                    for rank, (doc_id, score) in enumerate(rankings)
+                )
+                + "\n"
+            )
 
         return contents

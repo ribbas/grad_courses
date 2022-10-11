@@ -188,18 +188,25 @@ class Retriever:
         doc_len: float = self.partial_len[doc_id]
         return dot / (doc_len * self.partial_len[QUERY_DOC_ID])
 
+    def reset(self) -> None:
+
+        self.doc_ids.clear()
+        self.retrievals.clear()
+        self.metrics.clear()
+        self.query_tfidfs.clear()
+
     def query(self, query_terms: list[str]) -> None:
 
         print(f"Querying '{query_terms}'...")
         self.query_terms = query_terms
 
-        # decode inverted file into memory
-        self.decode_inverted_file()
-        print("Decoded inverted file...")
+        # # decode inverted file into memory
+        # self.decode_inverted_file()
+        # print("Decoded inverted file...")
 
         # initialize retrievals with terms from query
         self.update_retrievals()
-        self.delete_inverted_file()
+        # self.delete_inverted_file()
         print("Initialized retrievals...")
 
         # initialize set of all documents with at least one query term
@@ -218,8 +225,6 @@ class Retriever:
             print("Generating metrics...")
             self.generate_metrics()
         print("Generated metrics")
-
-        self.retrievals.clear()
 
     def get_rankings(self, top_n: int = 100) -> list[tuple[int, float]]:
 
