@@ -182,7 +182,6 @@ class InformationRetrieval:
         prep = Normalizer()
         query_file = QueryFile(filename)
         queries = query_file.ingest(prep)
-        queries = {k: v for k, v in queries.items() if k < 2}
 
         rankings = {}
         self.retr.decode_inverted_file()
