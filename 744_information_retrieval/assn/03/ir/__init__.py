@@ -29,10 +29,6 @@ class InformationRetrieval:
 
         self.data = DataFile(filename)
 
-    def set_query_filename(self, filename: Path) -> None:
-
-        self.query_file = QueryFile(filename)
-
     def load_freqs(self) -> None:
 
         self.df = IO.read_json(self.data.df_file)
@@ -136,12 +132,6 @@ class InformationRetrieval:
         self.invf.set_dictionary(dictionary)
         self.invf_loaded = True
 
-    def load_retriever(self) -> None:
-        self.retr = Retriever(self.invf, self.num_docs)
-
-        lengths = IO.read_json(self.data.len_file)
-        self.retr.set_lengths(lengths)
-
     def reset_retriever(self) -> None:
 
         self.retr.reset()
@@ -159,10 +149,6 @@ class InformationRetrieval:
 
         else:
             raise AttributeError("Inverted file not generated yet")
-
-    def decode_inverted_file(self):
-
-        self.retr.decode_inverted_file()
 
     def read_inverted_file(
         self, tokens: generator[str]
@@ -185,11 +171,24 @@ class InformationRetrieval:
 
         return prep.get_tokens()
 
-    def ingest_query_file(self):
+    def generate_rankings(self, filename: Path):
+
+        self.load_inverted_file()
+
+        self.retr = Retriever(self.invf, self.num_docs)
+        lengths = IO.read_json(self.data.len_file)
+        self.retr.set_lengths(lengths)
 
         prep = Normalizer()
-        return self.query_file.ingest(prep)
+        query_file = QueryFile(filename)
+        queries = query_file.ingest(prep)
+        queries = {k: v for k, v in queries.items() if k < 2}
 
-    def ingest_rankings(self, rankings: dict[int, list[tuple[int, float]]]):
+        rankings = {}
+        self.retr.decode_inverted_file()
 
-        print(Formatter.format_rankings(rankings))
+        for doc_id, tokens in queries.items():
+            rankings[doc_id] = self.read_inverted_file(tokens)
+            self.reset_retriever()
+
+        IO.dump(self.data.ranking_file, Formatter.format_rankings(rankings))

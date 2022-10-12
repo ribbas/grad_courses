@@ -68,7 +68,7 @@ class QueryFile:
 
     def ingest(self, prep: Normalizer) -> dict[int, generator[str]]:
 
-        doc_id: str = ""
+        doc_id: int = -1
         doc: str = ""
         tokens: dict[int, generator[str]] = {}
 
@@ -88,13 +88,9 @@ class QueryFile:
 
                         doc = ""
 
-                        if self.num_docs % DOC_PROC == 0:
-                            print("Normalized", self.num_docs, "documents")
-
                     else:
                         doc += line
 
-        print("Normalized", self.num_docs, "documents")
         return tokens
 
 
@@ -110,6 +106,7 @@ class DataFile:
         self.cf_file: str = f"stats/{filename.stem}_cf"
         self.stats_file: str = f"stats/{filename.stem}_stats"
         self.meta_file: str = f"stats/{filename.stem}_meta"
+        self.ranking_file: str = f"stats/ED5859-{filename.stem}"
 
         self.tdt_file: str = f"tmp/{filename.stem}_tdt"
         self.sorted_tdt_chunk_file: str = f"tmp/{filename.stem}_chunk_"

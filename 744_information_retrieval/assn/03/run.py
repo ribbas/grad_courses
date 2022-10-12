@@ -61,6 +61,7 @@ if __name__ == "__main__":
         action=argparse.BooleanOptionalAction,
         help="precompute document lengths",
     )
+    parser.add_argument("-q", "--query", type=str, help="path of query file")
 
     args = vars(parser.parse_args())
 
@@ -75,6 +76,9 @@ if __name__ == "__main__":
         ir_obj.encode_inverted_file()
         ir_obj.load_inverted_file()
         ir_obj.precompute_lengths()
+
+    elif args["query"]:
+        ir_obj.generate_rankings(args["query"])
 
     else:
 
