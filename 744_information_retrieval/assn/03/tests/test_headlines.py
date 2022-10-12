@@ -16,17 +16,16 @@ class TestQuick(unittest.TestCase):
         self.ir_obj.load_inverted_file()
         self.ir_obj.load_retriever()
         self.ir_obj.set_query_filename(
-            dir_name.parent / "data" / "cord19.topics.question.txt"
+            dir_name.parent / "data" / "cord19.topics.keyword.txt"
         )
         self.kw_queries = self.ir_obj.ingest_query_file()
         self.ir_obj.set_query_filename(
-            dir_name.parent / "data" / "cord19.topics.keyword.txt"
+            dir_name.parent / "data" / "cord19.topics.question.txt"
         )
         self.question_queries = self.ir_obj.ingest_query_file()
 
     def test_keyword(self):
 
-        self.kw_queries = {i: v for i, v in self.kw_queries.items() if i < 5}
         rankings = {}
         self.ir_obj.decode_inverted_file()
 

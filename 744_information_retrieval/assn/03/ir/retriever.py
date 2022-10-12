@@ -1,7 +1,7 @@
 from math import log2, sqrt
 from multiprocessing import Pool
 
-from .const import IDX, QUERY_DOC_ID
+from .const import IDX, QUERY_DOC_ID, PARALLEL_THRESH
 from .invertedfile import InvertedFile
 from .packer import Packer
 from .types import Any
@@ -200,14 +200,8 @@ class Retriever:
         print(f"Querying '{query_terms}'...")
         self.query_terms = query_terms
 
-        # # decode inverted file into memory
-        # self.decode_inverted_file()
-        # print("Decoded inverted file...")
-
         # initialize retrievals with terms from query
         self.update_retrievals()
-        # self.delete_inverted_file()
-        print("Initialized retrievals...")
 
         # initialize set of all documents with at least one query term
         self.update_doc_ids()
@@ -215,16 +209,14 @@ class Retriever:
         print(f"Found {self.num_doc_ids} relevant documents...")
 
         self.query_tfidfs = self.get_query_tfs()
-        print("Computed weights for query terms...")
 
         # generate metrics of all the retrieved documents
-        if len(self.doc_ids) > 1000:
+        if len(self.doc_ids) > PARALLEL_THRESH:
             print("Generating metrics in parallel...")
             self.generate_metrics_p()
         else:
             print("Generating metrics...")
             self.generate_metrics()
-        print("Generated metrics")
 
     def get_rankings(self, top_n: int = 100) -> list[tuple[int, float]]:
 

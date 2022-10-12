@@ -6,6 +6,8 @@ BYTE_FMT_SIZE = 4
 
 QUERY_DOC_ID = 0
 
+PARALLEL_THRESH = 90_000
+
 
 class IDX:
 
