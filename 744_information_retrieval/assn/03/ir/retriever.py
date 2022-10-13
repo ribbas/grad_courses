@@ -26,7 +26,7 @@ class Retriever:
         self.doc_ids: set[int] = set()
         self.num_doc_ids: int = 0
 
-        self.metrics: list[tuple[int, float]] = []
+        self.metrics: list[tuple[int, float] | None] = []
         self.query_terms = []
 
     def decode_inverted_file(self):
@@ -136,7 +136,7 @@ class Retriever:
 
         return self.retrievals
 
-    def get_metrics(self) -> list[tuple[int, float]]:
+    def get_metrics(self) -> list[tuple[int, float] | None]:
         return self.metrics
 
     def update_doc_ids(self) -> None:
@@ -218,7 +218,7 @@ class Retriever:
             print("Generating metrics...")
             self.generate_metrics()
 
-    def get_rankings(self, top_n: int = 100) -> list[tuple[int, float]]:
+    def get_rankings(self, top_n: int = 100) -> list[tuple[int, float] | None]:
 
         return sorted(
             (retrieval for retrieval in self.metrics),

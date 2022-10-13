@@ -27,3 +27,6 @@ class IDX:
         DID = 1  # document ID
         TF = 2  # term count
         STR = 3  # term string
+
+
+JHED = "sahmed80"

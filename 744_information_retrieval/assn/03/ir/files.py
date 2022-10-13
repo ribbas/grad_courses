@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from .const import DOC_PROC
+from .const import DOC_PROC, JHED
 from .lexer import Lexer, LexerStatistics
 from .normalize import Normalizer
 from .types import Any, iterable, text_io, generator
@@ -217,13 +217,15 @@ class Formatter:
         return contents
 
     @staticmethod
-    def format_rankings(rankings: dict[int, list[tuple[int, float]]]) -> str:
+    def format_rankings(
+        all_rankings: dict[int, list[tuple[int, float]]]
+    ) -> str:
 
         contents: str = ""
-        for query_id, rankings in rankings.items():
+        for query_id, rankings in all_rankings.items():
             contents += (
                 "\n".join(
-                    f"{query_id} Q0 {doc_id} {rank + 1} {score:.6f} ED5859"
+                    f"{query_id} Q0 {doc_id} {rank + 1} {score:.6f} {JHED}"
                     for rank, (doc_id, score) in enumerate(rankings)
                 )
                 + "\n"

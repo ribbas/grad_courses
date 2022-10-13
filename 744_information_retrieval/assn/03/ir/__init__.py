@@ -132,10 +132,6 @@ class InformationRetrieval:
         self.invf.set_dictionary(dictionary)
         self.invf_loaded = True
 
-    def reset_retriever(self) -> None:
-
-        self.retr.reset()
-
     def precompute_lengths(self) -> None:
 
         if self.invf_loaded:
@@ -188,6 +184,6 @@ class InformationRetrieval:
 
         for doc_id, tokens in queries.items():
             rankings[doc_id] = self.read_inverted_file(tokens)
-            self.reset_retriever()
+            self.retr.reset()
 
         IO.dump(self.data.ranking_file, Formatter.format_rankings(rankings))
