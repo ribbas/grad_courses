@@ -1,0 +1,90 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{colortbl}
+\usepackage{graphicx}
+\usepackage{listings}
+
+\usepackage[autostyle, english = american]{csquotes}
+\MakeOuterQuote{"}
+
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+\definecolor{Gray}{gray}{0.85}
+\newcolumntype{a}{>{\columncolor{Gray}}M}
+
+\newcommand{\super}{\textsuperscript}
+\newcommand{\mult}{$\times$}
+
+% margins
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\title{605.744: Information Retrieval \\ Problem Set (Module 7)}
+\author{Sabbir Ahmed}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+    \begin{enumerate}
+
+        \item (40\%) Briefly explain the following concepts in your own words and be sure to indicate how they are relevant to text classification:
+        
+        \begin{enumerate}
+            \item bias-variance tradeoff
+
+            \textbf{Answer:}
+
+            \item k-fold cross-validation
+
+            \textbf{Answer:}
+
+            \item macro-averaging vs. micro-averaging
+
+            \textbf{Answer:}
+
+            \item soft margin
+
+            \textbf{Answer:}
+
+        \end{enumerate}
+
+        \item (10\%) Why is 3-Nearest-Neighbor (3-NN) almost always a better choice than 1-NN for a binary (i.e, two-class) text classification problem.
+
+        \textbf{Answer:}
+
+        \item (50\%) Naïve Bayes using the Binomial (also known as Bernoulli) model. First calculate estimates of P(c) and P(w|c) given the following training sentences. There are only three classes: Travel, Business, and Health. You should not use any smoothing. For features you should only use the following seven vocabulary terms: {denver, employers, florida, hospital, jobs, nurses, vacation} and you should ignore all other words and any punctuation. Next compute the probability of each class for the two test documents A \& B below. Finally, indicate which is the predicted (i.e., the most likely) class for each test document. Please read these directions thoroughly, count carefully, and do show all of your work. Report probabilities using scientific notation (e.g., $1.563 \times 10^{-5}$) with three digits after the decimal point.
+
+        Training data
+
+        \begin{enumerate}
+            \item Travel: denver hospital administrator takes vacation in florida
+            \item Travel: nurses plan a trip to florida
+            \item Travel: employers offering more jobs with vacation benefits
+            \item Business: employers see growth in information science
+            \item Business: hospital nurses in denver say high paying jobs are vanishing
+            \item Business: employers say florida is nice vacation spot and there are good jobs
+            \item Health: study: more hospital nurses need to take a vacation
+            \item Health: local doctors attend florida conference on diabetes
+            \item Health: hospital trains maternity ward nurses
+            \item Health: denver hospital says local employers have jobs for nurses
+        \end{enumerate}
+
+        Test documents:
+        \begin{enumerate}
+            \item florida nurses take skiing vacation in denver
+            \item jobs available for experienced nurses at florida hospital
+        \end{enumerate}
+
+        \textbf{Answer:}
+
+    \end{enumerate}
+
+\end{document}
