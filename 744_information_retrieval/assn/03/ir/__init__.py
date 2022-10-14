@@ -76,6 +76,7 @@ class InformationRetrieval:
             invf.build_dict(self.df)
 
             mapped_tdt_chunks = invf.sort_mapped_tdt(self.term_doc_tf_str)
+            self.term_doc_tf_str = ""
             chunk_filenames: list[str] = []
             for idx, mapped_tdt_chunk in enumerate(mapped_tdt_chunks):
 
