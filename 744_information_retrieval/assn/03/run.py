@@ -65,8 +65,7 @@ if __name__ == "__main__":
 
     args = vars(parser.parse_args())
 
-    ir_obj = InformationRetrieval()
-    ir_obj.set_filename(Path(args["path"]))
+    ir_obj = InformationRetrieval(Path(args["path"]))
 
     if args["all"]:
         ir_obj.generate_freqs()

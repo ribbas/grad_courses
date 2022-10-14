@@ -1,3 +1,4 @@
+import heapq
 import json
 from pathlib import Path
 
@@ -25,6 +26,19 @@ class IO:
         with open(f"{filename}.txt", "w") as fp:
             fp.writelines(data)
         print(f"Dumped to '{filename}.txt'")
+
+    @staticmethod
+    def dump_sorted_chunks(filename: str, chunk_filenames: list[str]) -> None:
+
+        chunks: list[text_io] = []
+        for chunk_filename in chunk_filenames:
+            chunks.append(IO.open_file(chunk_filename))
+
+        with open(f"{filename}.txt", "w") as fp:
+            fp.writelines(heapq.merge(*chunks, key=lambda k: int(k.split()[0])))
+
+        for chunk_files in chunks:
+            chunk_files.close()
 
     @staticmethod
     def dump(filename: str, data: str) -> None:
@@ -94,7 +108,7 @@ class QueryFile:
         return tokens
 
 
-class DataFile:
+class CorpusFile:
     def __init__(self, filename: Path) -> None:
 
         self.filename: Path = filename
@@ -105,8 +119,8 @@ class DataFile:
         self.len_file: str = f"stats/{filename.stem}_len"
         self.cf_file: str = f"stats/{filename.stem}_cf"
         self.stats_file: str = f"stats/{filename.stem}_stats"
-        self.meta_file: str = f"stats/{filename.stem}_meta"
-        self.ranking_file: str = f"stats/ED5859-{filename.stem}"
+        self.meta_file: str = f"stats/{filename.stem}_ndocs"
+        self.ranking_file: str = f"stats/{filename.stem}_rank"
 
         self.tdt_file: str = f"tmp/{filename.stem}_tdt"
         self.sorted_tdt_chunk_file: str = f"tmp/{filename.stem}_chunk_"

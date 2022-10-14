@@ -1,19 +1,19 @@
-import heapq
 from pathlib import Path
 
-from .files import DataFile, Formatter, IO, QueryFile
+from .files import CorpusFile, Formatter, IO, QueryFile
 from .invertedfile import InvertedFile
 from .lexer import Lexer
 from .normalize import Normalizer
 from .packer import Packer
 from .retriever import Retriever
-from .types import text_io, generator, counter
+from .types import counter, generator
 
 
 class InformationRetrieval:
-    def __init__(self) -> None:
+    def __init__(self, filename: Path) -> None:
 
-        self.data: DataFile
+        self.corpus = CorpusFile(filename)
+
         self.invf: InvertedFile
         self.retr: Retriever
 
@@ -22,19 +22,14 @@ class InformationRetrieval:
 
         self.num_docs: int = 0
         self.freq_loaded = False
-        self.invf_loaded = False
         self.term_doc_tf_str: str = ""
-
-    def set_filename(self, filename: Path) -> None:
-
-        self.data = DataFile(filename)
 
     def load_freqs(self) -> None:
 
-        self.df = IO.read_json(self.data.df_file)
-        self.cf = IO.read_json(self.data.tf_file)
+        self.df = IO.read_json(self.corpus.df_file)
+        self.cf = IO.read_json(self.corpus.tf_file)
 
-        self.term_doc_tf_str = IO.read(self.data.tdt_file)
+        self.term_doc_tf_str = IO.read(self.corpus.tdt_file)
         self.freq_loaded = True
 
     def generate_freqs(self) -> None:
@@ -43,7 +38,7 @@ class InformationRetrieval:
         lex = Lexer()
 
         term_doc_tf: list[tuple[str, str, int]] = []
-        self.data.ingest(prep, lex, term_doc_tf)
+        self.corpus.ingest(prep, lex, term_doc_tf)
 
         self.df = lex.get_df()
         self.cf = lex.get_cf()
@@ -56,68 +51,57 @@ class InformationRetrieval:
             lex = Lexer()
             lex.set_df(self.df)
             lex.set_cf(self.cf)
-            contents: str = Formatter.format_stats(lex, self.data.num_docs)
-            IO.dump(self.data.stats_file, contents)
+            contents: str = Formatter.format_stats(lex, self.corpus.num_docs)
+            IO.dump(self.corpus.stats_file, contents)
+
         else:
             raise AttributeError("Corpus frequencies not generated yet")
 
     def dump_freqs(self) -> None:
 
         if self.freq_loaded:
-            IO.dump(self.data.tdt_file, self.term_doc_tf_str)
-            IO.dump_json(self.data.df_file, self.df)
-            IO.dump_json(self.data.tf_file, self.cf)
-            IO.dump_json(self.data.meta_file, {"num_docs": self.data.num_docs})
+            IO.dump(self.corpus.tdt_file, self.term_doc_tf_str)
+            IO.dump_json(self.corpus.df_file, self.df)
+            IO.dump_json(self.corpus.tf_file, self.cf)
+            IO.dump(self.corpus.meta_file, str(self.corpus.num_docs))
+
         else:
             raise AttributeError("Corpus frequencies not generated yet")
 
     def build_sorted_tdt(self) -> None:
 
         if self.freq_loaded:
+
             invf = InvertedFile()
             invf.build_dict(self.df)
+
             mapped_tdt_chunks = invf.sort_mapped_tdt(self.term_doc_tf_str)
             chunk_filenames: list[str] = []
             for idx, mapped_tdt_chunk in enumerate(mapped_tdt_chunks):
 
                 chunk_filenames.append(
-                    f"{self.data.sorted_tdt_chunk_file}{idx}"
+                    f"{self.corpus.sorted_tdt_chunk_file}{idx}"
                 )
-                IO.dumplines(
-                    chunk_filenames[-1],
-                    (
-                        " ".join(str(s) for s in l) + "\n"
-                        for l in mapped_tdt_chunk
-                    ),
-                )
+                IO.dumplines(chunk_filenames[-1], mapped_tdt_chunk)
 
-            chunks: list[text_io] = []
-            for filename in chunk_filenames:
-                chunks.append(IO.open_file(filename))
-
-            IO.dumplines(
-                self.data.sorted_tdt_file,
-                heapq.merge(*chunks, key=lambda k: int(k.split()[0])),
-            )
-
-            for chunk_files in chunks:
-                chunk_files.close()
+            IO.dump_sorted_chunks(self.corpus.sorted_tdt_file, chunk_filenames)
 
     def encode_inverted_file(self) -> None:
 
         if self.freq_loaded:
+
             invf = InvertedFile()
             invf.build_dict(self.df)
 
             mapped_tdt = invf.parse_sorted_tdt(
-                IO.open_file(self.data.sorted_tdt_file)
+                IO.open_file(self.corpus.sorted_tdt_file)
             )
             invf.convert(mapped_tdt)
 
             inv_file = invf.get_inverted_file_raw()
             if_data = Packer.encode(inv_file)
-            IO.dump_bin(self.data.inv_file, if_data)
-            IO.dump_json(self.data.dict_file, invf.get_dictionary())
+            IO.dump_bin(self.corpus.inv_file, if_data)
+            IO.dump_json(self.corpus.dict_file, invf.get_dictionary())
 
         else:
             raise AttributeError("Corpus frequencies not generated yet")
@@ -125,39 +109,22 @@ class InformationRetrieval:
     def load_inverted_file(self) -> None:
 
         self.invf = InvertedFile()
-        inv_file = IO.read_bin(self.data.inv_file)
-        dictionary = IO.read_json(self.data.dict_file)
-        self.num_docs = IO.read_json(self.data.meta_file)["num_docs"]
+        inv_file = IO.read_bin(self.corpus.inv_file)
+        dictionary = IO.read_json(self.corpus.dict_file)
+        self.num_docs = int(IO.read(self.corpus.meta_file))
         self.invf.set_inverted_file_bytes(inv_file)
         self.invf.set_dictionary(dictionary)
-        self.invf_loaded = True
 
     def precompute_lengths(self) -> None:
 
-        if self.invf_loaded:
+        self.load_inverted_file()
 
-            self.retr = Retriever(self.invf, self.num_docs)
-            self.retr.decode_inverted_file()
-            self.retr.compute_sum_of_squares()
-            self.retr.compute_lengths()
+        self.retr = Retriever(self.invf, self.num_docs)
+        self.retr.decode_inverted_file()
+        self.retr.compute_sum_of_squares()
+        self.retr.compute_lengths()
 
-            IO.dump_json(self.data.len_file, self.retr.get_lengths())
-
-        else:
-            raise AttributeError("Inverted file not generated yet")
-
-    def read_inverted_file(
-        self, tokens: generator[str]
-    ) -> list[tuple[int, float]]:
-
-        if self.invf_loaded:
-
-            self.retr.query(list(tokens))
-
-            return self.retr.get_rankings()
-
-        else:
-            raise AttributeError("Inverted file not generated yet")
+        IO.dump_json(self.corpus.len_file, self.retr.get_lengths())
 
     def normalize_query(self, query: str) -> generator[str]:
 
@@ -172,18 +139,18 @@ class InformationRetrieval:
         self.load_inverted_file()
 
         self.retr = Retriever(self.invf, self.num_docs)
-        lengths = IO.read_json(self.data.len_file)
+        lengths = IO.read_json(self.corpus.len_file)
         self.retr.set_lengths(lengths)
+        self.retr.decode_inverted_file()
 
         prep = Normalizer()
         query_file = QueryFile(filename)
         queries = query_file.ingest(prep)
 
         rankings = {}
-        self.retr.decode_inverted_file()
-
         for doc_id, tokens in queries.items():
-            rankings[doc_id] = self.read_inverted_file(tokens)
+            self.retr.query(list(tokens))
+            rankings[doc_id] = self.retr.get_rankings()
             self.retr.reset()
 
-        IO.dump(self.data.ranking_file, Formatter.format_rankings(rankings))
+        IO.dump(self.corpus.ranking_file, Formatter.format_rankings(rankings))

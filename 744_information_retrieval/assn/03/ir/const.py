@@ -6,7 +6,8 @@ BYTE_FMT_SIZE = 4
 
 QUERY_DOC_ID = 0
 
-PARALLEL_THRESH = 75_000
+# arbitrary - 75,000 for keywords and 90,000 for questions
+PARALLEL_THRESH = 90_000
 
 
 class IDX:

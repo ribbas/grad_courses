@@ -35,9 +35,7 @@ class InvertedFile:
             for i in term_doc_tf.split("\n")[:-1]
         )
 
-    def sort_mapped_tdt(
-        self, term_doc_tf: str
-    ) -> generator[list[tuple[int, int, int, str]]]:
+    def sort_mapped_tdt(self, term_doc_tf: str) -> generator[str]:
 
         mapped_values = self.__map_to_int(term_doc_tf)
 
@@ -49,12 +47,12 @@ class InvertedFile:
             chunk.append(mapped_value)
             if cur_cs % CHUNK_SIZE == 0:
                 chunk.sort()
-                yield chunk
+                yield "\n".join(" ".join(map(str, s)) for s in chunk) + "\n"
                 chunk = []
 
         if chunk:
             chunk.sort()
-            yield chunk
+            yield "\n".join(" ".join(map(str, s)) for s in chunk) + "\n"
             chunk = []
 
     def parse_sorted_tdt(
