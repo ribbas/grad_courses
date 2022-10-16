@@ -1,0 +1,186 @@
+@startuml
+
+skinparam linetype polyline
+skinparam linetype ortho
+left to right direction
+
+namespace Information_Retrieval {
+
+  class IO {
+    + open_file(filename: str): text_io
+    + read(filename: str): str
+    + dumplines(filename: str, data: iterable)
+    + dump_sorted_chunks(filename: str, chunk_filenames: list[str])
+    + dump(filename: str, data: str)
+    + read_json(filename: str): Any
+    + dump_json(filename: str, data: Any)
+    + read_bin(filename: str): bytes
+    + dump_bin(filename: str, data: bytes)
+  }
+
+  class DataFile {
+    # filename: Path
+    # num_docs: int
+    # doc_begin_tag: str
+    # doc_end_tag: str
+    # ingest(doc_id: int, prep: Normalizer, *args: Any)
+    + ingest(*args: Any)
+  }
+
+  class QueryFile {
+    + ingest(prep: Normalizer)
+    # ingest(doc_id: int, prep: Normalizer, tokens: dict[int, generator[str]])
+  }
+
+  class CorpusFile {
+    - df_file: str
+    - tf_file: str
+    - len_file: str
+    - stats_file: str
+    - ranking_file: str
+    - dict_file: str
+    - meta_file: str
+    - tdt_file: str
+    - sorted_tdt_chunk_file: str
+    - sorted_tdt_file: str
+    - inv_file: str
+    # ingest(doc_id: int, prep: Normalizer, lex: Lexer, term_doc_tf: list[tuple[str, int, int]])
+  }
+
+  class Formatter {
+    - hr: str
+    - table_header: str
+    - format_tf_df(term: str, tf: int, df: int): str
+    + format_stats(lex: Lexer, num_docs: int): str
+    + format_term_doc_tf(term_doc_tf: list[tuple[str, str, int]]): str
+    + format_rankings(all_rankings: dict[int, list[tuple[int, float]]]): str
+  }
+
+  class Normalizer {
+    - document: str
+    - tokens: list[str]
+    - ws_re: re.Pattern[str]
+    - snow: nltk.stem.SnowballStemmer
+    - to_lower_case(document: str): str
+    - split_document(document: str): generator[str]
+    - remove_stopwords(tokens: generator[str]): generator[str]
+    - stem(tokens: generator[str]): generator[str]
+    + get_tokens(): generator[str]
+    + process()
+  }
+
+  class Lexer {
+    + add(tokens: generator[str])
+    + get_term_docid_tf(doc_id: str): generator[tuple[str, str, int]]
+    + set_cf(cf: counter)
+    + set_df(df: counter)
+    + get_cf(): counter
+    + get_df(): counter
+  }
+
+  class LexerStatistics {
+    + get_collection_size(): int
+    + get_vocab_size(): int
+    + get_top_n_cf_df(n: int): generator[tuple[str, int, int]]
+    + get_nth_freq_term(n: int): tuple[str, int, int]
+    + get_single_occs(): int
+  }
+
+  class Packer {
+    + encode(data: list[int]): bytes
+    + decode(data: bytes): tuple[int, ...]
+  }
+
+  class InvertedFile {
+    - dictionary: dict[str, list[int]]
+    - inverted_file_raw: list[int]
+    - inverted_file_bytes: bytes
+    - convert_tdt_types(col_split_list: list[str]): tuple[int, int, int, str]
+    - map_to_int(term_doc_tf: str): generator[tuple[int, int, int, str]]
+    - format_mapped_tdt(chunk: list[tuple[int, int, int, str]]): str
+    + build_dict(df: counter): dict[str, list[int]]
+    + sort_mapped_tdt(term_doc_tf: str): generator[str]
+    + parse_sorted_tdt(mapped_tdt_fp: text_io): generator[tuple[int, int, int, str]]
+    + convert(mapped_values: generator[tuple[int, int, int, str]])
+    + set_inverted_file_raw(inverted_file_raw: list[int])
+    + get_inverted_file_raw(): list[int]
+    + set_inverted_file_bytes(inverted_file_bytes: bytes)
+    + get_inverted_file_bytes(): bytes
+    + set_dictionary(dictionary: dict[str, list[int]])
+    + get_dictionary(): dict[str, list[int]]
+  }
+
+  class Retriever {
+    - invf: InvertedFile
+    - num_docs: int
+    - partial_len: list[float]
+    - dictionary: dict[str, list[int]]
+    - inverted_file: bytes
+    - retrievals: dict[str, dict[str, Any]]
+    - query_tfidfs: dict[str, float]
+    - doc_ids: set[int]
+    - num_doc_ids: int
+    - metrics: list[tuple[int, float]]
+    - query_terms: list[str]
+    + decode_inverted_file()
+    + delete_inverted_file()
+    + retrieve(term: str): dict[str, Any]
+    + compute_sum_of_squares()
+    + compute_lengths()
+    + get_lengths(): list[float]
+    + set_lengths(lengths: list[float])
+    + get_term_tfidf(doc_id: int, postings: tuple[int], tfidfs: tuple[int]): float
+    + get_query_tfs(): dict[str, float]
+    + dot_product(document: dict[str, float]): float
+    + update_retrievals()
+    + get_retrievals(): dict[str, dict[str, Any]]
+    + get_metrics(): list[tuple[int, float]]
+    + update_doc_ids()
+    + get_document_weights(doc_id: int): dict[str, float]
+    + generate_metrics()
+    + generate_metrics_p()
+    + similarity(doc_id: int, doc_weights: dict[str, float]): float
+    + reset()
+    + query(query_terms: list[str])
+    + get_rankings(top_n: int): list[tuple[int, float]]
+  }
+
+  class IR {
+    - corpus: CorpusFile
+    - invf: InvertedFile
+    - retr: Retriever
+    - df: counter
+    - cf: counter
+    - num_docs: int
+    - freq_loaded: bool
+    - term_doc_tf_str: str
+    + load_freqs()
+    + generate_freqs()
+    + generate_stats()
+    + dump_freqs()
+    + build_sorted_tdt()
+    + encode_inverted_file()
+    - load_inverted_file()
+    + precompute_lengths()
+    + generate_rankings(filename: Path)
+  }
+
+  IR <-- Formatter
+  IR <-- IO
+  IR <-- QueryFile
+  IR <-- InvertedFile
+  IR <-- Lexer
+  IR <-- LexerStatistics
+  IR <-- Packer
+  IR <-- Retriever
+  CorpusFile -d-|> DataFile
+  QueryFile -d-|> DataFile
+  CorpusFile -- Normalizer
+  CorpusFile -- Lexer
+  Formatter -- LexerStatistics
+  Retriever -- InvertedFile
+  Retriever -- Packer
+  IR <-- CorpusFile
+}
+
+@enduml

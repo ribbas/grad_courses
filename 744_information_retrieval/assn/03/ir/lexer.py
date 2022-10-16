@@ -23,7 +23,7 @@ class Lexer:
         # increment the document-frequency values
         self.df.update(self.tf.keys())
 
-    def get_term_docid_tf(self, doc_id: str) -> generator[tuple[str, str, int]]:
+    def get_term_docid_tf(self, doc_id: int) -> generator[tuple[str, int, int]]:
 
         for term in self.tf:
             yield term, doc_id, self.tf[term]

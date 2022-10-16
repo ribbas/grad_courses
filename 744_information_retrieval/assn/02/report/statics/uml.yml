@@ -1,0 +1,94 @@
+@startuml
+
+skinparam linetype polyline
+skinparam linetype ortho
+left to right direction
+
+namespace Information_Retrieval {
+
+  class DataFile {
+    + filename: Path
+    + num_docs: int
+    + df_file_name: str
+    + tf_file_name: str
+    + stats_file_name: str 
+    + tdt_file_name: str
+    + inv_file_name: str
+    + dict_name: str
+    + ingest(prep: Normalizer, lex: Lexer, term_doc_tf: list[tuple[str, str, int]]): None
+  }
+
+  class IO {
+    + read(filename: str): str
+    + dump(filename: str, data: str): None
+    + read_json(filename: str): Any
+    + dump_json(filename: str, data: Any): None
+    + read_bin(filename: str): bytes
+    + dump_bin(filename: str, data: bytes): None
+  }
+
+  class Formatter {
+    - hr: str
+    - table_header: str
+    - format_tf_df(term: str, tf: int, df: int): str
+    + format_stats(lex: Lexer, num_docs: int = 0): str
+    + format_term_doc_tf(term_doc_tf: list[tuple[str, str, int]]): str
+  }
+
+  class Normalizer {
+    - document: str
+    - tokens: list[str]
+    - ws_re: re.Pattern[str]
+    - snow: nltk.stem.SnowballStemmer
+    - to_lower_case(document: str): str
+    - split_document(document: str): Generator[str]
+    - remove_stopwords(tokens: Generator[str]): Generator[str]
+    - stem(tokens: Generator[str]): Generator[str]
+    + get_tokens(): Generator[str]
+    + process(): None
+  }
+
+  class Lexer {
+    - tf: Counter[str]
+    - df: Counter[str]
+    - tf_in_doc: Counter[str]
+    + add(tokens: list[str]): None
+    + get_tf(): Counter[str]
+    + get_df(): Counter[str]
+    + term_doc_tf(doc_id: str): Generator[tuple[str, str, int]]
+    + get_collection_size(): int
+    + get_vocab_size(): int
+    + get_top_n_tf_df(n: int): Generator[tuple[str, int, int]]
+    + get_nth_freq_term(n: int): tuple[str, int, int]
+    + get_single_occs(): int
+  }
+
+  class Packer {
+    + encode(data: list[int]): bytes
+    + decode(data: bytes): tuple[int, ...]
+  }
+
+  class InvertedFile {
+    - dictionary: dict[str, list[int]]
+    - mapped_values: list[tuple[int, int, int, str]]
+    - inverted_file_raw: list[int]
+    + build_dict(df: Counter[str], tf: Counter[str]): dict[str, list[int]]
+    - convert_tdt_types(col_split_list: list[str]): tuple[int, int, int, str]
+    - map_to_int(term_doc_tf: str): list[tuple[int, int, int, str]]
+    + ingest(term_doc_tf: str): None
+    + set_inverted_file_raw(inverted_file_raw: list[int]): None
+    + get_inverted_file_raw(): list[int]
+    + set_inverted_file(inverted_file: bytes): None
+    + get_inverted_file(): bytes
+    + set_dictionary(dictionary: dict[str, list[int]]): None
+    + get_dictionary(): dict[str, list[int]]
+    + lookup(term: str): dict[str, Any]
+  }
+
+  DataFile -- Normalizer
+  DataFile -- Lexer
+  Formatter -- Lexer
+
+}
+
+@enduml

@@ -7,6 +7,7 @@ class InvertedFile:
 
         self.dictionary: dict[str, list[int]] = {}
         self.inverted_file_raw: list[int] = []
+        self.inverted_file_bytes: bytes
 
     def build_dict(self, df: counter) -> dict[str, list[int]]:
 

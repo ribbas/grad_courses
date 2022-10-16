@@ -2,8 +2,7 @@ from pathlib import Path
 
 from .files import CorpusFile, Formatter, IO, QueryFile
 from .invertedfile import InvertedFile
-from .lexer import Lexer
-from .normalize import Normalizer
+from .lexer import Lexer, LexerStatistics
 from .packer import Packer
 from .retriever import Retriever
 from .types import counter, generator
@@ -12,7 +11,7 @@ from .types import counter, generator
 class InformationRetrieval:
     def __init__(self, filename: Path) -> None:
 
-        self.corpus = CorpusFile(filename)
+        self.corpus: CorpusFile = CorpusFile(filename)
 
         self.invf: InvertedFile
         self.retr: Retriever
@@ -34,11 +33,10 @@ class InformationRetrieval:
 
     def generate_freqs(self) -> None:
 
-        prep = Normalizer()
         lex = Lexer()
 
-        term_doc_tf: list[tuple[str, str, int]] = []
-        self.corpus.ingest(prep, lex, term_doc_tf)
+        term_doc_tf: list[tuple[str, int, int]] = []
+        self.corpus.ingest(lex, term_doc_tf)
 
         self.df = lex.get_df()
         self.cf = lex.get_cf()
@@ -51,7 +49,9 @@ class InformationRetrieval:
             lex = Lexer()
             lex.set_df(self.df)
             lex.set_cf(self.cf)
-            contents: str = Formatter.format_stats(lex, self.corpus.num_docs)
+            contents: str = Formatter.format_stats(
+                LexerStatistics(lex), self.corpus.num_docs
+            )
             IO.dump(self.corpus.stats_file, contents)
 
         else:
@@ -107,7 +107,7 @@ class InformationRetrieval:
         else:
             raise AttributeError("Corpus frequencies not generated yet")
 
-    def load_inverted_file(self) -> None:
+    def __load_inverted_file(self) -> None:
 
         self.invf = InvertedFile()
         inv_file = IO.read_bin(self.corpus.inv_file)
@@ -118,7 +118,7 @@ class InformationRetrieval:
 
     def precompute_lengths(self) -> None:
 
-        self.load_inverted_file()
+        self.__load_inverted_file()
 
         self.retr = Retriever(self.invf, self.num_docs)
         self.retr.decode_inverted_file()
@@ -127,26 +127,18 @@ class InformationRetrieval:
 
         IO.dump_json(self.corpus.len_file, self.retr.get_lengths())
 
-    def normalize_query(self, query: str) -> generator[str]:
+    def generate_rankings(self, filename: Path) -> None:
 
-        prep = Normalizer()
-        prep.set_document(query)
-        prep.process()
-
-        return prep.get_tokens()
-
-    def generate_rankings(self, filename: Path):
-
-        self.load_inverted_file()
+        self.__load_inverted_file()
 
         self.retr = Retriever(self.invf, self.num_docs)
         lengths = IO.read_json(self.corpus.len_file)
         self.retr.set_lengths(lengths)
         self.retr.decode_inverted_file()
 
-        prep = Normalizer()
         query_file = QueryFile(filename)
-        queries = query_file.ingest(prep)
+        queries: dict[int, generator[str]] = {}
+        query_file.ingest(queries)
 
         rankings = {}
         for doc_id, tokens in queries.items():

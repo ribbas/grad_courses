@@ -32,14 +32,8 @@ if __name__ == "__main__":
         help="save frequencies data to file",
     )
     parser.add_argument(
-        "-lf",
-        "--loadfreqs",
-        action=argparse.BooleanOptionalAction,
-        help="load pre-generated frequencies data",
-    )
-    parser.add_argument(
-        "-li",
-        "--loadinvf",
+        "-l",
+        "--load",
         action=argparse.BooleanOptionalAction,
         help="load pre-generated frequencies data",
     )
@@ -53,7 +47,7 @@ if __name__ == "__main__":
         "-e",
         "--encode",
         action=argparse.BooleanOptionalAction,
-        help="generate inverted files",
+        help="generate inverted file",
     )
     parser.add_argument(
         "-p",
@@ -73,7 +67,6 @@ if __name__ == "__main__":
         ir_obj.dump_freqs()
         ir_obj.build_sorted_tdt()
         ir_obj.encode_inverted_file()
-        ir_obj.load_inverted_file()
         ir_obj.precompute_lengths()
 
     elif args["query"]:
@@ -90,11 +83,8 @@ if __name__ == "__main__":
         if args["dump"]:
             ir_obj.dump_freqs()
 
-        if args["loadfreqs"]:
+        if args["load"]:
             ir_obj.load_freqs()
-
-        if args["loadinvf"]:
-            ir_obj.load_inverted_file()
 
         if args["sort"]:
             ir_obj.build_sorted_tdt()

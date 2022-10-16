@@ -27,14 +27,14 @@ class Retriever:
         self.num_doc_ids: int = 0
 
         self.metrics: list[tuple[int, float] | None] = []
-        self.query_terms = []
+        self.query_terms: list[str] = []
 
-    def decode_inverted_file(self):
+    def decode_inverted_file(self) -> None:
 
         global Decoded_Inverted_File
         Decoded_Inverted_File = Packer.decode(self.inverted_file)
 
-    def delete_inverted_file(self):
+    def delete_inverted_file(self) -> None:
 
         global Decoded_Inverted_File
         Decoded_Inverted_File = tuple()
@@ -169,7 +169,7 @@ class Retriever:
             self.metrics[cur] = (doc_id, self.similarity(doc_id, tfidfs))
             cur += 1
 
-    def generate_metrics_p(self):
+    def generate_metrics_p(self) -> None:
 
         self.metrics = [None] * self.num_doc_ids
         cur = 0
@@ -220,8 +220,4 @@ class Retriever:
 
     def get_rankings(self, top_n: int = 100) -> list[tuple[int, float] | None]:
 
-        return sorted(
-            (retrieval for retrieval in self.metrics),
-            key=lambda x: x[1],
-            reverse=True,
-        )[:top_n]
+        return sorted(self.metrics, key=lambda x: x[1], reverse=True)[:top_n]

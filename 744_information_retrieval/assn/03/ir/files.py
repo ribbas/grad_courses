@@ -74,100 +74,6 @@ class IO:
         print(f"Dumped binary to '{filename}.bin'")
 
 
-class QueryFile:
-    def __init__(self, filename: Path) -> None:
-
-        self.filename: Path = filename
-        self.num_docs: int = 0
-
-    def ingest(self, prep: Normalizer) -> dict[int, generator[str]]:
-
-        doc_id: int = -1
-        doc: str = ""
-        tokens: dict[int, generator[str]] = {}
-
-        with open(self.filename) as fp:
-            for line in fp:
-
-                if line:
-                    if "<Q ID=" in line:
-                        doc_id = int(line[6:-2])
-                        self.num_docs += 1
-
-                    elif "</Q>" in line:
-
-                        prep.set_document(doc)
-                        prep.process()
-                        tokens[doc_id] = prep.get_tokens()
-
-                        doc = ""
-
-                    else:
-                        doc += line
-
-        return tokens
-
-
-class CorpusFile:
-    def __init__(self, filename: Path) -> None:
-
-        self.filename: Path = filename
-        self.num_docs: int = 0
-
-        self.df_file: str = f"stats/{filename.stem}_df"
-        self.tf_file: str = f"stats/{filename.stem}_tf"
-        self.len_file: str = f"stats/{filename.stem}_len"
-        self.stats_file: str = f"stats/{filename.stem}_summary"
-        self.ranking_file: str = f"stats/{filename.stem}_rank"
-        self.dict_file: str = f"stats/{filename.stem}_dict"
-
-        self.meta_file: str = f"tmp/{filename.stem}_ndocs"
-        self.tdt_file: str = f"tmp/{filename.stem}_tdt"
-        self.sorted_tdt_chunk_file: str = f"tmp/{filename.stem}_chunk_"
-        self.sorted_tdt_file: str = f"tmp/{filename.stem}_sort"
-
-        self.inv_file: str = f"bin/{filename.stem}_if"
-
-    def ingest(
-        self,
-        prep: Normalizer,
-        lex: Lexer,
-        term_doc_tf: list[tuple[str, str, int]],
-    ) -> None:
-
-        doc_id: str = ""
-        doc: str = ""
-
-        with open(self.filename) as fp:
-            for line in fp:
-
-                if line:
-                    if "<P ID=" in line:
-                        doc_id = line[6:-2]
-                        self.num_docs += 1
-
-                    elif "</P>" in line:
-
-                        prep.set_document(doc)
-                        prep.process()
-
-                        # add processed tokens to the lexer
-                        lex.add(prep.get_tokens())
-
-                        # save records of term-DocID-tf
-                        term_doc_tf.extend(lex.get_term_docid_tf(doc_id))
-
-                        doc = ""
-
-                        if self.num_docs % DOC_PROC == 0:
-                            print("Normalized", self.num_docs, "documents")
-
-                    else:
-                        doc += line
-
-        print("Normalized", self.num_docs, "documents")
-
-
 class Formatter:
 
     hr: str = "------------------------------\n"
@@ -179,9 +85,7 @@ class Formatter:
         return f"{term:<12} | {tf:<6} | {df:<6}\n"
 
     @staticmethod
-    def format_stats(lex: Lexer, num_docs: int = 0) -> str:
-
-        lex_stats = LexerStatistics(lex)
+    def format_stats(lex_stats: LexerStatistics, num_docs: int = 0) -> str:
 
         contents: str = ""
 
@@ -221,7 +125,7 @@ class Formatter:
         return contents
 
     @staticmethod
-    def format_term_doc_tf(term_doc_tf: list[tuple[str, str, int]]) -> str:
+    def format_term_doc_tf(term_doc_tf: list[tuple[str, int, int]]) -> str:
 
         contents: str = ""
         for line in term_doc_tf:
@@ -245,3 +149,97 @@ class Formatter:
             )
 
         return contents
+
+
+class DataFile:
+    def __init__(self, filename: Path) -> None:
+
+        self.filename: Path = filename
+        self.num_docs: int = 0
+        self.doc_begin_tag: str = ""
+        self.doc_end_tag: str = ""
+
+    def _ingest(self, doc_id: int, prep: Normalizer, *args: Any) -> None:
+        raise NotImplementedError
+
+    def ingest(self, *args: Any) -> None:
+
+        prep = Normalizer()
+        doc_id: int = -1
+        doc: str = ""
+
+        with open(self.filename) as fp:
+            for line in fp:
+
+                if line:
+                    if self.doc_begin_tag in line:
+                        doc_id = int(line[6:-2])
+                        self.num_docs += 1
+
+                    elif self.doc_end_tag in line:
+
+                        prep.set_document(doc)
+                        prep.process()
+                        self._ingest(doc_id, prep, *args)
+
+                        doc = ""
+
+                        if self.num_docs % DOC_PROC == 0:
+                            print("Normalized", self.num_docs, "documents")
+
+                    else:
+                        doc += line
+
+        print("Normalized", self.num_docs, "documents")
+
+
+class QueryFile(DataFile):
+    def __init__(self, filename: Path) -> None:
+
+        super().__init__(filename)
+
+        self.doc_begin_tag: str = "<Q ID="
+        self.doc_end_tag: str = "</Q>"
+
+    def _ingest(
+        self, doc_id: int, prep: Normalizer, tokens: dict[int, generator[str]]
+    ) -> None:
+
+        tokens[doc_id] = prep.get_tokens()
+
+
+class CorpusFile(DataFile):
+    def __init__(self, filename: Path) -> None:
+
+        super().__init__(filename)
+
+        self.doc_begin_tag: str = "<P ID="
+        self.doc_end_tag: str = "</P>"
+
+        self.df_file: str = f"outputs/stats/{filename.stem}_df"
+        self.tf_file: str = f"outputs/stats/{filename.stem}_tf"
+        self.len_file: str = f"outputs/stats/{filename.stem}_len"
+        self.stats_file: str = f"outputs/stats/{filename.stem}_summary"
+        self.ranking_file: str = f"outputs/stats/{filename.stem}_rank"
+        self.dict_file: str = f"outputs/stats/{filename.stem}_dict"
+
+        self.meta_file: str = f"outputs/tmp/{filename.stem}_ndocs"
+        self.tdt_file: str = f"outputs/tmp/{filename.stem}_tdt"
+        self.sorted_tdt_chunk_file: str = f"outputs/tmp/{filename.stem}_chunk_"
+        self.sorted_tdt_file: str = f"outputs/tmp/{filename.stem}_sort"
+
+        self.inv_file: str = f"outputs/bin/{filename.stem}_if"
+
+    def _ingest(
+        self,
+        doc_id: int,
+        prep: Normalizer,
+        lex: Lexer,
+        term_doc_tf: list[tuple[str, int, int]],
+    ) -> None:
+
+        # add processed tokens to the lexer
+        lex.add(prep.get_tokens())
+
+        # save records of term-DocID-tf
+        term_doc_tf.extend(lex.get_term_docid_tf(doc_id))
