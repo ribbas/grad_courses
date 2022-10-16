@@ -3,6 +3,8 @@
 skinparam linetype polyline
 skinparam linetype ortho
 left to right direction
+skinparam backgroundColor transparent
+skinparam classBackgroundColor fff
 
 namespace Information_Retrieval {
 

@@ -62,7 +62,7 @@ class InformationRetrieval:
         if self.freq_loaded:
             IO.dump(self.corpus.tdt_file, self.term_doc_tf_str)
             IO.dump_json(self.corpus.df_file, self.df)
-            IO.dump_json(self.corpus.tf_file, self.cf)
+            IO.dump_json(self.corpus.cf_file, self.cf)
             IO.dump(self.corpus.meta_file, str(self.corpus.num_docs))
 
         else:

@@ -19,7 +19,7 @@ class IDX:
 
         # dictionary indices
         OF = 1  # offset
-        WID = 2  # length
+        WID = 2  # width
         DF = 3  # document frequency
 
     class INVF:
