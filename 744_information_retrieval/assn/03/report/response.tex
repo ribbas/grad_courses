@@ -1,5 +1,6 @@
 \documentclass[11pt]{article}
 
+\usepackage{array}
 \usepackage{parskip}
 \usepackage{graphicx}
 \usepackage{amsmath}
@@ -9,6 +10,8 @@
 \usepackage{lmodern}
 \usepackage[autostyle, english = american]{csquotes}
 \MakeOuterQuote{"}
+
+\newcolumntype{L}[1]{>{\arraybackslash}m{#1}}
 
 \usepackage{pythonhighlight}
 
@@ -104,12 +107,55 @@ The \texttt{InvertedFile} class received the following modifications:
 \subsubsection{\texttt{retriever.Retriever}}
 The\texttt{Retriever} class was added to compute document weights and rank queries.
 
-The class precomputes document weights to save to a file for repeated use.
+The class precomputes document lengths to save to a file for repeated use. The document lengths are computed by reading the pre-generated inverted file and walking through each of the terms in the dictionary. The partial lengths of the documents are computed by adding the square of the TF-IDF of each of the term. The TF-IDF of a term is the product of its term frequency saved in the postings list of the inverted file and the logarithm of the inverse of its postings length. Once the entire inverted file is processed, the square root of each of the document partial lengths are computed and stored to file as the document vector lengths.
+
+Once the document lengths have been computed, the class can process queries to compute similarities between its term weights against all of the documents in the corpus to generate rankings. The rankings are based on the cosine similarities between the query and the documents. The similarities are determined by evaluating the dot product of the query with each of the "relevant" documents and dividing the value with the product of their lengths. A document is considered "relevant" if it contains at least one of the query terms.
+
+Generating this ranking is computationally expensive, even with the precomputed document lengths. The rankings of the query prompts were generated on a Debian-based Linux virtual machine with 2 cores, and generating the top 100 rankings for 50 queries per file may take hours to execute serially. Therefore, the class has been optimized to compute weights in parallel if the number of relevant documents exceed a threshold. The threshold value is assigned arbitrarily; 75,000 documents for \textit{cord19.topics.keyword.txt} and 90,000 documents for \textit{cord19.topics.questions.txt}.
+
+\subsection{\texttt{Output Files}}
+With the addition of several processes that rely on saving progress by writing no disk, the program makes use of numerous temporary files. The following table provides descriptions of each of the files:
+
+\begin{table}[h]
+    \begin{center}
+        
+        \begin{tabular}{| L{3.5cm} | L{12cm} |}
+        \hline
+        \textbf{File name} & \textbf{Description}
+        \\ \hline
+        corpus\_df.txt & Document frequencies of each normalized terms in the dictionary
+        \\ \hline
+        corpus\_cf.json & Relative term frequencies of each normalized terms in the dictionary
+        \\ \hline
+        corpus\_summary.txt & Summary statistics of the corpus as described in Assignment 1
+        \\ \hline
+        corpus\_len.json & Vector lengths of each of the documents in the corpus
+        \\ \hline
+        corpus\_rank.txt & Rankings generated from a query file sorted and formatted as described in the prompt
+        \\ \hline
+        corpus\_dict.json & Dictionary of the corpus containing each of the normalized terms mapping to their term index, inverted file offset, inverted file postings width, and their document frequency respectively
+        \\ \hline
+        corpus\_ndocs.txt & Number of documents in the corpus; this value is saved on disk to avoid having to reading large corpuses multiple times
+        \\ \hline
+        corpus\_tdt.txt & The term-docID-term frequency records saved to file after the entire corpus is processed
+        \\ \hline
+        corpus\_chunk\_$i$.txt ($i=0$ to $N$) & The sorted chunks of \texttt{corpus\_tdt.txt}; each of these  $N$ files are limited to \texttt{const.CHUNK\_SIZE} lines
+        \\ \hline
+        corpus\_sort.txt & The final sorted \texttt{corpus\_tdt.txt} file after merging all of its sorted chunks
+        \\ \hline
+        corpus\_if.bin & The inverted index file of the corpus
+        \\ \hline
+        \end{tabular}
+
+    \end{center}
+    \caption{Sizes of Files Computed Through the \texttt{stat} Command on a Debian Based Linux}
+
+\end{table}
+
 
 
 \section{Statistics and Observations}
-With the modifications made to the text normalization process, the statistics generated from the input file have changed. The new top 10 more frequent tokens now include "market", "announc", and "report", which are terms that expected in headlines.
-
+\textit{cord19.topics.questions.txt}
 In terms of the inverted files and dictionaries, the space they occupy on disk combined are significantly lower than the original document.
 
 \begin{table}[h]

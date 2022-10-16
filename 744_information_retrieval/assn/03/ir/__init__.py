@@ -26,7 +26,7 @@ class InformationRetrieval:
     def load_freqs(self) -> None:
 
         self.df = IO.read_json(self.corpus.df_file)
-        self.cf = IO.read_json(self.corpus.tf_file)
+        self.cf = IO.read_json(self.corpus.cf_file)
 
         self.term_doc_tf_str = IO.read(self.corpus.tdt_file)
         self.freq_loaded = True

@@ -217,7 +217,7 @@ class CorpusFile(DataFile):
         self.doc_end_tag: str = "</P>"
 
         self.df_file: str = f"outputs/stats/{filename.stem}_df"
-        self.tf_file: str = f"outputs/stats/{filename.stem}_tf"
+        self.cf_file: str = f"outputs/stats/{filename.stem}_cf"
         self.len_file: str = f"outputs/stats/{filename.stem}_len"
         self.stats_file: str = f"outputs/stats/{filename.stem}_summary"
         self.ranking_file: str = f"outputs/stats/{filename.stem}_rank"
