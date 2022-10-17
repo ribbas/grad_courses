@@ -3,6 +3,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{array}
+\usepackage[shortlabels]{enumitem}
 \usepackage{caption}
 \usepackage{colortbl}
 \usepackage{graphicx}
@@ -40,19 +41,19 @@
         \begin{enumerate}
             \item bias-variance tradeoff
 
-            \textbf{Answer:}
+            \textbf{Answer:} Bias is the difference between the average prediction of the model and the expected value, while variance is the measure of the spread of the data. High bias oversimplifies the model which leads to consistent errors, while high variance leads to overfitting models. The bias-variance tradeoff refers to the tradeoff between those 2 metrics such that they do not underfit or overfit the model.
 
             \item k-fold cross-validation
 
-            \textbf{Answer:}
+            \textbf{Answer:} K-fold cross-validation is typically required in models involved with limited data. It is a method where the data is shuffled and resampled into K-groups to evaluate the model.
 
             \item macro-averaging vs. micro-averaging
 
-            \textbf{Answer:}
+            \textbf{Answer:} Macro-averaging gives equal weight to each class by computing their average, while micro-averaging prioritizes each per-document classification decision by pooling them across classes to create contingency tables.
 
             \item soft margin
 
-            \textbf{Answer:}
+            \textbf{Answer:} 
 
         \end{enumerate}
 
@@ -60,11 +61,10 @@
 
         \textbf{Answer:}
 
-        \item (50\%) Naïve Bayes using the Binomial (also known as Bernoulli) model. First calculate estimates of P(c) and P(w|c) given the following training sentences. There are only three classes: Travel, Business, and Health. You should not use any smoothing. For features you should only use the following seven vocabulary terms: {denver, employers, florida, hospital, jobs, nurses, vacation} and you should ignore all other words and any punctuation. Next compute the probability of each class for the two test documents A \& B below. Finally, indicate which is the predicted (i.e., the most likely) class for each test document. Please read these directions thoroughly, count carefully, and do show all of your work. Report probabilities using scientific notation (e.g., $1.563 \times 10^{-5}$) with three digits after the decimal point.
+        \item (50\%) Naïve Bayes using the Binomial (also known as Bernoulli) model. First calculate estimates of P(c) and P(w|c) given the following training sentences. There are only three classes: Travel, Business, and Health. You should not use any smoothing. For features you should only use the following seven vocabulary terms: \{denver, employers, florida, hospital, jobs, nurses, vacation\} and you should ignore all other words and any punctuation. Next compute the probability of each class for the two test documents A \& B below. Finally, indicate which is the predicted (i.e., the most likely) class for each test document. Please read these directions thoroughly, count carefully, and do show all of your work. Report probabilities using scientific notation (e.g., $1.563 \times 10^{-5}$) with three digits after the decimal point.
 
-        Training data
-
-        \begin{enumerate}
+        \textbf{Training data:}
+        \begin{enumerate}[1)]
             \item Travel: denver hospital administrator takes vacation in florida
             \item Travel: nurses plan a trip to florida
             \item Travel: employers offering more jobs with vacation benefits
@@ -77,13 +77,151 @@
             \item Health: denver hospital says local employers have jobs for nurses
         \end{enumerate}
 
-        Test documents:
-        \begin{enumerate}
+        \textbf{Test documents:}
+        \begin{enumerate}[1)]
             \item florida nurses take skiing vacation in denver
             \item jobs available for experienced nurses at florida hospital
         \end{enumerate}
 
-        \textbf{Answer:}
+        \textbf{Answer:} The probabilities, P(c) and P(w|c), are calculated with the following equations:
+
+        \begin{equation*}
+            P(c_i) = \frac{count(c_i)}{N}, \ N=10
+        \end{equation*}
+
+        \begin{equation*}
+            P(w_j|c_i) = \frac{count(w_j=1 \in c_i)}{count(c_i)}
+        \end{equation*}
+
+        Computing the probabilities for the classes, Travel, Business, and Health:
+        \begin{align*}
+            P(\text{Travel}) &= \frac{3}{10} \\
+            P(\text{Business}) &= \frac{3}{10} \\
+            P(\text{Health}) &= \frac{4}{10}
+        \end{align*}
+
+        Computing the probabilities for the terms, \{denver, employers, florida, hospital, jobs, nurses, vacation\}:
+
+        \begin{align*}
+            P(\text{denver}|\text{Travel}) = \frac{1}{3} \\
+            P(\text{denver}|\text{Business}) = \frac{1}{3} \\
+            P(\text{denver}|\text{Health}) = \frac{1}{4}
+        \end{align*}
+
+        \begin{align*}
+            P(\text{employers}|\text{Travel}) = \frac{1}{3} \\
+            P(\text{employers}|\text{Business}) = \frac{2}{3} \\
+            P(\text{employers}|\text{Health}) = \frac{1}{4}
+        \end{align*}
+
+        \begin{align*}
+            P(\text{florida}|\text{Travel}) = \frac{2}{3} \\
+            P(\text{florida}|\text{Business}) = \frac{1}{3} \\
+            P(\text{florida}|\text{Health}) = \frac{1}{4}
+        \end{align*}
+
+        \begin{align*}
+            P(\text{hospital}|\text{Travel}) = \frac{1}{3} \\
+            P(\text{hospital}|\text{Business}) = \frac{1}{3} \\
+            P(\text{hospital}|\text{Health}) = \frac{3}{4}
+        \end{align*}
+
+        \begin{align*}
+            P(\text{jobs}|\text{Travel}) = \frac{1}{3} \\
+            P(\text{jobs}|\text{Business}) = \frac{2}{3} \\
+            P(\text{jobs}|\text{Health}) = \frac{1}{4}
+        \end{align*}
+
+        \begin{align*}
+            P(\text{nurses}|\text{Travel}) = \frac{1}{3} \\
+            P(\text{nurses}|\text{Business}) = \frac{1}{3} \\
+            P(\text{nurses}|\text{Health}) = \frac{3}{4}
+        \end{align*}
+
+        \begin{align*}
+            P(\text{vacation}|\text{Travel}) = \frac{2}{3} \\
+            P(\text{vacation}|\text{Business}) = \frac{1}{3} \\
+            P(\text{vacation}|\text{Health}) = \frac{1}{4}
+        \end{align*}
+
+        Summarizing the probabilities into a table: 
+
+        \begin{table}[ht]
+            \centering
+            \begin{tabular}[t]{|c|c|c|c|}
+                \hline
+                \textbf{Term} & \textbf{P(w|Travel)} & \textbf{P(w|Business)} & \textbf{P(w|Health)}
+                \\ \hline
+                denver      & 0.33 & 0.33 & 0.25
+                \\ \hline
+                employers   & 0.33 & 0.66 & 0.25
+                \\ \hline
+                florida     & 0.66 & 0.33 & 0.25
+                \\ \hline
+                hospital    & 0.33 & 0.33 & 0.75
+                \\ \hline
+                jobs        & 0.33 & 0.66 & 0.25
+                \\ \hline
+                nurses      & 0.33 & 0.33 & 0.75
+                \\ \hline
+                vacation    & 0.66 & 0.33 & 0.25
+                \\ \hline
+            \end{tabular}
+        \end{table}
+        \newpage
+
+        To find the best class, the following equation can be used:
+        \begin{equation*}
+            \text{BestClass} = P(c_i) \cdot \prod_{j=1}^{\text{\# words}}P(w_j|c_i)
+        \end{equation*}
+
+        After normalization, the first test document becomes: 
+        
+        $D_1=$\{"florida", "nurses", "vacation", "denver"\}
+        \begin{align*}
+            P(\text{Travel}|D_1) &= P(\text{Travel}) \cdot P(\text{denver}|\text{Travel}) \cdot P(\text{employers}|\text{Travel}) \cdot P(\text{florida}|\text{Travel}) \\
+            & \ \ \cdot P(\text{hospital}|\text{Travel}) \cdot P(\text{jobs}|\text{Travel}) \cdot P(\text{nurses}|\text{Travel}) \cdot P(\text{vacation}|\text{Travel}) \\
+            &= (0.30)(0.33)(1 - 0.33)(0.66)(1 - 0.33)(1 - 0.33)(0.33)(0.66) \\
+            &= 4.390\times10^{-3}
+        \end{align*}
+        \begin{align*}
+            P(\text{Business}|D_1) &= P(\text{Business}) \cdot P(\text{denver}|\text{Business}) \cdot P(\text{employers}|\text{Business}) \cdot P(\text{florida}|\text{Business}) \\
+            & \ \ \cdot P(\text{hospital}|\text{Business}) \cdot P(\text{jobs}|\text{Business}) \cdot P(\text{nurses}|\text{Business}) \cdot P(\text{vacation}|\text{Business}) \\
+            &= (0.30)(0.33)(1 - 0.66)(0.33)(1 - 0.33)(1 - 0.66)(0.33)(0.33) \\
+            &= 2.743\times10^{-4}
+        \end{align*}
+        \begin{align*}
+            P(\text{Health}|D_1) &= P(\text{Health}) \cdot P(\text{denver}|\text{Health}) \cdot P(\text{employers}|\text{Health}) \cdot P(\text{florida}|\text{Health}) \\
+            & \ \ \cdot P(\text{hospital}|\text{Health}) \cdot P(\text{jobs}|\text{Health}) \cdot P(\text{nurses}|\text{Health}) \cdot P(\text{vacation}|\text{Health}) \\
+            &= (0.40)(0.25)(1 - 0.25)(0.25)(1 - 0.75)(1 - 0.25)(0.75)(0.25)            \\
+            &= 6.592\times10^{-4}
+        \end{align*}
+
+        Therefore, the best class for $D_1$ is "Travel".
+
+        After normalization, the second test document becomes:
+        
+        $D_2=$\{"jobs", "nurses", "florida", "hospital"\}
+        \begin{align*}
+            P(\text{Travel}|D_2) &= P(\text{Travel}) \cdot P(\text{denver}|\text{Travel}) \cdot P(\text{employers}|\text{Travel}) \cdot P(\text{florida}|\text{Travel}) \\
+            & \ \ \cdot P(\text{hospital}|\text{Travel}) \cdot P(\text{jobs}|\text{Travel}) \cdot P(\text{nurses}|\text{Travel}) \cdot P(\text{vacation}|\text{Travel}) \\
+            &= (0.30)(1 - 0.33)(1 - 0.33)(0.66)(0.33)(0.33)(0.33)(1 - 0.66) \\
+            &= 1.097\times10^{-3}
+        \end{align*}
+        \begin{align*}
+            P(\text{Business}|D_2) &= P(\text{Business}) \cdot P(\text{denver}|\text{Business}) \cdot P(\text{employers}|\text{Business}) \cdot P(\text{florida}|\text{Business}) \\
+            & \ \ \cdot P(\text{hospital}|\text{Business}) \cdot P(\text{jobs}|\text{Business}) \cdot P(\text{nurses}|\text{Business}) \cdot P(\text{vacation}|\text{Business}) \\
+            &= (0.30)(1 - 0.33)(1 - 0.66)(0.33)(0.33)(0.66)(0.33)(1 - 0.33) \\
+            &= 1.097\times10^{-3}
+        \end{align*}
+        \begin{align*}
+            P(\text{Health}|D_2) &= P(\text{Health}) \cdot P(\text{denver}|\text{Health}) \cdot P(\text{employers}|\text{Health}) \cdot P(\text{florida}|\text{Health}) \\
+            & \ \ \cdot P(\text{hospital}|\text{Health}) \cdot P(\text{jobs}|\text{Health}) \cdot P(\text{nurses}|\text{Health}) \cdot P(\text{vacation}|\text{Health}) \\
+            &= (0.40)(1 - 0.25)(1 - 0.25)(0.25)(0.75)(0.25)(0.75)(1 - 0.25)            \\
+            &= 5.933\times10^{-3}
+        \end{align*}
+
+        Therefore, the best class for $D_2$ is "Health".
 
     \end{enumerate}
 
