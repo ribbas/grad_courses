@@ -107,20 +107,24 @@ The \texttt{InvertedFile} class received the following modifications:
 \subsection{New Classes}
 
 \subsubsection{\texttt{retriever.Retriever}}
-The\texttt{Retriever} class was added to compute document weights and rank queries.
+The \texttt{Retriever} class was added to compute document weights and rank queries.
 
 The class precomputes document lengths to save to a file for repeated use. The document lengths are computed by reading the pre-generated inverted file and walking through each of the terms in the dictionary. The partial lengths of the documents are computed by adding the square of the TF-IDF of each of the term. The TF-IDF of a term is the product of its term frequency saved in the postings list of the inverted file and the logarithm of the inverse of its postings length. Once the entire inverted file is processed, the square root of each of the document partial lengths are computed and stored to file as the document vector lengths.
 
-Once the document lengths have been computed, the class can process queries to compute similarities between its term weights against all of the documents in the corpus to generate rankings. The rankings are based on the cosine similarities between the query and the documents. The similarities are determined by evaluating the dot product of the query with each of the "relevant" documents and dividing the value with the product of their lengths. A document is considered "relevant" if it contains at least one of the query terms.
+After the document lengths have been computed, the class can process queries to compute similarities between its terms' weights against all of the documents in the corpus to generate rankings. The rankings are based on the cosine similarities between the query and the documents. The similarities are determined by evaluating the dot product of the query with each of the "relevant" documents and dividing the value with the product of their lengths. A document is considered "relevant" if it contains at least one of the query terms. Equation \ref{sim} describes how cosine similarity is computed between the query and a single relevant document by the class. 
+
+\begin{equation} \label{sim}
+    sim(D, Q) = \frac{D \cdot Q}{|D||Q|} = \frac{\sum_{i=1}^{t}{D_iQ_i}}{\sqrt{\sum_{i=1}^{t}{tfidf(D_i)^2}}\sqrt{\sum_{i=1}^{t}{tfidf(Q_i)^2}}}
+\end{equation}
 
 Generating this ranking is computationally expensive, even with the precomputed document lengths. The rankings of the query prompts were generated on a Debian-based Linux virtual machine with 2 cores, and generating the top 100 rankings for 50 queries per file may take hours to execute serially. Therefore, the class has been optimized to compute weights in parallel if the number of relevant documents exceed a threshold. The threshold value is assigned arbitrarily; 75,000 documents for \textit{cord19.topics.keyword.txt} and 90,000 documents for \textit{cord19.topics.question.txt}.
 
 \subsection{Output Files}
-With the addition of several processes that rely on saving progress by writing no disk, the program makes use of numerous temporary files. The following table provides descriptions of each of the files:
+With the addition of several processes that rely on saving progress by writing no disk, the program makes use of numerous temporary and final output files. Table \ref{files} provides descriptions of each of the files:
 
 \begin{table}[!ht]
     \caption{Description of the files used by the program}
-    \begin{center}
+    \begin{center} \label{files}
         
         \begin{tabular}{| L{3.5cm} | L{12cm} |}
         \hline
@@ -168,7 +172,7 @@ The following constants are used in the program:
 
 \begin{table}[!ht]
     \caption{Description of the constants used by the program. All of the values are located in \texttt{const.py}}
-    \begin{center}
+    \begin{center} \label{const}
 
         \begin{tabular}{| L{4cm} | L{1.5cm} | L{9cm} |}
         \hline
@@ -208,11 +212,13 @@ The following constants are used in the program:
 \newpage
 
 \section{Statistics}
-The following table details the storage used by the dictionary and inverted index files of \texttt{cord19.txt}; the combined space they occupied on disk are significantly lower than the corpus document.
+
+\subsection{File Sizes}
+Table \ref{sizes} details the storage used by the dictionary and inverted index files of \texttt{cord19.txt}; the combined space they occupied on disk are significantly lower than the corpus document.
 
 \begin{table}[!ht]
     \caption{Sizes of files computed through the \texttt{stat} command on a Debian-based Linux}
-    \begin{center}
+    \begin{center} \label{sizes}
 
         \begin{tabular}{| l | r | l |}
         \hline
@@ -232,6 +238,9 @@ The following table details the storage used by the dictionary and inverted inde
 
 \end{table}
 
+The generated files total to approximately 44\% of the corpus file in size.
+
+\subsection{Rankings}
 The following is the processed query terms and their weights of the first query of \textit{cord19.topics.keyword.txt}, "coronavirus origin":
 
 % {"coronavirus": 1.9400969473898837, "origin": 4.1451228967712135}
@@ -256,7 +265,7 @@ The following is the processed query terms and their weights of the first query 
 
 The rankings of \texttt{cord19.topics.keyword.txt} and \texttt{cord19.topics.question.txt} were generated in independent executions.
 
-\subsection{\texttt{cord19.topics.keyword.txt}}
+\subsubsection{\texttt{cord19.topics.keyword.txt}}
 The program took 998.231 seconds (approximately 16 minutes 38 seconds) in total to generate the rankings for the \texttt{cord19.topics.keyword.txt} queries. The following tables provide summary statistics of the queries and their executions:
 
 % {"ndocs": {"max": 121750, "mean": 66226.86, "median": 61488.0, "min": 49993},
@@ -331,7 +340,7 @@ The following is the top 10 terms occurring in the  \texttt{cord19.topics.keywor
 
 \end{table}
 
-\subsection{\texttt{cord19.topics.question.txt}}
+\subsubsection{\texttt{cord19.topics.question.txt}}
 The program took 2176.277 seconds (approximately 36 minutes 16 seconds) in total to generate the rankings for the \texttt{cord19.topics.question.txt} queries. The following tables provide summary statistics of the queries and their executions:
 
 % {'ndocs': {'max': 155723, 'mean': 101510.12, 'median': 105624.5, 'min': 39811},
@@ -415,7 +424,7 @@ The rankings for \texttt{cord19.topics.keyword.txt} and \texttt{cord19.topics.qu
 
         \begin{tabular}{| c | c | c |}
         \hline
-        \textbf{File} & \textbf{score $\leq 0.1$} & \textbf{score $\geq 0.9$}
+        \textbf{File} & \textbf{$0.1 \leq$ score $< 0.2$} & \textbf{score $\geq 0.9$}
         \\ \hline
         \texttt{sahmed80-a.txt} & 42 & 39
         \\ \hline
