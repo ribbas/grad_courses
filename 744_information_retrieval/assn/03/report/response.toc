@@ -1,0 +1,20 @@
+\contentsline {section}{\numberline {1}Introduction}{2}{}%
+\contentsline {section}{\numberline {2}Technical Background}{2}{}%
+\contentsline {subsection}{\numberline {2.1}Existing Classes}{2}{}%
+\contentsline {subsubsection}{\numberline {2.1.1}Driver}{2}{}%
+\contentsline {subsubsection}{\numberline {2.1.2}\texttt {lexer} Classes}{3}{}%
+\contentsline {subsubsection}{\numberline {2.1.3}\texttt {files} Classes}{4}{}%
+\contentsline {subsubsection}{\numberline {2.1.4}\texttt {invertedfile.InvertedFile}}{4}{}%
+\contentsline {subsection}{\numberline {2.2}New Classes}{4}{}%
+\contentsline {subsubsection}{\numberline {2.2.1}\texttt {retriever.Retriever}}{4}{}%
+\contentsline {subsection}{\numberline {2.3}Output Files}{5}{}%
+\contentsline {subsection}{\numberline {2.4}Constants}{5}{}%
+\contentsline {section}{\numberline {3}Statistics}{6}{}%
+\contentsline {subsection}{\numberline {3.1}File Sizes}{6}{}%
+\contentsline {subsection}{\numberline {3.2}Rankings}{7}{}%
+\contentsline {subsubsection}{\numberline {3.2.1}\texttt {cord19.topics.keyword.txt}}{7}{}%
+\contentsline {subsubsection}{\numberline {3.2.2}\texttt {cord19.topics.question.txt}}{7}{}%
+\contentsline {section}{\numberline {4}Observations}{8}{}%
+\contentsline {part}{Appendix}{9}{}%
+\contentsline {section}{\numberline {A}Source Code}{9}{}%
+\contentsline {section}{\numberline {B}Outputs}{24}{}%

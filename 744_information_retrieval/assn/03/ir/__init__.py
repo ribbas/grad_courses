@@ -25,8 +25,8 @@ class InformationRetrieval:
 
     def load_freqs(self) -> None:
 
-        self.df = IO.read_json(self.corpus.df_file)
-        self.cf = IO.read_json(self.corpus.cf_file)
+        self.df = IO.read_pickle(self.corpus.df_file)
+        self.cf = IO.read_pickle(self.corpus.cf_file)
 
         self.term_doc_tf_str = IO.read(self.corpus.tdt_file)
         self.freq_loaded = True
@@ -61,8 +61,8 @@ class InformationRetrieval:
 
         if self.freq_loaded:
             IO.dump(self.corpus.tdt_file, self.term_doc_tf_str)
-            IO.dump_json(self.corpus.df_file, self.df)
-            IO.dump_json(self.corpus.cf_file, self.cf)
+            IO.dump_pickle(self.corpus.df_file, self.df)
+            IO.dump_pickle(self.corpus.cf_file, self.cf)
             IO.dump(self.corpus.meta_file, str(self.corpus.num_docs))
 
         else:
@@ -102,7 +102,7 @@ class InformationRetrieval:
             inv_file = invf.get_inverted_file_raw()
             if_data = Packer.encode(inv_file)
             IO.dump_bin(self.corpus.inv_file, if_data)
-            IO.dump_json(self.corpus.dict_file, invf.get_dictionary())
+            IO.dump_pickle(self.corpus.dict_file, invf.get_dictionary())
 
         else:
             raise AttributeError("Corpus frequencies not generated yet")
@@ -111,7 +111,7 @@ class InformationRetrieval:
 
         self.invf = InvertedFile()
         inv_file = IO.read_bin(self.corpus.inv_file)
-        dictionary = IO.read_json(self.corpus.dict_file)
+        dictionary = IO.read_pickle(self.corpus.dict_file)
         self.num_docs = int(IO.read(self.corpus.meta_file))
         self.invf.set_inverted_file_bytes(inv_file)
         self.invf.set_dictionary(dictionary)
@@ -125,14 +125,14 @@ class InformationRetrieval:
         self.retr.compute_sum_of_squares()
         self.retr.compute_lengths()
 
-        IO.dump_json(self.corpus.len_file, self.retr.get_lengths())
+        IO.dump_pickle(self.corpus.len_file, self.retr.get_lengths())
 
     def generate_rankings(self, filename: Path) -> None:
 
         self.__load_inverted_file()
 
         self.retr = Retriever(self.invf, self.num_docs)
-        lengths = IO.read_json(self.corpus.len_file)
+        lengths = IO.read_pickle(self.corpus.len_file)
         self.retr.set_lengths(lengths)
         self.retr.decode_inverted_file()
 

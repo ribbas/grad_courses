@@ -2,6 +2,7 @@
 
 \usepackage{appendix}
 \usepackage{array}
+\usepackage{caption}
 \usepackage{parskip}
 \usepackage{graphicx}
 \usepackage{amsmath}
@@ -11,7 +12,7 @@
 \usepackage{lmodern}
 \usepackage[autostyle, english = american]{csquotes}
 \MakeOuterQuote{"}
-
+\captionsetup[table]{skip=5pt}
 \newcolumntype{L}[1]{>{\arraybackslash}m{#1}}
 
 \usepackage{pythonhighlight}
@@ -132,15 +133,15 @@ With the addition of several processes that rely on saving progress by writing n
         \\ \hline
         corpus\_df.txt & Document frequencies of each normalized terms in the dictionary in the format: \newline \texttt{\{"bird": 8, "dog": 4, ...\}}
         \\ \hline
-        corpus\_cf.json & Relative term frequencies of each normalized terms in the dictionary in the format: \newline \texttt{\{"bird": 21, "dog": 10, ...\}}
+        corpus\_cf.pickle & Relative term frequencies of each normalized terms in the dictionary in the format: \newline \texttt{\{"bird": 21, "dog": 10, ...\}}
         \\ \hline
         corpus\_summary.txt & Summary statistics of the corpus as described in Assignment 1
         \\ \hline
-        corpus\_len.json & Vector lengths of each of the documents in the corpus in the format: \newline \texttt{{[0.0, 3.0, 3.7416573867739413, ...]}}
+        corpus\_len.pickle & Vector lengths of each of the documents in the corpus in the format: \newline \texttt{{[0.0, 3.0, 3.7416573867739413, ...]}}
         \\ \hline
         corpus\_rank.txt & Rankings generated from a query file sorted and formatted as described in the prompt
         \\ \hline
-        corpus\_dict.json & Dictionary of the corpus containing each of the normalized terms mapping to their term index, inverted file offset, inverted file postings width, and their document frequency in the format: \newline \texttt{\{"aardvark": [0, 0, 8, 4], "bird": [1, 8, 16, 8], ...\}}
+        corpus\_dict.pickle & Dictionary of the corpus containing each of the normalized terms mapping to their term index, inverted file offset, inverted file postings width, and their document frequency in the format: \newline \texttt{\{"aardvark": [0, 0, 8, 4], "bird": [1, 8, 16, 8], ...\}}
         \\ \hline
         corpus\_ndocs.txt & Number of documents in the corpus; this value is saved on disk to avoid having to reading large corpuses multiple times
         \\ \hline
@@ -226,11 +227,11 @@ Table \ref{sizes} details the storage used by the dictionary and inverted index 
         \hline
         cord19.txt & 359,302,564 & Input corpus file
         \\ \hline
-        cord19\_dict.json & 8,830,004 & Generated dictionary JSON file
+        cord19\_dict.pickle & 6,655,642 & Generated dictionary Pickle file
         \\ \hline
         cord19\_if.bin & 145,476,192 & Binary inverted index file
         \\ \hline
-        cord19\_len.json & 3,717,192 & Precomputed document lengths
+        cord19\_len.pickle & 1,721,216 & Precomputed document lengths
         \\ \hline
         \end{tabular}
 
@@ -238,7 +239,7 @@ Table \ref{sizes} details the storage used by the dictionary and inverted index 
 
 \end{table}
 
-The generated files total to approximately 44\% of the corpus file in size.
+The generated files total to approximately 42.8\% of the corpus file in size.
 
 \subsection{Rankings}
 The following is the processed query terms and their weights of the first query of \textit{cord19.topics.keyword.txt}, "coronavirus origin":
@@ -253,9 +254,9 @@ The following is the processed query terms and their weights of the first query 
         \hline
         \textbf{Normalized term} & \textbf{Weight}
         \\ \hline
-        "coronavirus" & 1.9400969473898837
+        coronavirus & 1.9400969473898837
         \\ \hline
-        "origin" & 4.1451228967712135
+        origin & 4.1451228967712135
         \\ \hline
         \end{tabular}
 
@@ -314,25 +315,25 @@ The following is the top 10 terms occurring in the  \texttt{cord19.topics.keywor
         \hline
         \textbf{Term} & \textbf{Number of Occurrences}
         \\ \hline
-        "coronavirus" & 40
+        coronavirus & 40
         \\ \hline
-        "covid" & 7
+        covid & 7
         \\ \hline
-        "impact" & 4
+        impact & 4
         \\ \hline
-        "test" & 3
+        test & 3
         \\ \hline
-        "respons" & 2
+        respons & 2
         \\ \hline
-        "immun" & 2
+        immun & 2
         \\ \hline
-        "mask" & 2
+        mask & 2
         \\ \hline
-        "vaccin" & 2
+        vaccin & 2
         \\ \hline
-        "sar" & 2
+        sar & 2
         \\ \hline
-        "cov" & 2
+        cov & 2
         \\ \hline
         \end{tabular}
 
@@ -389,25 +390,25 @@ The following is the top 10 terms occurring in the  \texttt{cord19.topics.questi
         \hline
         \textbf{Term} & \textbf{Number of Occurrences}
         \\ \hline
-        "covid" & 31
+        covid & 31
         \\ \hline
-        "sar" & 9
+        sar & 9
         \\ \hline
-        "cov" & 9
+        cov & 9
         \\ \hline
-        "coronavirus" & 8
+        coronavirus & 8
         \\ \hline
-        "infect" & 6
+        infect & 6
         \\ \hline
-        "impact" & 6
+        impact & 6
         \\ \hline
-        "test" & 4
+        test & 4
         \\ \hline
-        "relat" & 4
+        relat & 4
         \\ \hline
-        "prevent" & 4
+        prevent & 4
         \\ \hline
-        "complic" & 4
+        complic & 4
         \\ \hline
         \end{tabular}
 

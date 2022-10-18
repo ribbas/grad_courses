@@ -1,6 +1,6 @@
 import heapq
-import json
 from pathlib import Path
+import pickle
 
 from .const import DOC_PROC, JHED
 from .lexer import Lexer, LexerStatistics
@@ -48,17 +48,17 @@ class IO:
         print(f"Dumped to '{filename}.txt'")
 
     @staticmethod
-    def read_json(filename: str) -> Any:
+    def read_pickle(filename: str) -> Any:
 
-        with open(f"{filename}.json") as fp:
-            return json.loads(fp.read())
+        with open(f"{filename}.pickle", "rb") as fp:
+            return pickle.load(fp)
 
     @staticmethod
-    def dump_json(filename: str, data: Any) -> None:
+    def dump_pickle(filename: str, data: Any) -> None:
 
-        with open(f"{filename}.json", "w") as fp:
-            json.dump(data, fp)
-        print(f"Dumped json to '{filename}.json'")
+        with open(f"{filename}.pickle", "wb") as fp:
+            pickle.dump(data, fp, protocol=pickle.HIGHEST_PROTOCOL)
+        print(f"Dumped Pickle to '{filename}.pickle'")
 
     @staticmethod
     def read_bin(filename: str) -> bytes:

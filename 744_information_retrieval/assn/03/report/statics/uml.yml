@@ -14,8 +14,8 @@ namespace Information_Retrieval {
     + dumplines(filename: str, data: iterable)
     + dump_sorted_chunks(filename: str, chunk_filenames: list[str])
     + dump(filename: str, data: str)
-    + read_json(filename: str): Any
-    + dump_json(filename: str, data: Any)
+    + read_pickle(filename: str): Any
+    + dump_pickle(filename: str, data: Any)
     + read_bin(filename: str): bytes
     + dump_bin(filename: str, data: bytes)
   }
