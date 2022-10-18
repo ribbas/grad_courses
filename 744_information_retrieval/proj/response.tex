@@ -1,0 +1,33 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{parskip}
+\usepackage{caption}
+\usepackage{colortbl}
+\usepackage{graphicx}
+\usepackage{listings}
+
+\usepackage[autostyle, english=american]{csquotes}
+\MakeOuterQuote{"}
+
+% % margins
+% \topmargin=-0.45in
+% \evensidemargin=0in
+% \oddsidemargin=0in
+% \textwidth=6.5in
+% \textheight=9.0in
+% \headsep=0.25in
+
+\title{605.744: Information Retrieval \\ Project Proposal: Emotion Analysis of Song Lyrics}
+\author{Sabbir Ahmed}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+    The DepecheMood Emotion Lexica (https://arxiv.org/abs/1405.1605 and https://arxiv.org/abs/1810.03660) provide frequencies of words per emotions extracted from crowd-annotated news. The emotions include: afraid, amused, angry, annoyed, dont\_care, happy, inspired, and sad.
+
+    The vocabulary of the lexica are relatively limited; less than 175,000 unstemmed terms across the datasets. However, the vocabulary consist of common words in English, including those considered to be stopwords. These types of words are common in popular song lyrics as well. These lyrics can be easily gathered from a combination of datasets on Kaggle, the musiXmatch dataset (http://millionsongdataset.com/musixmatch/) or through web scraping. Extracting emotion annotations from song lyrics can help classify songs into mood-based playlists, similar to algorithms by popular music streaming services like Spotify.
+
+\end{document}
