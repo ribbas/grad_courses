@@ -1,0 +1,76 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{graphicx}
+
+\usepackage[autostyle, english = american]{csquotes}
+\MakeOuterQuote{"}
+\captionsetup[table]{skip=1pt}
+
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+
+% margins
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\title{605.744: Information Retrieval \\ Problem Set (Module 8)}
+\author{Sabbir Ahmed}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+    \begin{enumerate}
+
+        \item (20\%) Name three significant issues that arise when using dictionaries to translate queries in cross-language
+        information retrieval and briefly explain why they create a problem.
+
+        \textbf{Answer:}
+
+        \item (20\%) Give two advantages and one disadvantage of using character n-gram tokenization for multilingual
+        text retrieval.
+
+        \textbf{Answer:}
+
+        \item (20\%) For this question consider an English alphabet to consist of just 26 (lower-cased) letters, 10 digits,
+        and a space character. And consider there to be exactly 10,000 characters in Chinese. Note, spaces are
+        not used in written Chinese.
+
+        \begin{enumerate}
+            \item How many possible character 4-grams are there in English? Using Table 5.1 (IIR) how does this number
+            compare to a typical vocabulary size when words are used?
+
+            \textbf{Answer:}
+
+            \item How many possible indexing terms will there be if 2-gram indexing is used for Chinese? What if 3-grams
+            are used?
+
+            \textbf{Answer:}
+
+            \item What difficulties might occur when indexing a document collection if the vocabulary size (i.e., number of
+            indexing terms) is extremely large?
+
+            \textbf{Answer:}
+
+        \end{enumerate}
+
+        \item (20\%) What advantages does query translation have over document translation in cross-language
+        information retrieval (CLIR)?
+
+        \textbf{Answer:}
+
+        \item (20\%) Briefly describe what pre-translation query expansion (sometimes called pre-translation feedback)
+        is and then explain why it is helpful in dictionary-based cross-language information retrieval.
+
+        \textbf{Answer:}
+
+    \end{enumerate}
+
+\end{document}
