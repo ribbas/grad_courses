@@ -1,0 +1,56 @@
+\documentclass[11pt]{article}
+
+\usepackage{appendix}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{parskip}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{listings}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[autostyle, english = american]{csquotes}
+\MakeOuterQuote{"}
+\captionsetup[table]{skip=5pt}
+\newcolumntype{L}[1]{>{\arraybackslash}m{#1}}
+
+\usepackage{pythonhighlight}
+
+% Margins
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\title{605.744: Information Retrieval \\ Programming Assignment \#4: Inverted Files}
+\author{Sabbir Ahmed}
+\date{\today}
+
+\begin{document}
+
+\newpage
+\clearpage
+
+\appendix
+\addcontentsline{toc}{part}{Appendix}%
+
+\section{Source Code} \label{appendix:src}
+
+\inputpython{../ir/files.py}{ir/files.py}
+\inputpython{../ir/invertedfile.py}{ir/invertedfile.py}
+\inputpython{../ir/lexer.py}{ir/lexer.py}
+\inputpython{../ir/normalize.py}{ir/normalize.py}
+\inputpython{../ir/packer.py}{ir/packer.py}
+\inputpython{../ir/retriever.py}{ir/retriever.py}
+\inputpython{../ir/types.py}{ir/types.py}
+
+\inputpython{../run.py}{run.py}
+
+\section{Outputs} \label{appendix:outputs}
+
+\lstinputlisting[caption=Statistics of "cord19.txt",basicstyle=\small]{../outputs/stats/cord19_summary.txt}
+
+\end{document}
