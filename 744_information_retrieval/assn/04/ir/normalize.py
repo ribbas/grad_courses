@@ -66,11 +66,7 @@ class Normalizer:
 
         return (self.snow.stem(token) for token in tokens)
 
-    def get_tokens(self) -> generator[str]:
-
-        return self.tokens
-
-    def process(self, document: str) -> None:
+    def __call__(self, document: str) -> None:
 
         # convert the entire document to lower-case
         doc_lc: str = self.__to_lower_case(document)
@@ -84,4 +80,4 @@ class Normalizer:
         # stem tokens
         self.tokens = self.__stem(self.tokens)
 
-        return self.tokens
+        return list(self.tokens)

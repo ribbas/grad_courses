@@ -1,37 +1,64 @@
 from pathlib import Path
+from pprint import pprint
 
-from .files import CorpusFile, Formatter, IO, QueryFile
+import numpy as np
+import scipy
+from sklearn.metrics import accuracy_score, confusion_matrix
 
-# from .invertedfile import InvertedFile
-# from .lexer import Lexer, LexerStatistics
-# from .packer import Packer
-# from .retriever import Retriever
-# from .types import counter, generator
+
+from .const import FEATURE_FIELDS, TARGET_FIELD
+from .files import CorpusFile, Formatter, IO
+from .vectorizer import Vectorizer
+from .types import Any
 
 
 class InformationRetrieval:
-    def __init__(self, filename: Path) -> None:
+    def __init__(self, train_filename: Path, test_filename: Path) -> None:
 
-        self.corpus: CorpusFile = CorpusFile(filename)
-
-        # self.invf: InvertedFile
-        # self.retr: Retriever
-
-        # self.df: counter
-        # self.cf: counter
+        self.train_corpus: CorpusFile = CorpusFile(train_filename)
+        self.test_corpus: CorpusFile = CorpusFile(test_filename)
+        self.vec = Vectorizer()
 
         self.num_docs: int = 0
-        self.freq_loaded = False
-        self.term_doc_tf_str: str = ""
 
-    def generate_freqs(self) -> None:
+    def describe(self, data):
 
-        # lex = Lexer()
+        unique, counts = np.unique(data, return_counts=True)
+        print(dict(zip(unique, counts)))
+        print(scipy.stats.describe(data))
 
-        term_doc_tf: list[tuple[str, int, int]] = []
-        self.corpus.ingest()
+    def extract_features(
+        self, categories: tuple[str, ...], corpus: CorpusFile
+    ) -> tuple[Any, dict[str, list[int | str]]]:
 
-        # self.df = lex.get_df()
-        # self.cf = lex.get_cf()
-        # self.term_doc_tf_str: str = Formatter.format_term_doc_tf(term_doc_tf)
-        # self.freq_loaded = True
+        docs = corpus.ingest()
+        target = np.array([i[TARGET_FIELD] for i in docs])
+        features: dict[str, list[int | str]] = {}
+
+        for feature in categories:
+            feature_list = []
+            for row in docs:
+                feature_list.append(row[feature])
+            features[feature] = feature_list
+
+        return target, features
+
+    def extract_train_features(
+        self, categories: tuple[str, ...] = FEATURE_FIELDS
+    ):
+
+        target, features = self.extract_features(categories, self.train_corpus)
+        self.describe(target)
+
+        self.vec.tfidf_fit_transform(features["title"], target)
+
+    def extract_test_features(
+        self, categories: tuple[str, ...] = FEATURE_FIELDS
+    ):
+
+        target, features = self.extract_features(categories, self.test_corpus)
+        predicted = self.vec.predict(features["title"])
+        print("accuracy %s" % accuracy_score(predicted, target))
+
+        print(self.describe(predicted))
+        print(np.mean(predicted == target))

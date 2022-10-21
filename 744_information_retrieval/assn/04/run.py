@@ -15,81 +15,23 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "-f",
-        "--freq",
+        "--train",
         action=argparse.BooleanOptionalAction,
         help="generate frequencies",
     )
-    parser.add_argument(
-        "-s",
-        "--stat",
-        action=argparse.BooleanOptionalAction,
-        help="generate frequency statistics",
-    )
-    parser.add_argument(
-        "-d",
-        "--dump",
-        action=argparse.BooleanOptionalAction,
-        help="save frequencies data to file",
-    )
-    parser.add_argument(
-        "-l",
-        "--load",
-        action=argparse.BooleanOptionalAction,
-        help="load pre-generated frequencies data",
-    )
-    parser.add_argument(
-        "-t",
-        "--sort",
-        action=argparse.BooleanOptionalAction,
-        help="sort term-docID-tf",
-    )
-    parser.add_argument(
-        "-e",
-        "--encode",
-        action=argparse.BooleanOptionalAction,
-        help="generate inverted file",
-    )
-    parser.add_argument(
-        "-p",
-        "--precompute",
-        action=argparse.BooleanOptionalAction,
-        help="precompute document lengths",
-    )
-    parser.add_argument("-q", "--query", type=str, help="path of query file")
+    parser.add_argument("-t", "--test", type=str, help="path of test file")
 
     args = vars(parser.parse_args())
 
-    ir_obj = InformationRetrieval(Path(args["path"]))
+    ir_obj = InformationRetrieval(Path(args["path"]), Path(args["test"]))
     if args["all"]:
-        ir_obj.generate_freqs()
-    #     ir_obj.generate_stats()
-    #     ir_obj.dump_freqs()
-    #     ir_obj.build_sorted_tdt()
-    #     ir_obj.encode_inverted_file()
-    #     ir_obj.precompute_lengths()
-
-    # elif args["query"]:
-    #     ir_obj.generate_rankings(args["query"])
+        ir_obj.extract_train_features(("title",))
+        ir_obj.extract_test_features(args["test"])
 
     else:
 
-        if args["freq"]:
-            ir_obj.generate_freqs()
+        if args["train"]:
+            ir_obj.extract_train_features(("title",))
 
-    #     if args["stat"]:
-    #         ir_obj.generate_stats()
-
-    #     if args["dump"]:
-    #         ir_obj.dump_freqs()
-
-    #     if args["load"]:
-    #         ir_obj.load_freqs()
-
-    #     if args["sort"]:
-    #         ir_obj.build_sorted_tdt()
-
-    #     if args["encode"]:
-    #         ir_obj.encode_inverted_file()
-
-    #     if args["precompute"]:
-    #         ir_obj.precompute_lengths()
+        if args["test"]:
+            ir_obj.extract_test_features(("title",))

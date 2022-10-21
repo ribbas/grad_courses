@@ -1,17 +1,18 @@
 DOC_PROC = 10_000
 CHUNK_SIZE = 1_000_000
 
-FIELDS = (
-    "Assessment",
-    "Docid",
-    "Title",
-    "Authors",
-    "Journal",
-    "ISSN",
-    "Year",
-    "Language",
-    "Abstract",
-    "Keywords",
+TARGET_FIELD = "assessment"
+
+FEATURE_FIELDS = (
+    "docid",
+    "title",
+    "authors",
+    "journal",
+    "issn",
+    "year",
+    "language",
+    "abstract",
+    "keywords",
 )
 FIELD_DELIM = "\t"
 LIST_DELIM = ";"
