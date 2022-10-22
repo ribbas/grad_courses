@@ -2,8 +2,6 @@ import re
 
 from nltk import stem
 
-from .types import generator
-
 # fmt: off
 STOPWORDS: set[str] = {
     # contractions
@@ -42,7 +40,7 @@ class Normalizer:
     def __init__(self) -> None:
 
         self.document: str = ""
-        self.tokens: generator[str]
+        self.tokens: list[str]
 
         self.ws_re: re.Pattern[str] = re.compile(r"([A-Za-z]+'?[A-Za-z]+)")
         self.snow: stem.SnowballStemmer = stem.SnowballStemmer("english")
@@ -55,18 +53,18 @@ class Normalizer:
 
         return document.lower()
 
-    def __split_document(self, document: str) -> generator[str]:
+    def __split_document(self, document: str) -> list[str]:
 
-        return (x.group(0) for x in self.ws_re.finditer(document))
+        return [x.group(0) for x in self.ws_re.finditer(document)]
 
-    def __remove_stopwords(self, tokens: generator[str]) -> generator[str]:
-        return (word for word in tokens if word not in STOPWORDS)
+    def __remove_stopwords(self, tokens: list[str]) -> list[str]:
+        return [word for word in tokens if word not in STOPWORDS]
 
-    def __stem(self, tokens: generator[str]) -> generator[str]:
+    def __stem(self, tokens: list[str]) -> list[str]:
 
-        return (self.snow.stem(token) for token in tokens)
+        return [self.snow.stem(token) for token in tokens]
 
-    def __call__(self, document: str) -> None:
+    def __call__(self, document: str) -> list[str]:
 
         # convert the entire document to lower-case
         doc_lc: str = self.__to_lower_case(document)
@@ -75,9 +73,9 @@ class Normalizer:
         self.tokens = self.__split_document(doc_lc)
 
         # remove contractions and stopwords
-        self.tokens = self.__remove_stopwords(self.tokens)
+        # self.tokens = self.__remove_stopwords(self.tokens)
 
         # stem tokens
         self.tokens = self.__stem(self.tokens)
 
-        return list(self.tokens)
+        return self.tokens

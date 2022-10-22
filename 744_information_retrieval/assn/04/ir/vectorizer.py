@@ -1,10 +1,7 @@
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-from sklearn.pipeline import Pipeline
 from sklearn.linear_model import SGDClassifier
-from sklearn import svm
-
-from sklearn.naive_bayes import MultinomialNB
 from sklearn.model_selection import GridSearchCV
+from sklearn.pipeline import Pipeline
 
 from .normalize import Normalizer
 
@@ -12,36 +9,56 @@ from .normalize import Normalizer
 class Vectorizer:
     def __init__(self) -> None:
 
-        self.parameters = {
+        self.clf: SGDClassifier
+        self.train_features = []
+        self.train_target = []
+        self.test_features = []
+        self.test_target = []
+
+    def grid_search(self):
+
+        parameters = {
             "cv__tokenizer": [Normalizer()],
-            "clf__class_weight": ({1: 2}, {1: 3}, {1: 4}, {1: 15}, {1: 30}),
         }
 
-        self.pipe = Pipeline(
+        pipe = Pipeline(
             [
                 ("cv", CountVectorizer()),
                 ("tfidf", TfidfTransformer()),
                 (
                     "clf",
-                    SGDClassifier(random_state=0),
+                    SGDClassifier(random_state=0, class_weight={1: 4}),
                 ),
             ]
         )
-        self.gs_clf = GridSearchCV(self.pipe, self.parameters, n_jobs=-1)
+        self.load_classifier(GridSearchCV(pipe, parameters, n_jobs=-1))
+        self.train_classifier()
 
-    def tfidf_fit_transform(self, data: list[str], target: list[int]):
+        # for param_name in sorted(parameters.keys()):
+        #     print("%s: %r" % (param_name, self.clf.best_params_[param_name]))
 
-        self.gs_clf.fit(data, target)
+    def set_training_features(self, data: list[str], target: list[int]):
 
-    def predict(self, data: list[str]):
+        self.train_features = data
+        self.train_target = target
 
-        # print(self.pipe["cv"].vocabulary_)
+    def set_test_features(self, data: list[str], target: list[int]):
 
-        print(self.gs_clf.best_score_)
+        self.test_features = data
+        self.test_target = target
 
-        for param_name in sorted(self.parameters.keys()):
-            print("%s: %r" % (param_name, self.gs_clf.best_params_[param_name]))
+    def load_classifier(self, clf) -> None:
 
-        return self.gs_clf.predict(data)
+        self.clf = clf
 
-    # def cross_validate(self):
+    def get_classifier(self):
+
+        return self.clf
+
+    def train_classifier(self):
+
+        self.clf.fit(self.train_features, self.train_target)
+
+    def predict(self):
+
+        return self.clf.predict(self.test_features)

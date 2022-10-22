@@ -1,4 +1,5 @@
 from pathlib import Path
+import joblib
 
 from .const import TARGET_FIELD, FEATURE_FIELDS, FIELD_DELIM, LIST_DELIM, JHED
 from .lexer import LexerStatistics
@@ -12,11 +13,6 @@ class CorpusFile:
         self.prep = Normalizer()
         self.filename: Path = filename
         self.num_docs: int = 0
-        self.doc_begin_tag: str = ""
-        self.doc_end_tag: str = ""
-
-    def _ingest(self, doc_id: int, prep: Normalizer, *args: Any) -> None:
-        raise NotImplementedError
 
     @staticmethod
     def __map_list(field: str) -> list[str]:
@@ -62,10 +58,6 @@ class CorpusFile:
                     docs.append(self.__map_to_fields(line[:-1]))
                     self.num_docs += 1
 
-                # if self.num_docs == 50:
-                #     break
-
-        # print(docs)
         return docs
 
 
@@ -76,12 +68,6 @@ class IO:
         return open(f"{filename}.txt")
 
     @staticmethod
-    def read(filename: str) -> str:
-
-        with open(f"{filename}.txt") as fp:
-            return fp.read()
-
-    @staticmethod
     def dump(filename: str, data: str) -> None:
 
         with open(f"{filename}.txt", "w") as fp:
@@ -89,17 +75,15 @@ class IO:
         print(f"Dumped to '{filename}.txt'")
 
     @staticmethod
-    def read_bin(filename: str) -> bytes:
+    def read_joblib(filename: str) -> Any:
 
-        with open(f"{filename}.bin", "rb") as fp:
-            return fp.read()
+        return joblib.load(f"{filename}.joblib")
 
     @staticmethod
-    def dump_bin(filename: str, data: bytes) -> None:
+    def dump_joblib(filename: str, clf: Any) -> None:
 
-        with open(f"{filename}.bin", "wb") as fp:
-            fp.write(data)
-        print(f"Dumped binary to '{filename}.bin'")
+        joblib.dump(clf, f"{filename}.joblib")
+        print(f"Dumped binary to '{filename}.joblib'")
 
 
 class Formatter:

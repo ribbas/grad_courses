@@ -8,30 +8,45 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("path", type=str, help="path of corpus file")
     parser.add_argument(
-        "-a",
-        "--all",
-        action=argparse.BooleanOptionalAction,
-        help="run through the entire list of default pipeline tasks",
-    )
-    parser.add_argument(
         "-f",
         "--train",
         action=argparse.BooleanOptionalAction,
-        help="generate frequencies",
+        help="extract training features",
+    )
+    parser.add_argument(
+        "-l",
+        "--load",
+        action=argparse.BooleanOptionalAction,
+        help="load classifier from disk",
+    )
+    parser.add_argument(
+        "-d",
+        "--dump",
+        action=argparse.BooleanOptionalAction,
+        help="dump classifier to disk",
+    )
+    parser.add_argument(
+        "-cv",
+        "--cross_validate",
+        action=argparse.BooleanOptionalAction,
+        help="perform grid search",
     )
     parser.add_argument("-t", "--test", type=str, help="path of test file")
 
     args = vars(parser.parse_args())
+    categories = ("title", "abstract")
 
-    ir_obj = InformationRetrieval(Path(args["path"]), Path(args["test"]))
-    if args["all"]:
-        ir_obj.extract_train_features(("title",))
-        ir_obj.extract_test_features(args["test"])
+    ir_obj = InformationRetrieval(Path(args["path"]))
 
-    else:
+    if args["train"]:
+        ir_obj.extract_train_features(categories)
 
-        if args["train"]:
-            ir_obj.extract_train_features(("title",))
+    if args["load"]:
+        ir_obj.load_classifier()
 
-        if args["test"]:
-            ir_obj.extract_test_features(("title",))
+    if args["cross_validate"]:
+        ir_obj.grid_search()
+        ir_obj.dump_classifier()
+
+    if args["test"]:
+        ir_obj.extract_test_features(Path(args["test"]), categories)
