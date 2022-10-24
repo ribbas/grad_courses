@@ -2,7 +2,7 @@ from pathlib import Path
 
 import numpy as np
 
-from .const import FEATURE_FIELDS, TARGET_FIELD
+from .const import FEATURE_FIELDS, TARGET_FIELD, LIST_FEATURE_FIELDS
 from .files import CorpusFile, Formatter, IO
 from .metrics import Metrics
 from .vectorizer import Vectorizer
@@ -29,7 +29,11 @@ class InformationRetrieval:
         for row in docs:
             feature_list = []
             for feature in categories:
-                feature_list.append(row[feature])
+                if feature in LIST_FEATURE_FIELDS:
+                    feature_list.extend(row[feature])
+
+                else:
+                    feature_list.append(row[feature])
             features.append(" ".join(feature_list))
 
         return features, target
@@ -48,13 +52,13 @@ class InformationRetrieval:
         self.vec.grid_search()
         self.model_loaded = True
 
-    def dump_classifier(self):
+    def dump_classifier(self, phase: str):
 
-        IO.dump_joblib("tmp/model", self.vec.get_classifier())
+        IO.dump_joblib(f"tmp/model-{phase}", self.vec.get_classifier())
 
-    def load_classifier(self):
+    def load_classifier(self, phase: str):
 
-        self.vec.load_classifier(IO.read_joblib("tmp/model"))
+        self.vec.load_classifier(IO.read_joblib(f"tmp/model-{phase}"))
         self.model_loaded = True
 
     def extract_test_features(

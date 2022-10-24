@@ -8,6 +8,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("path", type=str, help="path of corpus file")
     parser.add_argument(
+        "-1",
+        "--phase1",
+        action=argparse.BooleanOptionalAction,
+        help="extract training features",
+    )
+    parser.add_argument(
         "-f",
         "--train",
         action=argparse.BooleanOptionalAction,
@@ -40,7 +46,17 @@ if __name__ == "__main__":
     parser.add_argument("-t", "--test", type=str, help="path of test file")
 
     args = vars(parser.parse_args())
-    categories = ("title", "abstract")
+
+    categories: tuple = ()
+    phase_name: str = ""
+    if args["phase1"]:
+        categories = ("title",)
+        print("training on categories:", categories)
+        phase_name = "1"
+    else:
+        categories = ("title", "abstract", "keywords")
+        print("training on categories:", categories)
+        phase_name = "2"
 
     ir_obj = InformationRetrieval(Path(args["path"]))
 
@@ -48,11 +64,11 @@ if __name__ == "__main__":
         ir_obj.extract_train_features(categories)
 
     if args["load"]:
-        ir_obj.load_classifier()
+        ir_obj.load_classifier(phase_name)
 
     if args["cross_validate"]:
         ir_obj.grid_search()
-        ir_obj.dump_classifier()
+        ir_obj.dump_classifier(phase_name)
 
     if args["test"]:
         ir_obj.extract_test_features(Path(args["test"]), categories)

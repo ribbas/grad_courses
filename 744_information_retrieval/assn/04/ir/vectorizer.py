@@ -4,7 +4,7 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 
-from .normalize import Normalizer
+from .normalize import Normalizer, STOPWORDS
 
 
 class Vectorizer:
@@ -19,7 +19,12 @@ class Vectorizer:
     def grid_search(self):
 
         parameters = {
-            "cv__tokenizer": [Normalizer(), Normalizer(no_stopwords=True)],
+            "cv__tokenizer": [None, Normalizer()],
+            "cv__stop_words": [None, "english", STOPWORDS],
+            "clf__class_weight": [{1: i} for i in range(3, 31)],
+            # "cv__tokenizer": [None],
+            # "cv__stop_words": [None],
+            # "clf__class_weight": [{1: 3}],
         }
 
         pipe = Pipeline(
@@ -28,15 +33,15 @@ class Vectorizer:
                 ("tfidf", TfidfTransformer()),
                 (
                     "clf",
-                    SGDClassifier(random_state=0, class_weight={1: 30}),
+                    SGDClassifier(random_state=0),
                 ),
             ]
         )
         self.load_classifier(GridSearchCV(pipe, parameters, n_jobs=-1))
         self.train_classifier()
 
-        for param_name in sorted(parameters.keys()):
-            print("%s: %r" % (param_name, self.clf.best_params_[param_name]))
+        for param_name in parameters.keys():
+            print(f"{param_name}: {self.clf.best_params_[param_name]}")
 
     def set_training_features(self, data: list[str], target: np.ndarray):
 

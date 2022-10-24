@@ -83,7 +83,7 @@ class IO:
     def dump_joblib(filename: str, clf: Any) -> None:
 
         joblib.dump(clf, f"{filename}.joblib")
-        print(f"Dumped binary to '{filename}.joblib'")
+        print(f"Dumped model to '{filename}.joblib'")
 
 
 class Formatter:
