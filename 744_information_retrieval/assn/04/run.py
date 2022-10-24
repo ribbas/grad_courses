@@ -9,7 +9,7 @@ if __name__ == "__main__":
     parser.add_argument("path", type=str, help="path of corpus file")
     parser.add_argument(
         "-1",
-        "--phase1",
+        "--baseline",
         action=argparse.BooleanOptionalAction,
         help="extract training features",
     )
@@ -49,7 +49,7 @@ if __name__ == "__main__":
 
     categories: tuple = ()
     phase_name: str = ""
-    if args["phase1"]:
+    if args["baseline"]:
         categories = ("title",)
         print("training on categories:", categories)
         phase_name = "1"

@@ -19,17 +19,17 @@ class Vectorizer:
     def grid_search(self):
 
         parameters = {
-            "cv__tokenizer": [None, Normalizer()],
-            "cv__stop_words": [None, "english", STOPWORDS],
-            "clf__class_weight": [{1: i} for i in range(3, 31)],
-            # "cv__tokenizer": [None],
-            # "cv__stop_words": [None],
-            # "clf__class_weight": [{1: 3}],
+            # "cv__tokenizer": [None, Normalizer()],
+            # "cv__stop_words": [None, "english", STOPWORDS],
+            # "clf__class_weight": [{1: i} for i in range(3, 31)],
+            "cv__tokenizer": [None],
+            "cv__stop_words": [None],
+            "clf__class_weight": [{1: 3}],
         }
 
         pipe = Pipeline(
             [
-                ("cv", CountVectorizer()),
+                ("cv", CountVectorizer(analyzer="char")),
                 ("tfidf", TfidfTransformer()),
                 (
                     "clf",

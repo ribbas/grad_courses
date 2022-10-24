@@ -25,14 +25,20 @@
 \textheight=9.0in
 \headsep=0.25in
 
-\title{605.744: Information Retrieval \\ Programming Assignment \#4: Inverted Files}
+\title{605.744: Information Retrieval \\ Programming Assignment \#4: Binary Text Classification}
 \author{Sabbir Ahmed}
 \date{\today}
 
 \begin{document}
-
-\newpage
+\maketitle	
+\tableofcontents
 \clearpage
+\newpage
+
+\section*{Introduction}
+
+\section*{Baseline}
+
 
 \appendix
 \addcontentsline{toc}{part}{Appendix}%
@@ -40,17 +46,15 @@
 \section{Source Code} \label{appendix:src}
 
 \inputpython{../ir/files.py}{ir/files.py}
-\inputpython{../ir/invertedfile.py}{ir/invertedfile.py}
+\inputpython{../ir/metrics.py}{ir/metrics.py}
 \inputpython{../ir/lexer.py}{ir/lexer.py}
 \inputpython{../ir/normalize.py}{ir/normalize.py}
-\inputpython{../ir/packer.py}{ir/packer.py}
-\inputpython{../ir/retriever.py}{ir/retriever.py}
-\inputpython{../ir/types.py}{ir/types.py}
+\inputpython{../ir/vectorizer.py}{ir/vectorizer.py}
 
 \inputpython{../run.py}{run.py}
 
 \section{Outputs} \label{appendix:outputs}
 
-\lstinputlisting[caption=Statistics of "cord19.txt",basicstyle=\small]{../outputs/stats/cord19_summary.txt}
+% \lstinputlisting[caption=Statistics of "cord19.txt",basicstyle=\small]{../outputs/stats/cord19_summary.txt}
 
 \end{document}
