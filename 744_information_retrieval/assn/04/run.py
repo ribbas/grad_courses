@@ -31,6 +31,12 @@ if __name__ == "__main__":
         action=argparse.BooleanOptionalAction,
         help="perform grid search",
     )
+    parser.add_argument(
+        "-s",
+        "--score",
+        action=argparse.BooleanOptionalAction,
+        help="perform grid search",
+    )
     parser.add_argument("-t", "--test", type=str, help="path of test file")
 
     args = vars(parser.parse_args())
@@ -50,3 +56,6 @@ if __name__ == "__main__":
 
     if args["test"]:
         ir_obj.extract_test_features(Path(args["test"]), categories)
+
+    if args["score"]:
+        ir_obj.score()

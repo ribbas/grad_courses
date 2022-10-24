@@ -37,13 +37,18 @@ STOPWORDS: set[str] = {
 
 
 class Normalizer:
-    def __init__(self) -> None:
+    def __init__(self, no_stopwords=False) -> None:
 
         self.document: str = ""
         self.tokens: list[str]
 
         self.ws_re: re.Pattern[str] = re.compile(r"([A-Za-z]+'?[A-Za-z]+)")
         self.snow: stem.SnowballStemmer = stem.SnowballStemmer("english")
+        self.no_stopwords = no_stopwords
+
+    def __repr__(self) -> str:
+
+        return f"{self.__class__.__name__} (no_stopwords={self.no_stopwords})"
 
     def set_document(self, document: str) -> None:
 
@@ -73,7 +78,8 @@ class Normalizer:
         self.tokens = self.__split_document(doc_lc)
 
         # remove contractions and stopwords
-        # self.tokens = self.__remove_stopwords(self.tokens)
+        if self.no_stopwords:
+            self.tokens = self.__remove_stopwords(self.tokens)
 
         # stem tokens
         self.tokens = self.__stem(self.tokens)

@@ -1,12 +1,10 @@
 from pathlib import Path
 
 import numpy as np
-import scipy
-from sklearn.metrics import accuracy_score, classification_report
 
 from .const import FEATURE_FIELDS, TARGET_FIELD
 from .files import CorpusFile, Formatter, IO
-from .types import Any
+from .metrics import Metrics
 from .vectorizer import Vectorizer
 
 
@@ -18,20 +16,14 @@ class InformationRetrieval:
         self.vec = Vectorizer()
 
         self.num_docs: int = 0
-        self.loaded_clf = False
-
-    def describe(self, data):
-
-        unique, counts = np.unique(data, return_counts=True)
-        print(dict(zip(unique, counts)))
-        print(scipy.stats.describe(data))
+        self.model_loaded = False
 
     def extract_text_features(
         self, categories: tuple[str, ...], corpus: CorpusFile
-    ) -> tuple[Any, list[str]]:
+    ) -> tuple[list[str], np.ndarray]:
 
         docs = corpus.ingest()
-        target = np.array([i[TARGET_FIELD] for i in docs])
+        target: np.ndarray = np.array([i[TARGET_FIELD] for i in docs])
         features: list[str] = []
 
         for row in docs:
@@ -40,48 +32,49 @@ class InformationRetrieval:
                 feature_list.append(row[feature])
             features.append(" ".join(feature_list))
 
-        return target, features
+        return features, target
 
     def extract_train_features(
         self, categories: tuple[str, ...] = FEATURE_FIELDS
     ):
 
-        target, features = self.extract_text_features(
+        features, target = self.extract_text_features(
             categories, self.train_corpus
         )
         self.vec.set_training_features(features, target)
-        self.describe(target)
+        print("train targets:", Metrics.describe(target))
 
     def grid_search(self):
         self.vec.grid_search()
-        self.loaded_clf = True
+        self.model_loaded = True
 
     def dump_classifier(self):
 
-        IO.dump_joblib("tmp/clf", self.vec.get_classifier())
+        IO.dump_joblib("tmp/model", self.vec.get_classifier())
 
     def load_classifier(self):
 
-        self.vec.load_classifier(IO.read_joblib("tmp/clf"))
-        self.loaded_clf = True
+        self.vec.load_classifier(IO.read_joblib("tmp/model"))
+        self.model_loaded = True
 
     def extract_test_features(
         self, test_filename: Path, categories: tuple[str, ...] = FEATURE_FIELDS
     ):
 
-        if self.loaded_clf:
+        if self.model_loaded:
 
             test_corpus = CorpusFile(test_filename)
-            target, features = self.extract_text_features(
+            features, target = self.extract_text_features(
                 categories, test_corpus
             )
             self.vec.set_test_features(features, target)
-
-            predicted = self.vec.predict()
-            print("accuracy %s" % accuracy_score(predicted, target))
-            print(classification_report(predicted, target))
-
-            self.describe(predicted)
+            print("test targets:", Metrics.describe(target))
 
         else:
-            raise AttributeError("Corpus frequencies not generated yet")
+            raise AttributeError("Classifier model not generated yet")
+
+    def score(self) -> None:
+
+        predicted = self.vec.predict()
+        print("predicted targets:", Metrics.describe(predicted))
+        print(Metrics.classification_report(self.vec.test_target, predicted))
