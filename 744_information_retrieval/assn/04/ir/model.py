@@ -7,10 +7,10 @@ from sklearn.pipeline import Pipeline
 from .normalize import Normalizer, STOPWORDS
 
 
-class Vectorizer:
+class Model:
     def __init__(self) -> None:
 
-        self.clf: SGDClassifier
+        self.clf: GridSearchCV
         self.train_features: list[str] = []
         self.train_target: np.ndarray
         self.test_features: list[str] = []
@@ -18,29 +18,35 @@ class Vectorizer:
 
     def grid_search(self):
 
-        parameters = {
-            # "cv__tokenizer": [None, Normalizer()],
-            # "cv__stop_words": [None, "english", STOPWORDS],
-            # "clf__class_weight": [{1: i} for i in range(3, 31)],
-            "cv__tokenizer": [None],
-            "cv__stop_words": [None],
-            "clf__class_weight": [{1: 3}],
+        params = {
+            "cv__tokenizer": [None, Normalizer(), Normalizer(use_porter=True)],
+            "cv__stop_words": [None, "english", STOPWORDS],
+            "clf__class_weight": [{1: i} for i in range(3, 31)],
         }
 
         pipe = Pipeline(
             [
-                ("cv", CountVectorizer(analyzer="char")),
+                ("cv", CountVectorizer()),
                 ("tfidf", TfidfTransformer()),
                 (
                     "clf",
-                    SGDClassifier(random_state=0),
+                    SGDClassifier(loss="hinge", random_state=0),
                 ),
             ]
         )
-        self.load_classifier(GridSearchCV(pipe, parameters, n_jobs=-1))
+        self.load_classifier(
+            GridSearchCV(
+                pipe,
+                params,
+                n_jobs=-1,
+                scoring=("f1", "recall", "precision"),
+                refit="precision",
+                verbose=10,
+            )
+        )
         self.train_classifier()
 
-        for param_name in parameters.keys():
+        for param_name in params.keys():
             print(f"{param_name}: {self.clf.best_params_[param_name]}")
 
     def set_training_features(self, data: list[str], target: np.ndarray):

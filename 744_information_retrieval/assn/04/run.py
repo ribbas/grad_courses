@@ -8,15 +8,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("path", type=str, help="path of corpus file")
     parser.add_argument(
-        "-1",
-        "--baseline",
-        action=argparse.BooleanOptionalAction,
-        help="extract training features",
-    )
-    parser.add_argument(
         "-f",
         "--train",
-        action=argparse.BooleanOptionalAction,
+        type=int,
+        nargs="?",
+        default=None,
+        const=1,
+        choices=(1, 2, 3),
         help="extract training features",
     )
     parser.add_argument(
@@ -32,8 +30,8 @@ if __name__ == "__main__":
         help="dump classifier to disk",
     )
     parser.add_argument(
-        "-cv",
-        "--cross_validate",
+        "-g",
+        "--gen",
         action=argparse.BooleanOptionalAction,
         help="perform grid search",
     )
@@ -41,37 +39,53 @@ if __name__ == "__main__":
         "-s",
         "--score",
         action=argparse.BooleanOptionalAction,
-        help="perform grid search",
+        help="compute scores of the model",
+    )
+    parser.add_argument(
+        "-p",
+        "--predict",
+        action=argparse.BooleanOptionalAction,
+        help="predict target values",
     )
     parser.add_argument("-t", "--test", type=str, help="path of test file")
 
     args = vars(parser.parse_args())
 
-    categories: tuple = ()
-    phase_name: str = ""
-    if args["baseline"]:
-        categories = ("title",)
-        print("training on categories:", categories)
-        phase_name = "1"
-    else:
-        categories = ("title", "abstract", "keywords")
-        print("training on categories:", categories)
-        phase_name = "2"
-
     ir_obj = InformationRetrieval(Path(args["path"]))
 
+    categories: tuple = ()
     if args["train"]:
+        if args["train"] == 1:
+            categories = ("title",)
+            print("training on categories:", categories)
+        elif args["train"] == 2:
+            categories = ("title", "abstract", "keywords")
+            print("training on categories:", categories)
+        elif args["train"] == 3:
+            categories = (
+                "title",
+                "abstract",
+                "keywords",
+                "language",
+            )
+            print("training on categories:", categories)
+
         ir_obj.extract_train_features(categories)
 
     if args["load"]:
-        ir_obj.load_classifier(phase_name)
+        ir_obj.load_classifier(args["train"])
 
-    if args["cross_validate"]:
+    if args["gen"]:
         ir_obj.grid_search()
-        ir_obj.dump_classifier(phase_name)
+        ir_obj.dump_classifier(args["train"])
 
     if args["test"]:
         ir_obj.extract_test_features(Path(args["test"]), categories)
 
     if args["score"]:
+        ir_obj.predict()
         ir_obj.score()
+
+    if args["predict"]:
+        ir_obj.predict()
+        ir_obj.dump_predict_vals(Path(args["test"]))

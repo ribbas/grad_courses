@@ -8,7 +8,7 @@ class Metrics:
         pass
 
     @staticmethod
-    def describe(data: np.ndarray) -> dict[str, int]:
+    def distribution(data: np.ndarray) -> dict[str, int]:
 
         unique, counts = np.unique(data, return_counts=True)
         return dict(zip(unique, counts))
@@ -56,7 +56,7 @@ class Metrics:
     ) -> dict[str, float]:
 
         return {
-            "recall": Metrics.recall(target, predict),
-            "precision": Metrics.precision(target, predict),
-            "f1": Metrics.f1(target, predict),
+            "precision": round(Metrics.precision(target, predict), 3),
+            "recall": round(Metrics.recall(target, predict), 3),
+            "f1": round(Metrics.f1(target, predict), 3),
         }

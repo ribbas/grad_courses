@@ -1,11 +1,12 @@
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 
-from .const import FEATURE_FIELDS, TARGET_FIELD, LIST_FEATURE_FIELDS
-from .files import CorpusFile, Formatter, IO
+from .const import FEATURE_FIELDS, TARGET_FIELD, LIST_FEATURE_FIELDS, JHED
+from .files import CorpusFile, IO
 from .metrics import Metrics
-from .vectorizer import Vectorizer
+from .model import Model
 
 
 class InformationRetrieval:
@@ -13,9 +14,9 @@ class InformationRetrieval:
 
         self.train_corpus: CorpusFile = CorpusFile(train_filename)
 
-        self.vec = Vectorizer()
+        self.clf = Model()
 
-        self.num_docs: int = 0
+        self.predicted: Any = []
         self.model_loaded = False
 
     def extract_text_features(
@@ -23,7 +24,7 @@ class InformationRetrieval:
     ) -> tuple[list[str], np.ndarray]:
 
         docs = corpus.ingest()
-        target: np.ndarray = np.array([i[TARGET_FIELD] for i in docs])
+        target = np.array([i[TARGET_FIELD] for i in docs])
         features: list[str] = []
 
         for row in docs:
@@ -45,20 +46,21 @@ class InformationRetrieval:
         features, target = self.extract_text_features(
             categories, self.train_corpus
         )
-        self.vec.set_training_features(features, target)
-        print("train targets:", Metrics.describe(target))
+        self.clf.set_training_features(features, target)
+        print("train targets:", Metrics.distribution(target))
 
     def grid_search(self):
-        self.vec.grid_search()
+
+        self.clf.grid_search()
         self.model_loaded = True
 
     def dump_classifier(self, phase: str):
 
-        IO.dump_joblib(f"tmp/model-{phase}", self.vec.get_classifier())
+        IO.dump_joblib(f"models/model-{phase}", self.clf.get_classifier())
 
-    def load_classifier(self, phase: str):
+    def load_classifier(self, phase: int):
 
-        self.vec.load_classifier(IO.read_joblib(f"tmp/model-{phase}"))
+        self.clf.load_classifier(IO.read_joblib(f"models/model-{phase}"))
         self.model_loaded = True
 
     def extract_test_features(
@@ -71,14 +73,28 @@ class InformationRetrieval:
             features, target = self.extract_text_features(
                 categories, test_corpus
             )
-            self.vec.set_test_features(features, target)
-            print("test targets:", Metrics.describe(target))
+            self.clf.set_test_features(features, target)
+            print("test targets:", Metrics.distribution(target))
 
         else:
             raise AttributeError("Classifier model not generated yet")
 
+    def predict(self) -> None:
+
+        self.predicted = self.clf.predict()
+
     def score(self) -> None:
 
-        predicted = self.vec.predict()
-        print("predicted targets:", Metrics.describe(predicted))
-        print(Metrics.classification_report(self.vec.test_target, predicted))
+        print("predicted targets:", Metrics.distribution(self.predicted))
+        print(
+            Metrics.classification_report(self.clf.test_target, self.predicted)
+        )
+
+    def dump_predict_vals(self, test_filename: Path) -> None:
+
+        test_corpus = CorpusFile(test_filename)
+        doc_ids, _ = self.extract_text_features(("docid",), test_corpus)
+        output_pairs = (
+            f"{doc_id}\t{p}" for doc_id, p in zip(doc_ids, self.predicted)
+        )
+        IO.dump(f"outputs/{JHED}", "\n".join(output_pairs))

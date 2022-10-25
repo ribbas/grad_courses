@@ -1,4 +1,5 @@
 import re
+from typing import Any
 
 from nltk import stem
 
@@ -37,18 +38,23 @@ STOPWORDS: set[str] = {
 
 
 class Normalizer:
-    def __init__(self, no_stopwords=False) -> None:
+    def __init__(self, use_porter=False) -> None:
+
+        self.use_porter = use_porter
 
         self.document: str = ""
         self.tokens: list[str]
 
         self.ws_re: re.Pattern[str] = re.compile(r"([A-Za-z]+'?[A-Za-z]+)")
-        self.snow: stem.SnowballStemmer = stem.SnowballStemmer("english")
-        self.no_stopwords = no_stopwords
+        self.stemmer: Any = (
+            stem.PorterStemmer()
+            if use_porter
+            else stem.SnowballStemmer("english")
+        )
 
     def __repr__(self) -> str:
 
-        return f"{self.__class__.__name__} (no_stopwords={self.no_stopwords})"
+        return f"{self.__class__.__name__} (use_porter={self.use_porter})"
 
     def set_document(self, document: str) -> None:
 
@@ -62,12 +68,9 @@ class Normalizer:
 
         return [x.group(0) for x in self.ws_re.finditer(document)]
 
-    def __remove_stopwords(self, tokens: list[str]) -> list[str]:
-        return [word for word in tokens if word not in STOPWORDS]
-
     def __stem(self, tokens: list[str]) -> list[str]:
 
-        return [self.snow.stem(token) for token in tokens]
+        return [self.stemmer.stem(token) for token in tokens]
 
     def __call__(self, document: str) -> list[str]:
 
@@ -76,10 +79,6 @@ class Normalizer:
 
         # split the document on its whitespace
         self.tokens = self.__split_document(doc_lc)
-
-        # remove contractions and stopwords
-        if self.no_stopwords:
-            self.tokens = self.__remove_stopwords(self.tokens)
 
         # stem tokens
         self.tokens = self.__stem(self.tokens)

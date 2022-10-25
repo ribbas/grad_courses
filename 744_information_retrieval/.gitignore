@@ -1,5 +1,6 @@
 tmp/
 assn/data/
 bin/
+models/
 *.xdv
 *.toc

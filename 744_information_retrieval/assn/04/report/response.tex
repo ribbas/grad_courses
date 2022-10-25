@@ -36,25 +36,253 @@
 \newpage
 
 \section*{Introduction}
+This paper describes the classification of the Systematic Review dataset through exploratory analysis, grid searching for optimal estimators and their hyper-parameters, and determining the best features.
 
-\section*{Baseline}
+\section*{Technical Background}
+All of the source code is in Python 3.10. The program is split into several modules and follows an object oriented structure. The following is the directory structure of the source code:
 
+% .
+% ├── ir/
+% │   ├── __init__.py
+% │   ├── const.py
+% │   ├── files.py
+% │   ├── metrics.py
+% │   ├── model.py
+% │   ├── normalize.py
+% │   └── types.py
+% ├── models/
+% ├── outputs/
+% └── run.py
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[scale=0.2]{statics/dirtree.png}
+    \caption{Directory Hierarchy of Assignment 4}
+\end{figure}
+
+\subsection*{Classes}
+\texttt{scikit-learn} was used to implement portions of this assignment.
+
+Some classes from Assignment 3 were used in this project:
+\begin{itemize}
+    \item the driver script \texttt{run.py} was modified with the relevant flags
+    \item the methdods in \texttt{files.IO} were simplified to handle only plain text and joblib binaries
+    \item the \texttt{files.CorpusFile} class was modified to process TSV files and transform the content into a list of mapped values
+    \item the \texttt{normalize.Normalizer} class was used to compare text tokenization methods
+    \item the \texttt{lexer} classes were replaced by the \texttt{CountVectorizer} class provided by \texttt{scikit-learn}
+\end{itemize}
+
+\section*{Exploratory Analysis}
+The dataset is a collection of tab separated value (TSV) files with 10 features.
+
+\begin{table}[!ht]
+    \caption{Description of the features of the Systematic Review dataset}
+    \begin{center}
+
+        \begin{tabular}{| l | l |}
+        \hline
+        \textbf{Feature} & \textbf{Description}
+        \\ \hline
+        Assessment & -1, 0, or 1; zero indicates unknown; 1=accept, -1=reject
+        \\ \hline
+        DocID & Unique ID. Usually PubMed ID, or hashed ID
+        \\ \hline
+        Title & Article title
+        \\ \hline
+        Authors & List of authors (poss. separated with ";"). Unnormalized.
+        \\ \hline
+        Journal & Journal title
+        \\ \hline
+        ISSN & Numeric code for journal (possibly a list)
+        \\ \hline
+        Year & Publication year
+        \\ \hline
+        language & Trigram for language code (e.g., "eng")
+        \\ \hline
+        Abstract & Several sentence abstract from article
+        \\ \hline
+        Keywords & List of keywords (formatting is highly variable) - should be ";" separated.
+        \\ \hline
+        \end{tabular}
+
+    \end{center}
+
+\end{table}
+
+The \textit{Assessment} feature in the training and development datasets is the target binary value, and will be predicted for the testing dataset. The feature is heavily imbalanced, with the following distribution in the training dataset:
+
+\begin{table}[!ht]
+    \caption{Distribution of \textit{Assessment} in the training dataset}
+    \begin{center}
+
+        \begin{tabular}{| c | c |}
+        \hline
+        \textbf{Value} & \textbf{Count}
+        \\ \hline
+        -1 & 21,000
+        \\ \hline
+        1 & 700
+        \\ \hline
+        \end{tabular}
+
+    \end{center}
+
+\end{table}
+
+The following features are considered text features, where they are represented as single strings:
+\begin{itemize}
+    \item DocID
+    \item Title
+    \item Language
+    \item Abstract
+\end{itemize}
+
+The following features are considered list of text features, where they are represented as string lists:
+\begin{itemize}
+    \item Authors
+    \item Journal
+    \item ISSN
+    \item Keywords
+\end{itemize}
+
+The remaining (optional) feature, \textit{Year}, is represented as an integer.
+
+\section*{Classification Algorithms}
+For classification, machine learning algorithms implemented by \texttt{scikit-learn} were used.
+
+For text tokenizing and normalizing, the \texttt{CountVectorizer} and \texttt{TfidfTransformer} classes by \texttt{scikit-learn} were used. \texttt{CountVectorizer} ingested text values and created bags-of-words. This data structure was further transformed using \texttt{TfidfTransformer} to assign TF-IDF values to the terms in the vocabulary.
+
+\subsection*{Scoring}
+To compare performances of the models, the following metrics were emphasize:
+\begin{itemize}
+\setlength\itemsep{1em}
+    \item Precision (P): $ \dfrac{TP}{TP + FP} $
+    \item Recall (R): $ \dfrac{TP}{TP + FN} $
+    \item F1-score: $ 2 \cdot \dfrac{P \cdot R}{P+R} $
+\end{itemize}
+
+These scores are computed in \texttt{metrics.Metrics}.
+
+\section*{Experiments}
+
+\subsection*{Baseline}
+For the initial phase, only the \textit{Title} feature was used as the feature. As a text feature, each of the values were tokenized, vectorized, and their TF-IDF values were used to predict the corresponding target value. The previously implemented \texttt{normalize.Normalizer} class was used as the tokenizer to \texttt{CountVectorizer}.
+
+The text vectorizers from \texttt{scikit-learn} were used with their default parameters. For classification, the linear support vector machine (SVM) with stochastic gradient descent (SGD), \texttt{SGDClassifier(loss="hinge")} was used.
+
+To account for the skewed data, an additional parameter $class\_weight=\{1:30\}$ was used.
+
+After execution, the model yielded the following scores:
+\begin{table}[!ht]
+    \caption{Scores using only \textit{Title} as the feature}
+    \begin{center}
+
+        \begin{tabular}{| c | c |}
+        \hline
+        \textbf{Metric} & \textbf{Score}
+        \\ \hline
+        Precision & 0.195 
+        \\ \hline
+        Recall & 0.640
+        \\ \hline
+        F1-Score & 0.299
+        \\ \hline
+        \end{tabular}
+
+    \end{center}
+
+\end{table}
+
+\subsection*{Experiment \#1}
+To improve the scores of the model, the features \textit{Abstract} and \textit{Keywords} were added. The vocabulary from the 3 features were merged and tokenized through the vectorizers. 
+
+After execution, the model yielded the following scores:
+\begin{table}[!ht]
+    \caption{Scores using \textit{Title}, \textit{Abstract} and \textit{Keywords} as the features}
+    \begin{center}
+
+        \begin{tabular}{| c | c |}
+        \hline
+        \textbf{Metric} & \textbf{Score}
+        \\ \hline
+        Precision & 0.330 
+        \\ \hline
+        Recall & 0.747
+        \\ \hline
+        F1-Score & 0.458
+        \\ \hline
+        \end{tabular}
+
+    \end{center}
+
+\end{table}
+
+\subsection*{Experiment \#2}
+In addition to the features, the grid searching algorithm by scikit-learn, \texttt{GridSearchCV}, was used to find the best-performing hyper-parameters. The following parameters were used:
+\begin{enumerate}
+    \item Tokenizer for \texttt{CountVectorizer}: \{None, \texttt{Normalizer()} with Snowball stemmer, \texttt{Normalizer()} with Porter stemmer\}
+    \item Stop words for \texttt{CountVectorizer} tokenization: \{None, "english", normalize.STOPWORDS\}
+    \item Class weight for \texttt{SGDClassifier}: $\{\{1: i\}, 3 \le i \le 30\}$,
+\end{enumerate}
+In total, 252 combinations were exhaustively searched to find the optimal scores.
+
+The following parameters were determined to have the best scores:
+\begin{table}[!ht]
+    \caption{Optimal parameters determined via grid search}
+    \begin{center}
+
+        \begin{tabular}{| l | c |}
+        \hline
+        \textbf{Parameter} & \textbf{Value}
+        \\ \hline
+        Tokenizer for \texttt{CountVectorizer} & None
+        \\ \hline
+        Stop words for \texttt{CountVectorizer} tokenization & None
+        \\ \hline
+        Class weight for \texttt{SGDClassifier} & \{1: 3\}
+        \\ \hline
+        \end{tabular}
+
+    \end{center}
+
+\end{table}
+
+Along with the hyper-parameter search, various combinations of features were tested as well. Features such as \textit{Authors} and \textit{Year} do not appear to contribute to the model's performance, and \textit{Journal} appears to degrade the performance. The optimal features were determined to be: \{\textit{Title}, \textit{Abstract}, \textit{Keywords}, \textit{Language}\}.
+
+After execution, the model yielded the following scores:
+\begin{table}[!ht]
+    \caption{Scores using \textit{Title}, \textit{Abstract}, \textit{Keywords} and \textit{Language} as the features}
+    \begin{center}
+
+        \begin{tabular}{| c | c |}
+        \hline
+        \textbf{Metric} & \textbf{Score}
+        \\ \hline
+        Precision & 0.633 
+        \\ \hline
+        Recall & 0.460
+        \\ \hline
+        F1-Score & 0.533
+        \\ \hline
+        \end{tabular}
+
+    \end{center}
+
+\end{table}
+
+\section*{Conclusion}
 
 \appendix
 \addcontentsline{toc}{part}{Appendix}%
 
 \section{Source Code} \label{appendix:src}
 
+\inputpython{../ir/\_\_init\_\_.py}{ir/\_\_init\_\_.py}
 \inputpython{../ir/files.py}{ir/files.py}
 \inputpython{../ir/metrics.py}{ir/metrics.py}
-\inputpython{../ir/lexer.py}{ir/lexer.py}
 \inputpython{../ir/normalize.py}{ir/normalize.py}
-\inputpython{../ir/vectorizer.py}{ir/vectorizer.py}
+\inputpython{../ir/model.py}{ir/model.py}
 
 \inputpython{../run.py}{run.py}
-
-\section{Outputs} \label{appendix:outputs}
-
-% \lstinputlisting[caption=Statistics of "cord19.txt",basicstyle=\small]{../outputs/stats/cord19_summary.txt}
 
 \end{document}
