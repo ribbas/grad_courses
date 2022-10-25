@@ -1,12 +1,7 @@
 import numpy as np
-import scipy
-from sklearn.metrics import accuracy_score, classification_report
 
 
 class Metrics:
-    def __init__(self) -> None:
-        pass
-
     @staticmethod
     def distribution(data: np.ndarray) -> dict[str, int]:
 

@@ -1,0 +1,80 @@
+@startuml
+
+skinparam linetype polyline
+skinparam linetype ortho
+left to right direction
+skinparam backgroundColor transparent
+skinparam classBackgroundColor fff
+
+namespace Information_Retrieval {
+
+  class IO {
+    + dump(filename: str, data: str)
+    + read_joblib(filename: str): Any
+    + dump_joblib(filename: str, clf: Any)
+  }
+
+  class CorpusFile {
+    # filename: Path
+    - map_list(field: str): list[str]
+    - map_to_fields(line: str): dict[str, Any]
+    + ingest(): list[dict[str, Any]]
+  }
+
+  class Normalizer {
+    - use_porter : bool
+    - ws_re: re.Pattern[str]
+    - stemmer: nltk.stem.PorterStemmer | nltk.stem.SnowballStemmer
+    - to_lower_case(document: str): str
+    - split_document(document: str): list[str]
+    - stem(tokens: list[str]): list[str]
+    + __call__(document: str): list[str]
+  }
+
+  class Metrics {
+    + distribution(data: np.ndarray): dict[str, int]
+    + precision(target: np.ndarray, predict: np.ndarray): float
+    + recall(target: np.ndarray, predict: np.ndarray): float
+    + f1(target: np.ndarray, predict: np.ndarray): float
+    + classification_report(target: np.ndarray, predict: np.ndarray): dict[str, float]
+  }
+
+  class Model {
+    - clf: GridSearchCV
+    - train_features: list[str]
+    - train_target: np.ndarray
+    - test_features: list[str]
+    - test_target: np.ndarray
+    + grid_search()
+    + set_training_features(data: list[str], target: np.ndarray)
+    + set_test_features(data: list[str], target: np.ndarray)
+    + load_classifier(clf: GridSearchCV)
+    + get_classifier(): GridSearchCV
+    + train_classifier()
+    + predict(): np.ndarray
+  }
+
+  class IR {
+    - train_corpus: CorpusFile
+    - clf: Model
+    - predicted: np.ndarray
+    - model_loaded: bool
+    + extract_text_features(categories: tuple[str, ...], corpus: CorpusFile): tuple[list[str], np.ndarray]
+    + extract_train_features(categories: tuple[str, ...])
+    + extract_test_features(test_filename: Path, categories: tuple[str, ...])
+    + grid_search()
+    + dump_classifier(phase: int)
+    + load_classifier(phase: int)
+    + predict()
+    + score()
+    + dump_predict_vals(test_filename: Path)
+  }
+
+  IR <-- CorpusFile
+  IR <-l- IO
+  IR <-- Metrics
+  IR <-- Model
+  Model <-u- Normalizer
+}
+
+@enduml

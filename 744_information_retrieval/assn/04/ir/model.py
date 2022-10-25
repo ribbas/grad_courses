@@ -16,7 +16,7 @@ class Model:
         self.test_features: list[str] = []
         self.test_target: np.ndarray
 
-    def grid_search(self):
+    def grid_search(self) -> None:
 
         params = {
             "cv__tokenizer": [None, Normalizer(), Normalizer(use_porter=True)],
@@ -49,28 +49,30 @@ class Model:
         for param_name in params.keys():
             print(f"{param_name}: {self.clf.best_params_[param_name]}")
 
-    def set_training_features(self, data: list[str], target: np.ndarray):
+    def set_training_features(
+        self, data: list[str], target: np.ndarray
+    ) -> None:
 
         self.train_features = data
         self.train_target = target
 
-    def set_test_features(self, data: list[str], target: np.ndarray):
+    def set_test_features(self, data: list[str], target: np.ndarray) -> None:
 
         self.test_features = data
         self.test_target = target
 
-    def load_classifier(self, clf) -> None:
+    def load_classifier(self, clf: GridSearchCV) -> None:
 
         self.clf = clf
 
-    def get_classifier(self):
+    def get_classifier(self) -> GridSearchCV:
 
         return self.clf
 
-    def train_classifier(self):
+    def train_classifier(self) -> None:
 
         self.clf.fit(self.train_features, self.train_target)
 
-    def predict(self):
+    def predict(self) -> np.ndarray:
 
         return self.clf.predict(self.test_features)

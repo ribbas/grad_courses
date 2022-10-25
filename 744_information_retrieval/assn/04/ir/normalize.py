@@ -1,5 +1,4 @@
 import re
-from typing import Any
 
 from nltk import stem
 
@@ -41,12 +40,8 @@ class Normalizer:
     def __init__(self, use_porter=False) -> None:
 
         self.use_porter = use_porter
-
-        self.document: str = ""
-        self.tokens: list[str]
-
         self.ws_re: re.Pattern[str] = re.compile(r"([A-Za-z]+'?[A-Za-z]+)")
-        self.stemmer: Any = (
+        self.stemmer: stem.PorterStemmer | stem.SnowballStemmer = (
             stem.PorterStemmer()
             if use_porter
             else stem.SnowballStemmer("english")
@@ -55,10 +50,6 @@ class Normalizer:
     def __repr__(self) -> str:
 
         return f"{self.__class__.__name__} (use_porter={self.use_porter})"
-
-    def set_document(self, document: str) -> None:
-
-        self.document = document
 
     def __to_lower_case(self, document: str) -> str:
 
@@ -78,9 +69,9 @@ class Normalizer:
         doc_lc: str = self.__to_lower_case(document)
 
         # split the document on its whitespace
-        self.tokens = self.__split_document(doc_lc)
+        tokens: list[str] = self.__split_document(doc_lc)
 
         # stem tokens
-        self.tokens = self.__stem(self.tokens)
+        tokens = self.__stem(tokens)
 
-        return self.tokens
+        return tokens

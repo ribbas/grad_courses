@@ -1,9 +1,8 @@
 from pathlib import Path
-from typing import Any
 
 import numpy as np
 
-from .const import FEATURE_FIELDS, TARGET_FIELD, LIST_FEATURE_FIELDS, JHED
+from .const import TARGET_FIELD, LIST_FEATURE_FIELDS, JHED
 from .files import CorpusFile, IO
 from .metrics import Metrics
 from .model import Model
@@ -14,9 +13,9 @@ class InformationRetrieval:
 
         self.train_corpus: CorpusFile = CorpusFile(train_filename)
 
-        self.clf = Model()
+        self.clf: Model = Model()
 
-        self.predicted: Any = []
+        self.predicted: np.ndarray
         self.model_loaded = False
 
     def extract_text_features(
@@ -28,20 +27,22 @@ class InformationRetrieval:
         features: list[str] = []
 
         for row in docs:
+
             feature_list = []
+
             for feature in categories:
+
                 if feature in LIST_FEATURE_FIELDS:
                     feature_list.extend(row[feature])
 
                 else:
                     feature_list.append(row[feature])
+
             features.append(" ".join(feature_list))
 
         return features, target
 
-    def extract_train_features(
-        self, categories: tuple[str, ...] = FEATURE_FIELDS
-    ):
+    def extract_train_features(self, categories: tuple[str, ...]) -> None:
 
         features, target = self.extract_text_features(
             categories, self.train_corpus
@@ -49,23 +50,9 @@ class InformationRetrieval:
         self.clf.set_training_features(features, target)
         print("train targets:", Metrics.distribution(target))
 
-    def grid_search(self):
-
-        self.clf.grid_search()
-        self.model_loaded = True
-
-    def dump_classifier(self, phase: str):
-
-        IO.dump_joblib(f"models/model-{phase}", self.clf.get_classifier())
-
-    def load_classifier(self, phase: int):
-
-        self.clf.load_classifier(IO.read_joblib(f"models/model-{phase}"))
-        self.model_loaded = True
-
     def extract_test_features(
-        self, test_filename: Path, categories: tuple[str, ...] = FEATURE_FIELDS
-    ):
+        self, test_filename: Path, categories: tuple[str, ...]
+    ) -> None:
 
         if self.model_loaded:
 
@@ -78,6 +65,20 @@ class InformationRetrieval:
 
         else:
             raise AttributeError("Classifier model not generated yet")
+
+    def grid_search(self) -> None:
+
+        self.clf.grid_search()
+        self.model_loaded = True
+
+    def dump_classifier(self, phase: int) -> None:
+
+        IO.dump_joblib(f"models/model-{phase}", self.clf.get_classifier())
+
+    def load_classifier(self, phase: int) -> None:
+
+        self.clf.load_classifier(IO.read_joblib(f"models/model-{phase}"))
+        self.model_loaded = True
 
     def predict(self) -> None:
 
@@ -94,7 +95,7 @@ class InformationRetrieval:
 
         test_corpus = CorpusFile(test_filename)
         doc_ids, _ = self.extract_text_features(("docid",), test_corpus)
-        output_pairs = (
+        output_pairs = "\n".join(
             f"{doc_id}\t{p}" for doc_id, p in zip(doc_ids, self.predicted)
         )
-        IO.dump(f"outputs/{JHED}", "\n".join(output_pairs))
+        IO.dump(f"outputs/{JHED}", output_pairs)

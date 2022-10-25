@@ -1,15 +1,13 @@
-from pathlib import Path
 import joblib
+from pathlib import Path
+from typing import Any
 
-from .const import TARGET_FIELD, FEATURE_FIELDS, FIELD_DELIM, LIST_DELIM, JHED
-from .normalize import Normalizer
-from .types import Any
+from .const import TARGET_FIELD, FEATURE_FIELDS, FIELD_DELIM, LIST_DELIM
 
 
 class CorpusFile:
     def __init__(self, filename: Path) -> None:
 
-        self.prep = Normalizer()
         self.filename: Path = filename
 
     @staticmethod

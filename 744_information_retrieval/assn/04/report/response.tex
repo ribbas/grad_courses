@@ -48,8 +48,7 @@ All of the source code is in Python 3.10. The program is split into several modu
 % │   ├── files.py
 % │   ├── metrics.py
 % │   ├── model.py
-% │   ├── normalize.py
-% │   └── types.py
+% │   └── normalize.py
 % ├── models/
 % ├── outputs/
 % └── run.py
@@ -58,6 +57,16 @@ All of the source code is in Python 3.10. The program is split into several modu
     \centering
     \includegraphics[scale=0.2]{statics/dirtree.png}
     \caption{Directory Hierarchy of Assignment 4}
+\end{figure}
+
+The source code for all of the files are attached in Appendix \ref{appendix:src}.
+
+The total number of non-empty lines of code for the program totals to under 750.
+
+\begin{figure}[!ht]
+    \includegraphics[scale=0.35]{statics/uml.png}
+    \centering
+    \caption{UML of Information Retrieval}
 \end{figure}
 
 \subsection*{Classes}
@@ -222,7 +231,7 @@ In addition to the features, the grid searching algorithm by scikit-learn, \text
 \begin{enumerate}
     \item Tokenizer for \texttt{CountVectorizer}: \{None, \texttt{Normalizer()} with Snowball stemmer, \texttt{Normalizer()} with Porter stemmer\}
     \item Stop words for \texttt{CountVectorizer} tokenization: \{None, "english", normalize.STOPWORDS\}
-    \item Class weight for \texttt{SGDClassifier}: $\{\{1: i\}, 3 \le i \le 30\}$,
+    \item Class weight for \texttt{SGDClassifier}: $\{\{1: i\}, 3 \le i \le 30\}$
 \end{enumerate}
 In total, 252 combinations were exhaustively searched to find the optimal scores.
 

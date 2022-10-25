@@ -1,6 +1,3 @@
-DOC_PROC = 10_000
-CHUNK_SIZE = 1_000_000
-
 TARGET_FIELD = "assessment"
 
 FEATURE_FIELDS = (
