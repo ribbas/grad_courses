@@ -2,7 +2,7 @@
 
 \usepackage{appendix}
 \usepackage{array}
-\usepackage{caption}
+\usepackage[labelfont=bf]{caption}
 \usepackage{parskip}
 \usepackage{graphicx}
 \usepackage{amsmath}
@@ -39,7 +39,7 @@
 This paper describes the classification of the Systematic Review dataset through exploratory analysis, grid searching for optimal estimators and their hyper-parameters, and determining the best features.
 
 \section*{Technical Background}
-All of the source code is in Python 3.10. The program is split into several modules and follows an object oriented structure. The following is the directory structure of the source code:
+All of the source code is in Python 3.10. The program is split into several modules and follows an object oriented structure.
 
 % .
 % ├── ir/
@@ -61,7 +61,7 @@ All of the source code is in Python 3.10. The program is split into several modu
 
 The source code for all of the files are attached in Appendix \ref{appendix:src}.
 
-The total number of non-empty lines of code for the program totals to under 750.
+The total number of non-empty lines of code for the program totals to around 460.
 
 \begin{figure}[!ht]
     \includegraphics[scale=0.35]{statics/uml.png}
@@ -70,7 +70,7 @@ The total number of non-empty lines of code for the program totals to under 750.
 \end{figure}
 
 \subsection*{Classes}
-\texttt{scikit-learn} was used to implement portions of this assignment.
+\texttt{scikit-learn} \cite{scikit-learn} was used to implement portions of this assignment.
 
 Some classes from Assignment 3 were used in this project:
 \begin{itemize}
@@ -98,11 +98,11 @@ The dataset is a collection of tab separated value (TSV) files with 10 features.
         \\ \hline
         Title & Article title
         \\ \hline
-        Authors & List of authors (poss. separated with ";"). Unnormalized.
+        Authors & List of authors
         \\ \hline
         Journal & Journal title
         \\ \hline
-        ISSN & Numeric code for journal (possibly a list)
+        ISSN & Numeric code for journal
         \\ \hline
         Year & Publication year
         \\ \hline
@@ -110,7 +110,7 @@ The dataset is a collection of tab separated value (TSV) files with 10 features.
         \\ \hline
         Abstract & Several sentence abstract from article
         \\ \hline
-        Keywords & List of keywords (formatting is highly variable) - should be ";" separated.
+        Keywords & List of keywords
         \\ \hline
         \end{tabular}
 
@@ -234,25 +234,33 @@ In addition to the features, the grid searching algorithm by scikit-learn, \text
 \begin{enumerate}
     \item Tokenizer for \texttt{CountVectorizer}:
     \begin{enumerate}
-            \item None
-            \item \texttt{Normalizer()}
-            \begin{enumerate}
-                \item With one of the following stemmers:
-                \begin{enumerate}
-                    \item Snowball stemmer
-                    \item Porter stemmer
-                \end{enumerate}
-                \item Combined with the following stop words list options:
-                \begin{enumerate}
-                    \item No stopwords removed
-                    \item Custom stop words list generated from previous assignments
-                    \item English stop words provided by scikit-learn
-                \end{enumerate}
-            \end{enumerate}
+        \item With one of the following stemmers:
+        \begin{enumerate}
+            \item No stemming
+            \item Snowball stemmer
+            \item Porter stemmer
         \end{enumerate}
+        \item Combined with the following stop words list options:
+        \begin{enumerate}
+            \item No stopwords removed
+            \item Custom stop words list generated from previous assignments
+            \item English stop words provided by scikit-learn
+        \end{enumerate}
+    \end{enumerate}
     \item Class weight for \texttt{SGDClassifier}: $\{\{1: i\}, 3 \le i \le 30\}$
 \end{enumerate}
 In total, 196 combinations were exhaustively searched to find the optimal scores.
+
+Figure \ref{fig:cv} lists the scores yielded by the various combinations of class weight ratios, tokenization methods, and stop words lists. The scores are the mean F1-scores of the 5-fold cross validation segments.
+
+The tokenizer not using any stemming or stop words lists perform the best consistently. Some models, such as the tokenizer with either of the stemmers and no stop words lists, appear to perform well with low weight classes, but degrade over increasing weights.
+
+\begin{figure}[!ht]
+    \includegraphics[scale=0.46]{statics/cv.png}
+    \centering
+    \caption{Mean F1-scores with Various Combinations of Class Weight Ratios, Tokenization Methods, and Stop Words Lists}
+    \label{fig:cv}
+\end{figure}
 
 Table \ref{table:gs1_param} lists the parameters with the best scores.
 \begin{table}[!ht]
@@ -264,11 +272,11 @@ Table \ref{table:gs1_param} lists the parameters with the best scores.
         \hline
         \textbf{Parameter} & \textbf{Value}
         \\ \hline
-        Tokenizer for \texttt{CountVectorizer} & None
+        Stemmer for \texttt{CountVectorizer} & Snowball
         \\ \hline
         Stop words list & None
         \\ \hline
-        Class weight for \texttt{SGDClassifier} & \{1: 3\}
+        Class weight ratio for \texttt{SGDClassifier} & \{1: 4\}
         \\ \hline
         \end{tabular}
 
@@ -284,29 +292,15 @@ Table \ref{table:gs1_score} shows the model's scores:
     \label{table:gs1_score}
     \begin{center}
 
-        % cv__tokenizer: None
-        % clf__class_weight: {1: 12}
-        % Dumped model to 'models/model-2.joblib'
-        % test targets: {-1: 4700, 1: 150}
-        % predicted targets: {-1: 4635, 1: 215}
-        % {'precision': 0.47, 'recall': 0.673, 'f1': 0.553}
-        
-        % cv__tokenizer: Normalizer/snowball/None
-        % clf__class_weight: {1: 4}
-        % Dumped model to 'models/model-2.joblib'
-        % test targets: {-1: 4700, 1: 150}
-        % predicted targets: {-1: 4675, 1: 175}
-        % {'precision': 0.503, 'recall': 0.587, 'f1': 0.542}
-        
         \begin{tabular}{| c | c |}
         \hline
         \textbf{Metric} & \textbf{Score}
         \\ \hline
-        Precision & 0.633 
+        Precision & 0.503 
         \\ \hline
-        Recall & 0.460
+        Recall & 0.587
         \\ \hline
-        F1-Score & 0.533
+        F1-Score & 0.542
         \\ \hline
         \end{tabular}
 
@@ -315,9 +309,10 @@ Table \ref{table:gs1_score} shows the model's scores:
 \end{table}
 
 \subsubsection*{Analysis}
-The exhaustive grid search still yielded a model with poor scores. The 
+The exhaustive grid search still yielded a model with poor scores.
 
 \subsection*{Experiment \#3}
+An additional experiment was performed, where the same features were trained on an XGBoost (eXtreme Gradient Boosting) estimator \cite{Chen_2016}. 
 
 % scale_pos_weight": [3]
 % "learning_rate": 0.2,
@@ -331,7 +326,10 @@ The exhaustive grid search still yielded a model with poor scores. The
 % {'precision': 0.631, 'recall': 0.433, 'f1': 0.514}
 
 \subsubsection*{Analysis}
-The final scores of the 
+The final scores of the models were underwhelming.
+
+\bibliographystyle{ieeetr}
+\bibliography{refs}
 
 \appendix
 \addcontentsline{toc}{part}{Appendix}%

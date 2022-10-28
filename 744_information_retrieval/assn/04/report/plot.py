@@ -19,24 +19,21 @@ df1.plot(
     markersize=10,
     legend=True,
 )
-plt.xlabel("Ratio of Positive to Negative Class Weight", size=12)
-plt.ylabel("Mean F1-score", size=12)
-plt.title(
-    "Mean F1-scores with Various Combinations of Class Weight Ratios, Tokenization Methods, and Stop Words Lists",
-    size=16,
-)
+plt.xlabel("Ratio of Positive to Negative Class Weight", size=16)
+plt.ylabel("Mean F1-score", size=16)
 
 plt.legend(
     [
-        "No stemmer, no stop words",
-        "Snowball stemmer, no stop words",
-        "Porter stemmer, no stop words",
-        "Snowball stemmer, custom stop words",
-        "Porter stemmer, custom stop words",
-        "Snowball stemmer, sklearn stop words",
-        "Porter stemmer, sklearn stop words",
+        "No stemming, no stop words",
+        "Snowball, no stop words",
+        "Porter, no stop words",
+        "Snowball, custom stop words",
+        "Porter, custom stop words",
+        "Snowball, sklearn stop words",
+        "Porter, sklearn stop words",
     ],
-    prop={"size": 12},
+    bbox_to_anchor=(1.01, 1),
+    prop={"size": 16},
 )
 plt.tight_layout()
 plt.savefig("report/statics/cv.png")
