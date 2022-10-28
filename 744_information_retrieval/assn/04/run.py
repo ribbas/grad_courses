@@ -13,8 +13,8 @@ if __name__ == "__main__":
         type=int,
         nargs="?",
         default=None,
-        const=1,
-        choices=(1, 2, 3),
+        const=0,
+        choices=(0, 1, 2, 3),
         help="extract training features",
     )
     parser.add_argument(
@@ -55,12 +55,24 @@ if __name__ == "__main__":
 
     categories: tuple = ()
     if args["train"]:
-        if args["train"] == 1:
+
+        if args["train"] == 0:
             categories = ("title",)
             print("training on categories:", categories)
-        elif args["train"] == 2:
+
+        elif args["train"] == 1:
             categories = ("title", "abstract", "keywords")
             print("training on categories:", categories)
+
+        elif args["train"] == 2:
+            categories = (
+                "title",
+                "abstract",
+                "keywords",
+                "language",
+            )
+            print("training on categories:", categories)
+
         elif args["train"] == 3:
             categories = (
                 "title",
@@ -68,6 +80,7 @@ if __name__ == "__main__":
                 "keywords",
                 "language",
             )
+            ir_obj.use_xgb()
             print("training on categories:", categories)
 
         ir_obj.extract_train_features(categories)
@@ -85,6 +98,7 @@ if __name__ == "__main__":
     if args["score"]:
         ir_obj.predict()
         ir_obj.score()
+        ir_obj.dump_cv_results()
 
     if args["predict"]:
         ir_obj.predict()

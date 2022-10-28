@@ -118,10 +118,11 @@ The dataset is a collection of tab separated value (TSV) files with 10 features.
 
 \end{table}
 
-The \textit{Assessment} feature in the training and development datasets is the target binary value, and will be predicted for the testing dataset. The feature is heavily imbalanced, with the following distribution in the training dataset:
+The \textit{Assessment} feature in the training and development datasets is the target binary value, and will be predicted for the testing dataset. The feature is heavily imbalanced, with Table \ref{table:dist_train} showing the distribution in the training dataset:
 
 \begin{table}[!ht]
     \caption{Distribution of \textit{Assessment} in the training dataset}
+    \label{table:dist_train}
     \begin{center}
 
         \begin{tabular}{| c | c |}
@@ -181,9 +182,10 @@ The text vectorizers from \texttt{scikit-learn} were used with their default par
 
 To account for the skewed data, an additional parameter $class\_weight=\{1:30\}$ was used.
 
-After execution, the model yielded the following scores:
+Table \ref{table:base_score} lists the model's scores:
 \begin{table}[!ht]
     \caption{Scores using only \textit{Title} as the feature}
+    \label{table:base_score}
     \begin{center}
 
         \begin{tabular}{| c | c |}
@@ -205,9 +207,10 @@ After execution, the model yielded the following scores:
 \subsection*{Experiment \#1}
 To improve the scores of the model, the features \textit{Abstract} and \textit{Keywords} were added. The vocabulary from the 3 features were merged and tokenized through the vectorizers. 
 
-After execution, the model yielded the following scores:
+Table \ref{table:gs0_score} lists the model's scores:
 \begin{table}[!ht]
     \caption{Scores using \textit{Title}, \textit{Abstract} and \textit{Keywords} as the features}
+    \label{table:gs0_score}
     \begin{center}
 
         \begin{tabular}{| c | c |}
@@ -229,15 +232,32 @@ After execution, the model yielded the following scores:
 \subsection*{Experiment \#2}
 In addition to the features, the grid searching algorithm by scikit-learn, \texttt{GridSearchCV}, was used to find the best-performing hyper-parameters. The following parameters were used:
 \begin{enumerate}
-    \item Tokenizer for \texttt{CountVectorizer}: \{None, \texttt{Normalizer()} with Snowball stemmer, \texttt{Normalizer()} with Porter stemmer\}
-    \item Stop words for \texttt{CountVectorizer} tokenization: \{None, "english", normalize.STOPWORDS\}
+    \item Tokenizer for \texttt{CountVectorizer}:
+    \begin{enumerate}
+            \item None
+            \item \texttt{Normalizer()}
+            \begin{enumerate}
+                \item With one of the following stemmers:
+                \begin{enumerate}
+                    \item Snowball stemmer
+                    \item Porter stemmer
+                \end{enumerate}
+                \item Combined with the following stop words list options:
+                \begin{enumerate}
+                    \item No stopwords removed
+                    \item Custom stop words list generated from previous assignments
+                    \item English stop words provided by scikit-learn
+                \end{enumerate}
+            \end{enumerate}
+        \end{enumerate}
     \item Class weight for \texttt{SGDClassifier}: $\{\{1: i\}, 3 \le i \le 30\}$
 \end{enumerate}
-In total, 252 combinations were exhaustively searched to find the optimal scores.
+In total, 196 combinations were exhaustively searched to find the optimal scores.
 
-The following parameters were determined to have the best scores:
+Table \ref{table:gs1_param} lists the parameters with the best scores.
 \begin{table}[!ht]
     \caption{Optimal parameters determined via grid search}
+    \label{table:gs1_param}
     \begin{center}
 
         \begin{tabular}{| l | c |}
@@ -246,7 +266,7 @@ The following parameters were determined to have the best scores:
         \\ \hline
         Tokenizer for \texttt{CountVectorizer} & None
         \\ \hline
-        Stop words for \texttt{CountVectorizer} tokenization & None
+        Stop words list & None
         \\ \hline
         Class weight for \texttt{SGDClassifier} & \{1: 3\}
         \\ \hline
@@ -258,11 +278,26 @@ The following parameters were determined to have the best scores:
 
 Along with the hyper-parameter search, various combinations of features were tested as well. Features such as \textit{Authors} and \textit{Year} do not appear to contribute to the model's performance, and \textit{Journal} appears to degrade the performance. The optimal features were determined to be: \{\textit{Title}, \textit{Abstract}, \textit{Keywords}, \textit{Language}\}.
 
-After execution, the model yielded the following scores:
+Table \ref{table:gs1_score} shows the model's scores:
 \begin{table}[!ht]
     \caption{Scores using \textit{Title}, \textit{Abstract}, \textit{Keywords} and \textit{Language} as the features}
+    \label{table:gs1_score}
     \begin{center}
 
+        % cv__tokenizer: None
+        % clf__class_weight: {1: 12}
+        % Dumped model to 'models/model-2.joblib'
+        % test targets: {-1: 4700, 1: 150}
+        % predicted targets: {-1: 4635, 1: 215}
+        % {'precision': 0.47, 'recall': 0.673, 'f1': 0.553}
+        
+        % cv__tokenizer: Normalizer/snowball/None
+        % clf__class_weight: {1: 4}
+        % Dumped model to 'models/model-2.joblib'
+        % test targets: {-1: 4700, 1: 150}
+        % predicted targets: {-1: 4675, 1: 175}
+        % {'precision': 0.503, 'recall': 0.587, 'f1': 0.542}
+        
         \begin{tabular}{| c | c |}
         \hline
         \textbf{Metric} & \textbf{Score}
@@ -279,7 +314,24 @@ After execution, the model yielded the following scores:
 
 \end{table}
 
-\section*{Conclusion}
+\subsubsection*{Analysis}
+The exhaustive grid search still yielded a model with poor scores. The 
+
+\subsection*{Experiment \#3}
+
+% scale_pos_weight": [3]
+% "learning_rate": 0.2,
+% "n_estimators": 100,
+% "objective": "binary:logistic",
+% "max_depth": 3,
+% "min_child_weight": 10,
+% "max_delta_step": 3,
+% "subsample": 0.8,
+
+% {'precision': 0.631, 'recall': 0.433, 'f1': 0.514}
+
+\subsubsection*{Analysis}
+The final scores of the 
 
 \appendix
 \addcontentsline{toc}{part}{Appendix}%

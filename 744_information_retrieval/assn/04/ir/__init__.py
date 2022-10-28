@@ -18,7 +18,11 @@ class InformationRetrieval:
         self.predicted: np.ndarray
         self.model_loaded = False
 
-    def extract_text_features(
+    def use_xgb(self) -> None:
+
+        self.clf.use_xgb_flag = True
+
+    def __extract_text_features(
         self, categories: tuple[str, ...], corpus: CorpusFile
     ) -> tuple[list[str], np.ndarray]:
 
@@ -44,7 +48,7 @@ class InformationRetrieval:
 
     def extract_train_features(self, categories: tuple[str, ...]) -> None:
 
-        features, target = self.extract_text_features(
+        features, target = self.__extract_text_features(
             categories, self.train_corpus
         )
         self.clf.set_training_features(features, target)
@@ -57,7 +61,7 @@ class InformationRetrieval:
         if self.model_loaded:
 
             test_corpus = CorpusFile(test_filename)
-            features, target = self.extract_text_features(
+            features, target = self.__extract_text_features(
                 categories, test_corpus
             )
             self.clf.set_test_features(features, target)
@@ -91,10 +95,22 @@ class InformationRetrieval:
             Metrics.classification_report(self.clf.test_target, self.predicted)
         )
 
+    def dump_cv_results(self) -> None:
+
+        cv_results = self.clf.get_cv_results()
+        content_str = ""
+        for param, score in zip(
+            cv_results["params"], cv_results["mean_test_score"]
+        ):
+            content_str += f"{param['clf__class_weight'][1]},{param['cv__tokenizer']},{score}\n"
+
+        print(content_str)
+        IO.dump("outputs/cv", content_str)
+
     def dump_predict_vals(self, test_filename: Path) -> None:
 
         test_corpus = CorpusFile(test_filename)
-        doc_ids, _ = self.extract_text_features(("docid",), test_corpus)
+        doc_ids, _ = self.__extract_text_features(("docid",), test_corpus)
         output_pairs = "\n".join(
             f"{doc_id}\t{p}" for doc_id, p in zip(doc_ids, self.predicted)
         )

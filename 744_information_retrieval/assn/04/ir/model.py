@@ -1,10 +1,14 @@
+from typing import Any
+
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
+from xgboost import XGBClassifier
+from sklearn.preprocessing import LabelEncoder
 
-from .normalize import Normalizer, STOPWORDS
+from .normalize import Normalizer
 
 
 class Model:
@@ -16,31 +20,66 @@ class Model:
         self.test_features: list[str] = []
         self.test_target: np.ndarray
 
+        self.use_xgb_flag = False
+
     def grid_search(self) -> None:
 
-        params = {
-            "cv__tokenizer": [None, Normalizer(), Normalizer(use_porter=True)],
-            "cv__stop_words": [None, "english", STOPWORDS],
-            "clf__class_weight": [{1: i} for i in range(3, 31)],
-        }
+        params = {}
+        clf = None
+
+        if not self.use_xgb_flag:
+            params = {
+                "cv__tokenizer": [
+                    None,
+                    Normalizer(stemmer="snowball", stopwords=None),
+                    Normalizer(stemmer="porter", stopwords=None),
+                    Normalizer(stemmer="snowball", stopwords="custom"),
+                    Normalizer(stemmer="porter", stopwords="custom"),
+                    Normalizer(stemmer="snowball", stopwords="sklearn"),
+                    Normalizer(stemmer="porter", stopwords="sklearn"),
+                ],
+                "clf__class_weight": [{1: i} for i in range(3, 31)],
+            }
+            clf = SGDClassifier(loss="hinge", random_state=0)
+
+        else:
+            params = {
+                "cv__tokenizer": [
+                    None,
+                    # Normalizer(use_porter=False, stopwords=None),
+                    # Normalizer(use_porter=True, stopwords=None),
+                    # Normalizer(use_porter=False, stopwords="custom"),
+                    # Normalizer(use_porter=True, stopwords="custom"),
+                    # Normalizer(use_porter=False, stopwords="sklearn"),
+                    # Normalizer(use_porter=True, stopwords="sklearn"),
+                ],
+                # "clf__scale_pos_weight": range(3, 31),
+                # "clf__max_depth": range(3, 10),
+                # "clf__min_child_weight": range(1, 10),
+            }
+            clf = XGBClassifier(
+                objective="binary:logistic",
+                random_state=0,
+                learning_rate=0.2,
+                n_estimators=100,
+            )
 
         pipe = Pipeline(
             [
-                ("cv", CountVectorizer()),
+                ("cv", CountVectorizer(stop_words=None)),
                 ("tfidf", TfidfTransformer()),
-                (
-                    "clf",
-                    SGDClassifier(loss="hinge", random_state=0),
-                ),
+                ("clf", clf),
             ]
         )
         self.load_classifier(
             GridSearchCV(
                 pipe,
                 params,
+                cv=2,
                 n_jobs=-1,
-                scoring=("f1", "recall", "precision"),
-                refit="precision",
+                # scoring=("f1", "recall", "precision"),
+                # refit="precision",
+                scoring="f1",
                 verbose=10,
             )
         )
@@ -48,6 +87,10 @@ class Model:
 
         for param_name in params.keys():
             print(f"{param_name}: {self.clf.best_params_[param_name]}")
+
+    def get_cv_results(self) -> dict[str, Any]:
+
+        return self.clf.cv_results_
 
     def set_training_features(
         self, data: list[str], target: np.ndarray
@@ -70,6 +113,10 @@ class Model:
         return self.clf
 
     def train_classifier(self) -> None:
+
+        if self.use_xgb_flag:
+            le = LabelEncoder()
+            self.train_target = le.fit_transform(self.train_target)
 
         self.clf.fit(self.train_features, self.train_target)
 

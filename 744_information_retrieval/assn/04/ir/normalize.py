@@ -1,9 +1,10 @@
 import re
 
 from nltk import stem
+from sklearn.feature_extraction import _stop_words
 
 # fmt: off
-STOPWORDS: set[str] = {
+STOPWORDS: frozenset[str] = frozenset({
     # contractions
     "aren't", "ain't", "can't", "could've", "couldn't", "didn't", "doesn't",
     "don't", "hadn't", "hasn't", "haven't", "he'd", "he'll", "he's",
@@ -32,24 +33,34 @@ STOPWORDS: set[str] = {
     "we", "were", "what", "when", "where", "which", "who",
     "whom", "why", "will", "with", "would", "you", "your",
     "yours", "yourself", "yourselves",
-}
+})
 # fmt: on
 
 
 class Normalizer:
-    def __init__(self, use_porter=False) -> None:
+    def __init__(
+        self, stemmer: str = "snowball", stopwords: str | None = None
+    ) -> None:
 
-        self.use_porter = use_porter
+        self.stemmer = stemmer
+        self.chosen_stemmer = stem.PorterStemmer | stem.SnowballStemmer
+        if self.stemmer == "snowball":
+            self.chosen_stemmer = stem.SnowballStemmer("english")
+        elif self.stemmer == "porter":
+            self.chosen_stemmer = stem.PorterStemmer()
+
+        self.stopwords = stopwords
+        self.stopwords_list: frozenset[str]
+        if self.stopwords == "custom":
+            self.stopwords_list = STOPWORDS
+        elif self.stopwords == "sklearn":
+            self.stopwords_list = _stop_words.ENGLISH_STOP_WORDS
+
         self.ws_re: re.Pattern[str] = re.compile(r"([A-Za-z]+'?[A-Za-z]+)")
-        self.stemmer: stem.PorterStemmer | stem.SnowballStemmer = (
-            stem.PorterStemmer()
-            if use_porter
-            else stem.SnowballStemmer("english")
-        )
 
     def __repr__(self) -> str:
 
-        return f"{self.__class__.__name__} (use_porter={self.use_porter})"
+        return f"{self.__class__.__name__}/{self.stemmer}/{self.stopwords}"
 
     def __to_lower_case(self, document: str) -> str:
 
@@ -59,9 +70,12 @@ class Normalizer:
 
         return [x.group(0) for x in self.ws_re.finditer(document)]
 
+    def __remove_stopwords(self, tokens: list[str]) -> list[str]:
+        return [word for word in tokens if word not in self.stopwords_list]
+
     def __stem(self, tokens: list[str]) -> list[str]:
 
-        return [self.stemmer.stem(token) for token in tokens]
+        return [self.chosen_stemmer.stem(token) for token in tokens]
 
     def __call__(self, document: str) -> list[str]:
 
@@ -70,6 +84,10 @@ class Normalizer:
 
         # split the document on its whitespace
         tokens: list[str] = self.__split_document(doc_lc)
+
+        # remove contractions and stopwords
+        if self.stopwords:
+            tokens = self.__remove_stopwords(tokens)
 
         # stem tokens
         tokens = self.__stem(tokens)
