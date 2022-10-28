@@ -46,16 +46,16 @@ class Model:
             params = {
                 "cv__tokenizer": [
                     None,
-                    # Normalizer(use_porter=False, stopwords=None),
-                    # Normalizer(use_porter=True, stopwords=None),
-                    # Normalizer(use_porter=False, stopwords="custom"),
-                    # Normalizer(use_porter=True, stopwords="custom"),
-                    # Normalizer(use_porter=False, stopwords="sklearn"),
-                    # Normalizer(use_porter=True, stopwords="sklearn"),
+                    Normalizer(stemmer="snowball", stopwords=None),
+                    Normalizer(stemmer="porter", stopwords=None),
+                    Normalizer(stemmer="snowball", stopwords="custom"),
+                    Normalizer(stemmer="porter", stopwords="custom"),
+                    Normalizer(stemmer="snowball", stopwords="sklearn"),
+                    Normalizer(stemmer="porter", stopwords="sklearn"),
                 ],
-                # "clf__scale_pos_weight": range(3, 31),
-                # "clf__max_depth": range(3, 10),
-                # "clf__min_child_weight": range(1, 10),
+                "clf__scale_pos_weight": range(3, 31),
+                "clf__max_depth": range(3, 10),
+                "clf__min_child_weight": range(1, 10),
             }
             clf = XGBClassifier(
                 objective="binary:logistic",
@@ -75,10 +75,7 @@ class Model:
             GridSearchCV(
                 pipe,
                 params,
-                cv=2,
                 n_jobs=-1,
-                # scoring=("f1", "recall", "precision"),
-                # refit="precision",
                 scoring="f1",
                 verbose=10,
             )

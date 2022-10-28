@@ -1,3 +1,4 @@
+weight,tokenization,score
 3,None,0.5112918190533222
 3,Normalizer/snowball/None,0.5120204285002491
 3,Normalizer/porter/None,0.5064080056179775

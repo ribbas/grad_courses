@@ -98,14 +98,13 @@ class InformationRetrieval:
     def dump_cv_results(self) -> None:
 
         cv_results = self.clf.get_cv_results()
-        content_str = ""
+        content_str = "weight,tokenization,score\n"
         for param, score in zip(
             cv_results["params"], cv_results["mean_test_score"]
         ):
             content_str += f"{param['clf__class_weight'][1]},{param['cv__tokenizer']},{score}\n"
 
-        print(content_str)
-        IO.dump("outputs/cv", content_str)
+        IO.dump("outputs/cross_validations.csv", content_str)
 
     def dump_predict_vals(self, test_filename: Path) -> None:
 
@@ -114,4 +113,4 @@ class InformationRetrieval:
         output_pairs = "\n".join(
             f"{doc_id}\t{p}" for doc_id, p in zip(doc_ids, self.predicted)
         )
-        IO.dump(f"outputs/{JHED}", output_pairs)
+        IO.dump(f"outputs/{JHED}.txt", output_pairs)

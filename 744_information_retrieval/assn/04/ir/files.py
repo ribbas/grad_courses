@@ -59,9 +59,9 @@ class IO:
     @staticmethod
     def dump(filename: str, data: str) -> None:
 
-        with open(f"{filename}.txt", "w") as fp:
+        with open(filename, "w") as fp:
             fp.write(data)
-        print(f"Dumped to '{filename}.txt'")
+        print(f"Dumped to '{filename}'")
 
     @staticmethod
     def read_joblib(filename: str) -> Any:
