@@ -1,6 +1,6 @@
 import re
 
-from nltk import stem
+import nltk
 from sklearn.feature_extraction import _stop_words
 
 # fmt: off
@@ -42,14 +42,14 @@ class Normalizer:
         self, stemmer: str = "snowball", stopwords: str | None = None
     ) -> None:
 
-        self.stemmer = stemmer
-        self.chosen_stemmer = stem.PorterStemmer | stem.SnowballStemmer
+        self.stemmer: str = stemmer
+        self.chosen_stemmer: nltk.stem.PorterStemmer | nltk.stem.SnowballStemmer
         if self.stemmer == "snowball":
-            self.chosen_stemmer = stem.SnowballStemmer("english")
+            self.chosen_stemmer = nltk.stem.SnowballStemmer("english")
         elif self.stemmer == "porter":
-            self.chosen_stemmer = stem.PorterStemmer()
+            self.chosen_stemmer = nltk.stem.PorterStemmer()
 
-        self.stopwords = stopwords
+        self.stopwords: str = stopwords
         self.stopwords_list: frozenset[str]
         if self.stopwords == "custom":
             self.stopwords_list = STOPWORDS

@@ -15,16 +15,18 @@ namespace Information_Retrieval {
   }
 
   class CorpusFile {
-    # filename: Path
     - map_list(field: str): list[str]
     - map_to_fields(line: str): dict[str, Any]
-    + ingest(): list[dict[str, Any]]
+    + ingest(filename: Path): list[dict[str, Any]]
   }
 
   class Normalizer {
-    - use_porter : bool
-    - ws_re: re.Pattern[str]
-    - stemmer: nltk.stem.PorterStemmer | nltk.stem.SnowballStemmer
+    - stemmer: str
+    - chosen_stemmer: nltk.stem.PorterStemmer | nltk.stem.SnowballStemmer
+    - stopwords: str
+    - stopwords_list: frozenset[str]
+    - self.ws_re: re.Pattern[str]
+    + __init__(stemmer: str, stopwords: str)
     - to_lower_case(document: str): str
     - split_document(document: str): list[str]
     - stem(tokens: list[str]): list[str]
@@ -32,40 +34,45 @@ namespace Information_Retrieval {
   }
 
   class Metrics {
-    + distribution(data: np.ndarray): dict[str, int]
-    + precision(target: np.ndarray, predict: np.ndarray): float
-    + recall(target: np.ndarray, predict: np.ndarray): float
-    + f1(target: np.ndarray, predict: np.ndarray): float
-    + classification_report(target: np.ndarray, predict: np.ndarray): dict[str, float]
+    + distribution(data: numpy.ndarray): dict[str, int]
+    + precision(target: numpy.ndarray, predict: numpy.ndarray): float
+    + recall(target: numpy.ndarray, predict: numpy.ndarray): float
+    + f1(target: numpy.ndarray, predict: numpy.ndarray): float
+    + classification_report(target: numpy.ndarray, predict: numpy.ndarray): dict[str, float]
   }
 
   class Model {
-    - clf: GridSearchCV
+    - clf: sklearn.model_selection.GridSearchCV
     - train_features: list[str]
-    - train_target: np.ndarray
+    - train_target: numpy.ndarray
     - test_features: list[str]
-    - test_target: np.ndarray
+    - test_target: numpy.ndarray
+    + use_xgb_flag: bool
+    + __init__()
+    + set_train_features(data: list[str], target: numpy.ndarray)
+    + set_test_features(data: list[str], target: numpy.ndarray)
+    + load_classifier(clf: sklearn.model_selection.GridSearchCV)
+    + get_classifier(): sklearn.model_selection.GridSearchCV
     + grid_search()
-    + set_training_features(data: list[str], target: np.ndarray)
-    + set_test_features(data: list[str], target: np.ndarray)
-    + load_classifier(clf: GridSearchCV)
-    + get_classifier(): GridSearchCV
-    + train_classifier()
-    + predict(): np.ndarray
+    - train_classifier()
+    + get_cv_results(): dict[str, Any]
+    + predict(): numpy.ndarray
   }
 
   class IR {
-    - train_corpus: CorpusFile
     - clf: Model
-    - predicted: np.ndarray
+    - predicted: numpy.ndarray
     - model_loaded: bool
-    + extract_text_features(categories: tuple[str, ...], corpus: CorpusFile): tuple[list[str], np.ndarray]
-    + extract_train_features(categories: tuple[str, ...])
+    + __init__()
+    - extract_text_features(filename: Path, categories: tuple[str, ...]): tuple[list[str], numpy.ndarray]
+    + extract_train_features(train_filename: Path, categories: tuple[str, ...])
     + extract_test_features(test_filename: Path, categories: tuple[str, ...])
-    + grid_search()
+    + use_xgb()
+    + train()
     + dump_classifier(phase: int)
     + load_classifier(phase: int)
     + predict()
+    + dump_cv_results()
     + score()
     + dump_predict_vals(test_filename: Path)
   }

@@ -22,6 +22,24 @@ class Model:
 
         self.use_xgb_flag = False
 
+    def set_train_features(self, data: list[str], target: np.ndarray) -> None:
+
+        self.train_features = data
+        self.train_target = target
+
+    def set_test_features(self, data: list[str], target: np.ndarray) -> None:
+
+        self.test_features = data
+        self.test_target = target
+
+    def load_classifier(self, clf: GridSearchCV) -> None:
+
+        self.clf = clf
+
+    def get_classifier(self) -> GridSearchCV:
+
+        return self.clf
+
     def grid_search(self) -> None:
 
         params = {}
@@ -80,42 +98,22 @@ class Model:
                 verbose=10,
             )
         )
-        self.train_classifier()
+        self.__train_classifier()
 
         for param_name in params.keys():
             print(f"{param_name}: {self.clf.best_params_[param_name]}")
 
-    def get_cv_results(self) -> dict[str, Any]:
-
-        return self.clf.cv_results_
-
-    def set_training_features(
-        self, data: list[str], target: np.ndarray
-    ) -> None:
-
-        self.train_features = data
-        self.train_target = target
-
-    def set_test_features(self, data: list[str], target: np.ndarray) -> None:
-
-        self.test_features = data
-        self.test_target = target
-
-    def load_classifier(self, clf: GridSearchCV) -> None:
-
-        self.clf = clf
-
-    def get_classifier(self) -> GridSearchCV:
-
-        return self.clf
-
-    def train_classifier(self) -> None:
+    def __train_classifier(self) -> None:
 
         if self.use_xgb_flag:
             le = LabelEncoder()
             self.train_target = le.fit_transform(self.train_target)
 
         self.clf.fit(self.train_features, self.train_target)
+
+    def get_cv_results(self) -> dict[str, Any]:
+
+        return self.clf.cv_results_
 
     def predict(self) -> np.ndarray:
 

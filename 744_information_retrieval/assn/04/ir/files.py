@@ -2,55 +2,65 @@ import joblib
 from pathlib import Path
 from typing import Any
 
-from .const import TARGET_FIELD, FEATURE_FIELDS, FIELD_DELIM, LIST_DELIM
+TARGET_FIELD = "assessment"
+
+FEATURE_FIELDS = (
+    "docid",
+    "title",
+    "authors",
+    "journal",
+    "issn",
+    "year",
+    "language",
+    "abstract",
+    "keywords",
+)
+
+LIST_FEATURE_FIELDS = (
+    "authors",
+    "journal",
+    "issn",
+    "keywords",
+)
 
 
 class CorpusFile:
-    def __init__(self, filename: Path) -> None:
 
-        self.filename: Path = filename
+    field_delim = "\t"
+    list_delim = ";"
 
     @staticmethod
     def __map_list(field: str) -> list[str]:
 
-        return field.split(LIST_DELIM)
+        return field.split(CorpusFile.list_delim)
 
-    def __map_to_fields(self, line: str) -> dict[str, Any]:
+    @staticmethod
+    def __map_to_fields(line: str) -> dict[str, Any]:
 
         mapped_field: dict[str, Any] = dict(
-            zip((TARGET_FIELD, *FEATURE_FIELDS), line.split(FIELD_DELIM))
+            zip(
+                (TARGET_FIELD, *FEATURE_FIELDS),
+                line.split(CorpusFile.field_delim),
+            )
         )
 
-        # assessment
-        mapped_field["assessment"] = int(mapped_field["assessment"])
-
-        # authors
-        mapped_field["authors"] = self.__map_list(mapped_field["authors"])
-
-        # journal
-        mapped_field["journal"] = self.__map_list(mapped_field["journal"])
-
-        # issn
-        mapped_field["issn"] = self.__map_list(mapped_field["issn"])
-
-        # year
-        if mapped_field["year"]:
-            if not (" " in mapped_field["year"] or "-" in mapped_field["year"]):
-                mapped_field["year"] = int(mapped_field["year"])
-
-        # keywords
-        mapped_field["keywords"] = self.__map_list(mapped_field["keywords"])
+        for field, value in mapped_field.items():
+            if field == TARGET_FIELD:
+                mapped_field[field] = int(value)
+            elif field in LIST_FEATURE_FIELDS:
+                mapped_field[field] = CorpusFile.__map_list(value)
 
         return mapped_field
 
-    def ingest(self) -> list[dict[str, Any]]:
+    @staticmethod
+    def ingest(filename: Path) -> list[dict[str, Any]]:
 
         docs: list[dict[str, Any]] = []
 
-        with open(self.filename) as fp:
+        with open(filename) as fp:
             for line in fp:
                 if line:
-                    docs.append(self.__map_to_fields(line[:-1]))
+                    docs.append(CorpusFile.__map_to_fields(line[:-1]))
 
         return docs
 

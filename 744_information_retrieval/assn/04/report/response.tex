@@ -35,16 +35,15 @@
 \clearpage
 \newpage
 
-\section*{Introduction}
+\section{Introduction}
 This paper describes the classification of the Systematic Review dataset through exploratory analysis, grid searching for optimal estimators and their hyper-parameters, and determining the best features.
 
-\section*{Technical Background}
+\section{Technical Background}
 All of the source code is in Python 3.10. The program is split into several modules and follows an object oriented structure.
 
 % .
 % ├── ir/
 % │   ├── __init__.py
-% │   ├── const.py
 % │   ├── files.py
 % │   ├── metrics.py
 % │   ├── model.py
@@ -69,7 +68,7 @@ The total number of non-empty lines of code for the program totals to around 460
     \caption{UML of Information Retrieval}
 \end{figure}
 
-\subsection*{Classes}
+\subsection{Classes}
 \texttt{scikit-learn} \cite{scikit-learn} was used to implement portions of this assignment.
 
 Some classes from Assignment 3 were used in this project:
@@ -81,7 +80,7 @@ Some classes from Assignment 3 were used in this project:
     \item the \texttt{lexer} classes were replaced by the \texttt{CountVectorizer} class provided by \texttt{scikit-learn}
 \end{itemize}
 
-\section*{Exploratory Analysis}
+\section{Exploratory Analysis}
 The dataset is a collection of tab separated value (TSV) files with 10 features.
 
 \begin{table}[!ht]
@@ -106,7 +105,7 @@ The dataset is a collection of tab separated value (TSV) files with 10 features.
         \\ \hline
         Year & Publication year
         \\ \hline
-        language & Trigram for language code (e.g., "eng")
+        Language & Trigram for language code (e.g., "eng")
         \\ \hline
         Abstract & Several sentence abstract from article
         \\ \hline
@@ -143,6 +142,7 @@ The following features are considered text features, where they are represented 
 \begin{itemize}
     \item DocID
     \item Title
+    \item Year
     \item Language
     \item Abstract
 \end{itemize}
@@ -155,14 +155,12 @@ The following features are considered list of text features, where they are repr
     \item Keywords
 \end{itemize}
 
-The remaining (optional) feature, \textit{Year}, is represented as an integer.
-
-\section*{Classification Algorithms}
+\section{Classification Algorithms}
 For classification, machine learning algorithms implemented by \texttt{scikit-learn} were used.
 
 For text tokenizing and normalizing, the \texttt{CountVectorizer} and \texttt{TfidfTransformer} classes by \texttt{scikit-learn} were used. \texttt{CountVectorizer} ingested text values and created bags-of-words. This data structure was further transformed using \texttt{TfidfTransformer} to assign TF-IDF values to the terms in the vocabulary.
 
-\subsection*{Scoring}
+\subsection{Scoring}
 To compare performances of the models, the following metrics were emphasize:
 \begin{itemize}
 \setlength\itemsep{1em}
@@ -173,12 +171,13 @@ To compare performances of the models, the following metrics were emphasize:
 
 These scores are computed in \texttt{metrics.Metrics}.
 
-\section*{Experiments}
+\section{Experiments}
 
-\subsection*{Baseline}
+\subsection{Baseline}
 For the initial phase, only the \textit{Title} feature was used as the feature. As a text feature, each of the values were tokenized, vectorized, and their TF-IDF values were used to predict the corresponding target value. The previously implemented \texttt{normalize.Normalizer} class was used as the tokenizer to \texttt{CountVectorizer}.
 
-The text vectorizers from \texttt{scikit-learn} were used with their default parameters. For classification, the linear support vector machine (SVM) with stochastic gradient descent (SGD), \texttt{SGDClassifier(loss="hinge")} was used.
+The text vectorizers from \texttt{scikit-learn} were used with their default parameters. For classification, the linear support vector machine (SVM) with stochastic gradient descent (SGD), \\
+\texttt{SGDClassifier(loss="hinge")} was used.
 
 To account for the skewed data, an additional parameter $class\_weight=\{1:30\}$ was used.
 
@@ -204,7 +203,7 @@ Table \ref{table:base_score} lists the model's scores:
 
 \end{table}
 
-\subsection*{Experiment \#1}
+\subsection{Experiment \#1}
 To improve the scores of the model, the features \textit{Abstract} and \textit{Keywords} were added. The vocabulary from the 3 features were merged and tokenized through the vectorizers. 
 
 Table \ref{table:gs0_score} lists the model's scores:
@@ -229,7 +228,7 @@ Table \ref{table:gs0_score} lists the model's scores:
 
 \end{table}
 
-\subsection*{Experiment \#2}
+\subsection{Experiment \#2}
 In addition to the features, the grid searching algorithm by scikit-learn, \texttt{GridSearchCV}, was used to find the best-performing hyper-parameters. The following parameters were used:
 \begin{enumerate}
     \item Tokenizer for \texttt{CountVectorizer}:
@@ -249,11 +248,11 @@ In addition to the features, the grid searching algorithm by scikit-learn, \text
     \end{enumerate}
     \item Class weight for \texttt{SGDClassifier}: $\{\{1: i\}, 3 \le i \le 30\}$
 \end{enumerate}
-In total, 196 combinations were exhaustively searched to find the optimal scores.
+In total, 196 combinations were exhaustively searched to find the optimal F1-score.
+
+Along with the hyper-parameter search, various combinations of features were tested as well. Features such as \textit{Authors} and \textit{Year} do not appear to contribute to the model's performance, and \textit{Journal} appears to degrade the performance. The optimal features were determined to be: \{\textit{Title}, \textit{Abstract}, \textit{Keywords}, \textit{Language}\}.
 
 Figure \ref{fig:cv} lists the scores yielded by the various combinations of class weight ratios, tokenization methods, and stop words lists. The scores are the mean F1-scores of the 5-fold cross validation segments.
-
-The tokenizer not using any stemming or stop words lists perform the best consistently. Some models, such as the tokenizer with either of the stemmers and no stop words lists, appear to perform well with low weight classes, but degrade over increasing weights.
 
 \begin{figure}[!ht]
     \includegraphics[scale=0.46]{statics/cv.png}
@@ -284,9 +283,9 @@ Table \ref{table:gs1_param} lists the parameters with the best scores.
 
 \end{table}
 
-Along with the hyper-parameter search, various combinations of features were tested as well. Features such as \textit{Authors} and \textit{Year} do not appear to contribute to the model's performance, and \textit{Journal} appears to degrade the performance. The optimal features were determined to be: \{\textit{Title}, \textit{Abstract}, \textit{Keywords}, \textit{Language}\}.
+The tokenizer, when not using any stemming or stop words lists perform the best consistently. Some models, such as the tokenizer with either of the stemmers and no stop words lists, appear to perform well with low weight classes, but degrade over increasing weights.
 
-Table \ref{table:gs1_score} shows the model's scores:
+Table \ref{table:gs1_score} shows the optimal model's scores.
 \begin{table}[!ht]
     \caption{Scores using \textit{Title}, \textit{Abstract}, \textit{Keywords} and \textit{Language} as the features}
     \label{table:gs1_score}
@@ -308,16 +307,46 @@ Table \ref{table:gs1_score} shows the model's scores:
 
 \end{table}
 
-\subsubsection*{Analysis}
-The exhaustive grid search still yielded a model with poor scores.
+\subsubsection{Analysis}
+The exhaustive grid search yielded an optimal model with an F1-score of 0.542. When hyper-parameter tuning, all of the 3 metrics were initially considered (precision, recall, and F1-score) but it ranked models with inconsistent performances on the development dataset, i.e models with recall of >0.8 yielded precision of <0.2. The models had to be narrowed down to just the F1-scores.
 
-\subsection*{Experiment \#3}
+\subsection{Experiment \#3}
 An additional experiment was performed, where the same features were trained on an XGBoost (eXtreme Gradient Boosting) estimator \cite{Chen_2016}. 
+
+\begin{table}[!ht]
+    \caption{Scores using an XGBoost classifier}
+    \label{table:gs2_score}
+    \begin{center}
+
+        \begin{tabular}{| c | c |}
+        \hline
+        \textbf{Metric} & \textbf{Score}
+        \\ \hline
+        objective & binary:logistic
+        \\ \hline
+        scale\_pos\_weight & 3
+        \\ \hline
+        learning\_rate & 0.2
+        \\ \hline
+        n\_estimators & 100
+        \\ \hline
+        max\_depth & 3
+        \\ \hline
+        min\_child\_weight & 10
+        \\ \hline
+        max\_delta\_step & 3
+        \\ \hline
+        subsample & 0.8
+        \\ \hline
+        \end{tabular}
+
+    \end{center}
+
+\end{table}
 
 % scale_pos_weight": [3]
 % "learning_rate": 0.2,
 % "n_estimators": 100,
-% "objective": "binary:logistic",
 % "max_depth": 3,
 % "min_child_weight": 10,
 % "max_delta_step": 3,
@@ -325,7 +354,7 @@ An additional experiment was performed, where the same features were trained on 
 
 % {'precision': 0.631, 'recall': 0.433, 'f1': 0.514}
 
-\subsubsection*{Analysis}
+\subsubsection{Analysis}
 The final scores of the models were underwhelming.
 
 \bibliographystyle{ieeetr}

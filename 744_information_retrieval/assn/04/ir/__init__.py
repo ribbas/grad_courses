@@ -2,16 +2,15 @@ from pathlib import Path
 
 import numpy as np
 
-from .const import TARGET_FIELD, LIST_FEATURE_FIELDS, JHED
-from .files import CorpusFile, IO
+from .files import CorpusFile, IO, TARGET_FIELD, LIST_FEATURE_FIELDS
 from .metrics import Metrics
 from .model import Model
 
+JHED = "sahmed80"
+
 
 class InformationRetrieval:
-    def __init__(self, train_filename: Path) -> None:
-
-        self.train_corpus: CorpusFile = CorpusFile(train_filename)
+    def __init__(self) -> None:
 
         self.clf: Model = Model()
 
@@ -23,10 +22,10 @@ class InformationRetrieval:
         self.clf.use_xgb_flag = True
 
     def __extract_text_features(
-        self, categories: tuple[str, ...], corpus: CorpusFile
+        self, filename: Path, categories: tuple[str, ...]
     ) -> tuple[list[str], np.ndarray]:
 
-        docs = corpus.ingest()
+        docs = CorpusFile().ingest(filename)
         target = np.array([i[TARGET_FIELD] for i in docs])
         features: list[str] = []
 
@@ -46,31 +45,27 @@ class InformationRetrieval:
 
         return features, target
 
-    def extract_train_features(self, categories: tuple[str, ...]) -> None:
+    def extract_train_features(
+        self, train_filename: Path, categories: tuple[str, ...]
+    ) -> None:
 
         features, target = self.__extract_text_features(
-            categories, self.train_corpus
+            train_filename, categories
         )
-        self.clf.set_training_features(features, target)
-        print("train targets:", Metrics.distribution(target))
+        self.clf.set_train_features(features, target)
+        print("distribution of train targets:", Metrics.distribution(target))
 
     def extract_test_features(
         self, test_filename: Path, categories: tuple[str, ...]
     ) -> None:
 
-        if self.model_loaded:
+        features, target = self.__extract_text_features(
+            test_filename, categories
+        )
+        self.clf.set_test_features(features, target)
+        print("distribution of test targets:", Metrics.distribution(target))
 
-            test_corpus = CorpusFile(test_filename)
-            features, target = self.__extract_text_features(
-                categories, test_corpus
-            )
-            self.clf.set_test_features(features, target)
-            print("test targets:", Metrics.distribution(target))
-
-        else:
-            raise AttributeError("Classifier model not generated yet")
-
-    def grid_search(self) -> None:
+    def train(self) -> None:
 
         self.clf.grid_search()
         self.model_loaded = True
@@ -90,7 +85,10 @@ class InformationRetrieval:
 
     def score(self) -> None:
 
-        print("predicted targets:", Metrics.distribution(self.predicted))
+        print(
+            "distribution of predicted targets:",
+            Metrics.distribution(self.predicted),
+        )
         print(
             Metrics.classification_report(self.clf.test_target, self.predicted)
         )
@@ -108,8 +106,7 @@ class InformationRetrieval:
 
     def dump_predict_vals(self, test_filename: Path) -> None:
 
-        test_corpus = CorpusFile(test_filename)
-        doc_ids, _ = self.__extract_text_features(("docid",), test_corpus)
+        doc_ids, _ = self.__extract_text_features(test_filename, ("docid",))
         output_pairs = "\n".join(
             f"{doc_id}\t{p}" for doc_id, p in zip(doc_ids, self.predicted)
         )

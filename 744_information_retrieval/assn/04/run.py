@@ -42,6 +42,12 @@ if __name__ == "__main__":
         help="compute scores of the model",
     )
     parser.add_argument(
+        "-c",
+        "--cv",
+        action=argparse.BooleanOptionalAction,
+        help="dump cross validation results of grid search",
+    )
+    parser.add_argument(
         "-p",
         "--predict",
         action=argparse.BooleanOptionalAction,
@@ -51,7 +57,7 @@ if __name__ == "__main__":
 
     args = vars(parser.parse_args())
 
-    ir_obj = InformationRetrieval(Path(args["path"]))
+    ir_obj = InformationRetrieval()
 
     categories: tuple = ()
     if args["train"]:
@@ -83,13 +89,13 @@ if __name__ == "__main__":
             ir_obj.use_xgb()
             print("training on categories:", categories)
 
-        ir_obj.extract_train_features(categories)
+        ir_obj.extract_train_features(Path(args["path"]), categories)
 
     if args["load"]:
         ir_obj.load_classifier(args["train"])
 
     if args["gen"]:
-        ir_obj.grid_search()
+        ir_obj.train()
         ir_obj.dump_classifier(args["train"])
 
     if args["test"]:
@@ -98,6 +104,8 @@ if __name__ == "__main__":
     if args["score"]:
         ir_obj.predict()
         ir_obj.score()
+
+    if args["cv"]:
         ir_obj.dump_cv_results()
 
     if args["predict"]:
