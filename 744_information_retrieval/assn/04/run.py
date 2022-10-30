@@ -60,43 +60,41 @@ if __name__ == "__main__":
     ir_obj = InformationRetrieval()
 
     categories: tuple = ()
-    if args["train"]:
+    if args["train"] == 0:
+        categories = ("title",)
+        print("training on categories:", categories)
 
-        if args["train"] == 0:
-            categories = ("title",)
-            print("training on categories:", categories)
+    elif args["train"] == 1:
+        categories = ("title", "abstract", "keywords")
+        print("training on categories:", categories)
 
-        elif args["train"] == 1:
-            categories = ("title", "abstract", "keywords")
-            print("training on categories:", categories)
+    elif args["train"] == 2:
+        categories = (
+            "title",
+            "abstract",
+            "keywords",
+            "language",
+        )
+        print("training on categories:", categories)
 
-        elif args["train"] == 2:
-            categories = (
-                "title",
-                "abstract",
-                "keywords",
-                "language",
-            )
-            print("training on categories:", categories)
+    elif args["train"] == 3:
+        categories = (
+            "title",
+            "abstract",
+            "keywords",
+            "language",
+        )
+        ir_obj.use_xgb()
+        print("training on categories:", categories)
 
-        elif args["train"] == 3:
-            categories = (
-                "title",
-                "abstract",
-                "keywords",
-                "language",
-            )
-            ir_obj.use_xgb()
-            print("training on categories:", categories)
-
-        ir_obj.extract_train_features(Path(args["path"]), categories)
+    ir_obj.extract_train_features(Path(args["path"]), categories)
 
     if args["load"]:
         ir_obj.load_classifier(args["train"])
 
     if args["gen"]:
         ir_obj.train()
-        ir_obj.dump_classifier(args["train"])
+        # ir_obj.dump_classifier(args["train"])
 
     if args["test"]:
         ir_obj.extract_test_features(Path(args["test"]), categories)
