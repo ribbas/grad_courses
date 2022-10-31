@@ -1,29 +1,6 @@
 \documentclass[11pt]{article}
 
-\usepackage{appendix}
-\usepackage{array}
-\usepackage[labelfont=bf]{caption}
-\usepackage{parskip}
-\usepackage{graphicx}
-\usepackage{amsmath}
-\usepackage{listings}
-
-\usepackage[T1]{fontenc}
-\usepackage{lmodern}
-\usepackage[autostyle, english = american]{csquotes}
-\MakeOuterQuote{"}
-\captionsetup[table]{skip=5pt}
-\newcolumntype{L}[1]{>{\arraybackslash}m{#1}}
-
-\usepackage{pythonhighlight}
-
-% Margins
-\topmargin=-0.45in
-\evensidemargin=0in
-\oddsidemargin=0in
-\textwidth=6.5in
-\textheight=9.0in
-\headsep=0.25in
+\usepackage{custom}
 
 \title{605.744: Information Retrieval \\ Programming Assignment \#4: Binary Text Classification}
 \author{Sabbir Ahmed}
@@ -36,7 +13,7 @@
 \newpage
 
 \section{Introduction}
-This paper describes the classification of the Systematic Review dataset through exploratory analysis, grid searching for optimal estimators and their hyper-parameters, and determining the best features.
+This paper describes the classification of the Systematic Review dataset through exploratory analysis, grid searching for optimal estimators and their hyperparameters, and determining the best features.
 
 \section{Technical Background}
 All of the source code is in Python 3.10. The program is split into several modules and follows an object oriented structure.
@@ -54,13 +31,13 @@ All of the source code is in Python 3.10. The program is split into several modu
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[scale=0.2]{statics/dirtree.png}
+    \includegraphics[trim={0 0 15cm 3cm},clip,scale=0.3]{statics/dirtree.png}
     \caption{Directory Hierarchy of Assignment 4}
 \end{figure}
 
 The source code for all of the files are attached in Appendix \ref{appendix:src}.
 
-The total number of non-empty lines of code for the program totals to around 460.
+The total number of non-empty lines of code for the program totals to under 460.
 
 \begin{figure}[!ht]
     \includegraphics[scale=0.35]{statics/uml.png}
@@ -69,8 +46,6 @@ The total number of non-empty lines of code for the program totals to around 460
 \end{figure}
 
 \subsection{Classes}
-\texttt{scikit-learn} \cite{scikit-learn} was used to implement portions of this assignment.
-
 Some classes from Assignment 3 were used in this project:
 \begin{itemize}
     \item the driver script \texttt{run.py} was modified with the relevant flags
@@ -80,63 +55,58 @@ Some classes from Assignment 3 were used in this project:
     \item the \texttt{lexer} classes were replaced by the \texttt{CountVectorizer} class provided by \texttt{scikit-learn}
 \end{itemize}
 
+\subsection{External Libraries}
+The following external libraries were used to implement portions of the assignment:
+\begin{itemize}
+    \item Natural Language Toolkit (NLTK) \cite{bird2009natural}
+    \item scikit-learn (sklearn) \cite{scikit-learn}
+    \item XGBoost \cite{Chen_2016}
+\end{itemize}
+
 \section{Exploratory Analysis}
-The dataset is a collection of tab separated value (TSV) files with 10 features.
+The dataset is a collection of tab separated value (TSV) files with 10 features. The training portion is used to train the models, the development portion is used to score the performances of the models, and the test portion is used for its target features to be predicted by the models. 
 
-\begin{table}[!ht]
-    \caption{Description of the features of the Systematic Review dataset}
-    \begin{center}
-
-        \begin{tabular}{| l | l |}
-        \hline
-        \textbf{Feature} & \textbf{Description}
-        \\ \hline
-        Assessment & -1, 0, or 1; zero indicates unknown; 1=accept, -1=reject
-        \\ \hline
-        DocID & Unique ID. Usually PubMed ID, or hashed ID
-        \\ \hline
-        Title & Article title
-        \\ \hline
-        Authors & List of authors
-        \\ \hline
-        Journal & Journal title
-        \\ \hline
-        ISSN & Numeric code for journal
-        \\ \hline
-        Year & Publication year
-        \\ \hline
-        Language & Trigram for language code (e.g., "eng")
-        \\ \hline
-        Abstract & Several sentence abstract from article
-        \\ \hline
-        Keywords & List of keywords
-        \\ \hline
-        \end{tabular}
-
-    \end{center}
-
-\end{table}
+\begin{simptable}
+    {Description of the features of the Systematic Review dataset}
+    {features}
+    {| l | l |}
+    \textbf{Feature} & \textbf{Description}
+    \\ \hline
+    Assessment & -1, 0, or 1; zero indicates unknown; 1=accept, -1=reject
+    \\ \hline
+    DocID & Unique ID. Usually PubMed ID, or hashed ID
+    \\ \hline
+    Title & Article title
+    \\ \hline
+    Authors & List of authors
+    \\ \hline
+    Journal & Journal title
+    \\ \hline
+    ISSN & Numeric code for journal
+    \\ \hline
+    Year & Publication year
+    \\ \hline
+    Language & Trigram for language code (e.g., "eng")
+    \\ \hline
+    Abstract & Several sentence abstract from article
+    \\ \hline
+    Keywords & List of keywords
+    \\ \hline
+\end{simptable}
 
 The \textit{Assessment} feature in the training and development datasets is the target binary value, and will be predicted for the testing dataset. The feature is heavily imbalanced, with Table \ref{table:dist_train} showing the distribution in the training dataset:
 
-\begin{table}[!ht]
-    \caption{Distribution of \textit{Assessment} in the training dataset}
-    \label{table:dist_train}
-    \begin{center}
-
-        \begin{tabular}{| c | c |}
-        \hline
-        \textbf{Value} & \textbf{Count}
-        \\ \hline
-        -1 & 21,000
-        \\ \hline
-        1 & 700
-        \\ \hline
-        \end{tabular}
-
-    \end{center}
-
-\end{table}
+\begin{simptable}
+    {Distribution of \textit{Assessment} in the training dataset}
+    {dist_train}
+    {| c | c |}
+    \textbf{Value} & \textbf{Count}
+    \\ \hline
+    -1 & 21,000
+    \\ \hline
+    1 & 700
+    \\ \hline
+\end{simptable}
 
 The following features are considered text features, where they are represented as single strings:
 \begin{itemize}
@@ -182,54 +152,43 @@ The text vectorizers from \texttt{scikit-learn} were used with their default par
 To account for the skewed data, an additional parameter $class\_weight=\{1:30\}$ was used.
 
 Table \ref{table:base_score} lists the model's scores:
-\begin{table}[!ht]
-    \caption{Scores using only \textit{Title} as the feature}
-    \label{table:base_score}
-    \begin{center}
 
-        \begin{tabular}{| c | c |}
-        \hline
-        \textbf{Metric} & \textbf{Score}
-        \\ \hline
-        Precision & 0.195 
-        \\ \hline
-        Recall & 0.640
-        \\ \hline
-        F1-Score & 0.299
-        \\ \hline
-        \end{tabular}
+\begin{simptable}
+    {Scores using only \textit{Title} as the feature}
+    {base_score}
+    {| c | c |}
+    \textbf{Metric} & \textbf{Score}
+    \\ \hline
+    Precision & 0.195 
+    \\ \hline
+    Recall & 0.640
+    \\ \hline
+    F1-Score & 0.299
+    \\ \hline
 
-    \end{center}
+\end{simptable}
 
-\end{table}
-
-\subsection{Experiment \#1}
+\subsection{Experiment \#1: More Features}
 To improve the scores of the model, the features \textit{Abstract} and \textit{Keywords} were added. The vocabulary from the 3 features were merged and tokenized through the vectorizers. 
 
 Table \ref{table:gs0_score} lists the model's scores:
-\begin{table}[!ht]
-    \caption{Scores using \textit{Title}, \textit{Abstract} and \textit{Keywords} as the features}
-    \label{table:gs0_score}
-    \begin{center}
 
-        \begin{tabular}{| c | c |}
-        \hline
-        \textbf{Metric} & \textbf{Score}
-        \\ \hline
-        Precision & 0.330 
-        \\ \hline
-        Recall & 0.747
-        \\ \hline
-        F1-Score & 0.458
-        \\ \hline
-        \end{tabular}
+\begin{simptable}
+    {Scores using \textit{Title}, \textit{Abstract} and \textit{Keywords} as the features}
+    {gs0_score}
+    {| c | c |}
+    \textbf{Metric} & \textbf{Score}
+    \\ \hline
+    Precision & 0.330 
+    \\ \hline
+    Recall & 0.747
+    \\ \hline
+    F1-Score & 0.458
+    \\ \hline
+\end{simptable}
 
-    \end{center}
-
-\end{table}
-
-\subsection{Experiment \#2}
-In addition to the features, the grid searching algorithm by scikit-learn, \texttt{GridSearchCV}, was used to find the best-performing hyper-parameters. The following parameters were used:
+\subsection{Experiment \#2: Hyperparameter Optimization and Feature Selection}
+In addition to the features, the grid searching algorithm by scikit-learn, \texttt{GridSearchCV}, was used to find the best-performing hyperparameters. The following parameters were used:
 \begin{enumerate}
     \item Tokenizer for \texttt{CountVectorizer}:
     \begin{enumerate}
@@ -250,7 +209,7 @@ In addition to the features, the grid searching algorithm by scikit-learn, \text
 \end{enumerate}
 In total, 196 combinations were exhaustively searched to find the optimal F1-score.
 
-Along with the hyper-parameter search, various combinations of features were tested as well. Features such as \textit{Authors} and \textit{Year} do not appear to contribute to the model's performance, and \textit{Journal} appears to degrade the performance. The optimal features were determined to be: \{\textit{Title}, \textit{Abstract}, \textit{Keywords}, \textit{Language}\}.
+Along with the hyperparameter search, various combinations of features were tested as well. Features such as \textit{Authors} and \textit{Year} do not appear to contribute to the model's performance, and \textit{Journal} appears to degrade the performance. The optimal features were determined to be: \{\textit{Title}, \textit{Abstract}, \textit{Keywords}, \textit{Language}\}.
 
 Figure \ref{fig:cv} lists the scores yielded by the various combinations of class weight ratios, tokenization methods, and stop words lists. The scores are the mean F1-scores of the 5-fold cross validation segments.
 
@@ -262,106 +221,95 @@ Figure \ref{fig:cv} lists the scores yielded by the various combinations of clas
 \end{figure}
 
 Table \ref{table:gs1_param} lists the parameters with the best scores.
-\begin{table}[!ht]
-    \caption{Optimal parameters determined via grid search}
-    \label{table:gs1_param}
-    \begin{center}
-
-        \begin{tabular}{| l | c |}
-        \hline
-        \textbf{Parameter} & \textbf{Value}
-        \\ \hline
-        Stemmer for \texttt{CountVectorizer} & Snowball
-        \\ \hline
-        Stop words list & None
-        \\ \hline
-        Class weight ratio for \texttt{SGDClassifier} & \{1: 4\}
-        \\ \hline
-        \end{tabular}
-
-    \end{center}
-
-\end{table}
+\begin{simptable}
+    {Optimal parameters determined via grid search}
+    {gs1_param}
+    {| l | c |}
+    \textbf{Parameter} & \textbf{Value}
+    \\ \hline
+    Stemmer for \texttt{CountVectorizer} & Snowball
+    \\ \hline
+    Stop words list & None
+    \\ \hline
+    Class weight ratio for \texttt{SGDClassifier} & \{1: 4\}
+    \\ \hline
+\end{simptable}
 
 The tokenizer, when not using any stemming or stop words lists perform the best consistently. Some models, such as the tokenizer with either of the stemmers and no stop words lists, appear to perform well with low weight classes, but degrade over increasing weights.
 
 Table \ref{table:gs1_score} shows the optimal model's scores.
-\begin{table}[!ht]
-    \caption{Scores using \textit{Title}, \textit{Abstract}, \textit{Keywords} and \textit{Language} as the features}
-    \label{table:gs1_score}
-    \begin{center}
-
-        \begin{tabular}{| c | c |}
-        \hline
-        \textbf{Metric} & \textbf{Score}
-        \\ \hline
-        Precision & 0.503 
-        \\ \hline
-        Recall & 0.587
-        \\ \hline
-        F1-Score & 0.542
-        \\ \hline
-        \end{tabular}
-
-    \end{center}
-
-\end{table}
+\begin{simptable}
+    {Scores using \textit{Title}, \textit{Abstract}, \textit{Keywords} and \textit{Language} as the features}
+    {gs1_score}
+    {| c | c |}
+    \textbf{Metric} & \textbf{Score}
+    \\ \hline
+    Precision & 0.503 
+    \\ \hline
+    Recall & 0.587
+    \\ \hline
+    F1-Score & 0.542
+    \\ \hline
+\end{simptable}
 
 \subsubsection{Analysis}
-The exhaustive grid search yielded an optimal model with an F1-score of 0.542. When hyper-parameter tuning, all of the 3 metrics were initially considered (precision, recall, and F1-score) but it ranked models with inconsistent performances on the development dataset, i.e models with recall of >0.8 yielded precision of <0.2. The models had to be narrowed down to just the F1-scores.
+The exhaustive grid search yielded an optimal model with an F1-score of 0.542. When hyperparameter tuning, all of the 3 metrics were initially considered (precision, recall, and F1-score) but it ranked models with inconsistent performances on the development dataset, i.e models with recall of >0.8 yielded precision of <0.2. The models had to be narrowed down to just the F1-scores.
 
-\subsection{Experiment \#3}
-An additional experiment was performed, where the same features were trained on an XGBoost (eXtreme Gradient Boosting) estimator \cite{Chen_2016}. 
+\subsection{Experiment \#3: eXtreme Gradient Boosting}
+An additional experiment was performed, where the same features were trained on an XGBoost (eXtreme Gradient Boosting) estimator \cite{Chen_2016}. A similar approach to hyperparameter tuning and feature selection with the SVM model was taken with this estimator, although not as thoroughly due to memory and time constraints.
 
-\begin{table}[!ht]
-    \caption{Scores using an XGBoost classifier}
-    \label{table:gs2_score}
-    \begin{center}
+\begin{simptable}
+    {Optimal parameters determined via grid search}
+    {gs2_param}
+    {| c | c |}
+    \textbf{Metric} & \textbf{Score}
+    \\ \hline
+    objective & binary:logistic
+    \\ \hline
+    scale\_pos\_weight & 3
+    \\ \hline
+    learning\_rate & 0.2
+    \\ \hline
+    n\_estimators & 100
+    \\ \hline
+    max\_depth & 3
+    \\ \hline
+    min\_child\_weight & 10
+    \\ \hline
+    max\_delta\_step & 3
+    \\ \hline
+    subsample & 0.8
+    \\ \hline
+\end{simptable}
 
-        \begin{tabular}{| c | c |}
-        \hline
-        \textbf{Metric} & \textbf{Score}
-        \\ \hline
-        objective & binary:logistic
-        \\ \hline
-        scale\_pos\_weight & 3
-        \\ \hline
-        learning\_rate & 0.2
-        \\ \hline
-        n\_estimators & 100
-        \\ \hline
-        max\_depth & 3
-        \\ \hline
-        min\_child\_weight & 10
-        \\ \hline
-        max\_delta\_step & 3
-        \\ \hline
-        subsample & 0.8
-        \\ \hline
-        \end{tabular}
+Table \ref{table:gs2_score} shows the optimal model's scores.
 
-    \end{center}
-
-\end{table}
-
-% scale_pos_weight": [3]
-% "learning_rate": 0.2,
-% "n_estimators": 100,
-% "max_depth": 3,
-% "min_child_weight": 10,
-% "max_delta_step": 3,
-% "subsample": 0.8,
-
-% {'precision': 0.631, 'recall': 0.433, 'f1': 0.514}
+\begin{simptable}
+    {Scores using \textit{Title}, \textit{Abstract}, \textit{Keywords} and \textit{Language} as the features}
+    {gs2_score}
+    {| c | c |}
+    \textbf{Metric} & \textbf{Score}
+    \\ \hline
+    Precision & 0.631 
+    \\ \hline
+    Recall & 0.433
+    \\ \hline
+    F1-Score & 0.514
+    \\ \hline
+\end{simptable}
 
 \subsubsection{Analysis}
-The final scores of the models were underwhelming.
+The scores yielded did not appear to be significantly different from the SVM model, although recall can be prioritized by adjusting properties of the tree structures such as \texttt{max\_depth} and \texttt{min\_child\_weight}.
 
+\section{Conclusion}
+The SVM model with the optimal parameters appeared to perform the best. Ultimately, this model was used to predict the target values of the test portion of the dataset. The predictions were saved to the attached file, \texttt{sahmed80.txt}.
+
+\addcontentsline{toc}{section}{References}
 \bibliographystyle{ieeetr}
 \bibliography{refs}
 
 \appendix
-\addcontentsline{toc}{part}{Appendix}%
+\addcontentsline{toc}{section}{Appendix}%
 
 \section{Source Code} \label{appendix:src}
 

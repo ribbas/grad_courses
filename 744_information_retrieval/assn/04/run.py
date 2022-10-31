@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
     ir_obj = InformationRetrieval()
 
-    categories: tuple = ()
+    categories: tuple[str, ...] = ()
     if args["train"] == 0:
         categories = ("title",)
         print("training on categories:", categories)
@@ -94,7 +94,7 @@ if __name__ == "__main__":
 
     if args["gen"]:
         ir_obj.train()
-        # ir_obj.dump_classifier(args["train"])
+        ir_obj.dump_classifier(args["train"])
 
     if args["test"]:
         ir_obj.extract_test_features(Path(args["test"]), categories)

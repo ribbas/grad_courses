@@ -5,8 +5,8 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
-from xgboost import XGBClassifier
 from sklearn.preprocessing import LabelEncoder
+from xgboost import XGBClassifier
 
 from .normalize import Normalizer
 
