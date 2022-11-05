@@ -6,3 +6,4 @@ models/
 *.toc
 *.bbl
 *.blg
+*.gz
