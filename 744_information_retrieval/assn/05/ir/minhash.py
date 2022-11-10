@@ -24,8 +24,22 @@ class MinHash:
         ]
 
         self.signatures: list[list[int]] = []
-        self.sim = [[0.0] * self.n_docs for _ in range(self.n_docs)]
-        # self.sim = np.zeros((self.n_docs, self.n_docs))
+
+        self.num_elems = int(self.n_docs * (self.n_docs - 1) / 2)
+        self.sim = [0.0 for _ in range(self.num_elems)]
+
+        # self.sim = [[0.0] * self.n_docs for _ in range(self.n_docs)]
+
+    def get_triangle_index(self, i, j):
+
+        if j < i:
+            temp = i
+            i = j
+            j = temp
+
+        k = int(i * (self.n_docs - (i + 1) / 2.0) + j - i) - 1
+
+        return k
 
     def generate_signatures(self):
 
@@ -34,14 +48,14 @@ class MinHash:
             signature: list[int] = []
 
             # For each of the random hash functions...
-            for i in range(self.n_hashes):
+            for a, b in self.perms:
 
                 min_hash_code = NEXT_PRIME + 1
 
                 # For each shingle in the document...
                 for shingle in shingle_set:
                     # Evaluate the hash function.
-                    a, b = self.perms[i]
+                    # a, b = self.perms[it]
                     hash_code = (a * shingle + b) % NEXT_PRIME
 
                     # Track the lowest hash code seen.
@@ -55,21 +69,26 @@ class MinHash:
             # Store the MinHash signature for this document.
             self.signatures.append(signature)
 
+        # self.signatures = np.asarray(self.signatures)
+
     def compare_signatures(self):
 
-        for i in range(self.n_docs):
+        for first in range(self.n_docs):
 
-            if not i % 1000:
-                print("done with a thousand", i)
+            if not first % 1000:
+                print(f"Documents: {first}/{self.n_docs}")
 
-            for j in range(i + 1, self.n_docs):
+            for second in range(first + 1, self.n_docs):
 
                 count = sum(
-                    self.signatures[i][k] == self.signatures[j][k]
+                    self.signatures[first][k] == self.signatures[second][k]
                     for k in range(self.n_hashes)
                 )
 
-                self.sim[i][j] = count / self.n_hashes
+                # self.sim[first][second] = count / self.n_hashes
+                self.sim[self.get_triangle_index(first, second)] = (
+                    count / self.n_hashes
+                )
 
     def find_near_duplicates(self):
 
@@ -82,7 +101,8 @@ class MinHash:
 
                 for j in range(i + 1, self.n_docs):
 
-                    sim = self.sim[i][j]
+                    # sim = self.sim[i][j]
+                    sim = self.sim[self.get_triangle_index(i, j)]
 
                     if sim > self.threshold:
                         checked.add(j + 1)

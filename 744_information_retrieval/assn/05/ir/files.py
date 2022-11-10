@@ -25,9 +25,9 @@ class CorpusFile:
         return docs
 
     @staticmethod
-    def dump_clusters(filename: Path, data: str) -> None:
+    def dump_clusters(filename: str, data: str) -> None:
 
-        filepath = f"outputs/{JHED}-{filename.name}"
+        filepath = f"outputs/{JHED}-{filename}.txt"
         with open(filepath, "w") as fp:
             fp.write(data)
         print(f"Dumped to '{filepath}'")
