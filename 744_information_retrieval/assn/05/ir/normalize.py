@@ -83,19 +83,10 @@ class Normalizer:
         # elif self.stemmer == "porter":
         #     self.chosen_stemmer = nltk.stem.PorterStemmer()
 
-        # self.stopwords: str = stopwords
-        # self.stopwords_list: frozenset[str]
-        # if self.stopwords == "custom":
-        #     self.stopwords_list = CONTRACTIONS
-        # elif self.stopwords == "sklearn":
-        #     self.stopwords_list = _stop_words.ENGLISH_STOP_WORDS
-
         self.ws_re: re.Pattern[str] = re.compile(r"\w+")
-        self.punctuation_table = str.maketrans("", "", string.punctuation)
-
-    # def __repr__(self) -> str:
-
-    #     return f"{self.__class__.__name__}/{self.stemmer}/{self.stopwords}"
+        self.punc_table = str.maketrans(
+            "", "", """!"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"""
+        )
 
     def __to_lower_case(self, document: str) -> str:
 
@@ -122,7 +113,7 @@ class Normalizer:
 
     def __remove_puncs(self, tokens: list[str]) -> list[str]:
 
-        return [i.translate(self.punctuation_table) for i in tokens]
+        return [i.translate(self.punc_table) for i in tokens]
 
     def __call__(self, document: str) -> list[str]:
 

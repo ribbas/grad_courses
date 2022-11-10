@@ -1,28 +1,33 @@
 from pathlib import Path
 
-import numpy as np
-
-from .files import CorpusFile, IO
+from .files import CorpusFile
 from .minhash import MinHash
-from .metrics import Metrics
-
-JHED = "sahmed80"
 
 
 class InformationRetrieval:
-    def __init__(self) -> None:
+    def __init__(self, filename: Path) -> None:
 
-        pass
+        self.filename = filename
+        self.docs = []
+        self.clusters = []
 
-    def read(self, filename: Path) -> None:
+    def normalize(self) -> None:
 
-        docs = CorpusFile().ingest(filename)
+        self.docs = CorpusFile().ingest(self.filename)
 
-        min_hash = MinHash(docs)
+    def generate_signatures(self) -> None:
+
+        min_hash = MinHash(self.docs)
         min_hash.generate_signatures()
         min_hash.compare_signatures()
-        clusters = min_hash.find_near_duplicates()
+        self.clusters = min_hash.find_near_duplicates()
 
-        from pprint import pprint
+    def dump_clusters(self) -> None:
 
-        pprint(clusters)
+        self.clusters.sort(key=len, reverse=True)
+
+        output = ""
+        for c in self.clusters:
+            output += " ".join(str(i) for i in c) + "\n"
+
+        CorpusFile().dump_clusters(self.filename, output)
