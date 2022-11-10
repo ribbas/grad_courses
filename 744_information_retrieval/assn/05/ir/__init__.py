@@ -14,7 +14,7 @@ class InformationRetrieval:
     def normalize(self) -> None:
 
         print("Normalizing documents...")
-        self.docs = CorpusFile().ingest(self.filename)
+        self.docs = CorpusFile().ingest(self.filename, 4)
 
     def generate_signatures(self) -> None:
 

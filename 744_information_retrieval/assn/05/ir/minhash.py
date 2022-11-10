@@ -27,6 +27,7 @@ class MinHash:
 
         self.num_elems = int(self.n_docs * (self.n_docs - 1) / 2)
         self.sim = [0.0 for _ in range(self.num_elems)]
+        # self.sim = np.zeros((self.num_elems, 1))
 
         # self.sim = [[0.0] * self.n_docs for _ in range(self.n_docs)]
 
@@ -75,8 +76,8 @@ class MinHash:
 
         for first in range(self.n_docs):
 
-            if not first % 1000:
-                print(f"Documents: {first}/{self.n_docs}")
+            if first and not first % 1000:
+                print(f"\t{first}/{self.n_docs}")
 
             for second in range(first + 1, self.n_docs):
 
@@ -89,6 +90,9 @@ class MinHash:
                 self.sim[self.get_triangle_index(first, second)] = (
                     count / self.n_hashes
                 )
+
+        print(f"\t{self.n_docs}/{self.n_docs}")
+        self.signatures.clear()
 
     def find_near_duplicates(self):
 
