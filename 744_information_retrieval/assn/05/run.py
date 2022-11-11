@@ -31,6 +31,7 @@ if __name__ == "__main__":
         action=argparse.BooleanOptionalAction,
         help="dump classifier to disk",
     )
+    parser.add_argument("-s", "--score", type=str, help="path of query file")
 
     args = vars(parser.parse_args())
 
@@ -51,3 +52,6 @@ if __name__ == "__main__":
 
         if args["dump"]:
             ir_obj.dump_clusters()
+
+        if args["score"]:
+            ir_obj.score(Path(args["score"]))

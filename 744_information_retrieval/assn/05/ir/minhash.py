@@ -24,23 +24,7 @@ class MinHash:
         ]
 
         self.signatures: list[list[int]] = []
-
-        self.num_elems = int(self.n_docs * (self.n_docs - 1) / 2)
-        self.sim = [0.0 for _ in range(self.num_elems)]
-        # self.sim = np.zeros((self.num_elems, 1))
-
-        # self.sim = [[0.0] * self.n_docs for _ in range(self.n_docs)]
-
-    def get_triangle_index(self, i, j):
-
-        if j < i:
-            temp = i
-            i = j
-            j = temp
-
-        k = int(i * (self.n_docs - (i + 1) / 2.0) + j - i) - 1
-
-        return k
+        self.sim = [[0.0] * self.n_docs for _ in range(self.n_docs)]
 
     def generate_signatures(self):
 
@@ -70,8 +54,6 @@ class MinHash:
             # Store the MinHash signature for this document.
             self.signatures.append(signature)
 
-        # self.signatures = np.asarray(self.signatures)
-
     def compare_signatures(self):
 
         for first in range(self.n_docs):
@@ -86,10 +68,7 @@ class MinHash:
                     for k in range(self.n_hashes)
                 )
 
-                # self.sim[first][second] = count / self.n_hashes
-                self.sim[self.get_triangle_index(first, second)] = (
-                    count / self.n_hashes
-                )
+                self.sim[first][second] = count / self.n_hashes
 
         print(f"\t{self.n_docs}/{self.n_docs}")
         self.signatures.clear()
@@ -101,16 +80,15 @@ class MinHash:
         for i in range(self.n_docs):
 
             if i + 1 not in checked:
-                cluster = [i + 1]
+                cluster = {i + 1}
 
                 for j in range(i + 1, self.n_docs):
 
-                    # sim = self.sim[i][j]
-                    sim = self.sim[self.get_triangle_index(i, j)]
+                    sim = self.sim[i][j]
 
                     if sim > self.threshold:
                         checked.add(j + 1)
-                        cluster.append(j + 1)
+                        cluster.add(j + 1)
 
                 clusters.append(cluster)
 
