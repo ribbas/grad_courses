@@ -1,6 +1,6 @@
 import random
 
-import numpy as np
+import networkx as nx
 
 NEXT_PRIME = 4294967311
 MAX_VAL = 2**32 - 1
@@ -73,23 +73,16 @@ class MinHash:
         print(f"\t{self.n_docs}/{self.n_docs}")
         self.signatures.clear()
 
-    def find_near_duplicates(self):
+    def find_near_duplicates(self) -> list[set[int]]:
 
-        clusters = []
-        checked = set()
+        clusters = nx.utils.UnionFind(list(range(1, self.n_docs + 1)))
         for i in range(self.n_docs):
 
-            if i + 1 not in checked:
-                cluster = {i + 1}
+            for j in range(i + 1, self.n_docs):
 
-                for j in range(i + 1, self.n_docs):
+                sim = self.sim[i][j]
 
-                    sim = self.sim[i][j]
+                if sim > self.threshold:
+                    clusters.union(i + 1, j + 1)
 
-                    if sim > self.threshold:
-                        checked.add(j + 1)
-                        cluster.add(j + 1)
-
-                clusters.append(cluster)
-
-        return clusters
+        return list(clusters.to_sets())

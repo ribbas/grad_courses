@@ -41,16 +41,16 @@ class InformationRetrieval:
 
         CorpusFile().dump_clusters(self.filename.stem, output)
 
-    def __read_cluster(self, filename) -> list[str]:
+    def __read_cluster(self, filename) -> set[frozenset[int]]:
 
-        data = []
+        data: set[frozenset[int]] = set()
         with open(filename) as fp:
-            cluster = set()
+            cluster = frozenset[int]
             for line in fp:
                 if line:
                     cluster = line[:-1].split(" ")
-                    cluster = set(int(i) for i in cluster)
-                    data.append(cluster)
+                    cluster = frozenset(int(i) for i in cluster)
+                    data.add(cluster)
 
         return data
 
@@ -61,4 +61,4 @@ class InformationRetrieval:
 
         metr = Metrics()
         metr.convert_ds(golden_data, output)
-        metr.get_score()
+        # metr.get_score()
