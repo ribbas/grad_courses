@@ -56,13 +56,12 @@ class InformationRetrieval:
 
         return data
 
-    def score(self, golden_file) -> int:
+    def score(self, golden_file) -> tuple[int, int]:
 
         golden_data = self.__read_cluster(golden_file)
         output = self.__read_cluster(f"outputs/{JHED}-{self.filename.stem}.txt")
 
-        metr = Metrics()
-        score = metr.score(golden_data, output)
+        gold_diff_out = golden_data.difference(output)
+        out_diff_gold = output.difference(golden_data)
 
-        print(score)
-        return score
+        return (len(gold_diff_out), len(out_diff_gold))

@@ -62,14 +62,14 @@ if __name__ == "__main__":
 
     elif args["test"]:
 
-        scores: list[tuple[int, bool, int]] = []
-        for ngram in range(1, 2):
-            for normalize_flag in (True, False):
-                ir_obj.ingest(ngrams=ngram, normalize=normalize_flag)
+        scores: list[tuple[int, bool, tuple[int, int]]] = []
+        for ngram in range(1, 7):
+            for normalize in (True, False):
+                ir_obj.ingest(ngrams=ngram, normalize=normalize)
                 ir_obj.generate_signatures()
                 ir_obj.dump_clusters()
                 scores.append(
-                    (ngram, normalize_flag, ir_obj.score(Path(args["score"])))
+                    (ngram, normalize, ir_obj.score(Path(args["score"])))
                 )
 
         print(scores)
