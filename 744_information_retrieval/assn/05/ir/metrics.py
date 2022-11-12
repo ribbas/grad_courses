@@ -1,27 +1,18 @@
-import bcubed
-from sklearn.metrics.cluster import adjusted_rand_score
-
-
 class Metrics:
     def __init__(self) -> None:
         self.diff_set = set[frozenset[int]]
 
     @staticmethod
     def difference_union(
-        set1: set[frozenset[int]], set2: set[frozenset[int]]
-    ) -> set[frozenset[int]]:
+        set1: frozenset[int], set2: frozenset[int]
+    ) -> frozenset[int]:
 
         return set1.difference(set2).union(set2.difference(set1))
 
     def convert_ds(self, gold: set[frozenset[int]], out: set[frozenset[int]]):
 
-        # self.diff_set = self.difference_union(gold, out)
         self.gold_diff_out = gold.difference(out)
         self.out_diff_gold = out.difference(gold)
-        from pprint import pprint
-
-        # pprint(self.gold_diff_out)
-        # pprint(self.out_diff_gold)
 
         for idx, gold_cluster in enumerate(self.gold_diff_out):
             for elem in gold_cluster:
@@ -35,10 +26,6 @@ class Metrics:
                                 out_cluster,
                             ),
                         )
-        # print(len(out), len(gold))
-        # if len(gold) < len(out):
-        #     for _ in range(len(out) - len(gold)):
-        #         out.pop()
 
         # self.gold_dict = dict(enumerate(gold))
         # self.out_dict = dict(enumerate(out))
@@ -53,6 +40,3 @@ class Metrics:
     #     fscore = bcubed.fscore(precision, recall)
 
     #     print(fscore)
-
-
-adjusted_rand_score([{0, 1}, {0}, {1}, {1}], [{0, 1}, {0}, {1}, {1}])
