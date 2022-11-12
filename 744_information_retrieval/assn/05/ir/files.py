@@ -8,18 +8,23 @@ JHED = "sahmed80"
 
 class CorpusFile:
     @staticmethod
-    def ingest(filename: Path, n: int = 3) -> list[set[int]]:
+    def ingest(
+        filename: Path, n: int = 3, normalize: bool = True
+    ) -> list[set[int]]:
 
-        norm = Normalizer()
         shingle = Shingle(n)
+        norm = Normalizer()
         docs: list[set[int]] = []
 
         with open(filename) as fp:
             for line in fp:
                 if line:
                     _, doc = line[:-1].split("\t")
-                    normalized_doc = norm(doc)
-                    doc_shingles = shingle(normalized_doc)
+                    if normalize:
+                        doc = norm(doc)
+                    else:
+                        doc = doc.split(" ")
+                    doc_shingles = shingle(doc)
                     docs.append(doc_shingles)
 
         return docs

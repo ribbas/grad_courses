@@ -12,10 +12,12 @@ class InformationRetrieval:
         self.docs = []
         self.clusters = []
 
-    def normalize(self) -> None:
+    def ingest(self, ngrams: int, normalize: bool) -> None:
 
-        print("Normalizing documents...")
-        self.docs = CorpusFile().ingest(self.filename, 3)
+        print(
+            f"Shingling documents with {ngrams}-grams and normalization={normalize}..."
+        )
+        self.docs = CorpusFile().ingest(self.filename, ngrams, normalize)
 
     def generate_signatures(self) -> None:
 
@@ -27,7 +29,7 @@ class InformationRetrieval:
         min_hash.compare_signatures()
 
         print("Finding clusters...")
-        self.clusters = min_hash.find_near_duplicates()
+        self.clusters = min_hash.find_clusters()
 
     def sort_clusters(self) -> None:
         self.clusters.sort(key=len, reverse=True)
@@ -54,11 +56,13 @@ class InformationRetrieval:
 
         return data
 
-    def score(self, golden_file):
+    def score(self, golden_file) -> int:
 
         golden_data = self.__read_cluster(golden_file)
         output = self.__read_cluster(f"outputs/{JHED}-{self.filename.stem}.txt")
 
         metr = Metrics()
-        metr.convert_ds(golden_data, output)
-        # metr.get_score()
+        score = metr.score(golden_data, output)
+
+        print(score)
+        return score

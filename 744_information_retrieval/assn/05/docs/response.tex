@@ -7,13 +7,13 @@
 \date{\today}
 
 \begin{document}
-\maketitle	
+\maketitle
 \tableofcontents
 \clearpage
 \newpage
 
-% \section{Introduction}
-% This paper describes the classification of the Systematic Review dataset through exploratory analysis, grid searching for optimal estimators and their hyperparameters, and determining the best features.
+\section{Introduction}
+This paper describes the classification of the Systematic Review dataset through exploratory analysis, grid searching for optimal estimators and their hyperparameters, and determining the best features.
 
 % \section{Technical Background}
 % All of the source code is in Python 3.10. The program is split into several modules and follows an object oriented structure.
@@ -96,17 +96,21 @@
 
 % The \textit{Assessment} feature in the training and development datasets is the target binary value, and will be predicted for the testing dataset. The feature is heavily imbalanced, with Table \ref{table:dist_train} showing the distribution in the training dataset:
 
-% \begin{simptable}
-%     {Distribution of \textit{Assessment} in the training dataset}
-%     {dist_train}
-%     {| c | c |}
-%     \textbf{Value} & \textbf{Count}
-%     \\ \hline
-%     -1 & 21,000
-%     \\ \hline
-%     1 & 700
-%     \\ \hline
-% \end{simptable}
+\begin{simptable}
+  {Distribution of \textit{Assessment} in the training dataset}
+  {dist_train}
+  {| c | c | c |}
+  \textbf{N-Gram} & \textbf{Normalized} & \textbf{Score}
+  \\ \hline
+  \textbf{1} & True & 0
+  \\ \hline
+  \textbf{1} & False & 1
+  \\ \hline
+  \textbf{2} & True & 2
+  \\ \hline
+  \textbf{2} & False & -1
+  \\ \hline
+\end{simptable}
 
 % The following features are considered text features, where they are represented as single strings:
 % \begin{itemize}

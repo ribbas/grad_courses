@@ -3,7 +3,7 @@ import random
 import networkx as nx
 
 NEXT_PRIME = 4294967311
-MAX_VAL = 2**32 - 1
+MAX_VAL = 4294967295
 
 
 class MinHash:
@@ -13,9 +13,16 @@ class MinHash:
         self.shingle_sets = shingle_sets
         self.n_docs = len(shingle_sets)
         self.n_hashes = 200
-        self.threshold = 0.5
+        self.threshold = 0.5 * self.n_hashes
 
-        self.perms = [
+        self.signatures: list[list[int]] = []
+        self.sim: list[list[int]] = [
+            [0] * self.n_docs for _ in range(self.n_docs)
+        ]
+
+    def __hash_func_coeffs(self):
+
+        return [
             (
                 random.randint(0, MAX_VAL),
                 random.randint(0, MAX_VAL),
@@ -23,85 +30,52 @@ class MinHash:
             for _ in range(self.n_hashes)
         ]
 
-        self.signatures: list[list[int]] = []
-        # self.sim = [[0.0] * self.n_docs for _ in range(self.n_docs)]
-        self.num_elems = int(self.n_docs * (self.n_docs - 1) / 2)
-        self.sim = [0.0 for _ in range(self.num_elems)]
-        # self.sim = np.zeros((self.num_elems, 1))
-
-        # self.sim = [[0.0] * self.n_docs for _ in range(self.n_docs)]
-
-    def get_triangle_index(self, i, j):
-
-        if j < i:
-            temp = i
-            i = j
-            j = temp
-
-        k = int(i * (self.n_docs - (i + 1) / 2.0) + j - i) - 1
-
-        return k
-
     def generate_signatures(self):
 
-        for shingle_set in self.shingle_sets:
+        hash_func_coeffs = self.__hash_func_coeffs()
 
+        for shingle_set in self.shingle_sets:
             signature: list[int] = []
 
-            # For each of the random hash functions...
-            for a, b in self.perms:
-
+            for a, b in hash_func_coeffs:
                 min_hash_code = NEXT_PRIME + 1
-
-                # For each shingle in the document...
                 for shingle in shingle_set:
-                    # Evaluate the hash function.
-                    # a, b = self.perms[it]
                     hash_code = (a * shingle + b) % NEXT_PRIME
 
-                    # Track the lowest hash code seen.
                     if hash_code < min_hash_code:
                         min_hash_code = hash_code
 
-                # Add the smallest hash code value as component number
-                # 'i' of the signature.
                 signature.append(min_hash_code)
 
-            # Store the MinHash signature for this document.
             self.signatures.append(signature)
+
+        self.shingle_sets.clear()
 
     def compare_signatures(self):
 
         for first in range(self.n_docs):
 
-            if first and not first % 1000:
+            if not first % 1000:
                 print(f"\t{first}/{self.n_docs}")
 
             for second in range(first + 1, self.n_docs):
 
-                count = sum(
+                self.sim[first][second] = sum(
                     self.signatures[first][k] == self.signatures[second][k]
                     for k in range(self.n_hashes)
                 )
 
-                # self.sim[first][second] = count / self.n_hashes
-                self.sim[self.get_triangle_index(first, second)] = (
-                    count / self.n_hashes
-                )
         print(f"\t{self.n_docs}/{self.n_docs}")
         self.signatures.clear()
 
-    def find_near_duplicates(self) -> list[set[int]]:
+    def find_clusters(self) -> list[set[int]]:
 
         clusters = nx.utils.UnionFind(list(range(1, self.n_docs + 1)))
-        for i in range(self.n_docs):
 
-            for j in range(i + 1, self.n_docs):
-
-                # sim = self.sim[i][j]
-                sim = self.sim[self.get_triangle_index(i, j)]
-
+        for first in range(self.n_docs):
+            for second in range(first + 1, self.n_docs):
+                sim = self.sim[first][second]
                 if sim > self.threshold:
-                    clusters.union(i + 1, j + 1)
+                    clusters.union(first + 1, second + 1)
 
         return list(clusters.to_sets())

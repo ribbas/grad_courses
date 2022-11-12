@@ -11,12 +11,22 @@ if __name__ == "__main__":
         "-a",
         "--all",
         action=argparse.BooleanOptionalAction,
-        help="normalize documents",
+        help="perform all operations",
+    )
+    parser.add_argument(
+        "-r",
+        "--read",
+        type=int,
+        nargs="?",
+        default=None,
+        const=3,
+        help="read and ingest file",
     )
     parser.add_argument(
         "-n",
         "--norm",
-        action=argparse.BooleanOptionalAction,
+        default=False,
+        action="store_true",
         help="normalize documents",
     )
     parser.add_argument(
@@ -29,23 +39,45 @@ if __name__ == "__main__":
         "-d",
         "--dump",
         action=argparse.BooleanOptionalAction,
-        help="dump classifier to disk",
+        help="dump clusters to disk",
     )
-    parser.add_argument("-s", "--score", type=str, help="path of query file")
+    parser.add_argument(
+        "-s", "--score", type=str, help="score clusters against golden file"
+    )
+    parser.add_argument(
+        "-t",
+        "--test",
+        action=argparse.BooleanOptionalAction,
+        help="perform all operations",
+    )
 
     args = vars(parser.parse_args())
 
     ir_obj = InformationRetrieval(Path(args["path"]))
 
     if args["all"]:
-        ir_obj.normalize()
+        ir_obj.ingest(ngrams=3, normalize=True)
         ir_obj.generate_signatures()
         ir_obj.dump_clusters()
 
+    elif args["test"]:
+
+        scores: list[tuple[int, bool, int]] = []
+        for ngram in range(1, 2):
+            for normalize_flag in (True, False):
+                ir_obj.ingest(ngrams=ngram, normalize=normalize_flag)
+                ir_obj.generate_signatures()
+                ir_obj.dump_clusters()
+                scores.append(
+                    (ngram, normalize_flag, ir_obj.score(Path(args["score"])))
+                )
+
+        print(scores)
+
     else:
 
-        if args["norm"]:
-            ir_obj.normalize()
+        if args["read"]:
+            ir_obj.ingest(ngrams=args["read"], normalize=args["norm"])
 
         if args["gen"]:
             ir_obj.generate_signatures()
