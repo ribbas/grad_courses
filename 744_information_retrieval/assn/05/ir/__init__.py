@@ -1,16 +1,15 @@
 from pathlib import Path
 
-from .files import CorpusFile, JHED
-from .metrics import Metrics
+from .files import CorpusFile
 from .minhash import MinHash
 
 
 class InformationRetrieval:
     def __init__(self, filename: Path) -> None:
 
-        self.filename = filename
-        self.docs = []
-        self.clusters = []
+        self.filename: Path = filename
+        self.docs: list[set[int]] = []
+        self.clusters: list[set[int]] = []
 
     def ingest(self, ngrams: int, normalize: bool) -> None:
 
@@ -37,29 +36,13 @@ class InformationRetrieval:
     def dump_clusters(self) -> None:
 
         self.sort_clusters()
-        output = ""
-        for c in self.clusters:
-            output += " ".join(str(i) for i in c) + "\n"
 
-        CorpusFile().dump_clusters(self.filename.stem, output)
+        CorpusFile().dump_clusters(self.filename.stem, self.clusters)
 
-    def __read_cluster(self, filename) -> set[frozenset[int]]:
+    def score(self, golden_file: Path) -> tuple[int, int]:
 
-        data: set[frozenset[int]] = set()
-        with open(filename) as fp:
-            cluster = frozenset[int]
-            for line in fp:
-                if line:
-                    cluster = line[:-1].split(" ")
-                    cluster = frozenset(int(i) for i in cluster)
-                    data.add(cluster)
-
-        return data
-
-    def score(self, golden_file) -> tuple[int, int]:
-
-        golden_data = self.__read_cluster(golden_file)
-        output = self.__read_cluster(f"outputs/{JHED}-{self.filename.stem}.txt")
+        golden_data = CorpusFile().read_clusters(golden_file.stem)
+        output = CorpusFile().read_clusters(self.filename.stem)
 
         gold_diff_out = golden_data.difference(output)
         out_diff_gold = output.difference(golden_data)

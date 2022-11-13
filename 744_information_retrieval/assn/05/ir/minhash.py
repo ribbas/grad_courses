@@ -20,7 +20,7 @@ class MinHash:
             [0] * self.n_docs for _ in range(self.n_docs)
         ]
 
-    def __hash_func_coeffs(self):
+    def __hash_func_coeffs(self) -> list[tuple[int, int]]:
 
         return [
             (
@@ -30,7 +30,7 @@ class MinHash:
             for _ in range(self.n_hashes)
         ]
 
-    def generate_signatures(self):
+    def generate_signatures(self) -> None:
 
         hash_func_coeffs = self.__hash_func_coeffs()
 
@@ -51,7 +51,7 @@ class MinHash:
 
         self.shingle_sets.clear()
 
-    def compare_signatures(self):
+    def compare_signatures(self) -> None:
 
         for first in range(self.n_docs):
 

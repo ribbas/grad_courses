@@ -86,4 +86,4 @@ if __name__ == "__main__":
             ir_obj.dump_clusters()
 
         if args["score"]:
-            ir_obj.score(Path(args["score"]))
+            print(ir_obj.score(Path(args["score"])))

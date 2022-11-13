@@ -8,80 +8,54 @@ skinparam classBackgroundColor fff
 
 namespace Information_Retrieval {
 
-  class IO {
-    + dump(filename: str, data: str)
-    + read_joblib(filename: str): Any
-    + dump_joblib(filename: str, clf: Any)
-  }
-
   class CorpusFile {
-    - map_list(field: str): list[str]
-    - map_to_fields(line: str): dict[str, Any]
-    + ingest(filename: Path): list[dict[str, Any]]
+    + ingest(filename: Path, ngram: int, normalize: bool): list[set[int]]
+    + dump_clusters(filename: str, data: list[set[int]])
+    + read_clusters(filename: str): set[frozenset[int]]
   }
 
   class Normalizer {
-    - stemmer: str
     - chosen_stemmer: nltk.stem.PorterStemmer | nltk.stem.SnowballStemmer
-    - stopwords: str
-    - stopwords_list: frozenset[str]
-    - self.ws_re: re.Pattern[str]
+    - punc_table: dict[int, int | None]
     + __init__(stemmer: str, stopwords: str)
     - to_lower_case(document: str): str
     - split_document(document: str): list[str]
+    - expand_contractions(tokens: list[str]): list[str]
+    - remove_puncs(tokens: list[str]): list[str]
     - stem(tokens: list[str]): list[str]
     + __call__(document: str): list[str]
   }
 
-  class Metrics {
-    + distribution(data: numpy.ndarray): dict[str, int]
-    + precision(target: numpy.ndarray, predict: numpy.ndarray): float
-    + recall(target: numpy.ndarray, predict: numpy.ndarray): float
-    + f1(target: numpy.ndarray, predict: numpy.ndarray): float
-    + classification_report(target: numpy.ndarray, predict: numpy.ndarray): dict[str, float]
+  class Shingle {
+    + __init__(ngram)
+    - ngrams(input_list): Iterator[tuple[str, ...]]
+    + __call__(doc: list[str]): set[int]
   }
 
-  class Model {
-    - clf: sklearn.model_selection.GridSearchCV
-    - train_features: list[str]
-    - train_target: numpy.ndarray
-    - test_features: list[str]
-    - test_target: numpy.ndarray
-    + use_xgb_flag: bool
-    + __init__()
-    + set_train_features(data: list[str], target: numpy.ndarray)
-    + set_test_features(data: list[str], target: numpy.ndarray)
-    + load_classifier(clf: sklearn.model_selection.GridSearchCV)
-    + get_classifier(): sklearn.model_selection.GridSearchCV
-    + grid_search()
-    - train_classifier()
-    + get_cv_results(): dict[str, Any]
-    + predict(): numpy.ndarray
+  class MinHash {
+    + __init__(shingle_sets: list[set[int]])
+    - hash_func_coeffs(): list[tuple[int, int]]
+    + generate_signatures()
+    + compare_signatures()
+    + find_clusters(): list[set[int]]
   }
 
   class IR {
-    - clf: Model
-    - predicted: numpy.ndarray
-    - model_loaded: bool
-    + __init__()
-    - extract_text_features(filename: Path, categories: tuple[str, ...]): tuple[list[str], numpy.ndarray]
-    + extract_train_features(train_filename: Path, categories: tuple[str, ...])
-    + extract_test_features(test_filename: Path, categories: tuple[str, ...])
-    + use_xgb()
-    + train()
-    + dump_classifier(phase: int)
-    + load_classifier(phase: int)
-    + predict()
-    + dump_cv_results()
-    + score()
-    + dump_predict_vals(test_filename: Path)
+    - filename: Path
+    - docs: list[set[int]]
+    - clusters: list[set[int]]
+    + __init__(filename: Path)
+    + ingest(ngrams: int, normalize: bool)
+    + generate_signatures()
+    + sort_clusters()
+    + dump_clusters()
+    + score(golden_file: Path): tuple[int, int]
   }
 
   IR <-- CorpusFile
-  IR <-l- IO
-  IR <-- Metrics
-  IR <-- Model
-  Model <-u- Normalizer
+  IR <-- MinHash
+  CorpusFile <-l- Normalizer
+  CorpusFile <-l- Shingle
 }
 
 @enduml
