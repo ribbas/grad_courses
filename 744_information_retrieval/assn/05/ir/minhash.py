@@ -38,14 +38,14 @@ class MinHash:
             signature: list[int] = []
 
             for a, b in hash_func_coeffs:
-                min_hash_code = NEXT_PRIME + 1
+                phi_s = NEXT_PRIME + 1
                 for shingle in shingle_set:
                     hash_code = (a * shingle + b) % NEXT_PRIME
 
-                    if hash_code < min_hash_code:
-                        min_hash_code = hash_code
+                    if hash_code < phi_s:
+                        phi_s = hash_code
 
-                signature.append(min_hash_code)
+                signature.append(phi_s)
 
             self.signatures.append(signature)
 
