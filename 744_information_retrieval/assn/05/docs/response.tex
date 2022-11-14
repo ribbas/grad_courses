@@ -153,12 +153,13 @@ The total execution times are listed on Table \ref{table:times}. Figure \ref{fig
   \caption{Average number of normalized documents processed per second (log-log)}
   \label{fig:times}
 \end{figure}
+\newpage
 
 The peak RAM usages are listed on Table \ref{table:ram}.
 
-For the datasets processed on the Linux machine, the peak RAM usage was obtained via the \textit{Maximum resident set size} value by running GNU's \texttt{time} command. The values are the average of 3 independent executions.
+For the datasets processed on the Linux machine, the peak RAM usages were obtained via the \textit{Maximum resident set size} value in GNU's \texttt{time} command. The values are the average of 3 independent executions.
 
-For the datasets processed on the Windows machine, the peak RAM usage was obtained by visual observations made using the Resource Monitor. These values also appeared to plateau or fluctuate after they peaked at certain times, mostly due to how Python processes are paged on Windows machines.
+For the datasets processed on the Windows machine, the peak RAM usages were obtained by visual observations made using the Resource Monitor. These values also appeared to plateau or fluctuate after they peaked at certain times, mostly due to how Python processes are paged on Windows machines.
 
 \begin{simptable}
   {Total execution times of processing the datasets}
