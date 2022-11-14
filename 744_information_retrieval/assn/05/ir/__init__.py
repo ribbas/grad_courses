@@ -11,7 +11,7 @@ class InformationRetrieval:
         self.docs: list[set[int]] = []
         self.clusters: list[set[int]] = []
 
-    def ingest(self, ngrams: int, normalize: bool) -> None:
+    def ingest(self, ngrams: int = 2, normalize: bool = True) -> None:
 
         print(
             f"Shingling documents with {ngrams}-grams and normalization={normalize}..."
@@ -36,7 +36,6 @@ class InformationRetrieval:
     def dump_clusters(self) -> None:
 
         self.sort_clusters()
-
         CorpusFile().dump_clusters(self.filename.stem, self.clusters)
 
     def score(self, golden_file: Path) -> tuple[int, int]:

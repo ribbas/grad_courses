@@ -7,9 +7,7 @@ JHED = "sahmed80"
 
 class CorpusFile:
     @staticmethod
-    def ingest(
-        filename: Path, ngram: int = 3, normalize: bool = True
-    ) -> list[set[int]]:
+    def ingest(filename: Path, ngram: int, normalize: bool) -> list[set[int]]:
 
         shingle = Shingle(ngram)
         norm = Normalizer()
