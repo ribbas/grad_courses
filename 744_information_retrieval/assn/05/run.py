@@ -19,7 +19,7 @@ if __name__ == "__main__":
         type=int,
         nargs="?",
         default=None,
-        const=3,
+        const=2,
         help="read and ingest file",
     )
     parser.add_argument(
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     ir_obj = InformationRetrieval(Path(args["path"]))
 
     if args["all"]:
-        ir_obj.ingest(ngrams=3, normalize=True)
+        ir_obj.ingest(ngrams=2, normalize=True)
         ir_obj.generate_signatures()
         ir_obj.dump_clusters()
 
