@@ -1,17 +1,7 @@
 \documentclass[11pt]{article}
 
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{array}
-\usepackage{caption}
-\usepackage{graphicx}
-\usepackage{textcomp}
-
 \usepackage[autostyle, english=american]{csquotes}
 \MakeOuterQuote{"}
-\captionsetup[table]{skip=1pt}
-
-\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
 
 % margins
 \topmargin=-0.45in
@@ -105,11 +95,11 @@
 
                   \item What types of errors are you able to discover?
 
-                        \textbf{Answer:} The name entity \textit{Thanksgiving} was properly recognized as a \texttt{DATE} entity, but \textit{turkey} gets improperly categorized as a \texttt{COUNTRY} entity.
+                        \textbf{Answer:} The named entity \textit{Thanksgiving} was properly recognized as a \texttt{DATE} entity, but \textit{turkey} gets improperly categorized as a \texttt{COUNTRY} entity.
 
                   \item Now suppose that you had a perfect named-entity recognizer (i.e., one that makes no mistakes). Argue briefly and clearly whether or not this capability could be used to effectively enhance ad hoc text retrieval accuracy (i.e., as measured by say average precision). Explain your reasoning and give examples if helpful.
 
-                        \textbf{Answer:}
+                        \textbf{Answer:} If a user queries \textit{turkey} in a retrieval system that emphasized its perfect named-entity recognition, documents that recognize the term as only a named entity will be retrieved. i.e., documents containing topics on the named entity version of the word (the country) would be retrieved while ignoring documents about the species of bird.
 
             \end{enumerate}
 
@@ -146,8 +136,7 @@
 
             Given what you observe by looking up these words, what conclusions can you make about using dictionary-based word-sense disambiguation (e.g., using a resource like WordNet) to try and improve text retrieval performance?
 
-            \textbf{Answer:}
-
+            \textbf{Answer:} Using semantic relations databases like WordNet can drastically improve text retrieval performance. Words such as "yeti" only had a single definition and can therefore be disambiguated very easily without the need for additional word-sensing. The other words have multiple definitions and would require WordNet to resolve the context. Using word-sensing instead of the frequency of a version of the word would yield more accurate text-retrieval results.
 
 \end{enumerate}
 
