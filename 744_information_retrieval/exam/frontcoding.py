@@ -1,28 +1,28 @@
-def front_code(dictionary):
+def front_code(dictionary, reverse=False, sort=True):
 
-    dictionary = [i[::-1] for i in dictionary]
-    dictionary.sort()
+    if reverse:
+        dictionary = [i[::-1] for i in dictionary]
 
-    compressed_dict = []
-    last_prefix = ""
-    offset = -1
+    if sort:
+        dictionary.sort()
 
-    for idx, word in enumerate(dictionary):
+    uncompressed_len = sum(len(i) for i in dictionary)
 
-        if not idx:
-            compressed_dict.append(f"0{word}")
+    last_prefix = dictionary.pop(0)
+    compressed_dict = f"0{last_prefix}"
 
+    for word in dictionary:
+
+        for offset, chr in enumerate(zip(last_prefix, word)):
+            if chr[0] != chr[1]:
+                compressed_dict += f"{offset}{word[offset:]}"
+                break
         else:
-            for offset, chr in enumerate(zip(last_prefix, word)):
-                if chr[0] != chr[1]:
-                    compressed_dict.append(f"{offset}{word[offset:]}")
-                    break
-            else:
-                compressed_dict.append(f"{offset+1}{word[offset + 1 :]}")
+            compressed_dict += f"{offset+1}{word[offset+1:]}"
 
         last_prefix = word
 
-    return sum(len(i) for i in dictionary), sum(len(i) for i in compressed_dict)
+    return uncompressed_len, len(compressed_dict)
 
 
 example = [
@@ -52,5 +52,5 @@ oxides = [
 ]
 
 
-print(front_code(example))
-print(front_code(oxides))
+print(front_code(example, True, True))
+print(front_code(oxides, True, True))
