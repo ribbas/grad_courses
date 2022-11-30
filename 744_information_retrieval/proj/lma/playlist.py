@@ -1,3 +1,4 @@
+import random
 from typing import Any
 
 import azapi
@@ -41,22 +42,31 @@ class Playlist:
             self.tracks.append(track)
 
 
-class LyricsScraper:
+class LyricsRetriever:
     def __init__(self) -> None:
 
-        self.az = azapi.AZlyrics("google", accuracy=0.5)
+        self.az = azapi.AZlyrics()
+        self.failed: set[str] = set()
 
-    def get_lyrics(self, tracks: list[Track]):
+    def get_lyrics(self, tracks: list[Track], path: str):
 
         for track in tracks:
             print(track.title, track.artist)
-            break
-            # self.az.title = track.title
-            # for artist in track.artist:
-            #     self.az.artist = artist
-            #     self.az.getLyrics(save=True, ext="lrc")
+            self.az.title = track.title
+            for artist in track.artist:
+                self.az.artist = artist
+                self.az.getLyrics(
+                    save=True, path=path, sleep=random.uniform(3, 5)
+                )
 
-            #     # add condition to check if success
-            #     if self.az.lyrics:
-            #         track.set_lyrics(self.az.lyrics)
-            #         break
+                # add condition to check if success
+                if self.az.lyrics:
+                    track.set_lyrics(self.az.lyrics)
+                    print(f"Retrieved '{track.title}'")
+                    break
+            if not track.lyrics:
+                print(f"Failed '{track.title}'")
+                self.failed.add(track.title)
+
+        print(self.failed)
+        return self.failed

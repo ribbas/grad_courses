@@ -6,7 +6,10 @@ from lma import LyricsMoodAnalysis
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("path", type=str, help="path of corpus file")
+    parser.add_argument("-p", "--play", type=str, help="path of playlist data")
+    parser.add_argument(
+        "-l", "--lyric", type=str, help="path of lyrics dataset directory"
+    )
     parser.add_argument(
         "-a",
         "--all",
@@ -56,10 +59,10 @@ if __name__ == "__main__":
     lma_obj = LyricsMoodAnalysis()
 
     if args["all"]:
-        lma_obj.get_playlists(Path(args["path"]))
+        lma_obj.get_playlists(Path(args["play"]))
 
     else:
 
-        if args["clean"]:
-            lma_obj.get_playlists(Path(args["path"]))
-            lma_obj.print_tracks()
+        if args["play"]:
+            lma_obj.get_playlists(Path(args["play"]))
+            lma_obj.print_tracks(Path(args["lyric"]))
