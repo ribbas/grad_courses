@@ -3,27 +3,29 @@ import pathlib
 from .const import LABELED_PLAYLISTS
 from .emotions import Emotions
 from .files import IO
-from .playlist import Track, Playlist, LyricsRetriever
+from .playlist import Track, Playlist, LyricsRetriever, PlaylistService
 
 
 class LyricsMoodAnalysis:
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        playlist_dir: pathlib.Path,
+        lyrics_dir: pathlib.Path,
+        log_dir: pathlib.Path,
+    ) -> None:
 
-        self.playlists: list[Playlist] = []
-        self.ls = LyricsRetriever()
+        self.playlists = PlaylistService(playlist_dir, lyrics_dir, log_dir)
 
-    def get_playlists(self, dirname: pathlib.Path):
+    def get_playlists(self):
 
-        for filename in dirname.iterdir():
+        for filename in self.playlists.playlist_dir.iterdir():
             file_data = IO.read_json(filename)
-            play = Playlist(file_data, LABELED_PLAYLISTS[filename.stem])
-            play.ingest()
-            self.playlists.append(play)
+            self.playlists.add_playlist(
+                Playlist(
+                    filename.stem, file_data, LABELED_PLAYLISTS[filename.stem]
+                )
+            )
 
-    def print_tracks(self, dirname: pathlib.Path):
+    def update_logs(self, playlist_name: str):
 
-        for playlist in self.playlists:
-            self.ls.get_lyrics(playlist.tracks, str(dirname.absolute()))
-            break
-            # for track in playlist.tracks:
-            #     print(track.artist)
+        self.playlists.find_failed(playlist_name)

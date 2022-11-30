@@ -5,6 +5,10 @@ from lma import LyricsMoodAnalysis
 
 if __name__ == "__main__":
 
+    playlist_dir = Path("data/spotify")
+    lyrics_dir = Path("data/lyrics")
+    log_dir = Path("data/logs")
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--play", type=str, help="path of playlist data")
     parser.add_argument(
@@ -56,13 +60,9 @@ if __name__ == "__main__":
 
     args = vars(parser.parse_args())
 
-    lma_obj = LyricsMoodAnalysis()
+    lma_obj = LyricsMoodAnalysis(playlist_dir, lyrics_dir, log_dir)
 
     if args["all"]:
-        lma_obj.get_playlists(Path(args["play"]))
-
-    else:
-
-        if args["play"]:
-            lma_obj.get_playlists(Path(args["play"]))
-            lma_obj.print_tracks(Path(args["lyric"]))
+        lma_obj.get_playlists()
+        lma_obj.update_logs(args["play"])
+        # lma_obj.print_tracks(lyrics_dir)

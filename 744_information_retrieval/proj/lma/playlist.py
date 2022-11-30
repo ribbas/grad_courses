@@ -1,3 +1,4 @@
+import pathlib
 import random
 from typing import Any
 
@@ -20,14 +21,11 @@ class Track:
         self.emotion = emotion
         self.lyrics = lyrics
 
-    def set_lyrics(self, lyrics: str):
-
-        self.lyrics = lyrics
-
 
 class Playlist:
-    def __init__(self, file_data: Any, emotion: str) -> None:
+    def __init__(self, name: str, file_data: Any, emotion: str) -> None:
 
+        self.name = name
         self.file_data = file_data
         self.tracks: list[Track] = []
         self.emotion = emotion
@@ -46,10 +44,10 @@ class LyricsRetriever:
     def __init__(self) -> None:
 
         self.az = azapi.AZlyrics()
-        self.failed: set[str] = set()
 
     def get_lyrics(self, tracks: list[Track], path: str):
 
+        failed: list[str] = []
         for track in tracks:
             print(track.title, track.artist)
             self.az.title = track.title
@@ -60,13 +58,67 @@ class LyricsRetriever:
                 )
 
                 # add condition to check if success
-                if self.az.lyrics:
-                    track.set_lyrics(self.az.lyrics)
-                    print(f"Retrieved '{track.title}'")
+                if len(self.az.lyrics):
+                    track.lyrics = self.az.lyrics
+                    print(f"Retrieved '{self.az.title}'")
                     break
+
             if not track.lyrics:
                 print(f"Failed '{track.title}'")
-                self.failed.add(track.title)
+                failed.append(track.title)
 
-        print(self.failed)
-        return self.failed
+        print(failed)
+        return failed
+
+
+class PlaylistService:
+    def __init__(
+        self,
+        playlist_dir: pathlib.Path,
+        lyrics_dir: pathlib.Path,
+        log_dir: pathlib.Path,
+    ) -> None:
+        self.playlists: list[Playlist] = []
+        self.ls = LyricsRetriever()
+        self.playlist_dir = playlist_dir
+        self.lyrics_dir = lyrics_dir
+        self.log_dir = log_dir
+
+    def add_playlist(self, playlist: Playlist):
+        playlist.ingest()
+        self.playlists.append(playlist)
+
+    def add_lyrics(self):
+        for playlist in self.playlists[2:]:
+            failed = self.ls.get_lyrics(
+                playlist.tracks, str(self.lyrics_dir.absolute())
+            )
+            IO.dump(playlist.name, "\n".join(failed))
+            break
+
+    def find_failed(self, playlist_name):
+
+        found = []
+        not_found = []
+        for playlist in self.playlists:
+            if playlist.name == playlist_name:
+                not_found = [i for i in playlist.tracks]
+                lyrics_files = list(i.stem for i in self.lyrics_dir.iterdir())
+                for track in sorted(not_found, key=lambda x: x.title):
+                    # print("checking", track.title)
+                    for lyrics_file in lyrics_files:
+                        if track.title.lower() in lyrics_file.lower():
+                            print("removing", track.title)
+                            found.append(track)
+                            # not_found.remove(track)
+                            # break
+
+        not_found = set(not_found) - set(found)
+        IO.dump(
+            self.log_dir / playlist_name,
+            "\n".join(
+                sorted(
+                    (f"{track.title} - {track.artist}" for track in not_found)
+                )
+            ),
+        )
