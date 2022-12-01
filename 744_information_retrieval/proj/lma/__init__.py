@@ -4,7 +4,7 @@ from .const import LABELED_PLAYLISTS
 from .emotions import Emotions
 from .files import IO
 from .playlist import Playlist
-from .lyrics import LyricsRetriever
+from .text import Normalizer
 from .playlistservice import PlaylistService
 
 
@@ -17,6 +17,7 @@ class LyricsMoodAnalysis:
     ) -> None:
 
         self.playlists = PlaylistService(playlist_dir, lyrics_dir, log_dir)
+        self.normalizer = Normalizer()
 
     def get_playlists(self):
 
@@ -30,4 +31,15 @@ class LyricsMoodAnalysis:
 
     def add_lyrics(self, playlist_name: str):
 
-        self.playlists.add_lyrics(playlist_name)
+        playlist = self.playlists[playlist_name]
+        self.playlists.add_lyrics(playlist)
+
+    def tokenize_lyrics(self, playlist_name: str):
+
+        playlist = self.playlists[playlist_name]
+        self.playlists.get_lyrics(playlist)
+
+        for track in playlist.tracks:
+            if track.lyrics:
+                print(track.title, track.artist)
+                print(self.normalizer(track.lyrics[:100]))

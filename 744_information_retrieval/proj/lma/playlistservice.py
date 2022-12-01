@@ -24,24 +24,34 @@ class PlaylistService:
         playlist.ingest()
         self.playlists.append(playlist)
 
-    def add_lyrics(self, playlist_name: str):
+    def __getitem__(self, playlist_name: str) -> Playlist:
 
         for playlist in self.playlists:
             if playlist.name == playlist_name:
-                print(f"Searching lyrics for {len(playlist.tracks)} tracks")
-                failed = self.ls.get_lyrics(
-                    playlist.tracks,
-                    str(self.lyrics_dir.absolute() / playlist_name),
-                )
+                return playlist
 
-                IO.dump(
-                    self.log_dir / playlist_name,
-                    "\n".join(
-                        sorted(
-                            (
-                                f"{track.title} :: {track.artist}"
-                                for track in failed
-                            )
-                        )
-                    ),
-                )
+        raise IndexError
+
+    def add_lyrics(self, playlist: Playlist):
+
+        print(f"Searching lyrics for {len(playlist.tracks)} tracks")
+        failed = self.ls.get_lyrics(
+            playlist.tracks,
+            str(self.lyrics_dir.absolute() / playlist.name),
+        )
+
+        IO.dump(
+            self.log_dir / playlist.name,
+            "\n".join(
+                sorted((f"{track.title} :: {track.artist}" for track in failed))
+            )
+            + "\n",
+        )
+
+    def get_lyrics(self, playlist: Playlist):
+
+        lyrics_files = list((self.lyrics_dir / playlist.name).iterdir())
+        for track in playlist.tracks:
+            for lyrics_file in lyrics_files:
+                if track.title in lyrics_file.stem:
+                    track.lyrics = IO.read(lyrics_file)

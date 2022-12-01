@@ -12,6 +12,12 @@ class IO:
         print(f"Dumped to '{filename}'")
 
     @staticmethod
+    def read(filename: pathlib.Path) -> str:
+
+        with open(filename) as fp:
+            return fp.read()
+
+    @staticmethod
     def read_json(filename: pathlib.Path) -> Any:
 
         with open(f"{filename}") as fp:
