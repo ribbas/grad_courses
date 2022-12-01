@@ -5,7 +5,7 @@ from typing import Any
 
 class IO:
     @staticmethod
-    def dump(filename: str, data: str) -> None:
+    def dump(filename: pathlib.Path, data: str) -> None:
 
         with open(filename, "w") as fp:
             fp.write(data)

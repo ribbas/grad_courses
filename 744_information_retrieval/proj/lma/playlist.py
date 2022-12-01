@@ -45,29 +45,29 @@ class LyricsRetriever:
 
         self.az = azapi.AZlyrics()
 
-    def get_lyrics(self, tracks: list[Track], path: str):
+    def get_lyrics(self, tracks: list[Track], path: str) -> list[Track]:
 
-        failed: list[str] = []
+        failed: list[Track] = []
         for track in tracks:
-            print(track.title, track.artist)
             self.az.title = track.title
             for artist in track.artist:
                 self.az.artist = artist
+                print(f"Searching for '{self.az.title} :: {self.az.artist}'")
                 self.az.getLyrics(
                     save=True, path=path, sleep=random.uniform(3, 5)
                 )
 
-                # add condition to check if success
                 if len(self.az.lyrics):
                     track.lyrics = self.az.lyrics
-                    print(f"Retrieved '{self.az.title}'")
+                    self.az.lyrics = ""
                     break
+                else:
+                    track.lyrics = ""
 
             if not track.lyrics:
                 print(f"Failed '{track.title}'")
-                failed.append(track.title)
+                failed.append(track)
 
-        print(failed)
         return failed
 
 
@@ -78,6 +78,7 @@ class PlaylistService:
         lyrics_dir: pathlib.Path,
         log_dir: pathlib.Path,
     ) -> None:
+
         self.playlists: list[Playlist] = []
         self.ls = LyricsRetriever()
         self.playlist_dir = playlist_dir
@@ -85,40 +86,55 @@ class PlaylistService:
         self.log_dir = log_dir
 
     def add_playlist(self, playlist: Playlist):
+
         playlist.ingest()
         self.playlists.append(playlist)
 
-    def add_lyrics(self):
-        for playlist in self.playlists[2:]:
-            failed = self.ls.get_lyrics(
-                playlist.tracks, str(self.lyrics_dir.absolute())
-            )
-            IO.dump(playlist.name, "\n".join(failed))
-            break
+    def add_lyrics(self, playlist_name: str):
 
-    def find_failed(self, playlist_name):
-
-        found = []
-        not_found = []
         for playlist in self.playlists:
             if playlist.name == playlist_name:
-                not_found = [i for i in playlist.tracks]
-                lyrics_files = list(i.stem for i in self.lyrics_dir.iterdir())
-                for track in sorted(not_found, key=lambda x: x.title):
-                    # print("checking", track.title)
-                    for lyrics_file in lyrics_files:
-                        if track.title.lower() in lyrics_file.lower():
-                            print("removing", track.title)
-                            found.append(track)
-                            # not_found.remove(track)
-                            # break
-
-        not_found = set(not_found) - set(found)
-        IO.dump(
-            self.log_dir / playlist_name,
-            "\n".join(
-                sorted(
-                    (f"{track.title} - {track.artist}" for track in not_found)
+                print(f"Searching lyrics for {len(playlist.tracks)} tracks")
+                failed = self.ls.get_lyrics(
+                    playlist.tracks,
+                    str(self.lyrics_dir.absolute() / playlist_name),
                 )
-            ),
-        )
+
+                IO.dump(
+                    self.log_dir / playlist_name,
+                    "\n".join(
+                        sorted(
+                            (
+                                f"{track.title} :: {track.artist}"
+                                for track in failed
+                            )
+                        )
+                    ),
+                )
+
+    # def find_failed(self, playlist_name: str):
+
+    #     found = []
+    #     not_found = []
+    #     for playlist in self.playlists:
+    #         if playlist.name == playlist_name:
+    #             not_found = [i for i in playlist.tracks]
+    #             lyrics_files = list(i.stem for i in self.lyrics_dir.iterdir())
+    #             for track in sorted(not_found, key=lambda x: x.title):
+    #                 # print("checking", track.title)
+    #                 for lyrics_file in lyrics_files:
+    #                     if track.title.lower() in lyrics_file.lower():
+    #                         print("removing", track.title)
+    #                         found.append(track)
+    #                         # not_found.remove(track)
+    #                         # break
+
+    #     not_found = set(not_found) - set(found)
+    #     IO.dump(
+    #         self.log_dir / playlist_name,
+    #         "\n".join(
+    #             sorted(
+    #                 (f"{track.title} - {track.artist}" for track in not_found)
+    #             )
+    #         ),
+    #     )

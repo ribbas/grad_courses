@@ -64,5 +64,6 @@ if __name__ == "__main__":
 
     if args["all"]:
         lma_obj.get_playlists()
-        lma_obj.update_logs(args["play"])
+        lma_obj.add_lyrics(args["play"])
+        # lma_obj.update_logs(args["play"])
         # lma_obj.print_tracks(lyrics_dir)

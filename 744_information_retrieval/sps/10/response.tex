@@ -20,123 +20,123 @@
 
 \begin{enumerate}
 
-      \item (30\%) \textbf{Question Typology.} IBM's Watson team developed over a hundred ways to answer a Jeopardy! question. A key part of question answering is determining what kind of question is being asked. Mark each question below with one of the following question categories: QUANTITY; WHERE; WHEN; WHO; WHAT-SUBTYPE; OTHER. Finally, write a regular expressions (or create a pattern like a regular expression) that correctly identifies all of the QUANTITY questions below but does not mis-identify any of the other questions as QUANTITY.
+  \item (30\%) \textbf{Question Typology.} IBM's Watson team developed over a hundred ways to answer a Jeopardy! question. A key part of question answering is determining what kind of question is being asked. Mark each question below with one of the following question categories: QUANTITY; WHERE; WHEN; WHO; WHAT-SUBTYPE; OTHER. Finally, write a regular expressions (or create a pattern like a regular expression) that correctly identifies all of the QUANTITY questions below but does not mis-identify any of the other questions as QUANTITY.
 
-            \begin{enumerate}
-                  \item At what temperature does water freeze?
+        \begin{enumerate}
+          \item At what temperature does water freeze?
 
-                        \textbf{Answer:} QUANTITY
+                \textbf{Answer:} QUANTITY
 
-                  \item How tall is the Eiffel tower in Lisbon?
+          \item How tall is the Eiffel tower in Lisbon?
 
-                        \textbf{Answer:} QUANTITY
+                \textbf{Answer:} QUANTITY
 
-                  \item Who killed Bobby Kennedy?
+          \item Who killed Bobby Kennedy?
 
-                        \textbf{Answer:} WHO
+                \textbf{Answer:} WHO
 
-                  \item How far is the Earth from the Sun?
+          \item How far is the Earth from the Sun?
 
-                        \textbf{Answer:} QUANTITY
+                \textbf{Answer:} QUANTITY
 
-                  \item What flying mammal navigates using echolocation?
+          \item What flying mammal navigates using echolocation?
 
-                        \textbf{Answer:} WHO
+                \textbf{Answer:} WHO
 
-                  \item Where did Elena Kagan attend law school?
+          \item Where did Elena Kagan attend law school?
 
-                        \textbf{Answer:} WHERE
+                \textbf{Answer:} WHERE
 
-                  \item What US federal agency is responsible for collecting tariffs?
+          \item What US federal agency is responsible for collecting tariffs?
 
-                        \textbf{Answer:} WHAT-SUBTYPE
+                \textbf{Answer:} WHAT-SUBTYPE
 
-                  \item Who invented Post-It notes?
+          \item Who invented Post-It notes?
 
-                        \textbf{Answer:} WHO
+                \textbf{Answer:} WHO
 
-                  \item How do you change the oil in a Ford Explorer?
+          \item How do you change the oil in a Ford Explorer?
 
-                        \textbf{Answer:} HOW
+                \textbf{Answer:} HOW
 
-                  \item When did Idaho become a state?
+          \item When did Idaho become a state?
 
-                        \textbf{Answer:} WHEN
+                \textbf{Answer:} WHEN
 
-                  \item Which national monument did Dr. Martin Luther King Jr. give a famous speech at?
+          \item Which national monument did Dr. Martin Luther King Jr. give a famous speech at?
 
-                        \textbf{Answer:} WHERE
+                \textbf{Answer:} WHERE
 
-                  \item How tall is the belfry in Bruges?
+          \item How tall is the belfry in Bruges?
 
-                        \textbf{Answer:} QUANTITY
+                \textbf{Answer:} QUANTITY
 
-                  \item What city was Angela Merkel born in?
+          \item What city was Angela Merkel born in?
 
-                        \textbf{Answer:} WHERE
+                \textbf{Answer:} WHERE
 
-                  \item How many feet are there in a nautical mile?
+          \item How many feet are there in a nautical mile?
 
-                        \textbf{Answer:} QUANTITY
+                \textbf{Answer:} QUANTITY
 
-                  \item What is the state flower of Maryland?
+          \item What is the state flower of Maryland?
 
-                        \textbf{Answer:} WHAT-SUBTYPE
+                \textbf{Answer:} WHAT-SUBTYPE
 
-            \end{enumerate}
+        \end{enumerate}
 
-            \textbf{Answer:} The regular expression would be: \texttt{(How\textbackslash s(?!do))|(What\textbackslash stemperature)}.
+        \textbf{Answer:} The regular expression would be: \texttt{(How\textbackslash s(?!do))|(What\textbackslash stemperature)}.
 
-      \item (25\%) \textbf{Named Entity Recognition (NER).} A NER tool tries to identify named entities in text (i.e., persons, organizations, locations). Examine the online Stanford NER tool available at: https://corenlp.run. Enter a variety of text and examine the results.
-            \begin{enumerate}
-                  \item Give an example of an input sentence and error that you think the tool should not make.
+  \item (25\%) \textbf{Named Entity Recognition (NER).} A NER tool tries to identify named entities in text (i.e., persons, organizations, locations). Examine the online Stanford NER tool available at: https://corenlp.run. Enter a variety of text and examine the results.
+        \begin{enumerate}
+          \item Give an example of an input sentence and error that you think the tool should not make.
 
-                        \textbf{Answer:} \textit{I can't wait to try cooking a turkey this Thanksgiving!}
+                \textbf{Answer:} \textit{I can't wait to try cooking a turkey this Thanksgiving!}
 
-                  \item What types of errors are you able to discover?
+          \item What types of errors are you able to discover?
 
-                        \textbf{Answer:} The named entity \textit{Thanksgiving} was properly recognized as a \texttt{DATE} entity, but \textit{turkey} gets improperly categorized as a \texttt{COUNTRY} entity.
+                \textbf{Answer:} The named entity \textit{Thanksgiving} was properly recognized as a \texttt{DATE} entity, but \textit{turkey} gets improperly categorized as a \texttt{COUNTRY} entity.
 
-                  \item Now suppose that you had a perfect named-entity recognizer (i.e., one that makes no mistakes). Argue briefly and clearly whether or not this capability could be used to effectively enhance ad hoc text retrieval accuracy (i.e., as measured by say average precision). Explain your reasoning and give examples if helpful.
+          \item Now suppose that you had a perfect named-entity recognizer (i.e., one that makes no mistakes). Argue briefly and clearly whether or not this capability could be used to effectively enhance ad hoc text retrieval accuracy (i.e., as measured by say average precision). Explain your reasoning and give examples if helpful.
 
-                        \textbf{Answer:} If a user queries \textit{turkey} in a retrieval system that emphasized its perfect named-entity recognition, documents that recognize the term as only a named entity will be retrieved. i.e., documents containing topics on the named entity version of the word (the country) would be retrieved while ignoring documents about the species of bird.
+                \textbf{Answer:} If a user queries \textit{turkey} in a retrieval system that emphasized its perfect named-entity recognition, documents that recognize the term as only a named entity will be retrieved. i.e., documents containing topics on the named entity version of the word (the country) would be retrieved while ignoring documents about the species of bird.
 
-            \end{enumerate}
+        \end{enumerate}
 
-      \item (15\%) \textbf{Retrieving with Good Sense.} Read Mark Sanderson's paper "Retrieving with Good Sense" (this is an assigned reading). In a few sentences briefly describe Sanderson's kalishnikov/banana experiment. You should explain what the goal of the experiment was and what was learned.
+  \item (15\%) \textbf{Retrieving with Good Sense.} Read Mark Sanderson's paper "Retrieving with Good Sense" (this is an assigned reading). In a few sentences briefly describe Sanderson's kalishnikov/banana experiment. You should explain what the goal of the experiment was and what was learned.
 
-            \textbf{Answer:} Sanderson attempted to artificially add ambiguity to a corpus by joining random words together to create pseudowords. The constituent words are then replaced by the pseudoword, i.e. all occurrences of "kalishnikov" and "banana" in the corpus get replaced by "kalishnikov/banana". Sanderson used this approach to add $n$-sized pseudowords (pseudowords made of $n$ distinct words) and determine the effectiveness of an IR system. It was found that adding pseudowords did not reduce effectiveness as much as might have been expected.
+        \textbf{Answer:} Sanderson attempted to artificially add ambiguity to a corpus by joining random words together to create pseudowords. The constituent words are then replaced by the pseudoword, i.e. all occurrences of "kalishnikov" and "banana" in the corpus get replaced by "kalishnikov/banana". Sanderson used this approach to add $n$-sized pseudowords (pseudowords made of $n$ distinct words) and determine the effectiveness of an IR system. It was found that adding pseudowords did not reduce effectiveness as much as might have been expected.
 
-      \item (15\%) \textbf{Lexical Semantic Relations.} Make up your own examples for the following lexical semantic relations. Example: "Two words that share an antonymy relation" - excited / calm
+  \item (15\%) \textbf{Lexical Semantic Relations.} Make up your own examples for the following lexical semantic relations. Example: "Two words that share an antonymy relation" - excited / calm
 
-            \begin{itemize}
-                  \item Two words that share a hypernym / hyponym relation:
+        \begin{itemize}
+          \item Two words that share a hypernym / hyponym relation:
 
-                        \textbf{Answer:} color / red
+                \textbf{Answer:} color / red
 
-                  \item Two words that share a demonym relation:
+          \item Two words that share a demonym relation:
 
-                        \textbf{Answer:} Spain / Spanish
+                \textbf{Answer:} Spain / Spanish
 
-                  \item Two words that share a synonymy relation:
+          \item Two words that share a synonymy relation:
 
-                        \textbf{Answer:} copy / duplicate
+                \textbf{Answer:} copy / duplicate
 
-                  \item Two words that share a meronymy relation:
+          \item Two words that share a meronymy relation:
 
-                        \textbf{Answer:} book / library
+                \textbf{Answer:} book / library
 
-                  \item Two words that share a troponymy relation:
+          \item Two words that share a troponymy relation:
 
-                        \textbf{Answer:} laugh / giggle
+                \textbf{Answer:} laugh / giggle
 
-            \end{itemize}
+        \end{itemize}
 
-      \item (15\%) \textbf{Using WordNet.} Explore the on-line version of WordNet, which can be found at http://wordnetweb.princeton.edu/perl/webwn. Lookup the detailed entries for these words: alphabet, delta, oracle, yeti.
+  \item (15\%) \textbf{Using WordNet.} Explore the on-line version of WordNet, which can be found at http://wordnetweb.princeton.edu/perl/webwn. Lookup the detailed entries for these words: alphabet, delta, oracle, yeti.
 
-            Given what you observe by looking up these words, what conclusions can you make about using dictionary-based word-sense disambiguation (e.g., using a resource like WordNet) to try and improve text retrieval performance?
+        Given what you observe by looking up these words, what conclusions can you make about using dictionary-based word-sense disambiguation (e.g., using a resource like WordNet) to try and improve text retrieval performance?
 
-            \textbf{Answer:} Using semantic relations databases like WordNet can drastically improve text retrieval performance. Words such as "yeti" only had a single definition and can therefore be disambiguated very easily without the need for additional word-sensing. The other words have multiple definitions and would require WordNet to resolve the context. Using word-sensing instead of the frequency of a version of the word would yield more accurate text-retrieval results.
+        \textbf{Answer:} Using semantic relations databases like WordNet can drastically improve text retrieval performance. Words such as "yeti" only had a single definition and can therefore be disambiguated very easily without the need for additional word-sensing. The other words have multiple definitions and would require WordNet to resolve the context. Using word-sensing instead of the frequency of a version of the word would yield more accurate text-retrieval results.
 
 \end{enumerate}
 

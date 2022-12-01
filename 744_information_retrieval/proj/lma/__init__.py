@@ -26,6 +26,10 @@ class LyricsMoodAnalysis:
                 )
             )
 
-    def update_logs(self, playlist_name: str):
+    def add_lyrics(self, playlist_name: str):
 
-        self.playlists.find_failed(playlist_name)
+        self.playlists.add_lyrics(playlist_name)
+
+    # def update_logs(self, playlist_name: str):
+
+    #     self.playlists.find_failed(playlist_name)
