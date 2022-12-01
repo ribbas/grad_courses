@@ -3,7 +3,9 @@ import pathlib
 from .const import LABELED_PLAYLISTS
 from .emotions import Emotions
 from .files import IO
-from .playlist import Track, Playlist, LyricsRetriever, PlaylistService
+from .playlist import Playlist
+from .lyrics import LyricsRetriever
+from .playlistservice import PlaylistService
 
 
 class LyricsMoodAnalysis:
@@ -29,7 +31,3 @@ class LyricsMoodAnalysis:
     def add_lyrics(self, playlist_name: str):
 
         self.playlists.add_lyrics(playlist_name)
-
-    # def update_logs(self, playlist_name: str):
-
-    #     self.playlists.find_failed(playlist_name)
