@@ -1,3 +1,4 @@
+import joblib
 import json
 import pathlib
 from typing import Any
@@ -29,3 +30,14 @@ class IO:
         with open(f"{filename}", "w") as fp:
             json.dump(data, fp)
         print(f"Dumped json to '{filename}'")
+
+    @staticmethod
+    def read_joblib(filename: str) -> Any:
+
+        return joblib.load(f"{filename}.joblib")
+
+    @staticmethod
+    def dump_joblib(filename: str, clf: Any) -> None:
+
+        joblib.dump(clf, f"{filename}.joblib")
+        print(f"Dumped model to '{filename}.joblib'")

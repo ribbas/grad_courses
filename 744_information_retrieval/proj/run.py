@@ -27,7 +27,7 @@ if __name__ == "__main__":
 
     args = vars(parser.parse_args())
 
-    lma_obj = LyricsMoodAnalysis(playlist_dir, lyrics_dir, log_dir)
+    lma_obj = LyricsMoodAnalysis(playlist_dir, lyrics_dir, log_dir, emolex_dir)
 
     if args["lyrics"]:
         lma_obj.get_playlists()
@@ -35,4 +35,4 @@ if __name__ == "__main__":
 
     if args["token"]:
         lma_obj.get_playlists()
-        lma_obj.tokenize_lyrics(args["play"])
+        lma_obj.tokenize_lyrics((args["play"]))
