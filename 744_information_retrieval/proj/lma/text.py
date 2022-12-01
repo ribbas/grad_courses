@@ -43,7 +43,7 @@ class Normalizer:
 
     def __split_document(self, document: str) -> list[str]:
 
-        return document.split(" ")
+        return document.split()
 
     def __expand_contractions(self, tokens: list[str]) -> list[str]:
 

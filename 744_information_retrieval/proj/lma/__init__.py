@@ -42,4 +42,4 @@ class LyricsMoodAnalysis:
         for track in playlist.tracks:
             if track.lyrics:
                 print(track.title, track.artist)
-                print(self.normalizer(track.lyrics[:100]))
+                print(self.normalizer(track.lyrics))

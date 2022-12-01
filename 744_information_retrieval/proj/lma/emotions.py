@@ -15,3 +15,8 @@ class Emotions:
     def get_quadrant(emotion: str) -> int:
 
         return Emotions.EMOTIONS[emotion]
+
+
+class VAD:
+
+    pass
