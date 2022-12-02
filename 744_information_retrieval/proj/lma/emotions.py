@@ -1,6 +1,7 @@
 import pathlib
 
 from .files import IO
+from .text import Normalizer
 
 EMOTIONS = {
     "anger",
@@ -18,6 +19,7 @@ class Emotions:
     def __init__(self, emolex_dir: pathlib.Path) -> None:
 
         self.emolex_dir = emolex_dir
+        self.normalizer = Normalizer()
 
         self.emotion_lex: dict[str, list[str]] = {
             "anger": [],
@@ -54,14 +56,10 @@ class Emotions:
 
     def load_all_datasets(self):
 
-        self.emotion_lex["anger"] = self.load_dataset("anger.txt")
-        self.emotion_lex["anticipation"] = self.load_dataset("anticipation.txt")
-        self.emotion_lex["disgust"] = self.load_dataset("disgust.txt")
-        self.emotion_lex["fear"] = self.load_dataset("fear.txt")
-        self.emotion_lex["joy"] = self.load_dataset("joy.txt")
-        self.emotion_lex["sadness"] = self.load_dataset("sadness.txt")
-        self.emotion_lex["surprise"] = self.load_dataset("surprise.txt")
-        self.emotion_lex["trust"] = self.load_dataset("trust.txt")
+        for emotion in EMOTIONS:
+            self.emotion_lex[emotion] = self.normalizer(
+                " ".join(self.load_dataset(f"{emotion}.txt"))
+            )
 
         vad_data = self.load_dataset("VAD-Lexicon.txt")
         for line in vad_data:
@@ -74,9 +72,8 @@ class Emotions:
                 }
                 self.vad_lex[word] = vad
 
-    def get_emotion(self, lyrics: list[str]):
+    def get_wheel_category(self, lyrics: list[str] | set[str]):
 
-        num_words = len(lyrics)
         counts = {e: 0 for e in EMOTIONS}
 
         for word in lyrics:
@@ -96,8 +93,18 @@ class Emotions:
                 for key in counts.keys():
                     counts[key][word] = self.vad_lex[word][key]
 
-        return {k: sum(v.values()) / len(v) for k, v in counts.items()}
+        try:
+            return {k: sum(v.values()) / len(v) for k, v in counts.items()}
+        except ZeroDivisionError:
+            print(lyrics, counts)
+            exit()
 
     def score(self, lyrics: list[str]):
 
-        return self.get_emotion(lyrics), self.get_vad(lyrics), len(lyrics)
+        return {
+            "vad": self.get_vad(lyrics),
+            "wheel": self.get_wheel_category(lyrics),
+            "wheel_unique": self.get_wheel_category(set(lyrics)),
+            "n_words": len(lyrics),
+            "n_words_unique": len(set(lyrics)),
+        }

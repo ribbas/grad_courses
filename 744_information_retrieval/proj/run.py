@@ -5,6 +5,7 @@ from lma import LyricsMoodAnalysis
 
 if __name__ == "__main__":
 
+    # https://aclanthology.org/2021.cmcl-1.18.pdf
     emolex_dir = Path("data/emotion_dynamics")
     log_dir = Path("data/logs")
     lyrics_dir = Path("data/lyrics")
@@ -35,4 +36,4 @@ if __name__ == "__main__":
 
     if args["token"]:
         lma_obj.get_playlists()
-        lma_obj.tokenize_lyrics((args["play"]))
+        lma_obj.generate_scores((args["play"]))

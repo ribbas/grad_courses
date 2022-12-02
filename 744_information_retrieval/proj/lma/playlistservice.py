@@ -1,4 +1,5 @@
 import pathlib
+from typing import Generator
 
 from .files import IO
 from .lyrics import LyricsRetriever
@@ -19,10 +20,10 @@ class PlaylistService:
         self.lyrics_dir = lyrics_dir
         self.log_dir = log_dir
 
-    def add_playlist(self, playlist: Playlist):
+    def __iter__(self) -> Generator[Playlist, None, None]:
 
-        playlist.ingest()
-        self.playlists.append(playlist)
+        for playlist in self.playlists:
+            yield playlist
 
     def __getitem__(self, playlist_name: str) -> Playlist:
 
@@ -31,6 +32,11 @@ class PlaylistService:
                 return playlist
 
         raise IndexError
+
+    def add_playlist(self, playlist: Playlist):
+
+        playlist.ingest()
+        self.playlists.append(playlist)
 
     def add_lyrics(self, playlist: Playlist):
 

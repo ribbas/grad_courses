@@ -1,5 +1,3 @@
-from typing import Iterator
-
 import nltk
 
 # fmt: off
@@ -45,6 +43,15 @@ class Normalizer:
 
         return document.split()
 
+    def __remove_stopwords(self, tokens: list[str]) -> list[str]:
+
+        temp_tokens: list[str] = []
+        for token in tokens:
+            if token not in nltk.corpus.stopwords.words("english"):
+                temp_tokens.append(token)
+
+        return temp_tokens
+
     def __expand_contractions(self, tokens: list[str]) -> list[str]:
 
         temp_tokens: list[str] = []
@@ -74,6 +81,7 @@ class Normalizer:
 
         # expand contraction words
         tokens = self.__expand_contractions(tokens)
+        tokens = self.__remove_stopwords(tokens)
 
         # remove punctuations
         tokens = self.__remove_puncs(tokens)

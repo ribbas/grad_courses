@@ -1,9 +1,9 @@
 import pathlib
 
-from .const import LABELED_PLAYLISTS
+from .dataframe import DataFrame
 from .emotions import Emotions
 from .files import IO
-from .playlist import Playlist
+from .playlist import Playlist, Track
 from .playlistservice import PlaylistService
 from .model import Model
 from .text import Normalizer
@@ -27,89 +27,67 @@ class LyricsMoodAnalysis:
 
         for filename in self.playlists.playlist_dir.iterdir():
             file_data = IO.read_json(filename)
-            self.playlists.add_playlist(
-                Playlist(
-                    filename.stem, file_data, LABELED_PLAYLISTS[filename.stem]
-                )
-            )
+            self.playlists.add_playlist(Playlist(filename.stem, file_data))
 
     def add_lyrics(self, playlist_name: str):
 
         playlist = self.playlists[playlist_name]
         self.playlists.add_lyrics(playlist)
 
-    # def __extract_text_features(
-    #     self, filename: Path, categories: tuple[str, ...]
-    # ) -> tuple[list[str], np.ndarray]:
+    def __transpose(self, tracks: list[Track]):
 
-    #     docs = CorpusFile().ingest(filename)
-    #     target = np.array([i[TARGET_FIELD] for i in docs])
-    #     features: list[str] = []
+        df = []
+        for track in tracks:
+            if track.lyrics:
+                line = {}
+                lyrics = self.normalizer(track.lyrics)
+                line["title"] = track.title
+                line["artist"] = "::".join(track.artist)
+                scores = self.emotions.score(lyrics)
+                line["valence"] = scores["vad"]["valence"]
+                line["arousal"] = scores["vad"]["arousal"]
+                line["dominance"] = scores["vad"]["dominance"]
 
-    #     for row in docs:
+                line["anger"] = scores["wheel"]["anger"]
+                line["anticipation"] = scores["wheel"]["anticipation"]
+                line["disgust"] = scores["wheel"]["disgust"]
+                line["fear"] = scores["wheel"]["fear"]
+                line["joy"] = scores["wheel"]["joy"]
+                line["sadness"] = scores["wheel"]["sadness"]
+                line["surprise"] = scores["wheel"]["surprise"]
+                line["trust"] = scores["wheel"]["trust"]
 
-    #         feature_list = []
+                line["anger_u"] = scores["wheel_unique"]["anger"]
+                line["anticipation_u"] = scores["wheel_unique"]["anticipation"]
+                line["disgust_u"] = scores["wheel_unique"]["disgust"]
+                line["fear_u"] = scores["wheel_unique"]["fear"]
+                line["joy_u"] = scores["wheel_unique"]["joy"]
+                line["sadness_u"] = scores["wheel_unique"]["sadness"]
+                line["surprise_u"] = scores["wheel_unique"]["surprise"]
+                line["trust_u"] = scores["wheel_unique"]["trust"]
 
-    #         for feature in categories:
+                line["n_words"] = scores["n_words"]
+                line["n_words_u"] = scores["n_words_unique"]
 
-    #             if feature in LIST_FEATURE_FIELDS:
-    #                 feature_list.extend(row[feature])
+                df.append(line)
 
-    #             else:
-    #                 feature_list.append(row[feature])
+        return df
 
-    #         features.append(" ".join(feature_list))
-
-    #     return features, target
-
-    # def extract_train_features(self) -> None:
-
-    #     self.emotions.load_all_datasets()
-    #     target = [
-    #         self.emotions.get_quadrant(e) for e in self.emotions.emotion_lex
-    #     ]
-    #     features = [
-    #         " ".join(self.emotions.emotion_lex[e])
-    #         for e in self.emotions.emotion_lex
-    #     ]
-    #     self.clf.set_train_features(features, target)
-
-    # def extract_test_features(self, playlist_name: str) -> None:
-
-    #     playlist = self.playlists[playlist_name]
-    #     self.playlists.get_lyrics(playlist)
-
-    #     target = []
-
-    #     features = []
-    #     for track in playlist.tracks:
-    #         if track.lyrics:
-    #             target.append(1)
-    #             features.append(track.lyrics)
-
-    #     self.clf.set_test_features(features, target)
-
-    # def train(self) -> None:
-
-    #     self.clf.grid_search()
-    #     self.model_loaded = True
-    # https://aclanthology.org/2021.cmcl-1.18.pdf
-
-    def tokenize_lyrics(self, playlist_name: str):
+    def generate_scores(self, playlist_name: str):
 
         self.emotions.load_all_datasets()
 
-        playlist = self.playlists[playlist_name]
-        self.playlists.get_lyrics(playlist)
+        scores = []
 
-        targets = []
-        for track in playlist.tracks[:10]:
-            if track.lyrics:
-                # print(track.title, track.artist)
-                lyrics = self.normalizer(track.lyrics)
-                print(self.emotions.score(lyrics))
-        #         targets.append(
-        #             self.emotions.get_quadrant(self.emotions.score(lyrics))
-        #         )
+        if playlist_name == "all":
+            for playlist in self.playlists:
+                self.playlists.get_lyrics(playlist)
+                scores.extend(self.__transpose(playlist.tracks))
 
-        # print(sorted(targets))
+        else:
+            playlist = self.playlists[playlist_name]
+            self.playlists.get_lyrics(playlist)
+            scores.extend(self.__transpose(playlist.tracks))
+
+        df = DataFrame(scores)
+        df.dump("data.csv")
