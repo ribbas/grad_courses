@@ -1,5 +1,0 @@
-Type the characters from the picture above:
-
-Input is case-insensitive
-
-Submit
