@@ -4,11 +4,471 @@
       "track": {
         "artists": [
           {
+            "name": "WILLOW"
+          }
+        ],
+        "name": "<maybe> it's my fault",
+        "uri": "spotify:track:5qMq8ITRVuTwqd2pDL0gff"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Pierce The Veil"
+          }
+        ],
+        "name": "Pass The Nirvana",
+        "uri": "spotify:track:5SDhI2jKg0S5fzEEqPCHiV"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Vundabar"
+          }
+        ],
+        "name": "Time",
+        "uri": "spotify:track:36d2zV9oeEiDlkZmiZaZE1"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "The White Stripes"
+          }
+        ],
+        "name": "Seven Nation Army",
+        "uri": "spotify:track:3dPQuX8Gs42Y7b454ybpMR"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Olivia Rodrigo"
+          }
+        ],
+        "name": "brutal",
+        "uri": "spotify:track:6SRsiMl7w1USE4mFqrOhHC"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "My Chemical Romance"
+          }
+        ],
+        "name": "Teenagers",
+        "uri": "spotify:track:7j31rVgGX9Q2blT92VBEA0"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Maggie Lindemann"
+          },
+          {
+            "name": "Kellin Quinn"
+          }
+        ],
+        "name": "how could you do this to me?",
+        "uri": "spotify:track:3fLCfvAGhyi8i4MfBjHCLB"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Green Day"
+          }
+        ],
+        "name": "American Idiot",
+        "uri": "spotify:track:6nTiIhLmQ3FWhvrGafw2zj"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "POORSTACY"
+          }
+        ],
+        "name": "Don't Look At Me",
+        "uri": "spotify:track:5hQZDntIU1PbXhmH94kZoM"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Falling In Reverse"
+          }
+        ],
+        "name": "The Drug In Me Is You",
+        "uri": "spotify:track:1mB7dCUM7sPyNab6R43nlj"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
             "name": "Origami Angel"
           }
         ],
         "name": "24 Hr Drive-Thru",
         "uri": "spotify:track:0ZwS03v4euiMztP9xDLgoO"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Mom Jeans."
+          }
+        ],
+        "name": "What's Up?",
+        "uri": "spotify:track:1rCQdw3dnvVexJwu1c7EAL"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Pinkshift"
+          }
+        ],
+        "name": "i'm gonna tell my therapist on you",
+        "uri": "spotify:track:1iUBNLLmZnBAjgkHysEv37"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Pavement"
+          }
+        ],
+        "name": "Harness Your Hopes - B-side",
+        "uri": "spotify:track:4vsoWZcvtvSsE0OiVvDDvX"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Modern Baseball"
+          }
+        ],
+        "name": "Your Graduation",
+        "uri": "spotify:track:7kVoPBSlGghzLoQjODkxGD"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Destroy Boys"
+          }
+        ],
+        "name": "I Threw Glass at My Friend's Eyes and Now I'm on Probation",
+        "uri": "spotify:track:2NBxGmbCTLArOiMyWEWsPE"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "The Frights"
+          }
+        ],
+        "name": "You Are Going to Hate This",
+        "uri": "spotify:track:4upw9RT8Cs96EQhCuoNryV"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "The Offspring"
+          }
+        ],
+        "name": "You're Gonna Go Far, Kid",
+        "uri": "spotify:track:6TfBA04WJ3X1d1wXhaCFVT"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Pierce The Veil"
+          },
+          {
+            "name": "Kellin Quinn"
+          }
+        ],
+        "name": "King For A Day",
+        "uri": "spotify:track:1IT0WQk5J8NsaeII8ktdlZ"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "The All-American Rejects"
+          }
+        ],
+        "name": "Move Along",
+        "uri": "spotify:track:2l57cfmCnOkwNX1tky02n1"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Avril Lavigne"
+          }
+        ],
+        "name": "F.U.",
+        "uri": "spotify:track:2pp1JDxpXuqRINtpxl0e4h"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Fall Out Boy"
+          }
+        ],
+        "name": "Sugar, We're Goin Down",
+        "uri": "spotify:track:2TfSHkHiFO4gRztVIkggkE"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Weezer"
+          }
+        ],
+        "name": "I Just Threw Out The Love Of My Dreams",
+        "uri": "spotify:track:35SRuRfp5BvD1yArmXKNHO"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "KennyHoopla"
+          }
+        ],
+        "name": "how will i rest in peace if i'm buried by a highway?//",
+        "uri": "spotify:track:4jFLw7QqWlv3lZr980HyYW"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Waterparks"
+          }
+        ],
+        "name": "Turbulent",
+        "uri": "spotify:track:4ig3DcNoj3UfPdhL2Rw9J1"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Meet Me @ The Altar"
+          }
+        ],
+        "name": "Say It (To My Face)",
+        "uri": "spotify:track:2UMeGWmUri9RVpmckPV9Jt"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "The Beths"
+          }
+        ],
+        "name": "Future Me Hates Me",
+        "uri": "spotify:track:0eL1VqUPElim7IP5eezImS"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "I DONT KNOW HOW BUT THEY FOUND ME"
+          }
+        ],
+        "name": "Leave Me Alone",
+        "uri": "spotify:track:1cIi1x8ANjMO97wH5OfYO1"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "My Chemical Romance"
+          }
+        ],
+        "name": "I'm Not Okay (I Promise)",
+        "uri": "spotify:track:7lRlq939cDG4SzWOF4VAnd"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Wheatus"
+          }
+        ],
+        "name": "Teenage Dirtbag",
+        "uri": "spotify:track:25FTMokYEbEWHEdss5JLZS"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "The Brobecks"
+          }
+        ],
+        "name": "Visitation Of The Ghost",
+        "uri": "spotify:track:0UspsjF4bHzpQdvHvKM3hV"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "chloe moriondo"
+          }
+        ],
+        "name": "Hell Hounds",
+        "uri": "spotify:track:0cAYxatX3fzSGpLmATQ0jz"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Bring Me The Horizon"
+          }
+        ],
+        "name": "sTraNgeRs",
+        "uri": "spotify:track:5fpq1wF8xa5tSSlcKHdmGQ"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "carolesdaughter"
+          }
+        ],
+        "name": "My Mother Wants Me Dead",
+        "uri": "spotify:track:3ADDLOa2NjjLFQ7g2FTiYx"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "McCafferty"
+          }
+        ],
+        "name": "Beachboy",
+        "uri": "spotify:track:70uQzsAyJ1vmloywhrO0ss"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "The Used"
+          }
+        ],
+        "name": "The Taste of Ink",
+        "uri": "spotify:track:5jZ1Z2GFTf2gwmFc3qiUxs"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Hawthorne Heights"
+          }
+        ],
+        "name": "Ohio Is For Lovers",
+        "uri": "spotify:track:23DHUWJ7iEieNPMPKvjzBV"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "The Brobecks"
+          }
+        ],
+        "name": "Better Than Me",
+        "uri": "spotify:track:2ACs0dJwkSsvNZvEbvFurK"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Sir Chloe"
+          }
+        ],
+        "name": "Animal",
+        "uri": "spotify:track:2RZWiishrE4Tygv9R7zuZe"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "WILLOW"
+          },
+          {
+            "name": "Travis Barker"
+          }
+        ],
+        "name": "t r a n s p a r e n t s o u l feat. Travis Barker",
+        "uri": "spotify:track:1QL7nSDZCwZMnbisV4KOXt"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "AFI"
+          }
+        ],
+        "name": "Miss Murder",
+        "uri": "spotify:track:0Ti2dlF2xLjXblvdU5fCxM"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "carolesdaughter"
+          }
+        ],
+        "name": "please put me in a medically induced coma",
+        "uri": "spotify:track:4MY8pe89WnW7xVOxUN4hmg"
       }
     },
     {
@@ -26,6 +486,17 @@
       "track": {
         "artists": [
           {
+            "name": "Scene Queen"
+          }
+        ],
+        "name": "Pink Panther",
+        "uri": "spotify:track:32ljWqOxw3ckyuaUc882F6"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
             "name": "LUNA AURA"
           }
         ],
@@ -37,11 +508,33 @@
       "track": {
         "artists": [
           {
-            "name": "WILLOW"
+            "name": "mazie"
           }
         ],
-        "name": "<maybe> it's my fault",
-        "uri": "spotify:track:5qMq8ITRVuTwqd2pDL0gff"
+        "name": "girls just wanna have sex",
+        "uri": "spotify:track:6u9pA8Izk34kgKXd0ukLv3"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "The Front Bottoms"
+          }
+        ],
+        "name": "Twin Size Mattress",
+        "uri": "spotify:track:14N3tALR3Mhf7UHpJRKk4L"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "The Regrettes"
+          }
+        ],
+        "name": "Monday",
+        "uri": "spotify:track:55jtGKCCpLEV0zWFf97wVY"
       }
     },
     {
@@ -53,6 +546,17 @@
         ],
         "name": "Rough",
         "uri": "spotify:track:4lalLstnInAdtSWUpOumhn"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Paramore"
+          }
+        ],
+        "name": "Misery Business",
+        "uri": "spotify:track:6SpLc7EXZIPpy0sVko0aoU"
       }
     }
   ]
