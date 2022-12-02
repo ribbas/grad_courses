@@ -1,7 +1,7 @@
 import pathlib
 
 from .dataframe import DataFrame
-from .emotions import Emotions
+from .emotions import Emotions, EMOTION_KEYS, VAD_KEYS
 from .files import IO
 from .playlist import Playlist, Track
 from .playlistservice import PlaylistService
@@ -21,7 +21,7 @@ class LyricsMoodAnalysis:
         self.clf: Model = Model()
         self.playlists = PlaylistService(playlist_dir, lyrics_dir, log_dir)
         self.emotions = Emotions(emolex_dir)
-        self.normalizer = Normalizer()
+        self.norm = Normalizer()
         self.data = []
 
     def get_playlists(self):
@@ -35,40 +35,49 @@ class LyricsMoodAnalysis:
         playlist = self.playlists[playlist_name]
         self.playlists.add_lyrics(playlist)
 
-    def __transpose(self, tracks: list[Track]):
+    def __transpose(self, playlist: Playlist):
 
         df = []
-        for track in tracks:
+        for track in playlist.tracks:
+
             if track.lyrics:
+
                 line = {}
-                lyrics = self.normalizer(track.lyrics)
+
                 line["title"] = track.title
                 line["artist"] = "::".join(track.artist)
-                scores = self.emotions.score(lyrics)
-                line["valence"] = scores["vad"]["valence"]
-                line["arousal"] = scores["vad"]["arousal"]
-                line["dominance"] = scores["vad"]["dominance"]
+                line["playlist"] = playlist.name
 
-                line["anger"] = scores["wheel"]["anger"]
-                line["anticipation"] = scores["wheel"]["anticipation"]
-                line["disgust"] = scores["wheel"]["disgust"]
-                line["fear"] = scores["wheel"]["fear"]
-                line["joy"] = scores["wheel"]["joy"]
-                line["sadness"] = scores["wheel"]["sadness"]
-                line["surprise"] = scores["wheel"]["surprise"]
-                line["trust"] = scores["wheel"]["trust"]
+                lyrics = self.norm(track.lyrics)
 
-                line["anger_u"] = scores["wheel_unique"]["anger"]
-                line["anticipation_u"] = scores["wheel_unique"]["anticipation"]
-                line["disgust_u"] = scores["wheel_unique"]["disgust"]
-                line["fear_u"] = scores["wheel_unique"]["fear"]
-                line["joy_u"] = scores["wheel_unique"]["joy"]
-                line["sadness_u"] = scores["wheel_unique"]["sadness"]
-                line["surprise_u"] = scores["wheel_unique"]["surprise"]
-                line["trust_u"] = scores["wheel_unique"]["trust"]
+                for k, transformed_lyrics in zip(
+                    ("{0}", "u_{0}", "s_{0}"),
+                    (
+                        lyrics,
+                        set(lyrics),
+                        set(self.norm.remove_stopwords(lyrics)),
+                    ),
+                ):
 
-                line["n_words"] = scores["n_words"]
-                line["n_words_u"] = scores["n_words_unique"]
+                    line[k.format("n_words")] = len(transformed_lyrics)
+                    vad = self.emotions.get_vad(transformed_lyrics)
+                    for key in VAD_KEYS:
+                        line[k.format(key)] = vad[key]
+
+                    wheel = self.emotions.get_wheel_category(transformed_lyrics)
+                    for key in EMOTION_KEYS:
+                        line[k.format(key)] = wheel[key]
+
+                # u_lyrics = set(lyrics)
+
+                # line["u_n_words"] = len(u_lyrics)
+                # vad = self.emotions.get_vad(u_lyrics)
+                # for key in VAD_KEYS:
+                #     line[f"u_{key}"] = vad[key]
+
+                # wheel = self.emotions.get_wheel_category(u_lyrics)
+                # for key in EMOTION_KEYS:
+                #     line[f"u_{key}"] = wheel[key]
 
                 df.append(line)
 
@@ -83,15 +92,16 @@ class LyricsMoodAnalysis:
         if playlist_name == "all":
             for playlist in self.playlists:
                 self.playlists.get_lyrics(playlist)
-                self.data.extend(self.__transpose(playlist.tracks))
+                self.data.extend(self.__transpose(playlist))
 
         else:
             playlist = self.playlists[playlist_name]
             self.playlists.get_lyrics(playlist)
-            self.data.extend(self.__transpose(playlist.tracks))
+            self.data.extend(self.__transpose(playlist))
 
     def dump(self, gen_data: pathlib.Path):
 
         df = DataFrame()
         df.generate(self.data)
+        df.head()
         df.dump(gen_data)

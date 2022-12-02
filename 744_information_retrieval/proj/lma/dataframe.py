@@ -21,6 +21,8 @@ class DataFrame:
     def head(self):
 
         print(self.df)
+        print(self.df.columns)
+        print(self.df.describe())
 
     def dump(self, filename: pathlib.Path):
 

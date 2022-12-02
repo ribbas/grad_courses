@@ -13,12 +13,14 @@ if __name__ == "__main__":
     gen_data = Path("data/final.csv")
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--play", type=str, help="name of playlist")
+    parser.add_argument(
+        "-p", "--play", type=str, default="all", help="name of playlist"
+    )
     parser.add_argument(
         "-l",
         "--lyrics",
         action=argparse.BooleanOptionalAction,
-        help="perform lyrics operations",
+        help="grab lyrics of playlist",
     )
     parser.add_argument(
         "-g",

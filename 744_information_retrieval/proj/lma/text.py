@@ -24,6 +24,25 @@ CONTRACTIONS = {
     "y'all": "you all", "you'd": "you would", "you'll": "you will",
     "you're": "you are", "you've": "you have",
 }
+
+STOPWORDS = {
+    "a", "about", "abov", "after", "again", "against", "ain", "all", "am",
+    "an", "and", "ani", "are", "aren", "as", "at", "be", "becaus", "been",
+    "befor", "below", "between", "both", "but", "by", "can", "could", "couldn",
+    "d", "did", "didn", "do", "doe", "doesn", "don", "down", "dure", "each",
+    "few", "for", "from", "further", "had", "hadn", "has", "hasn", "have",
+    "haven", "he", "her", "here", "herself", "him", "himself", "his", "how",
+    "i", "if", "in", "into", "is", "isn", "it", "itself", "just", "ll", "m",
+    "ma", "me", "might", "mightn", "more", "most", "must", "mustn", "my",
+    "myself", "needn", "neednt", "no", "nor", "not", "now", "o", "of", "off",
+    "on", "onc", "onli", "or", "other", "our", "ourselv", "out", "over", "own",
+    "re", "s", "same", "sha", "shan", "she", "should", "shouldn", "so", "some",
+    "such", "t", "than", "that", "the", "their", "them", "themselv", "then",
+    "there", "these", "they", "this", "those", "through", "to", "too", "under",
+    "until", "up", "ve", "veri", "was", "wasn", "we", "were", "weren", "what",
+    "when", "where", "whi", "which", "while", "who", "whom", "will", "with",
+    "wo", "won", "would", "wouldn", "y", "you", "your", "yourself", "yourselv"
+}
 # fmt: on
 
 
@@ -43,11 +62,12 @@ class Normalizer:
 
         return document.split()
 
-    def __remove_stopwords(self, tokens: list[str]) -> list[str]:
+    @staticmethod
+    def remove_stopwords(tokens: list[str]) -> list[str]:
 
         temp_tokens: list[str] = []
         for token in tokens:
-            if token not in nltk.corpus.stopwords.words("english"):
+            if token not in STOPWORDS:
                 temp_tokens.append(token)
 
         return temp_tokens
@@ -81,7 +101,6 @@ class Normalizer:
 
         # expand contraction words
         tokens = self.__expand_contractions(tokens)
-        tokens = self.__remove_stopwords(tokens)
 
         # remove punctuations
         tokens = self.__remove_puncs(tokens)
