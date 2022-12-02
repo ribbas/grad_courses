@@ -10,6 +10,7 @@ if __name__ == "__main__":
     log_dir = Path("data/logs")
     lyrics_dir = Path("data/lyrics")
     playlist_dir = Path("data/spotify")
+    gen_data = Path("data/final.csv")
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--play", type=str, help="name of playlist")
@@ -20,8 +21,8 @@ if __name__ == "__main__":
         help="perform lyrics operations",
     )
     parser.add_argument(
-        "-t",
-        "--token",
+        "-g",
+        "--gen",
         action=argparse.BooleanOptionalAction,
         help="perform lyrics operations",
     )
@@ -34,6 +35,8 @@ if __name__ == "__main__":
         lma_obj.get_playlists()
         lma_obj.add_lyrics(args["play"])
 
-    if args["token"]:
+    if args["gen"]:
         lma_obj.get_playlists()
-        lma_obj.generate_scores((args["play"]))
+        lma_obj.load_datasets()
+        lma_obj.generate_data(args["play"])
+        lma_obj.dump(gen_data)

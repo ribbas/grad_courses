@@ -22,6 +22,7 @@ class LyricsMoodAnalysis:
         self.playlists = PlaylistService(playlist_dir, lyrics_dir, log_dir)
         self.emotions = Emotions(emolex_dir)
         self.normalizer = Normalizer()
+        self.data = []
 
     def get_playlists(self):
 
@@ -73,21 +74,24 @@ class LyricsMoodAnalysis:
 
         return df
 
-    def generate_scores(self, playlist_name: str):
+    def load_datasets(self):
 
         self.emotions.load_all_datasets()
 
-        scores = []
+    def generate_data(self, playlist_name: str):
 
         if playlist_name == "all":
             for playlist in self.playlists:
                 self.playlists.get_lyrics(playlist)
-                scores.extend(self.__transpose(playlist.tracks))
+                self.data.extend(self.__transpose(playlist.tracks))
 
         else:
             playlist = self.playlists[playlist_name]
             self.playlists.get_lyrics(playlist)
-            scores.extend(self.__transpose(playlist.tracks))
+            self.data.extend(self.__transpose(playlist.tracks))
 
-        df = DataFrame(scores)
-        df.dump("data.csv")
+    def dump(self, gen_data: pathlib.Path):
+
+        df = DataFrame()
+        df.generate(self.data)
+        df.dump(gen_data)
