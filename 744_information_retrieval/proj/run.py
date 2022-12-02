@@ -26,7 +26,13 @@ if __name__ == "__main__":
         "-g",
         "--gen",
         action=argparse.BooleanOptionalAction,
-        help="perform lyrics operations",
+        help="generate dataframe",
+    )
+    parser.add_argument(
+        "-r",
+        "--read",
+        action=argparse.BooleanOptionalAction,
+        help="read generated dataframe",
     )
 
     args = vars(parser.parse_args())
@@ -42,3 +48,6 @@ if __name__ == "__main__":
         lma_obj.load_datasets()
         lma_obj.generate_data(args["play"])
         lma_obj.dump(gen_data)
+
+    if args["read"]:
+        lma_obj.read(gen_data)

@@ -22,8 +22,8 @@ class DataFrame:
 
         print(self.df)
         print(self.df.columns)
-        print(self.df.describe())
+        print(self.df[["n_words", "u_n_words", "s_n_words"]].describe())
 
     def dump(self, filename: pathlib.Path):
 
-        self.df.to_csv(filename)
+        self.df.to_csv(filename, index=False)

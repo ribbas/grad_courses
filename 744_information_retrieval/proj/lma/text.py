@@ -63,7 +63,7 @@ class Normalizer:
         return document.split()
 
     @staticmethod
-    def remove_stopwords(tokens: list[str]) -> list[str]:
+    def remove_stopwords(tokens: list[str] | set[str]) -> list[str]:
 
         temp_tokens: list[str] = []
         for token in tokens:

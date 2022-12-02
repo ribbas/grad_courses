@@ -50,34 +50,23 @@ class LyricsMoodAnalysis:
 
                 lyrics = self.norm(track.lyrics)
 
-                for k, transformed_lyrics in zip(
+                for t_key, t_lyrics in zip(
                     ("{0}", "u_{0}", "s_{0}"),
                     (
                         lyrics,
                         set(lyrics),
-                        set(self.norm.remove_stopwords(lyrics)),
+                        self.norm.remove_stopwords(set(lyrics)),
                     ),
                 ):
 
-                    line[k.format("n_words")] = len(transformed_lyrics)
-                    vad = self.emotions.get_vad(transformed_lyrics)
+                    line[t_key.format("n_words")] = len(t_lyrics)
+                    vad = self.emotions.get_vad(t_lyrics)
                     for key in VAD_KEYS:
-                        line[k.format(key)] = vad[key]
+                        line[t_key.format(key)] = vad[key]
 
-                    wheel = self.emotions.get_wheel_category(transformed_lyrics)
+                    wheel = self.emotions.get_wheel_category(t_lyrics)
                     for key in EMOTION_KEYS:
-                        line[k.format(key)] = wheel[key]
-
-                # u_lyrics = set(lyrics)
-
-                # line["u_n_words"] = len(u_lyrics)
-                # vad = self.emotions.get_vad(u_lyrics)
-                # for key in VAD_KEYS:
-                #     line[f"u_{key}"] = vad[key]
-
-                # wheel = self.emotions.get_wheel_category(u_lyrics)
-                # for key in EMOTION_KEYS:
-                #     line[f"u_{key}"] = wheel[key]
+                        line[t_key.format(key)] = wheel[key]
 
                 df.append(line)
 
@@ -98,6 +87,12 @@ class LyricsMoodAnalysis:
             playlist = self.playlists[playlist_name]
             self.playlists.get_lyrics(playlist)
             self.data.extend(self.__transpose(playlist))
+
+    def read(self, gen_data: pathlib.Path):
+
+        df = DataFrame()
+        df.read_csv(gen_data)
+        df.head()
 
     def dump(self, gen_data: pathlib.Path):
 
