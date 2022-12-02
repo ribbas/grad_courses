@@ -16,7 +16,7 @@ class LyricsRetriever:
         for track in tracks:
             self.az.title = track.title
             for artist in track.artist:
-                self.az.artist = artist
+                self.az.artist = artist.split(" (")[0]
                 print(f"Searching for '{self.az.title} :: {self.az.artist}'")
                 self.az.getLyrics(
                     save=True, path=path, sleep=random.uniform(3, 5)

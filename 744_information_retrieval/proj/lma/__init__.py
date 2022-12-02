@@ -93,6 +93,7 @@ class LyricsMoodAnalysis:
 
     #     self.clf.grid_search()
     #     self.model_loaded = True
+    # https://aclanthology.org/2021.cmcl-1.18.pdf
 
     def tokenize_lyrics(self, playlist_name: str):
 

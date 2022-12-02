@@ -4,6 +4,485 @@
       "track": {
         "artists": [
           {
+            "name": "Outkast"
+          }
+        ],
+        "name": "B.O.B. - Bombs Over Baghdad",
+        "uri": "spotify:track:3WibbMr6canxRJXhNtAvLU"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Toadies"
+          }
+        ],
+        "name": "Possum Kingdom",
+        "uri": "spotify:track:56SkdBKyR2zOkjk6wVFI9s"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Nicki Minaj"
+          },
+          {
+            "name": "Maluma"
+          },
+          {
+            "name": "Myriam Fares"
+          },
+          {
+            "name": "FIFA Sound"
+          }
+        ],
+        "name": "Tukoh Taka - Official FFF Anthem",
+        "uri": "spotify:track:7twsd0lwXyy0ARdsTyzHoJ"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Van Halen"
+          }
+        ],
+        "name": "Hot for Teacher - 2015 Remaster",
+        "uri": "spotify:track:6QDbGdbJ57Mtkflsg42WV5"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "The Beatles"
+          }
+        ],
+        "name": "Lovely Rita - Remastered 2009",
+        "uri": "spotify:track:6h9W5FxX4E9lUFsyq8j1AD"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Black Eyed Peas"
+          },
+          {
+            "name": "Daddy Yankee"
+          }
+        ],
+        "name": "BAILAR CONTIGO",
+        "uri": "spotify:track:4GCDX1A3tNGauj5FJfQfvy"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Pink Floyd"
+          }
+        ],
+        "name": "Money",
+        "uri": "spotify:track:0vFOzaXqZHahrZp6enQwQb"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "ROSALÍA"
+          }
+        ],
+        "name": "BIZCOCHITO",
+        "uri": "spotify:track:4kXxEhuatrvwrTQycA7s9B"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "KAROL G"
+          },
+          {
+            "name": "Ovy On The Drums"
+          }
+        ],
+        "name": "CAIRO",
+        "uri": "spotify:track:6WbAhuwE6fCOriBu5786X1"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "The Killers"
+          }
+        ],
+        "name": "Shadowplay",
+        "uri": "spotify:track:6HbTF52swZiGSJ2cvAJ7PU"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Beastie Boys"
+          }
+        ],
+        "name": "Hey Ladies",
+        "uri": "spotify:track:5ulZo7nk3MByXLvja3NCAc"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Red Hot Chili Peppers"
+          }
+        ],
+        "name": "Can't Stop",
+        "uri": "spotify:track:3ZOEytgrvLwQaqXreDs2Jx"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Radiohead"
+          }
+        ],
+        "name": "Creep",
+        "uri": "spotify:track:70LcF31zb1H0PyJoS1Sx1r"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "blink-182"
+          }
+        ],
+        "name": "What's My Age Again?",
+        "uri": "spotify:track:4LJhJ6DQS7NwE7UKtvcM52"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Anuel AA"
+          }
+        ],
+        "name": "Brother",
+        "uri": "spotify:track:3M23T72K5eqHI2GzdFMMHE"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Led Zeppelin"
+          }
+        ],
+        "name": "Whole Lotta Love - 1990 Remaster",
+        "uri": "spotify:track:0hCB0YR03f6AmQaHbwWDe8"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "The Killers"
+          }
+        ],
+        "name": "All These Things That I've Done",
+        "uri": "spotify:track:5vollujufHY0jMZxx77VWr"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Guns N' Roses"
+          }
+        ],
+        "name": "Welcome To The Jungle",
+        "uri": "spotify:track:0G21yYKMZoHa30cYVi1iA8"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Styx"
+          }
+        ],
+        "name": "Mr. Roboto",
+        "uri": "spotify:track:7C0rG4oWO7VeZcffyW1sK9"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Aerosmith"
+          }
+        ],
+        "name": "Dream On",
+        "uri": "spotify:track:5MxNLUsfh7uzROypsoO5qe"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Mötley Crüe"
+          }
+        ],
+        "name": "Girls, Girls, Girls",
+        "uri": "spotify:track:549Go7a66CX6k523uK9kUv"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "FLETCHER"
+          }
+        ],
+        "name": "Serial Heartbreaker",
+        "uri": "spotify:track:1UmFLqmTmgHoSyvss6Q7gw"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Vale"
+          }
+        ],
+        "name": "Se Acaba Todo",
+        "uri": "spotify:track:0uvY2zXHjplNTvfZMFXMYH"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Scorpions"
+          }
+        ],
+        "name": "Rock You Like A Hurricane",
+        "uri": "spotify:track:58XWGx7KNNkKneHdprcprX"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Daryl Hall & John Oates"
+          }
+        ],
+        "name": "I Can't Go for That (No Can Do)",
+        "uri": "spotify:track:41dDygR3r7e926oGUXfrLt"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Nelly Furtado"
+          }
+        ],
+        "name": "Maneater",
+        "uri": "spotify:track:4wH4dJgrsxONID6KS2tDQM"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Little Jesus"
+          }
+        ],
+        "name": "La Magia",
+        "uri": "spotify:track:3XJmD5suzFUBHJ7sizBAiy"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Airbourne"
+          }
+        ],
+        "name": "Too Much, Too Young, Too Fast",
+        "uri": "spotify:track:2LQbBzrXkgQHnCDUmHjReH"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Scorpions"
+          }
+        ],
+        "name": "No One Like You",
+        "uri": "spotify:track:26fZwf1ImE4aUJ4XaqOkUg"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Quiet Riot"
+          }
+        ],
+        "name": "Cum on Feel the Noize",
+        "uri": "spotify:track:3vV3cr2TpPqFk07zxYUbla"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Cruz"
+          },
+          {
+            "name": "Randy Class"
+          }
+        ],
+        "name": "Cómo Le Haces",
+        "uri": "spotify:track:0Vou3YugmY9I6pu52uxaYT"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "James Brown"
+          },
+          {
+            "name": "Fred Wesley"
+          },
+          {
+            "name": "The J.B.'s"
+          }
+        ],
+        "name": "People Get Up And Drive Your Funky Soul - Remix",
+        "uri": "spotify:track:5U3i59kbTLrxo46TU1FRnF"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Soft Cell"
+          }
+        ],
+        "name": "Tainted Love",
+        "uri": "spotify:track:0cGG2EouYCEEC3xfa0tDFV"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Twisted Sister"
+          }
+        ],
+        "name": "I Wanna Rock",
+        "uri": "spotify:track:70Z9t1qhytWtG4cCmmi7mU"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Miguel"
+          },
+          {
+            "name": "Travis Scott"
+          }
+        ],
+        "name": "Sky Walker (feat. Travis Scott)",
+        "uri": "spotify:track:5WoaF1B5XIEnWfmb5NZikf"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "The Rolling Stones"
+          }
+        ],
+        "name": "Wild Horses - 2009 Mix",
+        "uri": "spotify:track:52dm9op3rbfAkc1LGXgipW"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Bob Sinclar"
+          },
+          {
+            "name": "FISHER"
+          },
+          {
+            "name": "Steve Edwards"
+          }
+        ],
+        "name": "World Hold On - FISHER Rework",
+        "uri": "spotify:track:2YDOjCfkGciEXxSutB6LJR"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "KISS"
+          }
+        ],
+        "name": "I Was Made For Lovin' You",
+        "uri": "spotify:track:07q0QVgO56EorrSGHC48y3"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "The Offspring"
+          }
+        ],
+        "name": "Want You Bad",
+        "uri": "spotify:track:6hwQ69v7VbPhTTR2fOtYX7"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Megan Thee Stallion"
+          },
+          {
+            "name": "Dua Lipa"
+          },
+          {
+            "name": "David Guetta"
+          }
+        ],
+        "name": "Sweetest Pie - David Guetta Dance Remix",
+        "uri": "spotify:track:5xUJYQA7f6WU77N8VDASBH"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
             "name": "AC/DC"
           }
         ],

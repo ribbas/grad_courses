@@ -22,7 +22,6 @@ class Playlist:
         self.file_data = file_data
         self.tracks: list[Track] = []
         self.emotion = emotion
-        # self.quadrant = Emotions.get_quadrant(emotion)
 
     def ingest(self) -> None:
 
