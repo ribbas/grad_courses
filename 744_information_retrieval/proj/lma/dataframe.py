@@ -35,6 +35,25 @@ class DataFrame:
             axis=1,
         )
 
+    def create_sentiment_ratio_columns(self):
+
+        self.df["sentiment"] = self.df.apply(
+            lambda row: (row["positive"] - row["negative"]) / row["n_words"],
+            axis=1,
+        )
+
+    def drop_duplicate_artists(self):
+
+        self.df.drop_duplicates(
+            subset=["title", "playlist"], keep="first", inplace=True
+        )
+
+    def drop_duplicate_titles(self):
+
+        self.df.drop_duplicates(
+            subset=["title", "artist"], keep="first", inplace=True
+        )
+
     def head(self):
 
         print(self.df)

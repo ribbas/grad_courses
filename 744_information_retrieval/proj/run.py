@@ -24,10 +24,16 @@ if __name__ == "__main__":
         help="grab lyrics of playlist",
     )
     parser.add_argument(
-        "-g",
-        "--gen",
+        "-d",
+        "--data",
         action=argparse.BooleanOptionalAction,
         help="generate dataframe",
+    )
+    parser.add_argument(
+        "-g",
+        "--graph",
+        action=argparse.BooleanOptionalAction,
+        help="read generated dataframe",
     )
     parser.add_argument(
         "-r",
@@ -44,11 +50,14 @@ if __name__ == "__main__":
         lma_obj.get_playlists()
         lma_obj.add_lyrics(args["play"])
 
-    if args["gen"]:
+    if args["data"]:
         lma_obj.get_playlists()
         lma_obj.load_datasets()
         lma_obj.generate_data(args["play"])
         lma_obj.dump(gen_data)
 
-    if args["read"]:
+    if args["graph"]:
         lma_obj.generate_plots(gen_data, plot_dir)
+
+    if args["read"]:
+        lma_obj.read_csv(gen_data)

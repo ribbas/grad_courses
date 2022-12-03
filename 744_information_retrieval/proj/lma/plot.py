@@ -29,9 +29,35 @@ class Scatter:
         plt.close()
 
 
+class Scatter2:
+    def __init__(self) -> None:
+
+        plt.figure(figsize=(16, 9))
+        self.ax = plt.figure().add_subplot()
+
+    def set_axes(self, x, y, df):
+
+        graph = sns.scatterplot(x=x, y=y, data=df)
+        graph.axhline(0.50, linestyle="--", color="#A9A9A9")
+        graph.axvline(0.50, linestyle="--", color="#A9A9A9")
+
+    def save_fig(self, filename):
+        # Make legend, set axes limits and labels
+        # self.ax.legend()
+        self.ax.set_xlim(0, 1)
+        self.ax.set_ylim(0, 1)
+        self.ax.set_xlabel("valence")
+        self.ax.set_ylabel("arousal")
+
+        plt.tight_layout()
+        plt.savefig(filename)
+        plt.close()
+
+
 class Scatter3D:
     def __init__(self) -> None:
 
+        plt.figure(figsize=(16, 9))
         self.ax = plt.figure().add_subplot(projection="3d")
 
     def set_axes(self, x, y, z):
@@ -70,7 +96,7 @@ class BoxPlot:
 
     def set_axes(self, y: str, df: pd.DataFrame):
 
-        sns.boxplot(x="playlist", y=y, data=df, orient="v")
+        sns.boxplot(x="playlist", y=y, data=df, orient="v", showfliers=False)
 
     def save_fig(self, filename):
         plt.tight_layout()

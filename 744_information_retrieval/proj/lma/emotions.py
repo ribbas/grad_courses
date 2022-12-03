@@ -14,6 +14,8 @@ EMOTION_KEYS = {
     "trust",
 }
 
+SENTIMENT_KEYS = {"negative", "positive"}
+
 VAD_KEYS = {"valence", "arousal", "dominance"}
 
 
@@ -27,6 +29,8 @@ class Emotions:
 
         self.vad_lex: dict[str, dict[str, float]] = {}
 
+        self.sentiment = {}
+
     def load_dataset(self, dataset: str):
 
         return IO.read(self.emolex_dir / dataset).split("\n")
@@ -36,6 +40,11 @@ class Emotions:
         for emotion in EMOTION_KEYS:
             self.emotion_lex[emotion] = self.normalizer(
                 " ".join(self.load_dataset(f"{emotion}.txt"))
+            )
+
+        for sentiment in SENTIMENT_KEYS:
+            self.sentiment[sentiment] = self.normalizer(
+                " ".join(self.load_dataset(f"{sentiment}.txt"))
             )
 
         vad_data = self.load_dataset("VAD-Lexicon.txt")
@@ -48,6 +57,17 @@ class Emotions:
                     "dominance": float(dominance),
                 }
                 self.vad_lex[word] = vad
+
+    def get_sentiment(self, lyrics: list[str] | set[str]):
+
+        counts = {e: 0 for e in SENTIMENT_KEYS}
+
+        for word in lyrics:
+            for emotion_key, lex in self.sentiment.items():
+                if word in lex:
+                    counts[emotion_key] += 1
+
+        return counts
 
     def get_wheel_category(self, lyrics: list[str] | set[str]):
 
@@ -69,4 +89,4 @@ class Emotions:
                 for key in counts.keys():
                     counts[key][word] = self.vad_lex[word][key]
 
-        return {k: sum(v.values()) / len(v) for k, v in counts.items()}
+        return {k: sum(v.values()) / len(v.values()) for k, v in counts.items()}

@@ -1,11 +1,11 @@
 import pathlib
 
 from .dataframe import DataFrame, TRANSFORM_KEY_FMT
-from .emotions import Emotions, EMOTION_KEYS, VAD_KEYS
+from .emotions import Emotions, EMOTION_KEYS, VAD_KEYS, SENTIMENT_KEYS
 from .files import IO
 from .playlist import Playlist
 from .playlistservice import PlaylistService
-from .plot import Scatter, Scatter3D, BoxPlot
+from .plot import Scatter, Scatter3D, BoxPlot, Scatter2
 from .text import Normalizer
 
 
@@ -45,7 +45,6 @@ class LyricsMoodAnalysis:
                 line = {}
 
                 line["title"] = track.title
-                line["artist"] = "::".join(track.artist)
                 line["playlist"] = playlist.name
 
                 lyrics = self.norm(track.lyrics)
@@ -64,11 +63,18 @@ class LyricsMoodAnalysis:
                     for key in VAD_KEYS:
                         line[t_key.format(key)] = vad[key]
 
+                    sentiment = self.emotions.get_sentiment(t_lyrics)
+                    for key in SENTIMENT_KEYS:
+                        line[t_key.format(key)] = sentiment[key]
+
                     wheel = self.emotions.get_wheel_category(t_lyrics)
                     for key in EMOTION_KEYS:
                         line[t_key.format(key)] = wheel[key]
 
-                df.append(line)
+                for artist in track.artist:
+                    _line = line.copy()
+                    _line["artist"] = artist
+                    df.append(_line)
 
         return df
 
@@ -88,36 +94,54 @@ class LyricsMoodAnalysis:
             self.playlists.get_lyrics(playlist)
             self.data.extend(self.__transpose(playlist))
 
-    def generate_plots(self, gen_data: pathlib.Path, plot_dir: pathlib.Path):
+    def read_csv(self, gen_data: pathlib.Path):
 
         df = DataFrame()
         df.read_csv(gen_data)
+        print(df.df.describe().unstack())
+        df.df.describe().unstack().to_csv("lol.csv")
+
+    def generate_plots(self, gen_data: pathlib.Path, plot_dir: pathlib.Path):
+
+        data = DataFrame()
+        data.read_csv(gen_data)
+        data.drop_duplicate_artists()
 
         for key in EMOTION_KEYS:
             bp = BoxPlot()
-            bp.set_axes(f"{key}", df.df)
+            bp.set_axes(f"{key}", data.df)
             bp.save_fig(plot_dir / f"{key}.png")
 
         for key in EMOTION_KEYS:
             bp = BoxPlot()
-            bp.set_axes(f"s_{key}", df.df)
+            bp.set_axes(f"s_{key}", data.df)
             bp.save_fig(plot_dir / f"s_{key}.png")
 
         for key in EMOTION_KEYS:
-            df.create_wheel_ratio_columns(key, "{0}")
             bp = BoxPlot()
-            bp.set_axes(f"{key}_ratio", df.df)
+            data.create_wheel_ratio_columns(key, "{0}")
+            bp.set_axes(f"{key}_ratio", data.df)
             bp.save_fig(plot_dir / f"{key}_ratio.png")
+
+        bp = BoxPlot()
+        data.create_sentiment_ratio_columns()
+        bp.set_axes("sentiment", data.df)
+        bp.save_fig(plot_dir / "sentiment.png")
+
+        data.drop_duplicate_titles()
 
         sc = Scatter()
         sc.set_axes(
-            df.df["s_valence"], df.df["s_arousal"], df.df["s_dominance"], df.df
+            data.df["valence"],
+            data.df["arousal"],
+            data.df["dominance"],
+            data.df,
         )
         sc.save_fig(plot_dir / "s_va.png")
 
         sc3d = Scatter3D()
         sc3d.set_axes(
-            df.df["s_valence"], df.df["s_arousal"], df.df["s_dominance"]
+            data.df["valence"], data.df["arousal"], data.df["dominance"]
         )
         sc3d.save_fig(plot_dir / "s_vad.png")
 
