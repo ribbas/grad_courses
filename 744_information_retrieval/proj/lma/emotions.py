@@ -20,9 +20,12 @@ VAD_KEYS = {"valence", "arousal", "dominance"}
 
 
 class Emotions:
-    def __init__(self, emolex_dir: pathlib.Path) -> None:
+    def __init__(
+        self, emolex_dir: pathlib.Path, norm_emolex_dir: pathlib.Path
+    ) -> None:
 
         self.emolex_dir = emolex_dir
+        self.norm_emolex_dir = norm_emolex_dir
         self.normalizer = Normalizer()
 
         self.emotion_lex: dict[str, list[str]] = {e: [] for e in EMOTION_KEYS}
@@ -35,17 +38,46 @@ class Emotions:
 
         return IO.read(self.emolex_dir / dataset).split("\n")
 
-    def load_all_datasets(self):
+    def normalize_datasets(self):
 
         for emotion in EMOTION_KEYS:
-            self.emotion_lex[emotion] = self.normalizer(
-                " ".join(self.load_dataset(f"{emotion}.txt"))
+            IO.dump(
+                self.norm_emolex_dir / f"{emotion}.txt",
+                "\n".join(
+                    self.normalizer(
+                        " ".join(self.load_dataset(f"{emotion}.txt"))
+                    )
+                )
+                + "\n",
             )
 
         for sentiment in SENTIMENT_KEYS:
-            self.sentiment[sentiment] = self.normalizer(
-                " ".join(self.load_dataset(f"{sentiment}.txt"))
+            IO.dump(
+                self.norm_emolex_dir / f"{sentiment}.txt",
+                "\n".join(
+                    self.normalizer(
+                        " ".join(self.load_dataset(f"{sentiment}.txt"))
+                    )
+                )
+                + "\n",
             )
+
+        vad_data = self.load_dataset("VAD-Lexicon.txt")
+        vad_lex = ""
+        for line in vad_data:
+            if line:
+                word, value = line.split("\t", maxsplit=1)
+                vad_lex += f"{self.normalizer._stem([word])[0]}\t{value}\n"
+
+        IO.dump(self.norm_emolex_dir / "VAD-Lexicon.txt", vad_lex)
+
+    def load_all_datasets(self):
+
+        for emotion in EMOTION_KEYS:
+            self.emotion_lex[emotion] = self.load_dataset(f"{emotion}.txt")
+
+        for sentiment in SENTIMENT_KEYS:
+            self.sentiment[sentiment] = self.load_dataset(f"{sentiment}.txt")
 
         vad_data = self.load_dataset("VAD-Lexicon.txt")
         for line in vad_data:

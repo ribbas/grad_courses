@@ -87,7 +87,7 @@ class Normalizer:
 
         return [i.translate(self.punc_table) for i in tokens]
 
-    def __stem(self, tokens: list[str]) -> list[str]:
+    def _stem(self, tokens: list[str]) -> list[str]:
 
         return [self.stem.stem(token) for token in tokens]
 
@@ -106,6 +106,6 @@ class Normalizer:
         tokens = self.__remove_puncs(tokens)
 
         # stem tokens
-        tokens = self.__stem(tokens)
+        tokens = self._stem(tokens)
 
         return tokens

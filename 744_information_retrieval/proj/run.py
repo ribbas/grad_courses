@@ -6,7 +6,8 @@ from lma import LyricsMoodAnalysis
 if __name__ == "__main__":
 
     # https://aclanthology.org/2021.cmcl-1.18.pdf
-    emolex_dir = Path("data/emotion_dynamics")
+    emolex_dir = Path("data/emolex")
+    norm_emolex_dir = Path("data/norm_emolex")
     log_dir = Path("data/logs")
     lyrics_dir = Path("data/lyrics")
     playlist_dir = Path("data/spotify")
@@ -22,6 +23,12 @@ if __name__ == "__main__":
         "--lyrics",
         action=argparse.BooleanOptionalAction,
         help="grab lyrics of playlist",
+    )
+    parser.add_argument(
+        "-c",
+        "--clean",
+        action=argparse.BooleanOptionalAction,
+        help="generate dataframe",
     )
     parser.add_argument(
         "-d",
@@ -44,11 +51,17 @@ if __name__ == "__main__":
 
     args = vars(parser.parse_args())
 
-    lma_obj = LyricsMoodAnalysis(playlist_dir, lyrics_dir, log_dir, emolex_dir)
+    lma_obj = LyricsMoodAnalysis(
+        playlist_dir, lyrics_dir, log_dir, emolex_dir, norm_emolex_dir
+    )
 
     if args["lyrics"]:
         lma_obj.get_playlists()
         lma_obj.add_lyrics(args["play"])
+
+    if args["clean"]:
+        lma_obj.get_playlists()
+        lma_obj.clean_datasets()
 
     if args["data"]:
         lma_obj.get_playlists()

@@ -16,11 +16,12 @@ class LyricsMoodAnalysis:
         lyrics_dir: pathlib.Path,
         log_dir: pathlib.Path,
         emolex_dir: pathlib.Path,
+        norm_emolex_dir: pathlib.Path,
     ) -> None:
 
         self.scatter3d: Scatter3D
         self.playlists = PlaylistService(playlist_dir, lyrics_dir, log_dir)
-        self.emotions = Emotions(emolex_dir)
+        self.emotions = Emotions(emolex_dir, norm_emolex_dir)
         self.norm = Normalizer()
         self.data = []
 
@@ -81,6 +82,10 @@ class LyricsMoodAnalysis:
     def load_datasets(self):
 
         self.emotions.load_all_datasets()
+
+    def clean_datasets(self):
+
+        self.emotions.normalize_datasets()
 
     def generate_data(self, playlist_name: str):
 
