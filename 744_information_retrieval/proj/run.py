@@ -11,6 +11,7 @@ if __name__ == "__main__":
     lyrics_dir = Path("data/lyrics")
     playlist_dir = Path("data/spotify")
     gen_data = Path("data/final.csv")
+    plot_dir = Path("docs/statics")
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -50,4 +51,4 @@ if __name__ == "__main__":
         lma_obj.dump(gen_data)
 
     if args["read"]:
-        lma_obj.read(gen_data)
+        lma_obj.generate_plots(gen_data, plot_dir)

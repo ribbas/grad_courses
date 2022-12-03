@@ -1,11 +1,11 @@
 import pathlib
 
-from .dataframe import DataFrame
+from .dataframe import DataFrame, TRANSFORM_KEY_FMT
 from .emotions import Emotions, EMOTION_KEYS, VAD_KEYS
 from .files import IO
-from .playlist import Playlist, Track
+from .playlist import Playlist
 from .playlistservice import PlaylistService
-from .model import Model
+from .plot import Scatter, Scatter3D, BoxPlot
 from .text import Normalizer
 
 
@@ -18,7 +18,7 @@ class LyricsMoodAnalysis:
         emolex_dir: pathlib.Path,
     ) -> None:
 
-        self.clf: Model = Model()
+        self.scatter3d: Scatter3D
         self.playlists = PlaylistService(playlist_dir, lyrics_dir, log_dir)
         self.emotions = Emotions(emolex_dir)
         self.norm = Normalizer()
@@ -51,7 +51,7 @@ class LyricsMoodAnalysis:
                 lyrics = self.norm(track.lyrics)
 
                 for t_key, t_lyrics in zip(
-                    ("{0}", "u_{0}", "s_{0}"),
+                    TRANSFORM_KEY_FMT,
                     (
                         lyrics,
                         set(lyrics),
@@ -88,11 +88,38 @@ class LyricsMoodAnalysis:
             self.playlists.get_lyrics(playlist)
             self.data.extend(self.__transpose(playlist))
 
-    def read(self, gen_data: pathlib.Path):
+    def generate_plots(self, gen_data: pathlib.Path, plot_dir: pathlib.Path):
 
         df = DataFrame()
         df.read_csv(gen_data)
-        df.head()
+
+        for key in EMOTION_KEYS:
+            bp = BoxPlot()
+            bp.set_axes(f"{key}", df.df)
+            bp.save_fig(plot_dir / f"{key}.png")
+
+        for key in EMOTION_KEYS:
+            bp = BoxPlot()
+            bp.set_axes(f"s_{key}", df.df)
+            bp.save_fig(plot_dir / f"s_{key}.png")
+
+        for key in EMOTION_KEYS:
+            df.create_wheel_ratio_columns(key, "{0}")
+            bp = BoxPlot()
+            bp.set_axes(f"{key}_ratio", df.df)
+            bp.save_fig(plot_dir / f"{key}_ratio.png")
+
+        sc = Scatter()
+        sc.set_axes(
+            df.df["s_valence"], df.df["s_arousal"], df.df["s_dominance"], df.df
+        )
+        sc.save_fig(plot_dir / "s_va.png")
+
+        sc3d = Scatter3D()
+        sc3d.set_axes(
+            df.df["s_valence"], df.df["s_arousal"], df.df["s_dominance"]
+        )
+        sc3d.save_fig(plot_dir / "s_vad.png")
 
     def dump(self, gen_data: pathlib.Path):
 
