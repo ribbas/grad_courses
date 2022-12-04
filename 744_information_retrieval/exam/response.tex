@@ -1,6 +1,7 @@
 \documentclass[11pt]{article}
 
 \usepackage{custom}
+\usepackage{enumitem}
 \setlength{\abovedisplayskip}{-15pt}
 \setlength{\belowdisplayskip}{0pt}
 \setlength{\abovedisplayshortskip}{0pt}
@@ -28,58 +29,79 @@
         \end{enumerate}
 
 
-        % \item For this problem consider the following collection of 8 documents. No other documents are present in the
-        %       collection besides these eight. When analyzing these documents and the query below you are to ignore all
-        %       punctuation and any word with four or fewer letters. All short words with four or fewer letters are considered
-        %       stopwords that are completely ignored for this problem. Use base 2 logs if any logarithm is required.
-        %       (a) Compute cosine values and rank documents D1 and D2 using query Q using the vector cosine model with
-        %       TF/IDF term weighting. The query Q consists of the words: "france aids ukraine". Show your work. Report
-        %       scores to three decimal places (e.g., 0.123)
-        %       (b) Now rank the same documents (D1 and D2) but this time by probability of relevance to the query using a
-        %       unigram statistical language model. For smoothing purposes you should use a mixture model with a parameter
-        %       l = 0.2. You should assume that the prior probability of relevance is the same for each document. Report
-        %       scores using three digits of precision (e.g., 1.23 x 10^-4)
-        %       D1: france sends help to ukraine
-        %       D2: ukraine economy at risk
-        %       D3: france and germany meet on ukraine war
-        %       D4: economy tanks on inflation fear
-        %       D5: france to talk on economy
-        %       D6: france raises cheese prices
-        %       D7: economy: inflation makes home prices soar
-        %       D8: germany sends tanks to ukraine
-        %       Query Q for both parts (a) and (b): "france aids ukraine".
+  \item For this problem consider the following collection of 8 documents. No other documents are present in the collection besides these eight. When analyzing these documents and the query below you are to ignore all punctuation and any word with four or fewer letters. All short words with four or fewer letters are considered stopwords that are completely ignored for this problem. Use base 2 logs if any logarithm is required.
 
-        % \begin{simptable}
-        %   {Cardinalities of set-difference sets with various n-grams and normalization parameters}
-        %   {scores}
-        %   {| c | c | c | c |}
-        %   \textbf{N-Gram} & \textbf{Normalized} & \textbf{$|G-O|$} & \textbf{$|O-G|$}
-        %   \\ \hline
-        %   \textbf{6} & True & 10 & 12
-        %   \\ \hline
-        %   \textbf{6} & False & 10 & 12
-        %   \\ \hline
-        %   \textbf{5} & True & 3 & 6
-        %   \\ \hline
-        %   \textbf{5} & False & 4 & 9
-        %   \\ \hline
-        %   \textbf{4} & True & 3 & 6
-        %   \\ \hline
-        %   \textbf{4} & False & 3 & 6
-        %   \\ \hline
-        %   \textbf{3} & True & 2 & 4
-        %   \\ \hline
-        %   \textbf{3} & False & 2 & 4
-        %   \\ \hline
-        %   \textbf{2} & True & 1 & 2
-        %   \\ \hline
-        %   \textbf{2} & False & 3 & 2
-        %   \\ \hline
-        %   \textbf{1} & True & 2 & 1
-        %   \\ \hline
-        %   \textbf{1} & False & 2 & 2
-        %   \\ \hline
-        % \end{simptable}
+        \textbf{Answer:}
+
+        The documents were normalized to the following:
+
+        \begin{enumerate}[label=D\arabic*:]
+          \item france sends ukraine
+          \item ukraine economy
+          \item france germany ukraine
+          \item economy tanks inflation
+          \item france economy
+          \item france raises cheese prices
+          \item economy inflation makes prices
+          \item germany sends tanks ukraine
+        \end{enumerate}
+
+        Query Q for both parts (a) and (b): "france ukraine".
+
+        \begin{enumerate}
+          \item Compute cosine values and rank documents D1 and D2 using query Q using the vector cosine model with TF/IDF term weighting. The query Q consists of the words: "france aids ukraine". Show your work. Report scores to three decimal places (e.g., $0.123$)
+
+                \textbf{Answer:}
+
+                % D1:?france?sends?kraine
+                % D2:?ukraine?economy
+                % D3:?france?germany?ukraine
+                % D4:?economy?tanks?inflation
+                % D5:?france?economy
+                % D6:?france?raises?cheese?prices
+                % D7:?economy?inflation?makes?prices
+                % D8:?germany?sends?tanks?ukraine
+                % Query Q for both parts (a) and (b): "france ukraine".
+
+          \item Now rank the same documents (D1 and D2) but this time by probability of relevance to the query using a unigram statistical language model. For smoothing purposes you should use a mixture model with a parameter $\lambda = 0.2$. You should assume that the prior probability of relevance is the same for each document. Report scores using three digits of precision (e.g., $1.23 \times 10^{-4}$)
+
+                \textbf{Answer:} Computing the $tf_{t,d}$ (the (raw) term frequency of term $t$ in document $d$) and $L_d$ (the number of tokens in document $d$):
+
+                \begin{simptable}
+                  {}
+                  {scores}
+                  {|c|c|c|c|c|c|c|}
+                  & \textbf{$tf_{D1}$} & \textbf{$L_{D1}$} & \textbf{$tf_{D2}$} & \textbf{$L_{D2}$} & \textbf{$cf_{t}$} & \textbf{$cs$}
+                  \\ \hline
+                  france  & 1 & 3 & 0 & 2 & 4 & 25
+                  \\ \hline
+                  ukraine & 1 & 3 & 1 & 2 & 4 & 25
+                  \\ \hline
+                \end{simptable}
+                Using $\lambda = 0.2$ and Q=\textit{france ukraine}, and expanding the probability:
+                \begin{align*}
+                  P(d|q) & \propto P(d) \prod_{t \in q} ((1 - \lambda) P(t|M_c) + \lambda P(t|M_d))                            \\
+                         & \propto \prod_{t \in q} \left((1 - \lambda) \frac{cf_{t}}{cs} + \lambda \frac{tf_{t,d}}{L_d}\right)
+                \end{align*}
+                Computing the probability for each documents:
+                \begin{align*}
+                  P(Q|D1) & = \prod \left((1 - \lambda) \frac{cf_{t}}{cs} + \lambda \frac{tf_{t,D1}}{L_{D1}}\right)                                                                                          \\
+                          & = \prod \left(0.8\times \frac{cf_{t}}{25} + 0.2\times \frac{tf_{t,D1}}{3}\right)                                                                                                 \\
+                          & = \left(0.8\times \frac{cf_{france}}{25} + 0.2\times \frac{tf_{france,D1}}{3}\right) \times \left(0.8\times \frac{cf_{ukraine}}{25} + 0.2\times \frac{tf_{ukraine,D1}}{3}\right) \\
+                          & = \left(0.8\times \frac{4}{25} + 0.2\times \frac{1}{3}\right) \times \left(0.8\times \frac{4}{25} + 0.2\times \frac{1}{3}\right)                                                 \\
+                          & = (0.194)(0.194)                                                                                                                                                                 \\
+                          & = 3.79 \times 10^{-2}
+                \end{align*}
+                \begin{align*}
+                  P(Q|D2) & = \prod \left((1 - \lambda) \frac{cf_{t}}{cs} + \lambda \frac{tf_{t,D2}}{L_{D2}}\right)                                                                                          \\
+                          & = \prod \left(0.8\times \frac{cf_{t}}{25} + 0.2\times \frac{tf_{t,D2}}{3}\right)                                                                                                 \\
+                          & = \left(0.8\times \frac{cf_{france}}{25} + 0.2\times \frac{tf_{france,D2}}{3}\right) \times \left(0.8\times \frac{cf_{ukraine}}{25} + 0.2\times \frac{tf_{ukraine,D2}}{3}\right) \\
+                          & = \left(0.8\times \frac{4}{25} + 0.2\times \frac{0}{2}\right) \times \left(0.8\times \frac{4}{25} + 0.2\times \frac{1}{2}\right)                                                 \\
+                          & = (0.128)(0.228)                                                                                                                                                                 \\
+                          & = 2.92 \times 10^{-2}
+                \end{align*}
+
+        \end{enumerate}
 
         % numbner 5
   \item The three major problems in text retrieval are: (a) polysemy; (b) synonymy; and, (c) morphology. Briefly explain each issue and how it can lower performance. Give an example of each phenomena.
