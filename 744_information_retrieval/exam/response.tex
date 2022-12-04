@@ -12,8 +12,33 @@
 \maketitle
 \begin{enumerate}
 
-  \item nottirbt
+  \item \begin{enumerate}
+          \item Suppose the document collection is very large, and that the index will not fit in the available RAM. Describe an indexing algorithm that works when memory is small compared to the size of the index.
 
+          \item Once an inverted file has been created, it is possible to calculate document vector lengths for a TF/IDF cosine model. This pre-calculation makes query-time performance much more efficient. Explain how right after creating the inverted file document vector lengths can be efficiency computed for all docids in parallel using one traversal (i.e., one single pass) over the inverted file.
+        \end{enumerate}
+
+
+        % \item For this problem consider the following collection of 8 documents. No other documents are present in the
+        %       collection besides these eight. When analyzing these documents and the query below you are to ignore all
+        %       punctuation and any word with four or fewer letters. All short words with four or fewer letters are considered
+        %       stopwords that are completely ignored for this problem. Use base 2 logs if any logarithm is required.
+        %       (a) Compute cosine values and rank documents D1 and D2 using query Q using the vector cosine model with
+        %       TF/IDF term weighting. The query Q consists of the words: "france aids ukraine". Show your work. Report
+        %       scores to three decimal places (e.g., 0.123)
+        %       (b) Now rank the same documents (D1 and D2) but this time by probability of relevance to the query using a
+        %       unigram statistical language model. For smoothing purposes you should use a mixture model with a parameter
+        %       l = 0.2. You should assume that the prior probability of relevance is the same for each document. Report
+        %       scores using three digits of precision (e.g., 1.23 x 10^-4)
+        %       D1: france sends help to ukraine
+        %       D2: ukraine economy at risk
+        %       D3: france and germany meet on ukraine war
+        %       D4: economy tanks on inflation fear
+        %       D5: france to talk on economy
+        %       D6: france raises cheese prices
+        %       D7: economy: inflation makes home prices soar
+        %       D8: germany sends tanks to ukraine
+        %       Query Q for both parts (a) and (b): "france aids ukraine".
 
         \begin{simptable}
           {Cardinalities of set-difference sets with various n-grams and normalization parameters}
@@ -47,7 +72,18 @@
           \\ \hline
         \end{simptable}
 
-  \item
+        % numbner 5
+  \item The three major problems in text retrieval are: (a) polysemy; (b) synonymy; and, (c) morphology. Briefly explain each issue and how it can lower performance. Give an example of each phenomena.
+
+        \textbf{Answer:} \begin{enumerate}
+          \item Polysemy refers to words that can have multiple meanings depending on the context. For example, \textit{space} can refer to its noun version of unoccupied area. The unoccupied area can be physical or abstract, i.e. "the space between planets" or "a teenager needing their own personal space". The word can also be used as a verb to refer to a person physically or emotionally distancing themselves from a situation, i.e. "spacing out during lectures".
+                Polysemy introduces ambiguity to a retrieval if a query is not given enough context and the system retrieves the undesired version of the word.
+
+          \item Synonymy refers to different words addressing the same meaning. For example, \textit{colossal}, \textit{giant} and \textit{huge} all describe the size of an object to be very big. Numerous other words also act as synonyms for \textit{big}.
+                Synonymy can lower performance of a retrieval system if it is not aware of the numerous synonyms a query word may have. If a user queries for "big company" but the system only contains documents with the numerous synonyms of \textit{big}, the ranked documents may not be what the user implied.
+
+          \item Morphology
+        \end{enumerate}
 
 \end{enumerate}
 
