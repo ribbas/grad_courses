@@ -49,37 +49,37 @@
         %       D8: germany sends tanks to ukraine
         %       Query Q for both parts (a) and (b): "france aids ukraine".
 
-        \begin{simptable}
-          {Cardinalities of set-difference sets with various n-grams and normalization parameters}
-          {scores}
-          {| c | c | c | c |}
-          \textbf{N-Gram} & \textbf{Normalized} & \textbf{$|G-O|$} & \textbf{$|O-G|$}
-          \\ \hline
-          \textbf{6} & True & 10 & 12
-          \\ \hline
-          \textbf{6} & False & 10 & 12
-          \\ \hline
-          \textbf{5} & True & 3 & 6
-          \\ \hline
-          \textbf{5} & False & 4 & 9
-          \\ \hline
-          \textbf{4} & True & 3 & 6
-          \\ \hline
-          \textbf{4} & False & 3 & 6
-          \\ \hline
-          \textbf{3} & True & 2 & 4
-          \\ \hline
-          \textbf{3} & False & 2 & 4
-          \\ \hline
-          \textbf{2} & True & 1 & 2
-          \\ \hline
-          \textbf{2} & False & 3 & 2
-          \\ \hline
-          \textbf{1} & True & 2 & 1
-          \\ \hline
-          \textbf{1} & False & 2 & 2
-          \\ \hline
-        \end{simptable}
+        % \begin{simptable}
+        %   {Cardinalities of set-difference sets with various n-grams and normalization parameters}
+        %   {scores}
+        %   {| c | c | c | c |}
+        %   \textbf{N-Gram} & \textbf{Normalized} & \textbf{$|G-O|$} & \textbf{$|O-G|$}
+        %   \\ \hline
+        %   \textbf{6} & True & 10 & 12
+        %   \\ \hline
+        %   \textbf{6} & False & 10 & 12
+        %   \\ \hline
+        %   \textbf{5} & True & 3 & 6
+        %   \\ \hline
+        %   \textbf{5} & False & 4 & 9
+        %   \\ \hline
+        %   \textbf{4} & True & 3 & 6
+        %   \\ \hline
+        %   \textbf{4} & False & 3 & 6
+        %   \\ \hline
+        %   \textbf{3} & True & 2 & 4
+        %   \\ \hline
+        %   \textbf{3} & False & 2 & 4
+        %   \\ \hline
+        %   \textbf{2} & True & 1 & 2
+        %   \\ \hline
+        %   \textbf{2} & False & 3 & 2
+        %   \\ \hline
+        %   \textbf{1} & True & 2 & 1
+        %   \\ \hline
+        %   \textbf{1} & False & 2 & 2
+        %   \\ \hline
+        % \end{simptable}
 
         % numbner 5
   \item The three major problems in text retrieval are: (a) polysemy; (b) synonymy; and, (c) morphology. Briefly explain each issue and how it can lower performance. Give an example of each phenomena.
@@ -154,7 +154,7 @@
 
           \item What is a permuterm index useful for?
 
-                \textbf{Answer:} https://nlp.stanford.edu/IR-book/html/htmledition/permuterm-indexes-1.html
+                \textbf{Answer:} Permuterms are used in wildcard queries to indicate the end of a term. This is needed because when creating rotation permutations of the vocabulary, the original word may become lost. The permuterm index can be used to rotate the word back to its original form.
 
           \item What modification to an inverted file data structure makes it possible to intersect two postings lists for a Boolean AND query in less than linear time in the sum of the lengths of the two postings lists?
 
@@ -174,7 +174,7 @@
 
           \item Explain Broder's taxonomy of information needs.
 
-                \textbf{Answer:}
+                \textbf{Answer:} Broder's taxonomy refers to the classification of search queries by users into 3 categories: informational, navigational, and transactional. The system can provide higher quality documents if it can classify the users' query.
 
           \item How are estimates of p(word|class) calculated in Multinomial Naïve Bayes text classification?
 
