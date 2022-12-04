@@ -168,7 +168,102 @@
 
         \end{enumerate}
 
-        % numbner 5
+        % 3
+  \item Two IR systems (called A and B below) return top ranked lists of 20 documents for a query in an IR test collection. The query is known to have 10 relevant documents in the test collection. The test collection contains exactly 1,000 documents.
+        System A finds relevant docs at ranks: 2, 4, 5, 12, 15, 20. The other top 20 documents are not relevant.
+        System B finds relevant docs at ranks: 1, 2, 8, 10, 15, 18, 20. The other top 20 documents are not relevant.
+
+        \begin{enumerate}
+          \item Which system has higher Recall at rank 20?
+
+                \textbf{Answer:} System B has the higher recall at rank 20 with 7 retrieved relevant documents.
+
+          \item What is Precision at 10 documents (P@10) for both systems?
+
+                \textbf{Answer:} For System A, the relevant documents at rank 10 retrieved are \{2,3,5\}. Therefore, the P@10 is 3/10=0.3.
+
+                For System B, the relevant documents at rank 10 retrieved are \{1,2,8,10\}. Therefore, the P@10 is 4/10=0.4.
+
+          \item What is the average precision (AP) of System A?
+
+                \textbf{Answer:} (1/2 + 2/4 + 3/5 + 4/12 + 5/15 + 6/20)/10 = 0.257
+
+          \item In general, what is the difference between mean average precision and average precision?
+
+                \textbf{Answer:} The average precision computes the averages of the precision of a retrieval system over a range of recall values. The mean average precision refers to averaging the average precision values over multiple queries.
+
+          \item Suppose System A is used to create a ranking of all 1,000 documents and the first 20 documents retrieved as the same as those listed above. What is the highest possible average precision score for System A computed over the entire ranking?
+
+                \textbf{Answer:}
+
+        \end{enumerate}
+
+  \item Short answer questions / calculations about index compression. Show your work and justify any responses.
+        Note in working on this problem you should use the method for calculating gamma/delta codes and variable
+        byte coding presented in the lecture (or textbook) and not any other variation.
+        \begin{enumerate}
+          \item Represent the integer 79 using Gamma coding.
+
+                \textbf{Answer:} Converting to gamma coding:
+                \begin{align*}
+                  unary(floor(log_2(79)))         & = unary(6)               \\
+                                                  & = 1111110                \\
+                  binary(x-2^{(floor(log_2(x)))}) & = binary(79 - 2^6)       \\
+                                                  & = binary(79 - 64)        \\
+                                                  & = 001111                 \\
+                  gamma(79)                       & = 1 \ 1111 \ 1000 \ 1111
+                \end{align*}
+
+
+          \item Why do we encode docid gaps instead of raw docids in postings lists?
+
+                \textbf{Answer:}
+
+          \item The following Gamma-encoded bit string represents a gap list of 4 docids. What are the docids?
+
+                11111010101110001001110010
+
+                \textbf{Answer:} Regrouping the bit sequence using the following algorithm:
+                \begin{itemize}
+                  \item Read the 1 bits until the first zero and store it as $magnitude$ of the unary code
+                  \item Read the $magnitude$ number of bits as $b=\text{binary code}$
+                  \item Compute $u=2^{magnitude}$
+                  \item Add $u$ to the decimal value of the binary code, $u + dec(b)$
+                \end{itemize}
+                Therefore,
+                \begin{align*}
+                   & \{111110 10101 \ 110 00 \ 10 0 \ 1110 010 \}                               \\
+                   & = \{2^5 + dec(10101), \ 2^2 +  dec(00), \ 2^1 + dec(0), \ 2^3 + dec(010)\} \\
+                   & = \{2^5 + 21, \ 2^2 +  0, \ 2^1 + 0, \ 2^3 + 2\}                           \\
+                   & = \{53, 4, 2, 10\}
+                \end{align*}
+                The docIDs are:
+                \begin{align*}
+                   & = \{53, 53+4, 53+4+2, 53+4+2+10\} \\
+                   & = \{53, 57, 59, 69\}
+                \end{align*}
+
+          \item Term "JHU" occurs in four documents with docids: 64, 100, 2000, and 2032. Calculate a compressed representation of this four docid posting list using variable byte coding. Hint: you should encode gaps, not raw docids.
+
+                \textbf{Answer:}
+
+                For (e-g) indicate True or False -- and Justify Your Response.
+          \item Claim: Gamma codes are always an odd number of bits in length.
+
+                \textbf{Answer:} True, since gamma codes are concatenations of the unary and binary representations of a number, the binary code will be even if the unary code is odd and vice versa.
+
+          \item Claim: A Gamma code always starts with a one bit
+
+                \textbf{Answer:} False, since the unary code of 1 would be 0.
+
+          \item Claim: The Gamma code for the integer $2^{51} - 1000$ (read: two raised to the fifty-first power minus one
+                thousand) is shorter than 85 bits.
+
+                \textbf{Answer:} False, since the unary code of the integer would be 51 bits in length, the binary portion will be close to that length and add up to more than 85 bits.
+
+        \end{enumerate}
+
+        % 5
   \item The three major problems in text retrieval are: (a) polysemy; (b) synonymy; and, (c) morphology. Briefly explain each issue and how it can lower performance. Give an example of each phenomena.
 
         \textbf{Answer:} \begin{enumerate}
