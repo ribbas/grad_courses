@@ -19,7 +19,12 @@
   \item \begin{enumerate}
           \item Suppose the document collection is very large, and that the index will not fit in the available RAM. Describe an indexing algorithm that works when memory is small compared to the size of the index.
 
+                \textbf{Answer:} One of the methods that were used in my implementation of the document ranking assignment to reduce memory overhead was to split up the pipeline into chunks so that the RAM would not get exhausted. The words needed to be extracted and sorted lexicographically, which can easily explode in memory requirements. One method employed was to gather as much of the term frequency of each of the terms in the documents and then write them out to disk. Once all of the term-docID-term frequency records were extracted across several files, they can be merged in a separate execution when the RAM usage is low. This final sorted file of the term-docID-term frequency records can later be used to traverse through and build the index file.
+
           \item Once an inverted file has been created, it is possible to calculate document vector lengths for a TF/IDF cosine model. This pre-calculation makes query-time performance much more efficient. Explain how right after creating the inverted file document vector lengths can be efficiency computed for all docids in parallel using one traversal (i.e., one single pass) over the inverted file.
+
+                \textbf{Answer:} Pre-calculating the document vector lengths was also utilized in my implementation of the document ranking assignment. Computing the cosine similarity of documents against a query requires computing dot products with sums of squares of the TF-IDF values of each terms in a dictionary, which can be very computationally expensive. However, instead of computing the sums of squares of all the terms every time a query is inputted, they can be pre-calculated independently. Once an inverted file is created, the system can loop through each of the words in the dictionary and retrieve its information from the index file, which contains the corresponding term frequencies required to compute the square of the TF-IDF values. A separate hash table that maps the docIDs to their partial length is created. The squared TF-IDF values of each of the terms in a document get added to the corresponding docID in the hash table until the end of the dictionary is reached. This hash table can finally be written to disk and later retrieved to compute the dot products against the queries.
+
         \end{enumerate}
 
 
@@ -110,7 +115,7 @@
 
                 \textbf{Answer:} Precision is the ratio of the true positives over the total number of classes labeled positive (both true and false positive classes). In the table, there are a total of 8 true positives, with 2, 3, and 3 true positives and 2, 0, and 2 false positives in the 3 respective classes.
 
-                The micro average can be computed as:
+                The micro average, $P_{\mu}$, can be computed as:
                 \begin{align*}
                   P_{\mu} & = \frac{\sum_{i=0}^{n}(TP_i)}{\sum_{i=0}^{n}(TP_i+FP_i)} \\
                           & = \frac{2+3+3}{(2+2)+(3+0)+(3+2)}                        \\
@@ -118,26 +123,17 @@
                           & = 0.67
                 \end{align*}
 
-                The macro average is computed by taking the expected value of the individual precision scores of the 3 classes.
+                The macro average, $P_{M}$, is computed by taking the expected value of the individual precision scores of the 3 classes.
                 \begin{align*}
-                  P_{b} & = \frac{TP_i}{TP_i+FP_i} \\
-                        & = \frac{2}{4}            \\
-                        & = 0.5
-                \end{align*}
-
-                \begin{align*}
-                  P_{l} & = \frac{TP_i}{TP_i+FP_i} \\
-                        & = \frac{3}{3}            \\
-                        & = 1
-                \end{align*}
-
-                \begin{align*}
-                  P_{s} & = \frac{TP_i}{TP_i+FP_i} \\
-                        & = \frac{3}{5}            \\
-                        & = 0.6
-                \end{align*}
-
-                \begin{align*}
+                  P_{b} & = \frac{TP_i}{TP_i+FP_i}      \\
+                        & = \frac{2}{4}                 \\
+                        & = 0.5                         \\
+                  P_{l} & = \frac{TP_i}{TP_i+FP_i}      \\
+                        & = \frac{3}{3}                 \\
+                        & = 1                           \\
+                  P_{s} & = \frac{TP_i}{TP_i+FP_i}      \\
+                        & = \frac{3}{5}                 \\
+                        & = 0.6                         \\
                   P_{M} & = \frac{P_{b}+P_{l}+P_{s}}{3} \\
                         & = \frac{0.5+1+0.6}{3}         \\
                         & = 0.70
@@ -145,6 +141,50 @@
 
         \end{enumerate}
 
+        % number 7
+  \item Give brief responses to the following:
+        \begin{enumerate}
+          \item Give one example when converting all upper-case letters to lower-case could cause a retrieval error.
+
+                \textbf{Answer:} Acronyms are almost always consisting of all capital letters. They are used as proper nouns referring to organizations or businesses. If
+
+          \item True or False: stemming can improve recall at rank 100 in a TF/IDF vector cosine system?
+
+                \textbf{Answer:}
+
+          \item What is a permuterm index useful for?
+
+                \textbf{Answer:} https://nlp.stanford.edu/IR-book/html/htmledition/permuterm-indexes-1.html
+
+          \item What modification to an inverted file data structure makes it possible to intersect two postings lists for a Boolean AND query in less than linear time in the sum of the lengths of the two postings lists?
+
+                \textbf{Answer:}
+
+          \item What is front-coding and what is it used for in information retrieval?
+
+                \textbf{Answer:} Front-coding is a method of text compression that utilizes prefixes from the previous word in the dictionary to avoid duplicating portions of the words. For example, if a dictionary contains the words \textit{trova}, \textit{trovano} and \textit{trovare}, then the compression string would use \textit{trova} as the base prefix, and append the remnants of the individual strings to represent them, i.e. 5trova*no2$\Diamond$re instead of trova/trovano/trovare. This method works best if the dictionary is lexicographically sorted.
+
+          \item In a large collection of English documents, which word would you expect to have a lower inverse document frequency (IDF), apple or volcanic? Why?
+
+                \textbf{Answer:} The more frequent a word appears across documents, the lower its IDF value tends to be. I would expect \textit{apple} to appear a lot more than \textit{volcanic} in documents in a general corpus. However, if the documents are in a corpus related to topics on geology or seismic activities, I'd expect \textit{volcanic} to appear more frequently across the documents and thus having a lower IDF value.
+
+          \item What are the two main principles behind cover density ranking?
+
+                \textbf{Answer:}
+
+          \item Explain Broder's taxonomy of information needs.
+
+                \textbf{Answer:}
+
+          \item How are estimates of p(word|class) calculated in Multinomial Naïve Bayes text classification?
+
+                \textbf{Answer:}
+
+          \item What is the kernel trick?
+
+                \textbf{Answer:}
+
+        \end{enumerate}
 
 \end{enumerate}
 
