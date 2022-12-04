@@ -1,6 +1,10 @@
 \documentclass[11pt]{article}
 
 \usepackage{custom}
+\setlength{\abovedisplayskip}{-15pt}
+\setlength{\belowdisplayskip}{0pt}
+\setlength{\abovedisplayshortskip}{0pt}
+\setlength{\belowdisplayshortskip}{0pt}
 \newcolumntype{R}[1]{>{\raggedleft\arraybackslash}m{#1}}
 
 \title{605.744: Information Retrieval \\ Final Exam}
@@ -85,6 +89,62 @@
           \item Morphology refers to the various conjugations of a word. In English, adding suffixes such as "s" or "es" transforms a noun into its plural form. Adding suffixes such as "d", "ed", and "ing" transforms a present tense verb to a different tense. Morphology is not only limited to suffixes or prefixes, since there are special cases of words needing a replacement in a character, i.e. \textit{sang} is the past tense form of \textit{swim}, while \textit{sung} is its past participle form.
                 Morphology can introduce issues in a retrieval system if the different variations of the words in a query are not accounted for. These systems often employ some levels of stemming in their dictionary and the query processing to normalize the words to their base forms. However, stemming can introduce additional ambiguity when different words get stemmed to a common word. i.e. "transparent" and "transparency" get stemmed to "transpar" using a Porter stemmer.
         \end{enumerate}
+
+        % number 6
+  \item Short answers about text classification.
+        \begin{enumerate}
+          \item What is negative evidence in Binomial (also called Bernoulli) Naïve Bayes text classification?
+
+                \textbf{Answer:}
+
+          \item For a class that attains precision of 0.5 and recall of 0.6, what is the corresponding F1 score?
+
+                \textbf{Answer:} The F1 score is computed as $2 \times \frac{P\times R}{P+R}$. Therefore,
+                \begin{align*}
+                  F1 & = 2 \times \frac{P\times R}{P+R}         \\
+                     & = 2 \times \frac{0.5\times 0.6}{0.5+0.6} \\
+                     & = 0.54
+                \end{align*}
+
+          \item For the three classes below (business, local, and sports) with the indicated system predictions, calculate precision for the 12 news articles in two ways: using micro averaging and macro averaging.
+
+                \textbf{Answer:} Precision is the ratio of the true positives over the total number of classes labeled positive (both true and false positive classes). In the table, there are a total of 8 true positives, with 2, 3, and 3 true positives and 2, 0, and 2 false positives in the 3 respective classes.
+
+                The micro average can be computed as:
+                \begin{align*}
+                  P_{\mu} & = \frac{\sum_{i=0}^{n}(TP_i)}{\sum_{i=0}^{n}(TP_i+FP_i)} \\
+                          & = \frac{2+3+3}{(2+2)+(3+0)+(3+2)}                        \\
+                          & = \frac{8}{12}                                           \\
+                          & = 0.67
+                \end{align*}
+
+                The macro average is computed by taking the expected value of the individual precision scores of the 3 classes.
+                \begin{align*}
+                  P_{b} & = \frac{TP_i}{TP_i+FP_i} \\
+                        & = \frac{2}{4}            \\
+                        & = 0.5
+                \end{align*}
+
+                \begin{align*}
+                  P_{l} & = \frac{TP_i}{TP_i+FP_i} \\
+                        & = \frac{3}{3}            \\
+                        & = 1
+                \end{align*}
+
+                \begin{align*}
+                  P_{s} & = \frac{TP_i}{TP_i+FP_i} \\
+                        & = \frac{3}{5}            \\
+                        & = 0.6
+                \end{align*}
+
+                \begin{align*}
+                  P_{M} & = \frac{P_{b}+P_{l}+P_{s}}{3} \\
+                        & = \frac{0.5+1+0.6}{3}         \\
+                        & = 0.70
+                \end{align*}
+
+        \end{enumerate}
+
 
 \end{enumerate}
 
