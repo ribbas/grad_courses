@@ -194,7 +194,7 @@
 
           \item Suppose System A is used to create a ranking of all 1,000 documents and the first 20 documents retrieved as the same as those listed above. What is the highest possible average precision score for System A computed over the entire ranking?
 
-                \textbf{Answer:}
+                \textbf{Answer:} The precision may increase after the first 20 documents with every one of its later retrievals being relevant.
 
         \end{enumerate}
 
@@ -217,7 +217,7 @@
 
           \item Why do we encode docid gaps instead of raw docids in postings lists?
 
-                \textbf{Answer:}
+                \textbf{Answer:} DocID gaps take up a significantly less storage than entire DocIDs. For example, encoding the DocIDs \{1,7,1000,1001\} can be compressed with their DocID gaps as \{1,6,994,1\}.
 
           \item The following Gamma-encoded bit string represents a gap list of 4 docids. What are the docids?
 
@@ -245,7 +245,7 @@
 
           \item Term "JHU" occurs in four documents with docids: 64, 100, 2000, and 2032. Calculate a compressed representation of this four docid posting list using variable byte coding. Hint: you should encode gaps, not raw docids.
 
-                \textbf{Answer:}
+                \textbf{Answer:} The gap list is \{64,36,1900,32\}.
 
                 For (e-g) indicate True or False -- and Justify Your Response.
           \item Claim: Gamma codes are always an odd number of bits in length.
@@ -282,7 +282,7 @@
         \begin{enumerate}
           \item What is negative evidence in Binomial (also called Bernoulli) Naïve Bayes text classification?
 
-                \textbf{Answer:}
+                \textbf{Answer:} That the word does not occur in the classes.
 
           \item For a class that attains precision of 0.5 and recall of 0.6, what is the corresponding F1 score?
 
@@ -332,7 +332,7 @@
 
           \item True or False: stemming can improve recall at rank 100 in a TF/IDF vector cosine system?
 
-                \textbf{Answer:}
+                \textbf{Answer:} True, because the less frequent words would become stemmed to more common words.
 
           \item What is a permuterm index useful for?
 
@@ -340,7 +340,7 @@
 
           \item What modification to an inverted file data structure makes it possible to intersect two postings lists for a Boolean AND query in less than linear time in the sum of the lengths of the two postings lists?
 
-                \textbf{Answer:}
+                \textbf{Answer:} By adding the file offsets to the index file.
 
           \item What is front-coding and what is it used for in information retrieval?
 
@@ -352,7 +352,7 @@
 
           \item What are the two main principles behind cover density ranking?
 
-                \textbf{Answer:}
+                \textbf{Answer:} The covers for the query contain the shortest interval between the terms and the documents have to be concatenated together.
 
           \item Explain Broder's taxonomy of information needs.
 
@@ -360,11 +360,11 @@
 
           \item How are estimates of p(word|class) calculated in Multinomial Naïve Bayes text classification?
 
-                \textbf{Answer:}
+                \textbf{Answer:} With the product of the number of occurrences of the word in each of the classes.
 
           \item What is the kernel trick?
 
-                \textbf{Answer:}
+                \textbf{Answer:} The kernel trick refers to converting data points into vectors.
 
         \end{enumerate}
 
