@@ -82,7 +82,8 @@
           \item Synonymy refers to different words addressing the same meaning. For example, \textit{colossal}, \textit{giant} and \textit{huge} all describe the size of an object to be very big. Numerous other words also act as synonyms for \textit{big}.
                 Synonymy can lower performance of a retrieval system if it is not aware of the numerous synonyms a query word may have. If a user queries for "big company" but the system only contains documents with the numerous synonyms of \textit{big}, the ranked documents may not be what the user implied.
 
-          \item Morphology
+          \item Morphology refers to the various conjugations of a word. In English, adding suffixes such as "s" or "es" transforms a noun into its plural form. Adding suffixes such as "d", "ed", and "ing" transforms a present tense verb to a different tense. Morphology is not only limited to suffixes or prefixes, since there are special cases of words needing a replacement in a character, i.e. \textit{sang} is the past tense form of \textit{swim}, while \textit{sung} is its past participle form.
+                Morphology can introduce issues in a retrieval system if the different variations of the words in a query are not accounted for. These systems often employ some levels of stemming in their dictionary and the query processing to normalize the words to their base forms. However, stemming can introduce additional ambiguity when different words get stemmed to a common word. i.e. "transparent" and "transparency" get stemmed to "transpar" using a Porter stemmer.
         \end{enumerate}
 
 \end{enumerate}
