@@ -52,16 +52,81 @@
           \item Compute cosine values and rank documents D1 and D2 using query Q using the vector cosine model with TF/IDF term weighting. The query Q consists of the words: "france aids ukraine". Show your work. Report scores to three decimal places (e.g., $0.123$)
 
                 \textbf{Answer:}
-
-                % D1:?france?sends?kraine
-                % D2:?ukraine?economy
-                % D3:?france?germany?ukraine
-                % D4:?economy?tanks?inflation
-                % D5:?france?economy
-                % D6:?france?raises?cheese?prices
-                % D7:?economy?inflation?makes?prices
-                % D8:?germany?sends?tanks?ukraine
-                % Query Q for both parts (a) and (b): "france ukraine".
+                Compiling the term frequencies of all the relevant vocabulary:
+                \begin{simptable}
+                  {Term frequencies of \textit{france sends ukraine economy}}
+                  {scores}
+                  {| c | c | c | c |}
+                  \textbf{Word} & \textbf{D1} & \textbf{D2} & Q \\
+                  \hline
+                  france  & 1 & 0 & 1 \\
+                  \hline
+                  sends   & 1 & 0 & 0 \\
+                  \hline
+                  ukraine & 1 & 1 & 1 \\
+                  \hline
+                  economy & 0 & 1 & 0 \\
+                  \hline
+                \end{simptable}
+                The TF and IDF of the vocabulary are computed using the following values:
+                \begin{align*}
+                  TF(t)  & = \text{term frequency in the corpus} \\
+                  IDF(t) & = \text{inverse document frequency}   \\
+                         & = log_2\left(\frac{N}{df(t)}\right),  \\
+                         & \text{where:}                         \\
+                         & N=\text{length of corpus}=8,          \\
+                         & df(t)=\text{document frequency}
+                \end{align*}
+                {\renewcommand{\arraystretch}{1.5}
+                \begin{simptable}
+                  {TF-IDF of \textit{france sends ukraine economy}}
+                  {s}
+                  {| c | c | c |}
+                  \textbf{term} & \textbf{DF} & \textbf{IDF}                      \\
+                  \hline
+                  france  & 4 & $log_2\left(\frac{8}{4}\right)=1$ \\
+                  \hline
+                  sends   & 2 & $log_2\left(\frac{8}{2}\right)=2$ \\
+                  \hline
+                  ukraine & 4 & $log_2\left(\frac{8}{4}\right)=1$ \\
+                  \hline
+                  economy & 4 & $log_2\left(\frac{8}{4}\right)=1$ \\
+                  \hline
+                \end{simptable}}
+                \begin{simptable}
+                  {Squares of TF-IDF}
+                  {scores}
+                  {| c | c | c | c |}
+                  \textbf{Word} & \textbf{D1} & \textbf{D2} & Q \\
+                  \hline
+                  france  & 1 & 0 & 1 \\
+                  \hline
+                  sends   & 4 & 0 & 0 \\
+                  \hline
+                  ukraine & 1 & 1 & 1 \\
+                  \hline
+                  economy & 0 & 1 & 0 \\
+                  \hline
+                \end{simptable}
+                Finally, computing the cosine similarities.
+                  {\renewcommand{\arraystretch}{1.5}
+                    \begin{simptable}
+                      {Similarities}
+                      {s}
+                      {| c | c | c | c |}
+                      \textbf{value}  & \textbf{D1} & \textbf{D2} & \textbf{Q}                                              \\
+                      \hline
+                      sum of squares  & 6 & 2 & 2 \\
+                      \hline
+                      length, $||D|| = \sqrt{\sum_{i=1}^{t}{w_i^2}}$ & 2.4494 & 1.4142 & 1.4142 \\
+                      \hline
+                      dot product     & 2 & 1 & 2  \\
+                      \hline
+                      cosine similarity, $\frac{d \cdot q}{||d||*||q||}$ & $\frac{2}{2.4494*1.4142}=0.577$ & $\frac{1}{1.4142*1.4142}=0.500$ & 1 \\
+                      \hline
+                    \end{simptable}}
+                \clearpage
+                \newpage
 
           \item Now rank the same documents (D1 and D2) but this time by probability of relevance to the query using a unigram statistical language model. For smoothing purposes you should use a mixture model with a parameter $\lambda = 0.2$. You should assume that the prior probability of relevance is the same for each document. Report scores using three digits of precision (e.g., $1.23 \times 10^{-4}$)
 
