@@ -38,7 +38,9 @@ class DataFrame:
     def create_sentiment_ratio_columns(self):
 
         self.df["sentiment"] = self.df.apply(
-            lambda row: (row["positive"] - row["negative"]) / row["s_n_words"],
+            lambda row: (
+                (row["positive"] - row["negative"]) / row["n_words"] * 2
+            ),
             axis=1,
         )
 

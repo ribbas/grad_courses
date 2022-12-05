@@ -5,7 +5,7 @@ from .emotions import Emotions, EMOTION_KEYS, VAD_KEYS, SENTIMENT_KEYS
 from .files import IO
 from .playlist import Playlist
 from .playlistservice import PlaylistService
-from .plot import Scatter, Scatter3D, BoxPlot, Scatter2
+from .plot import Scatter, Scatter3D, BoxPlot
 from .text import Normalizer
 
 
@@ -101,10 +101,26 @@ class LyricsMoodAnalysis:
 
     def read_csv(self, gen_data: pathlib.Path):
 
-        df = DataFrame()
-        df.read_csv(gen_data)
-        print(df.df.describe().unstack())
-        df.df.describe().unstack().to_csv("lol.csv")
+        data = DataFrame()
+        data.read_csv(gen_data)
+        # data.create_sentiment_ratio_columns()
+        data.drop_duplicate_artists()
+        print(data.df["playlist"].unique())
+
+        for key in EMOTION_KEYS:
+            data.create_wheel_ratio_columns(key, "{0}")
+            print(f"{key}_ratio")
+            print(
+                data.df[["title", "playlist", f"{key}_ratio"]].loc[
+                    data.df[f"{key}_ratio"].idxmax()
+                ]
+            )
+            print(
+                data.df[["title", "playlist", f"{key}_ratio"]].loc[
+                    data.df[f"{key}_ratio"].idxmin()
+                ]
+            )
+            print()
 
     def generate_plots(self, gen_data: pathlib.Path, plot_dir: pathlib.Path):
 
@@ -132,6 +148,8 @@ class LyricsMoodAnalysis:
         data.create_sentiment_ratio_columns()
         bp.set_axes("sentiment", data.df)
         bp.save_fig(plot_dir / "sentiment.png")
+        print(data.df[data.df["sentiment"] < 0]["artist"].describe())
+        print(data.df[data.df["sentiment"] > 0]["artist"].describe())
 
         data.drop_duplicate_titles()
 
@@ -139,14 +157,17 @@ class LyricsMoodAnalysis:
         sc.set_axes(
             data.df["valence"],
             data.df["arousal"],
-            data.df["dominance"],
+            data.df["playlist"],
             data.df,
         )
         sc.save_fig(plot_dir / "s_va.png")
 
         sc3d = Scatter3D()
         sc3d.set_axes(
-            data.df["valence"], data.df["arousal"], data.df["dominance"]
+            data.df["valence"],
+            data.df["arousal"],
+            data.df["dominance"],
+            data.df["playlist"],
         )
         sc3d.save_fig(plot_dir / "s_vad.png")
 

@@ -1,3 +1,4 @@
+from matplotlib.cm import viridis
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
@@ -7,8 +8,7 @@ import pandas as pd
 class Scatter:
     def __init__(self) -> None:
 
-        plt.figure(figsize=(16, 9))
-        self.ax = plt.figure().add_subplot()
+        self.ax = plt.figure(figsize=(16, 9)).add_subplot()
 
     def set_axes(self, x, y, z, df):
 
@@ -32,8 +32,7 @@ class Scatter:
 class Scatter2:
     def __init__(self) -> None:
 
-        plt.figure(figsize=(16, 9))
-        self.ax = plt.figure().add_subplot()
+        self.ax = plt.figure(figsize=(16, 9)).add_subplot()
 
     def set_axes(self, x, y, df):
 
@@ -57,10 +56,9 @@ class Scatter2:
 class Scatter3D:
     def __init__(self) -> None:
 
-        plt.figure(figsize=(16, 9))
-        self.ax = plt.figure().add_subplot(projection="3d")
+        self.ax = plt.figure(figsize=(16, 9)).add_subplot(projection="3d")
 
-    def set_axes(self, x, y, z):
+    def set_axes(self, x, y, z, c):
 
         self.ax.scatter(x, y, z, c=z)
 
@@ -96,7 +94,14 @@ class BoxPlot:
 
     def set_axes(self, y: str, df: pd.DataFrame):
 
-        sns.boxplot(x="playlist", y=y, data=df, orient="v", showfliers=False)
+        sns.boxplot(
+            x="playlist",
+            y=y,
+            data=df,
+            order=sorted(df["playlist"].unique()),
+            orient="v",
+            showfliers=True,
+        )
 
     def save_fig(self, filename):
         plt.tight_layout()
