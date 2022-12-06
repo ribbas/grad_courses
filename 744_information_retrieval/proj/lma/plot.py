@@ -78,16 +78,17 @@ class BoxPlot:
     def __init__(self) -> None:
         plt.figure(figsize=(16, 9))
 
-    def set_axes(self, y: str, df: pd.DataFrame):
+    def set_axes(self, x: str, y: str, df: pd.DataFrame, showfliers=True):
 
-        sns.boxplot(
-            x="playlist",
+        graph = sns.boxplot(
+            x=x,
             y=y,
             data=df,
-            order=sorted(df["playlist"].unique()),
+            order=sorted(df[x].unique()),
             orient="v",
-            showfliers=True,
+            showfliers=showfliers,
         )
+        graph.axhline(0, linestyle="--", color="#A9A9A9")
 
     def save_fig(self, filename):
         plt.tight_layout()

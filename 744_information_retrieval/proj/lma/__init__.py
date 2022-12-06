@@ -8,6 +8,8 @@ from .playlistservice import PlaylistService
 from .plot import Scatter, Scatter3D, BoxPlot
 from .text import Normalizer
 
+import numpy as np
+
 
 class LyricsMoodAnalysis:
     def __init__(
@@ -19,7 +21,6 @@ class LyricsMoodAnalysis:
         norm_emolex_dir: pathlib.Path,
     ) -> None:
 
-        self.scatter3d: Scatter3D
         self.playlists = PlaylistService(playlist_dir, lyrics_dir, log_dir)
         self.emotions = Emotions(emolex_dir, norm_emolex_dir)
         self.norm = Normalizer()
@@ -36,49 +37,6 @@ class LyricsMoodAnalysis:
         playlist = self.playlists[playlist_name]
         self.playlists.add_lyrics(playlist)
 
-    def __transpose(self, playlist: Playlist):
-
-        df = []
-        for track in playlist.tracks:
-
-            if track.lyrics:
-
-                line = {}
-
-                line["title"] = track.title
-                line["playlist"] = playlist.name
-
-                lyrics = self.norm(track.lyrics)
-
-                for t_key, t_lyrics in zip(
-                    TRANSFORM_KEY_FMT,
-                    (
-                        lyrics,
-                        set(lyrics),
-                        self.norm.remove_stopwords(set(lyrics)),
-                    ),
-                ):
-
-                    line[t_key.format("n_words")] = len(t_lyrics)
-                    vad = self.emotions.get_vad(t_lyrics)
-                    for key in VAD_KEYS:
-                        line[t_key.format(key)] = vad[key]
-
-                    sentiment = self.emotions.get_sentiment(t_lyrics)
-                    for key in SENTIMENT_KEYS:
-                        line[t_key.format(key)] = sentiment[key]
-
-                    wheel = self.emotions.get_wheel_category(t_lyrics)
-                    for key in EMOTION_KEYS:
-                        line[t_key.format(key)] = wheel[key]
-
-                for artist in track.artist:
-                    _line = line.copy()
-                    _line["artist"] = artist
-                    df.append(_line)
-
-        return df
-
     def load_datasets(self):
 
         self.emotions.load_all_datasets()
@@ -92,38 +50,21 @@ class LyricsMoodAnalysis:
         if playlist_name == "all":
             for playlist in self.playlists:
                 self.playlists.get_lyrics(playlist)
-                self.data.extend(self.__transpose(playlist))
+                df = DataFrame.transpose(playlist, self.norm, self.emotions)
+                self.data.extend(df)
 
         else:
             playlist = self.playlists[playlist_name]
             self.playlists.get_lyrics(playlist)
-            self.data.extend(self.__transpose(playlist))
+            df = DataFrame.transpose(playlist, self.norm, self.emotions)
+            self.data.extend(df)
+
+        self.data = DataFrame.create_wheel_playlist(self.data)
 
     def read_csv(self, gen_data: pathlib.Path):
 
         data = DataFrame()
         data.read_csv(gen_data)
-        # data.create_sentiment_ratio_columns()
-        data.drop_duplicate_artists()
-        print(data.df["playlist"].unique())
-
-        for key in EMOTION_KEYS:
-            data.create_wheel_ratio_columns(key, "{0}")
-            print(f"{key}_ratio")
-            med = data.df[f"{key}_ratio"].median()
-            print(data.df[data.df[f"{key}_ratio"] < med].describe())
-            print(data.df[data.df[f"{key}_ratio"] >= med].describe())
-            # print(
-            #     data.df[["title", "playlist", f"{key}_ratio"]].loc[
-            #         data.df[f"{key}_ratio"].idxmax()
-            #     ]
-            # )
-            # print(
-            #     data.df[["title", "playlist", f"{key}_ratio"]].loc[
-            #         data.df[f"{key}_ratio"].idxmin()
-            #     ]
-            # )
-            print()
 
     def generate_plots(self, gen_data: pathlib.Path, plot_dir: pathlib.Path):
 
@@ -131,46 +72,57 @@ class LyricsMoodAnalysis:
         data.read_csv(gen_data)
         data.drop_duplicate_artists()
 
-        # for key in EMOTION_KEYS:
-        #     bp = BoxPlot()
-        #     bp.set_axes(f"{key}", data.df)
-        #     bp.save_fig(plot_dir / f"{key}.png")
+        for key in EMOTION_KEYS:
+            bp = BoxPlot()
+            bp.set_axes("playlist", f"{key}", data.df)
+            bp.save_fig(plot_dir / f"{key}.png")
 
-        # for key in EMOTION_KEYS:
-        #     bp = BoxPlot()
-        #     bp.set_axes(f"s_{key}", data.df)
-        #     bp.save_fig(plot_dir / f"s_{key}.png")
+        for key in EMOTION_KEYS:
+            bp = BoxPlot()
+            bp.set_axes("playlist", f"s_{key}", data.df)
+            bp.save_fig(plot_dir / f"s_{key}.png")
 
-        # for key in EMOTION_KEYS:
-        #     bp = BoxPlot()
-        #     data.create_wheel_ratio_columns(key, "{0}")
-        #     bp.set_axes(f"{key}_ratio", data.df)
-        #     bp.save_fig(plot_dir / f"{key}_ratio.png")
+        for key in EMOTION_KEYS:
+            bp = BoxPlot()
+            bp.set_axes("playlist", f"{key}_ratio", data.df)
+            bp.save_fig(plot_dir / f"{key}_ratio.png")
 
-        # bp = BoxPlot()
-        # data.create_sentiment_ratio_columns()
-        # bp.set_axes("sentiment", data.df)
-        # bp.save_fig(plot_dir / "sentiment.png")
+        bp = BoxPlot()
+        bp.set_axes("playlist", "sentiment", data.df)
+        bp.save_fig(plot_dir / "sentiment.png")
 
         data.drop_duplicate_titles()
 
-        # sc = Scatter()
-        # sc.set_axes(
-        #     data.df["valence"],
-        #     data.df["arousal"],
-        #     data.df["playlist"],
-        #     data.df,
-        # )
-        # sc.save_fig(plot_dir / "va.png")
+        bp = BoxPlot()
+        bp.set_axes("wheel_playlist", "sentiment", data.df, showfliers=False)
+        bp.save_fig(plot_dir / "wheel_playlist.png")
 
-        # sc.set_axes(
-        #     data.df["valence"],
-        #     data.df["arousal"],
-        #     data.df["playlist"],
-        #     data.df,
-        #     set_limits=False,
-        # )
-        # sc.save_fig(plot_dir / "va_zoom.png")
+        sc = Scatter()
+        sc.set_axes(
+            data.df["valence"],
+            data.df["arousal"],
+            data.df["playlist"],
+            data.df,
+        )
+        sc.save_fig(plot_dir / "va.png")
+
+        sc.set_axes(
+            data.df["valence"],
+            data.df["arousal"],
+            data.df["playlist"],
+            data.df,
+            set_limits=False,
+        )
+        sc.save_fig(plot_dir / "va_zoom.png")
+
+        sc.set_axes(
+            data.df["valence"],
+            data.df["arousal"],
+            data.df["wheel_playlist"],
+            data.df,
+            set_limits=False,
+        )
+        sc.save_fig(plot_dir / "va_zoom_wheel.png")
 
         sc3d = Scatter3D()
         sc3d.set_axes(
