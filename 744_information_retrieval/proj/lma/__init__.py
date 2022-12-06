@@ -110,16 +110,19 @@ class LyricsMoodAnalysis:
         for key in EMOTION_KEYS:
             data.create_wheel_ratio_columns(key, "{0}")
             print(f"{key}_ratio")
-            print(
-                data.df[["title", "playlist", f"{key}_ratio"]].loc[
-                    data.df[f"{key}_ratio"].idxmax()
-                ]
-            )
-            print(
-                data.df[["title", "playlist", f"{key}_ratio"]].loc[
-                    data.df[f"{key}_ratio"].idxmin()
-                ]
-            )
+            med = data.df[f"{key}_ratio"].median()
+            print(data.df[data.df[f"{key}_ratio"] < med].describe())
+            print(data.df[data.df[f"{key}_ratio"] >= med].describe())
+            # print(
+            #     data.df[["title", "playlist", f"{key}_ratio"]].loc[
+            #         data.df[f"{key}_ratio"].idxmax()
+            #     ]
+            # )
+            # print(
+            #     data.df[["title", "playlist", f"{key}_ratio"]].loc[
+            #         data.df[f"{key}_ratio"].idxmin()
+            #     ]
+            # )
             print()
 
     def generate_plots(self, gen_data: pathlib.Path, plot_dir: pathlib.Path):
@@ -128,39 +131,46 @@ class LyricsMoodAnalysis:
         data.read_csv(gen_data)
         data.drop_duplicate_artists()
 
-        for key in EMOTION_KEYS:
-            bp = BoxPlot()
-            bp.set_axes(f"{key}", data.df)
-            bp.save_fig(plot_dir / f"{key}.png")
+        # for key in EMOTION_KEYS:
+        #     bp = BoxPlot()
+        #     bp.set_axes(f"{key}", data.df)
+        #     bp.save_fig(plot_dir / f"{key}.png")
 
-        for key in EMOTION_KEYS:
-            bp = BoxPlot()
-            bp.set_axes(f"s_{key}", data.df)
-            bp.save_fig(plot_dir / f"s_{key}.png")
+        # for key in EMOTION_KEYS:
+        #     bp = BoxPlot()
+        #     bp.set_axes(f"s_{key}", data.df)
+        #     bp.save_fig(plot_dir / f"s_{key}.png")
 
-        for key in EMOTION_KEYS:
-            bp = BoxPlot()
-            data.create_wheel_ratio_columns(key, "{0}")
-            bp.set_axes(f"{key}_ratio", data.df)
-            bp.save_fig(plot_dir / f"{key}_ratio.png")
+        # for key in EMOTION_KEYS:
+        #     bp = BoxPlot()
+        #     data.create_wheel_ratio_columns(key, "{0}")
+        #     bp.set_axes(f"{key}_ratio", data.df)
+        #     bp.save_fig(plot_dir / f"{key}_ratio.png")
 
-        bp = BoxPlot()
-        data.create_sentiment_ratio_columns()
-        bp.set_axes("sentiment", data.df)
-        bp.save_fig(plot_dir / "sentiment.png")
-        print(data.df[data.df["sentiment"] < 0]["artist"].describe())
-        print(data.df[data.df["sentiment"] > 0]["artist"].describe())
+        # bp = BoxPlot()
+        # data.create_sentiment_ratio_columns()
+        # bp.set_axes("sentiment", data.df)
+        # bp.save_fig(plot_dir / "sentiment.png")
 
         data.drop_duplicate_titles()
 
-        sc = Scatter()
-        sc.set_axes(
-            data.df["valence"],
-            data.df["arousal"],
-            data.df["playlist"],
-            data.df,
-        )
-        sc.save_fig(plot_dir / "s_va.png")
+        # sc = Scatter()
+        # sc.set_axes(
+        #     data.df["valence"],
+        #     data.df["arousal"],
+        #     data.df["playlist"],
+        #     data.df,
+        # )
+        # sc.save_fig(plot_dir / "va.png")
+
+        # sc.set_axes(
+        #     data.df["valence"],
+        #     data.df["arousal"],
+        #     data.df["playlist"],
+        #     data.df,
+        #     set_limits=False,
+        # )
+        # sc.save_fig(plot_dir / "va_zoom.png")
 
         sc3d = Scatter3D()
         sc3d.set_axes(
@@ -169,7 +179,7 @@ class LyricsMoodAnalysis:
             data.df["dominance"],
             data.df["playlist"],
         )
-        sc3d.save_fig(plot_dir / "s_vad.png")
+        sc3d.save_fig(plot_dir / "vad.png")
 
     def dump(self, gen_data: pathlib.Path):
 

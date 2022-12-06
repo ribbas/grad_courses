@@ -8,45 +8,31 @@ import pandas as pd
 class Scatter:
     def __init__(self) -> None:
 
-        self.ax = plt.figure(figsize=(16, 9)).add_subplot()
+        self.ax = plt.figure(figsize=(16, 16)).add_subplot()
 
-    def set_axes(self, x, y, z, df):
+    def set_axes(self, valence, arousal, playlist, df, set_limits=True):
 
-        graph = sns.scatterplot(x=x, y=y, hue=z, data=df)
+        graph = sns.scatterplot(
+            x=valence, y=arousal, hue=playlist, data=df, alpha=0.5
+        )
         graph.axhline(0.50, linestyle="--", color="#A9A9A9")
         graph.axvline(0.50, linestyle="--", color="#A9A9A9")
 
-    def save_fig(self, filename):
-        # Make legend, set axes limits and labels
-        # self.ax.legend()
-        self.ax.set_xlim(0, 1)
-        self.ax.set_ylim(0, 1)
+        if set_limits:
+            self.ax.set_xlim(0, 1)
+            self.ax.set_ylim(0, 1)
+            plt.legend(
+                prop={"size": 16},
+            )
+        else:
+            plt.legend(
+                bbox_to_anchor=(1.01, 1),
+            )
+
         self.ax.set_xlabel("valence")
         self.ax.set_ylabel("arousal")
 
-        plt.tight_layout()
-        plt.savefig(filename)
-        plt.close()
-
-
-class Scatter2:
-    def __init__(self) -> None:
-
-        self.ax = plt.figure(figsize=(16, 9)).add_subplot()
-
-    def set_axes(self, x, y, df):
-
-        graph = sns.scatterplot(x=x, y=y, data=df)
-        graph.axhline(0.50, linestyle="--", color="#A9A9A9")
-        graph.axvline(0.50, linestyle="--", color="#A9A9A9")
-
     def save_fig(self, filename):
-        # Make legend, set axes limits and labels
-        # self.ax.legend()
-        self.ax.set_xlim(0, 1)
-        self.ax.set_ylim(0, 1)
-        self.ax.set_xlabel("valence")
-        self.ax.set_ylabel("arousal")
 
         plt.tight_layout()
         plt.savefig(filename)
@@ -56,11 +42,11 @@ class Scatter2:
 class Scatter3D:
     def __init__(self) -> None:
 
-        self.ax = plt.figure(figsize=(16, 9)).add_subplot(projection="3d")
+        self.ax = plt.figure(figsize=(16, 16)).add_subplot(projection="3d")
 
-    def set_axes(self, x, y, z, c):
+    def set_axes(self, valence, arousal, dominance, c):
 
-        self.ax.scatter(x, y, z, c=z)
+        self.ax.scatter(valence, arousal, dominance, c=dominance)
 
         x = np.linspace(0.5, 0.5, 10)
         y = np.linspace(0, 1, 10)
@@ -72,17 +58,17 @@ class Scatter3D:
         z = np.linspace(0.5, 0.5, 10)
         self.ax.plot3D(x, y, z)
 
-    def save_fig(self, filename):
-
-        # self.ax.legend()
         self.ax.set_xlim(0, 1)
         self.ax.set_ylim(0, 1)
         self.ax.set_zlim(0, 1)
-        self.ax.set_xlabel("X")
-        self.ax.set_ylabel("Y")
-        self.ax.set_zlabel("Z")
+        self.ax.set_xlabel("valence")
+        self.ax.set_ylabel("arousal")
+        self.ax.set_zlabel("dominance")
+        # self.ax.view_init(elev=20.0, azim=-35, roll=0)
+        self.ax.view_init(elev=20)
 
-        self.ax.view_init(elev=20.0, azim=-35, roll=0)
+    def save_fig(self, filename):
+
         plt.tight_layout()
         plt.savefig(filename)
         plt.close()
