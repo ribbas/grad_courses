@@ -28,7 +28,9 @@ class Emotions:
         self.norm_emolex_dir = norm_emolex_dir
         self.normalizer = Normalizer()
 
-        self.emotion_lex: dict[str, list[str]] = {e: [] for e in EMOTION_KEYS}
+        self.emotion_lex: dict[str, dict[str, float]] = {
+            e: {} for e in EMOTION_KEYS
+        }
 
         self.vad_lex: dict[str, dict[str, float]] = {}
 
@@ -41,15 +43,25 @@ class Emotions:
     def normalize_datasets(self):
 
         for emotion in EMOTION_KEYS:
-            IO.dump(
-                self.norm_emolex_dir / f"{emotion}.txt",
-                "\n".join(
-                    self.normalizer(
-                        " ".join(self.load_dataset(f"{emotion}.txt"))
-                    )
-                )
-                + "\n",
-            )
+
+            data = self.load_dataset(f"{emotion}_.txt")
+            lex = ""
+            for line in data:
+                if line:
+                    word, value = line.split("\t", maxsplit=1)
+                    lex += f"{self.normalizer._stem([word])[0]}\t{value}\n"
+
+            IO.dump(self.norm_emolex_dir / f"{emotion}_.txt", lex)
+
+            # IO.dump(
+            #     self.norm_emolex_dir / f"{emotion}.txt",
+            #     "\n".join(
+            #         self.normalizer(
+            #             " ".join(self.load_dataset(f"{emotion}.txt"))
+            #         )
+            #     )
+            #     + "\n",
+            # )
 
         for sentiment in SENTIMENT_KEYS:
             IO.dump(
@@ -74,7 +86,12 @@ class Emotions:
     def load_all_datasets(self):
 
         for emotion in EMOTION_KEYS:
-            self.emotion_lex[emotion] = self.load_dataset(f"{emotion}.txt")
+            emotion_data = self.load_dataset(f"{emotion}_.txt")
+            for line in emotion_data:
+                if line:
+                    # print(line)
+                    word, value = line.split("\t")
+                    self.emotion_lex[emotion][word] = float(value)
 
         for sentiment in SENTIMENT_KEYS:
             self.sentiment[sentiment] = self.load_dataset(f"{sentiment}.txt")
@@ -103,12 +120,13 @@ class Emotions:
 
     def get_wheel_category(self, lyrics: list[str] | set[str]):
 
-        counts = {e: 0 for e in EMOTION_KEYS}
+        counts = {e: 0.0 for e in EMOTION_KEYS}
 
         for word in lyrics:
             for emotion_key, lex in self.emotion_lex.items():
-                if word in lex:
-                    counts[emotion_key] += 1
+                for emotion_word, val in lex.items():
+                    if word == emotion_word:
+                        counts[emotion_key] += val
 
         return counts
 
