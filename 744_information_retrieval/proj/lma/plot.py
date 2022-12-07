@@ -24,13 +24,13 @@ class Scatter:
             plt.legend(
                 prop={"size": 16},
             )
-        else:
-            plt.legend(
-                bbox_to_anchor=(1.01, 1),
-            )
+        # else:
+        #     plt.legend(
+        #         bbox_to_anchor=(1.01, 1),
+        #     )
 
-        self.ax.set_xlabel("valence")
-        self.ax.set_ylabel("arousal")
+        self.ax.set_xlabel("valence", fontsize=16)
+        self.ax.set_ylabel("arousal", fontsize=16)
 
     def save_fig(self, filename):
 
@@ -61,9 +61,9 @@ class Scatter3D:
         self.ax.set_xlim(0, 1)
         self.ax.set_ylim(0, 1)
         self.ax.set_zlim(0, 1)
-        self.ax.set_xlabel("valence")
-        self.ax.set_ylabel("arousal")
-        self.ax.set_zlabel("dominance")
+        self.ax.set_xlabel("valence", fontsize=16)
+        self.ax.set_ylabel("arousal", fontsize=16)
+        self.ax.set_zlabel("dominance", fontsize=16)
         # self.ax.view_init(elev=20.0, azim=-35, roll=0)
         self.ax.view_init(elev=20)
 
@@ -89,6 +89,8 @@ class BoxPlot:
             showfliers=showfliers,
         )
         graph.axhline(0, linestyle="--", color="#A9A9A9")
+        plt.xlabel(x, fontsize=16)
+        plt.ylabel(y, fontsize=16)
 
     def save_fig(self, filename):
         plt.tight_layout()

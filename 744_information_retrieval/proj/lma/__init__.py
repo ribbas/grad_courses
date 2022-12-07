@@ -84,7 +84,7 @@ class LyricsMoodAnalysis:
 
         for key in EMOTION_KEYS:
             bp = BoxPlot()
-            bp.set_axes("playlist", f"{key}_ratio", data.df)
+            bp.set_axes("playlist", f"{key}_ratio", data.df, showfliers=False)
             bp.save_fig(plot_dir / f"{key}_ratio.png")
 
         bp = BoxPlot()
