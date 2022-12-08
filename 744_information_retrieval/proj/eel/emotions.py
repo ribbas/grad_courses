@@ -23,26 +23,10 @@ class DataCleaner:
     def __init__(
         self, emolex_dir: pathlib.Path, norm_emolex_dir: pathlib.Path
     ) -> None:
-        self.emolex_dir = emolex_dir
-        self.norm_emolex_dir = norm_emolex_dir
-
-
-class Emotions:
-    def __init__(
-        self, emolex_dir: pathlib.Path, norm_emolex_dir: pathlib.Path
-    ) -> None:
 
         self.emolex_dir = emolex_dir
         self.norm_emolex_dir = norm_emolex_dir
         self.normalizer = Normalizer()
-
-        self.emotion_lex: dict[str, dict[str, float]] = {
-            e: {} for e in EMOTION_KEYS
-        }
-
-        self.vad_lex: dict[str, dict[str, float]] = {}
-
-        self.sentiment = {}
 
     def load_dataset(self, dataset: str):
 
@@ -52,14 +36,14 @@ class Emotions:
 
         for emotion in EMOTION_KEYS:
 
-            data = self.load_dataset(f"{emotion}_.txt")
+            data = self.load_dataset(f"{emotion}.txt")
             lex = ""
             for line in data:
                 if line:
                     word, value = line.split("\t", maxsplit=1)
                     lex += f"{self.normalizer._stem([word])[0]}\t{value}\n"
 
-            IO.dump(self.norm_emolex_dir / f"{emotion}_.txt", lex)
+            IO.dump(self.norm_emolex_dir / f"{emotion}.txt", lex)
 
         for sentiment in SENTIMENT_KEYS:
             IO.dump(
@@ -81,10 +65,27 @@ class Emotions:
 
         IO.dump(self.norm_emolex_dir / "VAD-Lexicon.txt", vad_lex)
 
+
+class Emotions:
+    def __init__(self, norm_emolex_dir: pathlib.Path) -> None:
+
+        self.norm_emolex_dir = norm_emolex_dir
+
+        # lexicons
+        self.emotion_lex: dict[str, dict[str, float]] = {
+            e: {} for e in EMOTION_KEYS
+        }
+        self.vad_lex: dict[str, dict[str, float]] = {}
+        self.sentiment = {}
+
+    def load_dataset(self, dataset: str):
+
+        return IO.read(self.norm_emolex_dir / dataset).split("\n")
+
     def load_all_datasets(self):
 
         for emotion in EMOTION_KEYS:
-            emotion_data = self.load_dataset(f"{emotion}_.txt")
+            emotion_data = self.load_dataset(f"{emotion}.txt")
             for line in emotion_data:
                 if line:
                     word, value = line.split("\t")

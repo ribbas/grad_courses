@@ -1,4 +1,4 @@
-import joblib
+import pickle
 import json
 import pathlib
 from typing import Any
@@ -32,12 +32,14 @@ class IO:
         print(f"Dumped json to '{filename}'")
 
     @staticmethod
-    def read_joblib(filename: str) -> Any:
+    def read_pickle(filename: str) -> Any:
 
-        return joblib.load(f"{filename}.joblib")
+        with open(f"{filename}.pickle", "rb") as fp:
+            return pickle.load(fp)
 
     @staticmethod
-    def dump_joblib(filename: str, clf: Any) -> None:
+    def dump_pickle(filename: str, data: Any) -> None:
 
-        joblib.dump(clf, f"{filename}.joblib")
-        print(f"Dumped model to '{filename}.joblib'")
+        with open(f"{filename}.pickle", "wb") as fp:
+            pickle.dump(data, fp, protocol=pickle.HIGHEST_PROTOCOL)
+        print(f"Dumped Pickle to '{filename}.pickle'")

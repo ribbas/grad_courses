@@ -1,7 +1,7 @@
 import pathlib
 
 from .dataframe import DataFrame
-from .emotions import Emotions, EMOTION_KEYS
+from .emotions import Emotions, DataCleaner, EMOTION_KEYS
 from .files import IO
 from .playlist import Playlist
 from .playlistservice import PlaylistService
@@ -15,12 +15,13 @@ class EmotionExtractionFromLyrics:
         playlist_dir: pathlib.Path,
         lyrics_dir: pathlib.Path,
         log_dir: pathlib.Path,
-        emolex_dir: pathlib.Path,
         norm_emolex_dir: pathlib.Path,
     ) -> None:
 
-        self.playlists = PlaylistService(playlist_dir, lyrics_dir, log_dir)
-        self.emotions = Emotions(emolex_dir, norm_emolex_dir)
+        self.playlists = PlaylistService(
+            playlist_dir=playlist_dir, lyrics_dir=lyrics_dir, log_dir=log_dir
+        )
+        self.emotions = Emotions(norm_emolex_dir=norm_emolex_dir)
         self.norm = Normalizer()
         self.data = []
 
@@ -39,9 +40,12 @@ class EmotionExtractionFromLyrics:
 
         self.emotions.load_all_datasets()
 
-    def clean_datasets(self):
+    def clean_datasets(
+        self, emolex_dir: pathlib.Path, norm_emolex_dir: pathlib.Path
+    ):
 
-        self.emotions.normalize_datasets()
+        dc = DataCleaner(emolex_dir, norm_emolex_dir)
+        dc.normalize_datasets()
 
     def generate_data(self, playlist_name: str):
 

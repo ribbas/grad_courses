@@ -51,7 +51,10 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
 
     lma_obj = EmotionExtractionFromLyrics(
-        playlist_dir, lyrics_dir, log_dir, emolex_dir, norm_emolex_dir
+        playlist_dir=playlist_dir,
+        lyrics_dir=lyrics_dir,
+        log_dir=log_dir,
+        norm_emolex_dir=norm_emolex_dir,
     )
 
     if args["lyrics"]:
@@ -60,12 +63,14 @@ if __name__ == "__main__":
 
     if args["clean"]:
         lma_obj.get_playlists()
-        lma_obj.clean_datasets()
+        lma_obj.clean_datasets(
+            emolex_dir=emolex_dir, norm_emolex_dir=norm_emolex_dir
+        )
 
     if args["data"]:
         lma_obj.get_playlists()
         lma_obj.load_datasets()
-        lma_obj.generate_data(args["play"])
+        lma_obj.generate_data(playlist_name=args["play"])
         lma_obj.dump(gen_data)
 
     if args["graph"]:
