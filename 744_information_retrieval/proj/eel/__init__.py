@@ -1,17 +1,15 @@
 import pathlib
 
-from .dataframe import DataFrame, TRANSFORM_KEY_FMT
-from .emotions import Emotions, EMOTION_KEYS, VAD_KEYS, SENTIMENT_KEYS
+from .dataframe import DataFrame
+from .emotions import Emotions, EMOTION_KEYS
 from .files import IO
 from .playlist import Playlist
 from .playlistservice import PlaylistService
 from .plot import Scatter, Scatter3D, BoxPlot
 from .text import Normalizer
 
-import numpy as np
 
-
-class LyricsMoodAnalysis:
+class EmotionExtractionFromLyrics:
     def __init__(
         self,
         playlist_dir: pathlib.Path,
@@ -30,7 +28,7 @@ class LyricsMoodAnalysis:
 
         for filename in self.playlists.playlist_dir.iterdir():
             file_data = IO.read_json(filename)
-            self.playlists.add_playlist(Playlist(filename.stem, file_data))
+            self.playlists.append(Playlist(filename.stem, file_data))
 
     def add_lyrics(self, playlist_name: str):
 
@@ -65,6 +63,7 @@ class LyricsMoodAnalysis:
 
         data = DataFrame()
         data.read_csv(gen_data)
+        print(data.get_top_emotions("Pumped Up Kicks"))
 
     def generate_plots(self, gen_data: pathlib.Path, plot_dir: pathlib.Path):
 
@@ -137,5 +136,4 @@ class LyricsMoodAnalysis:
 
         df = DataFrame()
         df.generate(self.data)
-        df.head()
         df.dump(gen_data)

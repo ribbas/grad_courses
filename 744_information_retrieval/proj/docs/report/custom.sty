@@ -1,0 +1,46 @@
+\usepackage{appendix}
+
+% figures and tables
+\usepackage[labelfont=bf]{caption}
+\captionsetup[table]{skip=5pt}
+\usepackage{graphicx}
+\usepackage[bottom]{footmisc}
+
+% spacing
+\usepackage{array}
+\usepackage{parskip}
+
+% fonts
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[autostyle, english=american]{csquotes}
+\MakeOuterQuote{"}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% code snippets
+\usepackage{listings}
+\usepackage{pythonhighlight}
+
+% margins
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\newenvironment{simptable}
+[3]
+{\begin{table}[!ht]
+    \caption{#1}
+    \label{table:#2}
+    \begin{center}
+        \begin{tabular}{#3}
+            \hline
+}
+{
+        \end{tabular}
+    \end{center}
+\end{table}
+}

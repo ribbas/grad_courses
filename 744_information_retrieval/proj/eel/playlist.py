@@ -1,10 +1,6 @@
 from typing import Any
 
 
-from .emotions import Emotions
-from .files import IO
-
-
 class Track:
     def __init__(self, title: str, artist: list[str], lyrics: str = "") -> None:
         self.title = title

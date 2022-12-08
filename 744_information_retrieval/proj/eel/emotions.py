@@ -19,6 +19,14 @@ SENTIMENT_KEYS = {"negative", "positive"}
 VAD_KEYS = {"valence", "arousal", "dominance"}
 
 
+class DataCleaner:
+    def __init__(
+        self, emolex_dir: pathlib.Path, norm_emolex_dir: pathlib.Path
+    ) -> None:
+        self.emolex_dir = emolex_dir
+        self.norm_emolex_dir = norm_emolex_dir
+
+
 class Emotions:
     def __init__(
         self, emolex_dir: pathlib.Path, norm_emolex_dir: pathlib.Path
@@ -53,16 +61,6 @@ class Emotions:
 
             IO.dump(self.norm_emolex_dir / f"{emotion}_.txt", lex)
 
-            # IO.dump(
-            #     self.norm_emolex_dir / f"{emotion}.txt",
-            #     "\n".join(
-            #         self.normalizer(
-            #             " ".join(self.load_dataset(f"{emotion}.txt"))
-            #         )
-            #     )
-            #     + "\n",
-            # )
-
         for sentiment in SENTIMENT_KEYS:
             IO.dump(
                 self.norm_emolex_dir / f"{sentiment}.txt",
@@ -89,7 +87,6 @@ class Emotions:
             emotion_data = self.load_dataset(f"{emotion}_.txt")
             for line in emotion_data:
                 if line:
-                    # print(line)
                     word, value = line.split("\t")
                     self.emotion_lex[emotion][word] = float(value)
 

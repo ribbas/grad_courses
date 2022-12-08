@@ -25,6 +25,12 @@ class DataFrame:
 
         self.df = pd.read_csv(filename)
 
+    def get_top_emotions(self, title: str):
+
+        return self.df[self.df["title"] == title][
+            ["wheel_playlist"] + [f"{i}_ratio" for i in EMOTION_KEYS]
+        ]
+
     @staticmethod
     def transpose(playlist: Playlist, norm: Normalizer, emotions: Emotions):
 
@@ -119,13 +125,6 @@ class DataFrame:
         self.df.drop_duplicates(
             subset=["title", "artist"], keep="first", inplace=True
         )
-
-    def head(self):
-
-        print(self.df["wheel_playlist"].describe())
-        # print(self.df.columns)
-        # gk = self.df.groupby("playlist")
-        # print(gk.mean())
 
     def dump(self, filename: pathlib.Path):
 

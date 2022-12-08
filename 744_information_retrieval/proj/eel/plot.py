@@ -1,8 +1,7 @@
-from matplotlib.cm import viridis
 import matplotlib.pyplot as plt
-import seaborn as sns
 import numpy as np
 import pandas as pd
+import seaborn as sns
 
 
 class Scatter:
@@ -24,10 +23,6 @@ class Scatter:
             plt.legend(
                 prop={"size": 16},
             )
-        # else:
-        #     plt.legend(
-        #         bbox_to_anchor=(1.01, 1),
-        #     )
 
         self.ax.set_xlabel("valence", fontsize=16)
         self.ax.set_ylabel("arousal", fontsize=16)
@@ -64,7 +59,6 @@ class Scatter3D:
         self.ax.set_xlabel("valence", fontsize=16)
         self.ax.set_ylabel("arousal", fontsize=16)
         self.ax.set_zlabel("dominance", fontsize=16)
-        # self.ax.view_init(elev=20.0, azim=-35, roll=0)
         self.ax.view_init(elev=20)
 
     def save_fig(self, filename):

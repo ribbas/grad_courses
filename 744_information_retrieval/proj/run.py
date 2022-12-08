@@ -1,11 +1,10 @@
 import argparse
 from pathlib import Path
 
-from lma import LyricsMoodAnalysis
+from eel import EmotionExtractionFromLyrics
 
 if __name__ == "__main__":
 
-    # https://aclanthology.org/2021.cmcl-1.18.pdf
     emolex_dir = Path("data/emolex")
     norm_emolex_dir = Path("data/norm_emolex")
     log_dir = Path("data/logs")
@@ -51,7 +50,7 @@ if __name__ == "__main__":
 
     args = vars(parser.parse_args())
 
-    lma_obj = LyricsMoodAnalysis(
+    lma_obj = EmotionExtractionFromLyrics(
         playlist_dir, lyrics_dir, log_dir, emolex_dir, norm_emolex_dir
     )
 

@@ -33,7 +33,7 @@ class PlaylistService:
 
         raise IndexError
 
-    def add_playlist(self, playlist: Playlist):
+    def append(self, playlist: Playlist):
 
         playlist.ingest()
         self.playlists.append(playlist)
