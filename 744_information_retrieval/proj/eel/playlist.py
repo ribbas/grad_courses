@@ -22,3 +22,5 @@ class Playlist:
             artist = [i["name"] for i in line["track"]["artists"]]
             track = Track(title, artist)
             self.tracks.append(track)
+
+        self.file_data = {}

@@ -74,6 +74,9 @@ class EmotionExtractionFromLyrics:
         data = DataFrame()
         data.read_csv(gen_data)
         data.drop_duplicate_artists()
+        data.df.drop(
+            data.df[data.df["title"] == "Pumped Up Kicks"].index, inplace=True
+        )
 
         for key in EMOTION_KEYS:
             bp = BoxPlot()

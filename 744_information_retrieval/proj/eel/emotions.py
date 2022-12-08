@@ -98,26 +98,26 @@ class EmotionLexicon:
                 self.vad_lex[word] = vad
 
 
-class Emotions(EmotionLexicon):
+class Emotions:
     def __init__(self, emolex_dir: pathlib.Path) -> None:
 
-        super().__init__(emolex_dir)
+        self.lexes = EmotionLexicon(emolex_dir)
 
     def load_all_datasets(self):
 
-        print(f"Loading datasets from {self.emolex_dir}")
-        self.load_emotion_datasets()
-        self.load_sentiment_datasets()
-        self.load_vad_datasets()
+        print(f"Loading lexicons from {self.lexes.emolex_dir.absolute()}")
+        self.lexes.load_emotion_datasets()
+        self.lexes.load_sentiment_datasets()
+        self.lexes.load_vad_datasets()
 
     def get_sentiment(self, lyrics: list[str] | set[str]):
 
         counts = {e: 0 for e in SENTIMENT_KEYS}
 
         for word in lyrics:
-            for emotion_key, lex in self.sentiment.items():
+            for sentiment_key, lex in self.lexes.sentiment.items():
                 if word in lex:
-                    counts[emotion_key] += 1
+                    counts[sentiment_key] += 1
 
         return counts
 
@@ -126,7 +126,7 @@ class Emotions(EmotionLexicon):
         counts = {e: 0.0 for e in EMOTION_KEYS}
 
         for word in lyrics:
-            for emotion_key, lex in self.emotion_lex.items():
+            for emotion_key, lex in self.lexes.emotion_lex.items():
                 for emotion_word, val in lex.items():
                     if word == emotion_word:
                         counts[emotion_key] += val
@@ -138,8 +138,8 @@ class Emotions(EmotionLexicon):
         counts = {k: {} for k in VAD_KEYS}
 
         for word in lyrics:
-            if word in self.vad_lex:
+            if word in self.lexes.vad_lex:
                 for key in counts.keys():
-                    counts[key][word] = self.vad_lex[word][key]
+                    counts[key][word] = self.lexes.vad_lex[word][key]
 
         return {k: sum(v.values()) / len(v.values()) for k, v in counts.items()}
