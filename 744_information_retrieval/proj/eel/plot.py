@@ -39,7 +39,7 @@ class Scatter3D:
 
         self.ax = plt.figure(figsize=(16, 16)).add_subplot(projection="3d")
 
-    def set_axes(self, valence, arousal, dominance, c):
+    def set_axes(self, valence, arousal, dominance):
 
         self.ax.scatter(valence, arousal, dominance, c=dominance)
 

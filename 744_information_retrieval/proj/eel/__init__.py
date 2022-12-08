@@ -1,7 +1,7 @@
 import pathlib
 
 from .dataframe import DataFrame
-from .emotions import Emotions, DataCleaner, EMOTION_KEYS
+from .emotions import Emotions, EmotionLexicon, EMOTION_KEYS
 from .files import IO
 from .playlist import Playlist
 from .playlistservice import PlaylistService
@@ -21,7 +21,7 @@ class EmotionExtractionFromLyrics:
         self.playlists = PlaylistService(
             playlist_dir=playlist_dir, lyrics_dir=lyrics_dir, log_dir=log_dir
         )
-        self.emotions = Emotions(norm_emolex_dir=norm_emolex_dir)
+        self.emotions = Emotions(emolex_dir=norm_emolex_dir)
         self.norm = Normalizer()
         self.data = []
 
@@ -44,8 +44,8 @@ class EmotionExtractionFromLyrics:
         self, emolex_dir: pathlib.Path, norm_emolex_dir: pathlib.Path
     ):
 
-        dc = DataCleaner(emolex_dir, norm_emolex_dir)
-        dc.normalize_datasets()
+        dc = EmotionLexicon(emolex_dir)
+        dc.normalize_datasets(norm_emolex_dir)
 
     def generate_data(self, playlist_name: str):
 
@@ -129,10 +129,7 @@ class EmotionExtractionFromLyrics:
 
         sc3d = Scatter3D()
         sc3d.set_axes(
-            data.df["valence"],
-            data.df["arousal"],
-            data.df["dominance"],
-            data.df["playlist"],
+            data.df["valence"], data.df["arousal"], data.df["dominance"]
         )
         sc3d.save_fig(plot_dir / "vad.png")
 

@@ -13,88 +13,80 @@ EMOTION_KEYS = {
     "surprise",
     "trust",
 }
-
+VAD_KEYS = {"valence", "arousal", "dominance"}
 SENTIMENT_KEYS = {"negative", "positive"}
 
-VAD_KEYS = {"valence", "arousal", "dominance"}
 
-
-class DataCleaner:
-    def __init__(
-        self, emolex_dir: pathlib.Path, norm_emolex_dir: pathlib.Path
-    ) -> None:
+class EmotionLexicon:
+    def __init__(self, emolex_dir: pathlib.Path) -> None:
 
         self.emolex_dir = emolex_dir
-        self.norm_emolex_dir = norm_emolex_dir
+
         self.normalizer = Normalizer()
-
-    def load_dataset(self, dataset: str):
-
-        return IO.read(self.emolex_dir / dataset).split("\n")
-
-    def normalize_datasets(self):
-
-        for emotion in EMOTION_KEYS:
-
-            data = self.load_dataset(f"{emotion}.txt")
-            lex = ""
-            for line in data:
-                if line:
-                    word, value = line.split("\t", maxsplit=1)
-                    lex += f"{self.normalizer._stem([word])[0]}\t{value}\n"
-
-            IO.dump(self.norm_emolex_dir / f"{emotion}.txt", lex)
-
-        for sentiment in SENTIMENT_KEYS:
-            IO.dump(
-                self.norm_emolex_dir / f"{sentiment}.txt",
-                "\n".join(
-                    self.normalizer(
-                        " ".join(self.load_dataset(f"{sentiment}.txt"))
-                    )
-                )
-                + "\n",
-            )
-
-        vad_data = self.load_dataset("VAD-Lexicon.txt")
-        vad_lex = ""
-        for line in vad_data:
-            if line:
-                word, value = line.split("\t", maxsplit=1)
-                vad_lex += f"{self.normalizer._stem([word])[0]}\t{value}\n"
-
-        IO.dump(self.norm_emolex_dir / "VAD-Lexicon.txt", vad_lex)
-
-
-class Emotions:
-    def __init__(self, norm_emolex_dir: pathlib.Path) -> None:
-
-        self.norm_emolex_dir = norm_emolex_dir
 
         # lexicons
         self.emotion_lex: dict[str, dict[str, float]] = {
             e: {} for e in EMOTION_KEYS
         }
         self.vad_lex: dict[str, dict[str, float]] = {}
-        self.sentiment = {}
+        self.sentiment: dict[str, list[str]] = {}
 
-    def load_dataset(self, dataset: str):
+    def __load_dataset(self, dataset: str) -> list[str]:
 
-        return IO.read(self.norm_emolex_dir / dataset).split("\n")
+        return IO.read(self.emolex_dir / dataset).split("\n")
 
-    def load_all_datasets(self):
+    def __normalize_dataset(self, data: list[str]):
+
+        normalized_data = ""
+        for line in data:
+            if line:
+                word, value = line.split("\t", maxsplit=1)
+                normalized_data += (
+                    f"{self.normalizer._stem([word])[0]}\t{value}\n"
+                )
+
+        return normalized_data
+
+    def normalize_datasets(self, norm_emolex_dir: pathlib.Path):
 
         for emotion in EMOTION_KEYS:
-            emotion_data = self.load_dataset(f"{emotion}.txt")
+
+            data = self.__load_dataset(f"{emotion}.txt")
+            normalized_data = self.__normalize_dataset(data)
+            IO.dump(norm_emolex_dir / f"{emotion}.txt", normalized_data)
+
+        data = self.__load_dataset("VAD-Lexicon.txt")
+        normalized_data = self.__normalize_dataset(data)
+        IO.dump(norm_emolex_dir / "VAD-Lexicon.txt", normalized_data)
+
+        for sentiment in SENTIMENT_KEYS:
+            normalized_data = (
+                "\n".join(
+                    self.normalizer(
+                        " ".join(self.__load_dataset(f"{sentiment}.txt"))
+                    )
+                )
+                + "\n"
+            )
+            IO.dump(norm_emolex_dir / f"{sentiment}.txt", normalized_data)
+
+    def load_emotion_datasets(self):
+
+        for emotion in EMOTION_KEYS:
+            emotion_data = self.__load_dataset(f"{emotion}.txt")
             for line in emotion_data:
                 if line:
                     word, value = line.split("\t")
                     self.emotion_lex[emotion][word] = float(value)
 
-        for sentiment in SENTIMENT_KEYS:
-            self.sentiment[sentiment] = self.load_dataset(f"{sentiment}.txt")
+    def load_sentiment_datasets(self):
 
-        vad_data = self.load_dataset("VAD-Lexicon.txt")
+        for sentiment in SENTIMENT_KEYS:
+            self.sentiment[sentiment] = self.__load_dataset(f"{sentiment}.txt")
+
+    def load_vad_datasets(self):
+
+        vad_data = self.__load_dataset("VAD-Lexicon.txt")
         for line in vad_data:
             if line:
                 word, valence, arousal, dominance = line.split("\t")
@@ -104,6 +96,19 @@ class Emotions:
                     "dominance": float(dominance),
                 }
                 self.vad_lex[word] = vad
+
+
+class Emotions(EmotionLexicon):
+    def __init__(self, emolex_dir: pathlib.Path) -> None:
+
+        super().__init__(emolex_dir)
+
+    def load_all_datasets(self):
+
+        print(f"Loading datasets from {self.emolex_dir}")
+        self.load_emotion_datasets()
+        self.load_sentiment_datasets()
+        self.load_vad_datasets()
 
     def get_sentiment(self, lyrics: list[str] | set[str]):
 
