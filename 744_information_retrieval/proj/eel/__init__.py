@@ -5,7 +5,7 @@ from .emotions import Emotions, EmotionLexicon, EMOTION_KEYS
 from .files import IO
 from .playlist import Playlist
 from .playlistservice import PlaylistService
-from .plot import Scatter, Scatter3D, BoxPlot
+from .plot import PlotFactory
 from .text import Normalizer
 
 
@@ -78,63 +78,23 @@ class EmotionExtractionFromLyrics:
             data.df[data.df["title"] == "Pumped Up Kicks"].index, inplace=True
         )
 
-        for key in EMOTION_KEYS:
-            bp = BoxPlot()
-            bp.set_axes("playlist", f"{key}", data.df)
-            bp.save_fig(plot_dir / f"{key}.png")
+        plt = PlotFactory(data.df, EMOTION_KEYS, plot_dir)
+        plt.make_wheel_playlist_boxplots("{0}")
+        plt.make_wheel_playlist_boxplots("s_{0}")
+        plt.make_wheel_playlist_boxplots("{0}_ratio", showfliers=False)
 
-        for key in EMOTION_KEYS:
-            bp = BoxPlot()
-            bp.set_axes("playlist", f"s_{key}", data.df)
-            bp.save_fig(plot_dir / f"s_{key}.png")
-
-        for key in EMOTION_KEYS:
-            bp = BoxPlot()
-            bp.set_axes("playlist", f"{key}_ratio", data.df, showfliers=False)
-            bp.save_fig(plot_dir / f"{key}_ratio.png")
-
-        bp = BoxPlot()
-        bp.set_axes("playlist", "sentiment", data.df)
-        bp.save_fig(plot_dir / "sentiment.png")
+        plt.make_sentiment_playlist_boxplot()
 
         data.drop_duplicate_titles()
 
-        bp = BoxPlot()
-        bp.set_axes("wheel_playlist", "sentiment", data.df, showfliers=False)
-        bp.save_fig(plot_dir / "wheel_playlist.png")
+        plt.make_sentiment_wheel_playlist_boxplot()
 
-        sc = Scatter()
-        sc.set_axes(
-            data.df["valence"],
-            data.df["arousal"],
-            data.df["playlist"],
-            data.df,
-        )
-        sc.save_fig(plot_dir / "va.png")
+        plt.make_va_scatter(c="playlist")
+        plt.make_va_scatter(c="playlist", set_limits=False)
 
-        sc.set_axes(
-            data.df["valence"],
-            data.df["arousal"],
-            data.df["playlist"],
-            data.df,
-            set_limits=False,
-        )
-        sc.save_fig(plot_dir / "va_zoom.png")
+        plt.make_va_scatter(c="wheel_playlist", set_limits=False)
 
-        sc.set_axes(
-            data.df["valence"],
-            data.df["arousal"],
-            data.df["wheel_playlist"],
-            data.df,
-            set_limits=False,
-        )
-        sc.save_fig(plot_dir / "va_zoom_wheel.png")
-
-        sc3d = Scatter3D()
-        sc3d.set_axes(
-            data.df["valence"], data.df["arousal"], data.df["dominance"]
-        )
-        sc3d.save_fig(plot_dir / "vad.png")
+        plt.make_vad_scatter()
 
     def dump(self, gen_data: pathlib.Path):
 

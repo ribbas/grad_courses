@@ -4,16 +4,20 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from .emotions import EMOTION_KEYS
+from .emotions import Emotions, EMOTION_KEYS, VAD_KEYS, SENTIMENT_KEYS
 from .playlist import Playlist
 from .text import Normalizer
-from .emotions import Emotions, EMOTION_KEYS, VAD_KEYS, SENTIMENT_KEYS
 
-TRANSFORM_KEY_FMT = (
+TRANSFORM_KEY_FMT = {
     "{0}",
     "u_{0}",
     "s_{0}",
-)
+}
+# TRANSFORM_KEY_FMT = {
+#     "def": "{0}",
+#     "set": "u_{0}",
+#     "sw": "s_{0}",
+# }
 
 
 class DataFrame:
@@ -48,11 +52,7 @@ class DataFrame:
 
                 for t_key, t_lyrics in zip(
                     TRANSFORM_KEY_FMT,
-                    (
-                        lyrics,
-                        set(lyrics),
-                        norm.remove_stopwords(set(lyrics)),
-                    ),
+                    (lyrics, set(lyrics), norm.remove_stopwords(set(lyrics))),
                 ):
 
                     line[t_key.format("n_words")] = len(t_lyrics)
