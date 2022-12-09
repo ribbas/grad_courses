@@ -105,10 +105,14 @@ class Emotions:
 
     def load_all_datasets(self):
 
-        print(f"Loading lexicons from {self.lexes.emolex_dir.absolute()}")
+        print(
+            f"Loading lexicons from '{self.lexes.emolex_dir.absolute()}'...",
+            end="",
+        )
         self.lexes.load_emotion_datasets()
         self.lexes.load_sentiment_datasets()
         self.lexes.load_vad_datasets()
+        print(" done!")
 
     def get_sentiment(self, lyrics: list[str] | set[str]):
 

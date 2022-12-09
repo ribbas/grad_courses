@@ -13,11 +13,6 @@ TRANSFORM_KEY_FMT = {
     "u_{0}",
     "s_{0}",
 }
-# TRANSFORM_KEY_FMT = {
-#     "def": "{0}",
-#     "set": "u_{0}",
-#     "sw": "s_{0}",
-# }
 
 
 class DataFrame:
@@ -28,6 +23,13 @@ class DataFrame:
     def read_csv(self, filename: pathlib.Path):
 
         self.df = pd.read_csv(filename)
+
+    def get_dist(self, cols):
+
+        # return (
+        #     self.df[cols].describe().loc[["mean", "50%"]].transpose().to_latex()
+        # )
+        return self.df[cols].nunique()
 
     def get_top_emotions(self, title: str):
 
@@ -86,18 +88,38 @@ class DataFrame:
 
         return df
 
+    def score_metrics(self):
+
+        print(self.df["title"].nunique())
+
+        diffs = {}
+        for p in ("anger", "disgust", "fear", "sadness"):
+            diffs[p] = (
+                self.df[self.df["wheel_playlist"] == p]["sentiment"].lt(0).sum()
+                / self.df[self.df["wheel_playlist"] == p]["sentiment"].count()
+            )
+
+        for n in ("anticipation", "joy", "surprise", "trust"):
+            diffs[n] = (
+                self.df[self.df["wheel_playlist"] == n]["sentiment"].gt(0).sum()
+                / self.df[self.df["wheel_playlist"] == n]["sentiment"].count()
+            )
+
+        print(diffs)
+        print(sum(v * v for v in diffs.values()) / 8)
+
     @staticmethod
     def create_wheel_playlist(df_data):
 
-        medians = {
-            col: np.nanmedian([i[f"{col}_ratio"] for i in df_data])
+        thresh = {
+            col: np.nanpercentile([i[f"{col}_ratio"] for i in df_data], 50)
             for col in EMOTION_KEYS
         }
 
         new_data = []
         for line in df_data:
             for key in EMOTION_KEYS:
-                if line[f"{key}_ratio"] >= medians[key]:
+                if line[f"{key}_ratio"] >= thresh[key]:
                     _line = line.copy()
                     _line["wheel_playlist"] = key
                     new_data.append(_line)

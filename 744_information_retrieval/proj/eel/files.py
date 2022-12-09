@@ -32,13 +32,13 @@ class IO:
         print(f"Dumped json to '{filename}'")
 
     @staticmethod
-    def read_pickle(filename: str) -> Any:
+    def read_pickle(filename: pathlib.Path) -> Any:
 
         with open(f"{filename}.pickle", "rb") as fp:
             return pickle.load(fp)
 
     @staticmethod
-    def dump_pickle(filename: str, data: Any) -> None:
+    def dump_pickle(filename: pathlib.Path, data: Any) -> None:
 
         with open(f"{filename}.pickle", "wb") as fp:
             pickle.dump(data, fp, protocol=pickle.HIGHEST_PROTOCOL)

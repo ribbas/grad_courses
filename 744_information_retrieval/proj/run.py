@@ -36,6 +36,12 @@ if __name__ == "__main__":
         help="generate dataframe",
     )
     parser.add_argument(
+        "-b",
+        "--load",
+        action=argparse.BooleanOptionalAction,
+        help="generate dataframe",
+    )
+    parser.add_argument(
         "-g",
         "--graph",
         action=argparse.BooleanOptionalAction,
@@ -54,7 +60,7 @@ if __name__ == "__main__":
         playlist_dir=playlist_dir,
         lyrics_dir=lyrics_dir,
         log_dir=log_dir,
-        norm_emolex_dir=norm_emolex_dir,
+        norm_emolex_dir=emolex_dir,
     )
 
     if args["lyrics"]:
@@ -70,6 +76,13 @@ if __name__ == "__main__":
     if args["data"]:
         lma_obj.get_playlists()
         lma_obj.load_datasets()
+        lma_obj.generate_data(playlist_name=args["play"])
+        lma_obj.dump(gen_data)
+
+    if args["load"]:
+        lma_obj.get_playlists()
+        lma_obj.load_datasets()
+        lma_obj.load_checkpoint()
         lma_obj.generate_data(playlist_name=args["play"])
         lma_obj.dump(gen_data)
 
