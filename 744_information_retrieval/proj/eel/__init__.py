@@ -24,7 +24,6 @@ class EmotionExtractionFromLyrics:
             playlist_dir=playlist_dir, lyrics_dir=lyrics_dir, log_dir=log_dir
         )
         self.emotions = Emotions(emolex_dir=norm_emolex_dir)
-        self.norm = Normalizer()
         self.data = []
 
     def get_playlists(self):
@@ -59,40 +58,21 @@ class EmotionExtractionFromLyrics:
 
         self.data = IO.read_pickle(self.log_dir / "checkpoint")
 
-    # def score_metrics(self, data: DataFrame):
-
-    #     print(len(set(i["title"] for i in self.data)))
-
-    #     diffs = {}
-    #     for p in ("anger", "disgust", "fear", "sadness"):
-    #         diffs[p] = (
-    #             data.df[data.df["wheel_playlist"] == p]["sentiment"].lt(0).sum()
-    #             / data.df[data.df["wheel_playlist"] == p]["sentiment"].count()
-    #         )
-
-    #     for n in ("anticipation", "joy", "surprise", "trust"):
-    #         diffs[n] = (
-    #             data.df[data.df["wheel_playlist"] == n]["sentiment"].gt(0).sum()
-    #             / data.df[data.df["wheel_playlist"] == n]["sentiment"].count()
-    #         )
-
-    #     print(diffs)
-    #     print(sum(v * v for v in diffs.values()))
-
     def generate_data(self, playlist_name: str):
 
         if not self.loaded_checkpoint:
+            norm = Normalizer()
             if playlist_name == "all":
                 for playlist in self.playlists:
                     print(f"Processing '{playlist.name}'")
                     self.playlists.get_lyrics(playlist)
-                    df = DataFrame.transpose(playlist, self.norm, self.emotions)
+                    df = DataFrame.transpose(playlist, norm, self.emotions)
                     self.data.extend(df)
 
             else:
                 playlist = self.playlists[playlist_name]
                 self.playlists.get_lyrics(playlist)
-                df = DataFrame.transpose(playlist, self.norm, self.emotions)
+                df = DataFrame.transpose(playlist, norm, self.emotions)
                 self.data.extend(df)
 
             self.save_checkpoint()

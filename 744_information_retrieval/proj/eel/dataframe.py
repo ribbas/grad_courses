@@ -13,6 +13,7 @@ TRANSFORM_KEY_FMT = {
     "u_{0}",
     "s_{0}",
 }
+QUAD = ("q1", "q2", "q3", "q4")
 
 
 class DataFrame:
@@ -90,31 +91,68 @@ class DataFrame:
 
     def score_metrics(self):
 
-        print(self.df["title"].nunique())
-
-        diffs = {}
-        for p in ("anger", "disgust", "fear", "sadness"):
-            diffs[p] = (
-                self.df[self.df["wheel_playlist"] == p]["sentiment"].lt(0).sum()
-                / self.df[self.df["wheel_playlist"] == p]["sentiment"].count()
-            )
-
-        for n in ("anticipation", "joy", "surprise", "trust"):
-            diffs[n] = (
-                self.df[self.df["wheel_playlist"] == n]["sentiment"].gt(0).sum()
+        wdiffs = {}
+        for n in ("anger", "disgust", "fear", "sadness"):
+            wdiffs[n] = (
+                self.df[self.df["wheel_playlist"] == n]["sentiment"].lt(0).sum()
                 / self.df[self.df["wheel_playlist"] == n]["sentiment"].count()
             )
 
-        print(diffs)
-        print(sum(v * v for v in diffs.values()) / 8)
+        for p in ("anticipation", "joy", "surprise", "trust"):
+            wdiffs[p] = (
+                self.df[self.df["wheel_playlist"] == p]["sentiment"].gt(0).sum()
+                / self.df[self.df["wheel_playlist"] == p]["sentiment"].count()
+            )
+
+        qdiffs = {}
+        for n in ("q2", "q3"):
+            qdiffs[n] = (
+                self.df[self.df["quadrant_playlist"] == n]["sentiment"]
+                .lt(0)
+                .sum()
+                / self.df[self.df["quadrant_playlist"] == n][
+                    "sentiment"
+                ].count()
+            )
+
+        for p in ("q1", "q4"):
+            qdiffs[p] = (
+                self.df[self.df["quadrant_playlist"] == p]["sentiment"]
+                .gt(0)
+                .sum()
+                / self.df[self.df["quadrant_playlist"] == p][
+                    "sentiment"
+                ].count()
+            )
+
+        print(wdiffs)
+        print(qdiffs)
+        print(
+            self.df[self.df["quadrant_playlist"].notna()]["title"].nunique(),
+            sum(v for v in qdiffs.values()) / 4,
+        )
+        print(
+            self.df[self.df["wheel_playlist"].notna()]["title"].nunique(),
+            sum(v for v in wdiffs.values()) / 8,
+        )
 
     @staticmethod
     def create_wheel_playlist(df_data):
 
+        for i in df_data:
+            i["q1"] = i["joy_ratio"] + i["surprise_ratio"]
+            i["q2"] = i["anger_ratio"] + i["disgust_ratio"]
+            i["q3"] = i["sadness_ratio"] + i["fear_ratio"]
+            i["q4"] = i["trust_ratio"] + i["anticipation_ratio"]
+
+        qthresh = {
+            col: np.nanpercentile([i[col] for i in df_data], 75) for col in QUAD
+        }
         thresh = {
-            col: np.nanpercentile([i[f"{col}_ratio"] for i in df_data], 50)
+            col: np.nanpercentile([i[f"{col}_ratio"] for i in df_data], 75)
             for col in EMOTION_KEYS
         }
+        print(thresh)
 
         new_data = []
         for line in df_data:
@@ -122,6 +160,12 @@ class DataFrame:
                 if line[f"{key}_ratio"] >= thresh[key]:
                     _line = line.copy()
                     _line["wheel_playlist"] = key
+                    new_data.append(_line)
+
+            for key in QUAD:
+                if line[key] >= qthresh[key]:
+                    _line = line.copy()
+                    _line["quadrant_playlist"] = key
                     new_data.append(_line)
 
         return new_data
