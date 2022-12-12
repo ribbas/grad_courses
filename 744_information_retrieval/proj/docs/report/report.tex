@@ -22,6 +22,32 @@ This paper discusses the methods used to
 
 \section{Background}
 
+Most popular streaming services contain manually curated playlists of songs based on their perceived emotions they invoke on the listeners. For example, Spotify has many official mood specific playlists. The apparent moods they invoke range from highly energetic or angry songs to play at the gym to soft or sad songs to play when it is raining. These playlists are constantly updated to incorporate new releases, but are done so manually. This manual curation can be heavily influences from staff bias and subjectivity.
+
+On Spotify, automatic playlist creation is achieved via audio features such as duration, energy, tempo, etc. and other combinations of audio features such as danceability and instrumentalness \cite{spotify}. These features are evaluated from audio analyses of the tracks which do not include contexts from their lyrical contents.
+
+Lyrics can be just as relevant when classifying songs into moods. For example, the production of \textit{Pumped Up Kicks} by the indie pop/neo-psychedelia group Foster the People consists of pop chords, upbeat melodies and a relatively cheerful tone. However, the song describes the homicidal fantasies of a young boy named Richard who has gained access to his father's gun.
+
+\begin{table}[!ht]
+  % \centering
+  \begin{center}
+    \footnotesize
+    \minibox{
+      He found a six-shooter gun                         \\
+      In his dad's closet, and with a box of fun things  \\
+      I don't even know what                             \\
+      But he's coming for you, yeah, he's coming for you \\
+      All the other kids with the pumped up kicks        \\
+      You better run, better run outrun my gun           \\
+      All the other kids with the pumped up kicks        \\
+      You better run, better run faster than my bullet
+    }
+  \end{center}
+  \caption*{\textbf{Listing 1:} Excerpt of \textit{Pumped Up Kicks}}
+\end{table}
+
+Relying solely on the audio features of this song will classify it as a joyous or calming song, with relatively positive sentiment.
+
 \subsection{Natural Language Processing on Lyrics}
 
 Natural language processing on English song lyrics assume additional restrictions. There are no standards set for preprocessing lyrics, but the following lists the exceptions address for this project:
@@ -34,13 +60,7 @@ Natural language processing on English song lyrics assume additional restriction
 
 \subsection{Sentiment Analysis}
 
-Sentiment scores are evaluated as the ratios of weights of the relatively positive and negative terms in a document. Context is typically emphasized to increase the accuracy of the perceived sentiment. This is achieved by using long n-grams. This project tokenizes the documents as 1-grams, and therefore loses contexts. The sentiment scores are instead evaluated as the ratio of the positive terms ($p$) and negative terms ($n$) over the total number of terms. Terms are labeled positive or negative if they are found in their corresponding datasets.
-
-\begin{equation}
-  S = \frac{|p| - |n|}{N}
-\end{equation}
-
-If a document contains more negative terms, then the sentiment score will naturally be negative as well, and vice versa for a positive score.
+Sentiment scores are widely used to categorize documents as invoking positive or negative perceptions. However, the scores are limited as they are one-dimensional, ranging between [-1, 1]. This score lacks the depth required to distinguish negative-sentiment emotions such as anger from sadness or positive-sentiment emotions such as calm and excited.
 
 \subsection{Emotion Classification}
 
@@ -109,10 +129,10 @@ The scores generated are based on sums of the emotion intensities and frequencie
 
 \subsection{Emotion Intensity}
 
-Emotion intensity scores are generated for the 8 emotions identified by the Plutchik's Wheel Model. The scores are simply the sums of the corresponding emotion intensity values present in the NRC datasets. To normalize the intensity scores, each of the 8 emotions also have their corresponding intensity ratio scores, which are calculated by computing the ratio of the emotion intensities over the total sum of intensities. Equation \ref{equ:emo_ratio} defines the ratio for all emotions $e$ in the 8 emotions identified by the Plutchik's Wheel Model, $E$.
+Emotion intensity scores are generated for the 8 emotions identified by the Plutchik's Wheel Model. The scores are simply the sums of the corresponding emotion intensity values present in the NRC datasets. To normalize the intensity scores, each of the 8 emotions also have their corresponding intensity ratio scores, which are calculated by computing the ratio of the emotion intensities over the total sum of intensities. Equation \ref{equ:emo_ratio} defines the ratio for all emotions $e$ in the 8 emotions identified by the Plutchik's Wheel Model, $E_{wheel}$.
 
 \begin{equation} \label{equ:emo_ratio}
-  e_{ratio} = \frac{\sum_{i=0}e_i}{\sum_{e \in E}\sum_{i=0}e_i}
+  e_{ratio} = \frac{\sum_{i=0}e_i}{\sum_{e \in E_{wheel}}\sum_{i=0}e_i}
 \end{equation}
 
 \subsection{VAD Scores}
@@ -122,6 +142,16 @@ Similar to the emotion intensity scores, the valence, arousal and dominance scor
 \begin{equation} \label{equ:vad}
   v = \frac{\sum_{i=0}^{N}v_i}{N}, a = \frac{\sum_{i=0}^{N}a_i}{N}, d = \frac{\sum_{i=0}^{N}d_i}{N}
 \end{equation}
+
+\subsection{Sentiment Scores}
+
+The sentiment scores are instead evaluated as the ratio of the positive terms ($p$) and negative terms ($n$) over the total number of terms. Terms are labeled positive or negative if they are found in their corresponding datasets.
+
+\begin{equation}
+  S = \frac{|p| - |n|}{N}
+\end{equation}
+
+If a document contains more negative terms, then the sentiment score will naturally be negative as well, and vice versa for a positive score.
 
 \section{Analysis}
 
