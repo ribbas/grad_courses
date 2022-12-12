@@ -85,7 +85,7 @@ if __name__ == "__main__":
         eel_obj.load_checkpoint()
         eel_obj.generate_data(playlist_name=args["play"])
         eel_obj.compute_metrics()
-        # eel_obj.dump(gen_data)
+        eel_obj.dump(gen_data)
 
     if args["graph"]:
         eel_obj.generate_plots(gen_data, plot_dir)

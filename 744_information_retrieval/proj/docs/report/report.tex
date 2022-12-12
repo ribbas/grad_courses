@@ -28,13 +28,19 @@ Natural language processing on English song lyrics assume additional restriction
 \begin{itemize}
   \item Songs may be entirely composed of stopwords.
   \item Repetition is considered significant.
-  \item Lyrics may contain songwriting directions, such as "\[gang vocals\]", "\[instrumental\]", "\[hook\]", "\[Speaker A\]", etc.
+  \item Lyrics may contain songwriting directions, such as "[gang vocals]", "[instrumental]", "[hook]", "[Speaker A]", etc.
   \item Lyrics may contain adlibs. For this project, adlibs are not considered part of the dictionary.
 \end{itemize}
 
 \subsection{Sentiment Analysis}
 
-Sentiment scores are evaluated as the ratios of weights of the relatively positive and negative terms in a document. Context is typically emphasized to increase the accuracy of the perceived sentiment. This is achieved by using long n-grams. This project tokenizes the documents as 1-grams, and therefore loses contexts. The sentiment scores are instead evaluated as the ratio of the positive or negative terms over the sum of identified terms.
+Sentiment scores are evaluated as the ratios of weights of the relatively positive and negative terms in a document. Context is typically emphasized to increase the accuracy of the perceived sentiment. This is achieved by using long n-grams. This project tokenizes the documents as 1-grams, and therefore loses contexts. The sentiment scores are instead evaluated as the ratio of the positive and negative terms over the total number of terms. Terms are labeled positive or negative if they are found in their corresponding datasets.
+
+\begin{equation}
+  S = \frac{|p| - |n|}{N}
+\end{equation}
+
+If a document contains more negative terms, then the sentiment score will naturally be negative as well, and vice versa for a positive score.
 
 \subsection{Emotion Classification}
 
@@ -58,7 +64,7 @@ Several categories described by the model do not translate well over text. For e
 The VAD (Valence-Arousal-Dominance) Emotional State Model was proposed by psychologist Albert Mehrabian. The model plots emotional states across these 3 dimensions of emotion. Valence measures how pleasant or unpleasant an emotion is, arousal determines the energy of the emotion, and dominance refers to the sense of control over the particular emotion. The model, pictured in \ref{fig:vad}, implies a more granular approach to categorizing emotions.
 
 \begin{figure}[!ht]
-  \includegraphics[scale=0.45]{../statics/vad.png}
+  \includegraphics[scale=0.35]{../statics/vad.png}
   \centering
   \caption{VAD Emotional State Model}
   \label{fig:vad}
@@ -73,7 +79,7 @@ The third dimension of the model can be disregarded to describe the more popular
 \end{itemize}
 
 \begin{figure}[!ht]
-  \includegraphics[scale=0.45]{../statics/vad.png}
+  \includegraphics[scale=0.35]{../statics/vad.png}
   \centering
   \caption{VAD Emotional State Model}
   \label{fig:va}
@@ -97,9 +103,9 @@ All of the source code is in Python 3.10. The program is split into several modu
 
 \subsection{Emotion Playlist}
 
-\begin{equation*}
+\begin{equation}
   acc = \frac{\sum_{p \in E^{+}}\frac{\sum_{i}[p_i > 0]}{|p|} + \sum_{n \in E^{-}}\frac{\sum_{i}[n_i < 0]}{|n|}}{|E|}
-\end{equation*}
+\end{equation}
 
 % Original count: 748
 
@@ -126,13 +132,13 @@ All of the source code is in Python 3.10. The program is split into several modu
   {|c|c|c|}
   \textbf{Metric} & \textbf{Tracks Categorized} & \textbf{Accuracy} \\
   \hline
-  25\%  & 747 & 0.572 \\
+  25\%  & 626 & 0.572 \\
   \hline
-  50\%  & 747 & 0.719 \\
+  50\%  & 626 & 0.719 \\
   \hline
-  75\%  & 614 & 0.820 \\
+  75\%  & 603 & 0.820 \\
   \hline
-  mean  & 747 & 0.745 \\
+  mean  & 626 & 0.713 \\
   \hline
 \end{simptable}
 

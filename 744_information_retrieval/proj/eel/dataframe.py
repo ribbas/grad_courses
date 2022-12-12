@@ -73,7 +73,7 @@ class Dataset:
                         line[t_key.format(key)] = wheel[key]
 
                 for key in EMOTION_KEYS:
-                    den = sum((0.9 * line[k]) for k in EMOTION_KEYS)
+                    den = sum(line[k] for k in EMOTION_KEYS)
                     if den:
                         line[f"{key}_ratio"] = line[key] / den
                     else:
@@ -98,39 +98,44 @@ class Dataset:
     @staticmethod
     def create_wheel_playlist(df_data, func, args=None):
 
-        # for i in df_data:
-        #     i["q1"] = i["joy_ratio"] + i["surprise_ratio"]
-        #     i["q2"] = i["anger_ratio"] + i["disgust_ratio"]
-        #     i["q3"] = i["sadness_ratio"] + i["fear_ratio"]
-        #     i["q4"] = i["trust_ratio"] + i["anticipation_ratio"]
+        for i in df_data:
+            i["q1"] = i["joy_ratio"] + i["surprise_ratio"]
+            i["q2"] = i["anger_ratio"] + i["disgust_ratio"]
+            i["q3"] = i["sadness_ratio"] + i["fear_ratio"]
+            i["q4"] = i["trust_ratio"] + i["anticipation_ratio"]
 
-        # qthresh = {col: func([i[col] for i in df_data], args) for col in QUAD}
         thresh = {}
+        qthresh = {}
+
         if args:
             thresh = {
                 col: func([i[f"{col}_ratio"] for i in df_data], args)
                 for col in EMOTION_KEYS
+            }
+            qthresh = {
+                col: func([i[col] for i in df_data], args) for col in QUAD
             }
         else:
             thresh = {
                 col: func([i[f"{col}_ratio"] for i in df_data])
                 for col in EMOTION_KEYS
             }
+            qthresh = {col: func([i[col] for i in df_data]) for col in QUAD}
 
         new_data = []
-        for line in df_data:
-            for key in EMOTION_KEYS:
-                if line[f"{key}_ratio"] >= thresh[key]:
-                    _line = line.copy()
-                    _line["wheel_playlist"] = key
-                    new_data.append(_line)
-
         # for line in df_data:
-        #     for key in QUAD:
-        #         if line[key] >= qthresh[key]:
+        #     for key in EMOTION_KEYS:
+        #         if line[f"{key}_ratio"] >= thresh[key]:
         #             _line = line.copy()
-        #             _line["quadrant_playlist"] = key
+        #             _line["wheel_playlist"] = key
         #             new_data.append(_line)
+
+        for line in df_data:
+            for key in QUAD:
+                if line[key] >= qthresh[key]:
+                    _line = line.copy()
+                    _line["quadrant_playlist"] = key
+                    new_data.append(_line)
 
         return new_data
 

@@ -124,7 +124,6 @@ class EmotionExtractionFromLyrics:
         ds.drop_duplicate_titles()
 
         plt.make_sentiment_wheel_playlist_boxplot()
-        # plt.make_sentiment_quadrant_playlist_boxplot()
 
         plt.make_va_scatter(c="playlist")
         plt.make_va_scatter(c="playlist", set_limits=False)
