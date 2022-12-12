@@ -19,10 +19,7 @@
 \usepackage{lmodern}
 
 % code snippets
-% \usepackage{listings}
-% \usepackage{pythonhighlight}
-\usepackage{minibox}
-% \usepackage{natbib}
+\usepackage{newfloat}
 
 % margins
 \topmargin=-0.45in
@@ -31,6 +28,13 @@
 \textwidth=6.5in
 \textheight=9.0in
 \headsep=0.25in
+
+\DeclareFloatingEnvironment[
+  fileext=lob,
+  listname={List of Boxes},
+  name=Box,
+  placement=htp,
+]{BOX}
 
 \newenvironment{simptable}
 [3]
