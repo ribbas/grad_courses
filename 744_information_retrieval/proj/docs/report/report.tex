@@ -13,27 +13,77 @@
 \clearpage
 \newpage
 
+\begin{abstract}
+  \noindent Mood classification in music has become more prevalent with the growing streaming industry. Categorizing songs based on the perceived emotions allow music streaming services to improve their recommendation systems and automatic playlist generation. Services such as Spotify use audio features such as duration, energy, tempo, etc. and other combinations of audio features such as danceability and instrumentalness to group similar tracks. These classifications focus solely on the audio production of the songs while ignoring the lyrical content. Emotion extraction from text can be a difficult task, due to the subjectivity in quantifying or discretely categorizing emotions. In this project, 2 of the popular models of emotions, the Plutchik's Wheel and the VAD model, have been used to attempt emotion extraction.
+\end{abstract}
+
 \section{Introduction}
+This paper discusses the methods used to
+
+\section{Background}
+
+\subsection{Natural Language Processing on Lyrics}
+
+Natural language processing on English song lyrics assume additional restrictions. There are no standards set for preprocessing lyrics, but the following lists the exceptions address for this project:
+\begin{itemize}
+  \item Songs may be entirely composed of stopwords.
+  \item Repetition is considered significant.
+  \item Lyrics may contain songwriting directions, such as "\[gang vocals\]", "\[instrumental\]", "\[hook\]", "\[Speaker A\]", etc.
+  \item Lyrics may contain adlibs. For this project, adlibs are not considered part of the dictionary.
+\end{itemize}
+
+\subsection{Sentiment Analysis}
+
+Sentiment scores are evaluated as the ratios of weights of the relatively positive and negative terms in a document. Context is typically emphasized to increase the accuracy of the perceived sentiment. This is achieved by using long n-grams. This project tokenizes the documents as 1-grams, and therefore loses contexts. The sentiment scores are instead evaluated as the ratio of the positive or negative terms over the sum of identified terms.
+
+\subsection{Emotion Classification}
+
+\subsubsection{Plutchik's Wheel of Emotions Model}
+
+Psychologist Robert Plutchik proposed a model composed of eight primary emotions: anger, fear, sadness, disgust, surprise, anticipation, trust, and joy \cite{wheel}. The model, pictured in Figure \ref{fig:wheel}, consists of several concentric circles, with the outer circles being combinations of emotions from the inner circles.
+
+\begin{figure}[!ht]
+  \includegraphics[scale=0.4]{../statics/wheel.png}
+  \centering
+  \caption{Plutchik's Wheel of Emotions Model}
+  \label{fig:wheel}
+\end{figure}
+
+% Several categories described by the model do not translate well over text. For example, a human reviewer may infer emotions such as \textit{disgust} and \textit{anger} from the document "Good God, the venerable saint was romancing the scientist's bride!". The prevalent emotions extracted from the document using the emotion intensities are \textit{trust} and \textit{anticipation}.
+
+Several categories described by the model do not translate well over text. For example, a human reviewer may find it difficult to extract emotions of \textit{trust} or \textit{anticipation} from a document without explicit usages of synonyms of such emotions.
+
+\subsubsection{VAD Emotional State Model}
+
+The VAD (Valence-Arousal-Dominance) Emotional State Model was proposed by psychologist Albert Mehrabian. The model plots emotional states across these 3 dimensions of emotion. Valence measures how pleasant or unpleasant an emotion is, arousal determines the energy of the emotion, and dominance refers to the sense of control over the particular emotion. The model, pictured in \ref{fig:vad}, implies a more granular approach to categorizing emotions.
+
+\begin{figure}[!ht]
+  \includegraphics[scale=0.45]{../statics/vad.png}
+  \centering
+  \caption{VAD Emotional State Model}
+  \label{fig:vad}
+\end{figure}
+
+The third dimension of the model can be disregarded to describe the more popular Valence-Arousal Emotional State Model (also known as the Circumplex Model), developed by psychologist James A. Russell. The two dimensions of this model allows for emotions to be categorized into quadrants which are sufficient in determining the general sentiment of the emotion. The four quadrants can be labeled as:
+\begin{itemize}
+  \item \textbf{Quadrant I}: High-arousal/positive-valence, "joy"
+  \item \textbf{Quadrant II}: High-arousal/negative-valence, "anger"
+  \item \textbf{Quadrant III}: Low-arousal/negative-valence, "sadness"
+  \item \textbf{Quadrant IV}: Low-arousal/positive-valence, "calm"
+\end{itemize}
+
+\begin{figure}[!ht]
+  \includegraphics[scale=0.45]{../statics/vad.png}
+  \centering
+  \caption{VAD Emotional State Model}
+  \label{fig:va}
+\end{figure}
+
+\subsubsection{Emotion Categories}
+
 
 \section{Technical Background}
 All of the source code is in Python 3.10. The program is split into several modules and follows an object oriented structure.
-
-% .
-% ├── ir/
-% │   ├── __init__.py
-% │   ├── files.py
-% │   ├── minhash.py
-% │   └── text.py
-% ├── outputs/
-% └── run.py
-
-% \begin{figure}[!ht]
-%   \centering
-%   \includegraphics[trim={0 3cm 15cm 3cm},clip,scale=0.3]{statics/dirtree.png}
-%   \caption{Directory Hierarchy of Assignment 5}
-% \end{figure}
-
-% The source code for all of the files are attached in Appendix \ref{appendix:src}.
 
 % The total number of non-empty lines of code for the program totals to under 285.
 
@@ -43,117 +93,124 @@ All of the source code is in Python 3.10. The program is split into several modu
 %   \caption{UML of Information Retrieval}
 % \end{figure}
 
-error:
+
+
+\subsection{Emotion Playlist}
 
 \begin{equation*}
-
+  acc = \frac{\sum_{p \in E^{+}}\frac{\sum_{i}[p_i > 0]}{|p|} + \sum_{n \in E^{-}}\frac{\sum_{i}[n_i < 0]}{|n|}}{|E|}
 \end{equation*}
 
-Original count: 748
+% Original count: 748
 
-25\%: 747, 0.007366122852376495
-50\%: 747, 0.031104515575374657
-75\%: 730, 0.07781607776652624
-mean: 747, 0.042994973168723666
 
 \begin{simptable}
-    {ratio}
-    {scores}
-    {|c|c|}
-    \textbf{Metric} & \textbf{Loss} \\
-    \hline
-    25\% percentile &  490 \\
-    \hline
-    50\% percentile &  474 \\
-    \hline
-    75\% percentile &  470 \\
-    \hline
-    90\% percentile &  470 \\
-    \hline
-    mean &  469 \\
-    \hline
+  {ratio}
+  {scores}
+  {|c|c|c|}
+  \textbf{Metric} & \textbf{Tracks Categorized} & \textbf{Accuracy} \\
+  \hline
+  25\%  & 747 & 0.544 \\
+  \hline
+  50\%  & 747 & 0.643 \\
+  \hline
+  75\%  & 730 & 0.747 \\
+  \hline
+  mean  & 747 & 0.673 \\
+  \hline
+\end{simptable}
+
+\begin{simptable}
+  {ratio}
+  {scores}
+  {|c|c|c|}
+  \textbf{Metric} & \textbf{Tracks Categorized} & \textbf{Accuracy} \\
+  \hline
+  25\%  & 747 & 0.572 \\
+  \hline
+  50\%  & 747 & 0.719 \\
+  \hline
+  75\%  & 614 & 0.820 \\
+  \hline
+  mean  & 747 & 0.745 \\
+  \hline
 \end{simptable}
 
 
 \begin{simptable}
-    {No transform}
-    {scores}
-    {|c|c|c||c|c||c|c|}
-    \textbf{Emotion} & \textbf{mean} & \textbf{median} & \textbf{mean} & \textbf{median} & \textbf{mean} & \textbf{median}\\
-    \hline
-    anticipation &  1.730709 &  1.5940 &  3.719128 &  2.8350 &  1.730709 &  1.5940 \\
-    \hline
-    disgust      &  1.069293 &  0.7200 &  2.601124 &  1.1640 &  1.069293 &  0.7200 \\
-    \hline
-    anger        &  1.648021 &  1.2190 &  3.986169 &  1.8750 &  1.648021 &  1.2190 \\
-    \hline
-    trust        &  2.476561 &  2.1790 &  6.776188 &  4.9530 &  2.476284 &  2.1790 \\
-    \hline
-    sadness      &  1.790973 &  1.5090 &  3.842015 &  2.6960 &  1.701007 &  1.4210 \\
-    \hline
-    joy          &  2.392433 &  2.2070 &  6.319867 &  4.4240 &  2.392433 &  2.2070 \\
-    \hline
-    fear         &  1.888261 &  1.5315 &  3.869922 &  2.4785 &  1.888261 &  1.5315 \\
-    \hline
-    surprise     &  0.851107 &  0.7420 &  1.840037 &  1.0710 &  0.851107 &  0.7420 \\
-    \hline
+  {No transform}
+  {scores}
+  {|c|c|c||c|c||c|c|}
+  \textbf{Emotion} & \textbf{mean} & \textbf{median} & \textbf{mean} & \textbf{median} & \textbf{mean} & \textbf{median}\\
+  \hline
+  anticipation &  1.730709 &  1.5940 &  3.719128 &  2.8350 &  1.730709 &  1.5940 \\
+  \hline
+  disgust      &  1.069293 &  0.7200 &  2.601124 &  1.1640 &  1.069293 &  0.7200 \\
+  \hline
+  anger        &  1.648021 &  1.2190 &  3.986169 &  1.8750 &  1.648021 &  1.2190 \\
+  \hline
+  trust        &  2.476561 &  2.1790 &  6.776188 &  4.9530 &  2.476284 &  2.1790 \\
+  \hline
+  sadness      &  1.790973 &  1.5090 &  3.842015 &  2.6960 &  1.701007 &  1.4210 \\
+  \hline
+  joy          &  2.392433 &  2.2070 &  6.319867 &  4.4240 &  2.392433 &  2.2070 \\
+  \hline
+  fear         &  1.888261 &  1.5315 &  3.869922 &  2.4785 &  1.888261 &  1.5315 \\
+  \hline
+  surprise     &  0.851107 &  0.7420 &  1.840037 &  1.0710 &  0.851107 &  0.7420 \\
+  \hline
 \end{simptable}
 
 \begin{simptable}
-    {ratio}
-    {scores}
-    {|c|c|c|c|}
-    \textbf{Emotion} & \textbf{mean} & \textbf{median} & \textbf{max} \\
-    \hline
-    joy\_ratio          &  0.216300 &  0.218978&  0.668980 \\
-    \hline
-    trust\_ratio        &  0.186233 &  0.187097&  0.638021 \\
-    \hline
-    sadness\_ratio      &  0.121942 &  0.114320&  0.457091 \\
-    \hline
-    surprise\_ratio     &  0.057528 &  0.052510&  0.407974 \\
-    \hline
-    anticipation\_ratio &  0.138459 &  0.138032&  0.456406 \\
-    \hline
-    anger\_ratio        &  0.101198 &  0.090794&  0.694792 \\
-    \hline
-    disgust\_ratio      &  0.065279 &  0.057565&  0.316643 \\
-    \hline
-    fear\_ratio         &  0.113061 &  0.106388&  0.409779 \\
-    \hline
+  {ratio}
+  {scores}
+  {|c|c|c|c|}
+  \textbf{Emotion} & \textbf{mean} & \textbf{median} & \textbf{max} \\
+  \hline
+  joy\_ratio          &  0.216300 &  0.218978&  0.668980 \\
+  \hline
+  trust\_ratio        &  0.186233 &  0.187097&  0.638021 \\
+  \hline
+  sadness\_ratio      &  0.121942 &  0.114320&  0.457091 \\
+  \hline
+  surprise\_ratio     &  0.057528 &  0.052510&  0.407974 \\
+  \hline
+  anticipation\_ratio &  0.138459 &  0.138032&  0.456406 \\
+  \hline
+  anger\_ratio        &  0.101198 &  0.090794&  0.694792 \\
+  \hline
+  disgust\_ratio      &  0.065279 &  0.057565&  0.316643 \\
+  \hline
+  fear\_ratio         &  0.113061 &  0.106388&  0.409779 \\
+  \hline
 \end{simptable}
 
 \begin{simptable}
-    {ratio}
-    {scores}
-    {|c|c|}
-    \textbf{wheel\_playlist} & \textbf{count} \\
-    \hline
-    fear &  490 \\
-    \hline
-    disgust &  474 \\
-    \hline
-    anger &  470 \\
-    \hline
-    sadness &  470 \\
-    \hline
-    anticipation &  469 \\
-    \hline
-    trust &  461 \\
-    \hline
-    surprise &  458 \\
-    \hline
-    joy &  444 \\
-    \hline
+  {ratio}
+  {scores}
+  {|c|c|}
+  \textbf{wheel\_playlist} & \textbf{count} \\
+  \hline
+  fear &  490 \\
+  \hline
+  disgust &  474 \\
+  \hline
+  anger &  470 \\
+  \hline
+  sadness &  470 \\
+  \hline
+  anticipation &  469 \\
+  \hline
+  trust &  461 \\
+  \hline
+  surprise &  458 \\
+  \hline
+  joy &  444 \\
+  \hline
 \end{simptable}
 
 \addcontentsline{toc}{section}{References}
 \bibliographystyle{ieeetr}
 \bibliography{refs}
-
-\clearpage
-\newpage
-\appendix
-\addcontentsline{toc}{section}{Appendix}
 
 \end{document}

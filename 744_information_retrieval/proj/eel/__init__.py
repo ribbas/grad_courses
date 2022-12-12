@@ -1,8 +1,9 @@
 import pathlib
 
-from .dataframe import DataFrame
+from .dataframe import Dataset
 from .emotions import Emotions, EmotionLexicon, EMOTION_KEYS
 from .files import IO
+from .metrics import Metrics, FUNCTIONS
 from .playlist import Playlist
 from .playlistservice import PlaylistService
 from .plot import PlotFactory
@@ -66,25 +67,37 @@ class EmotionExtractionFromLyrics:
                 for playlist in self.playlists:
                     print(f"Processing '{playlist.name}'")
                     self.playlists.get_lyrics(playlist)
-                    df = DataFrame.transpose(playlist, norm, self.emotions)
+                    df = Dataset.transpose(playlist, norm, self.emotions)
                     self.data.extend(df)
 
             else:
                 playlist = self.playlists[playlist_name]
                 self.playlists.get_lyrics(playlist)
-                df = DataFrame.transpose(playlist, norm, self.emotions)
+                df = Dataset.transpose(playlist, norm, self.emotions)
                 self.data.extend(df)
 
             self.save_checkpoint()
 
-        print(
-            f"Unique number of titles before reclassification: {len(set(i['title'] for i in self.data))}"
-        )
-        self.data = DataFrame.create_wheel_playlist(self.data)
+        else:
+            print("Checkpoint already generated")
+        self.data = Dataset.create_wheel_playlist(self.data, *FUNCTIONS["75"])
+
+    def compute_metrics(self):
+
+        ds = Dataset()
+
+        for func_name, args in Metrics().get_function():
+
+            data_with_playcols = ds.create_wheel_playlist(self.data, *args)
+
+            ds.generate(data_with_playcols)
+
+            print(func_name, len(set(i["title"] for i in self.data)))
+            Metrics().score_metrics(ds.df)
 
     def read_csv(self, gen_data: pathlib.Path):
 
-        data = DataFrame()
+        data = Dataset()
         data.read_csv(gen_data)
         print(data.get_top_emotions("Pumped Up Kicks"))
         print(data.get_dist(i for i in EMOTION_KEYS))
@@ -96,23 +109,22 @@ class EmotionExtractionFromLyrics:
 
     def generate_plots(self, gen_data: pathlib.Path, plot_dir: pathlib.Path):
 
-        data = DataFrame()
-        data.read_csv(gen_data)
-        data.drop_duplicate_artists()
-        data.df.drop(
-            data.df[data.df["title"] == "Pumped Up Kicks"].index, inplace=True
-        )
+        ds = Dataset()
+        ds.read_csv(gen_data)
+        ds.drop_duplicate_artists()
+        ds.drop_custom_titles()
 
-        plt = PlotFactory(data.df, EMOTION_KEYS, plot_dir)
+        plt = PlotFactory(ds.df, EMOTION_KEYS, plot_dir)
         plt.make_wheel_playlist_boxplots("{0}")
         plt.make_wheel_playlist_boxplots("s_{0}")
         plt.make_wheel_playlist_boxplots("{0}_ratio", showfliers=False)
 
         plt.make_sentiment_playlist_boxplot()
 
-        data.drop_duplicate_titles()
+        ds.drop_duplicate_titles()
 
         plt.make_sentiment_wheel_playlist_boxplot()
+        # plt.make_sentiment_quadrant_playlist_boxplot()
 
         plt.make_va_scatter(c="playlist")
         plt.make_va_scatter(c="playlist", set_limits=False)
@@ -123,7 +135,10 @@ class EmotionExtractionFromLyrics:
 
     def dump(self, gen_data: pathlib.Path):
 
-        data = DataFrame()
-        data.generate(self.data)
-        data.score_metrics()
-        data.dump(gen_data)
+        ds = Dataset()
+
+        ds.generate(self.data)
+
+        # Metrics().score_metrics(ds.df)
+
+        ds.dump(gen_data)

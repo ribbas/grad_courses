@@ -16,7 +16,7 @@ TRANSFORM_KEY_FMT = {
 QUAD = ("q1", "q2", "q3", "q4")
 
 
-class DataFrame:
+class Dataset:
     def __init__(self) -> None:
 
         self.df: pd.DataFrame
@@ -42,6 +42,7 @@ class DataFrame:
     def transpose(playlist: Playlist, norm: Normalizer, emotions: Emotions):
 
         df = []
+        angers = []
         for track in playlist.tracks:
 
             if track.lyrics:
@@ -72,11 +73,16 @@ class DataFrame:
                         line[t_key.format(key)] = wheel[key]
 
                 for key in EMOTION_KEYS:
-                    den = sum(line[k] for k in EMOTION_KEYS)
+                    den = sum((0.9 * line[k]) for k in EMOTION_KEYS)
                     if den:
                         line[f"{key}_ratio"] = line[key] / den
                     else:
                         line[f"{key}_ratio"] = np.nan
+
+                # line["q1"] = line["joy_ratio"] + line["surprise_ratio"]
+                # line["q2"] = line["anger_ratio"] + line["disgust_ratio"]
+                # line["q3"] = line["sadness_ratio"] + line["fear_ratio"]
+                # line["q4"] = line["trust_ratio"] + line["anticipation_ratio"]
 
                 line["sentiment"] = (
                     (line["positive"] - line["negative"]) / line["n_words"] * 4
@@ -89,70 +95,27 @@ class DataFrame:
 
         return df
 
-    def score_metrics(self):
-
-        wdiffs = {}
-        for n in ("anger", "disgust", "fear", "sadness"):
-            wdiffs[n] = (
-                self.df[self.df["wheel_playlist"] == n]["sentiment"].lt(0).sum()
-                / self.df[self.df["wheel_playlist"] == n]["sentiment"].count()
-            )
-
-        for p in ("anticipation", "joy", "surprise", "trust"):
-            wdiffs[p] = (
-                self.df[self.df["wheel_playlist"] == p]["sentiment"].gt(0).sum()
-                / self.df[self.df["wheel_playlist"] == p]["sentiment"].count()
-            )
-
-        qdiffs = {}
-        for n in ("q2", "q3"):
-            qdiffs[n] = (
-                self.df[self.df["quadrant_playlist"] == n]["sentiment"]
-                .lt(0)
-                .sum()
-                / self.df[self.df["quadrant_playlist"] == n][
-                    "sentiment"
-                ].count()
-            )
-
-        for p in ("q1", "q4"):
-            qdiffs[p] = (
-                self.df[self.df["quadrant_playlist"] == p]["sentiment"]
-                .gt(0)
-                .sum()
-                / self.df[self.df["quadrant_playlist"] == p][
-                    "sentiment"
-                ].count()
-            )
-
-        print(wdiffs)
-        print(qdiffs)
-        print(
-            self.df[self.df["quadrant_playlist"].notna()]["title"].nunique(),
-            sum(v for v in qdiffs.values()) / 4,
-        )
-        print(
-            self.df[self.df["wheel_playlist"].notna()]["title"].nunique(),
-            sum(v for v in wdiffs.values()) / 8,
-        )
-
     @staticmethod
-    def create_wheel_playlist(df_data):
+    def create_wheel_playlist(df_data, func, args=None):
 
-        for i in df_data:
-            i["q1"] = i["joy_ratio"] + i["surprise_ratio"]
-            i["q2"] = i["anger_ratio"] + i["disgust_ratio"]
-            i["q3"] = i["sadness_ratio"] + i["fear_ratio"]
-            i["q4"] = i["trust_ratio"] + i["anticipation_ratio"]
+        # for i in df_data:
+        #     i["q1"] = i["joy_ratio"] + i["surprise_ratio"]
+        #     i["q2"] = i["anger_ratio"] + i["disgust_ratio"]
+        #     i["q3"] = i["sadness_ratio"] + i["fear_ratio"]
+        #     i["q4"] = i["trust_ratio"] + i["anticipation_ratio"]
 
-        qthresh = {
-            col: np.nanpercentile([i[col] for i in df_data], 75) for col in QUAD
-        }
-        thresh = {
-            col: np.nanpercentile([i[f"{col}_ratio"] for i in df_data], 75)
-            for col in EMOTION_KEYS
-        }
-        print(thresh)
+        # qthresh = {col: func([i[col] for i in df_data], args) for col in QUAD}
+        thresh = {}
+        if args:
+            thresh = {
+                col: func([i[f"{col}_ratio"] for i in df_data], args)
+                for col in EMOTION_KEYS
+            }
+        else:
+            thresh = {
+                col: func([i[f"{col}_ratio"] for i in df_data])
+                for col in EMOTION_KEYS
+            }
 
         new_data = []
         for line in df_data:
@@ -162,11 +125,12 @@ class DataFrame:
                     _line["wheel_playlist"] = key
                     new_data.append(_line)
 
-            for key in QUAD:
-                if line[key] >= qthresh[key]:
-                    _line = line.copy()
-                    _line["quadrant_playlist"] = key
-                    new_data.append(_line)
+        # for line in df_data:
+        #     for key in QUAD:
+        #         if line[key] >= qthresh[key]:
+        #             _line = line.copy()
+        #             _line["quadrant_playlist"] = key
+        #             new_data.append(_line)
 
         return new_data
 
@@ -192,6 +156,13 @@ class DataFrame:
             subset=["title", "artist"], keep="first", inplace=True
         )
 
+    def drop_custom_titles(self):
+
+        self.df.drop(
+            self.df[self.df["title"] == "Pumped Up Kicks"].index, inplace=True
+        )
+
     def dump(self, filename: pathlib.Path):
 
         self.df.to_csv(filename, index=False)
+        print(f"Saved data to {filename}")
