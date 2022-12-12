@@ -125,12 +125,11 @@ class EmotionExtractionFromLyrics:
 
         plt.make_sentiment_wheel_playlist_boxplot()
 
+        plt.make_vad_scatter()
         plt.make_va_scatter(c="playlist")
         plt.make_va_scatter(c="playlist", set_limits=False)
 
         plt.make_va_scatter(c="wheel_playlist", set_limits=False)
-
-        plt.make_vad_scatter()
 
     def dump(self, gen_data: pathlib.Path):
 

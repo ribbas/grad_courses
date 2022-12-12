@@ -27,26 +27,29 @@ class Scatter(Plot):
     ):
 
         fig = self.ax.add_subplot()
-        graph = sns.scatterplot(x=df[x], y=df[y], hue=df[c], data=df, alpha=0.5)
+        graph = sns.scatterplot(
+            x=df[x], y=df[y], hue=df[c], data=df, alpha=0.5, s=100
+        )
         graph.axhline(0.50, linestyle="--", color="#A9A9A9")
         graph.axvline(0.50, linestyle="--", color="#A9A9A9")
 
         if set_limits:
             fig.set_xlim(0, 1)
             fig.set_ylim(0, 1)
-            plt.legend(
-                prop={"size": 16},
-            )
+        plt.legend(
+            prop={"size": 20},
+        )
 
-        fig.set_xlabel(x, fontsize=16)
-        fig.set_ylabel(y, fontsize=16)
+        fig.set_xlabel(x, fontsize=20)
+        fig.set_ylabel(y, fontsize=20)
+        fig.tick_params(axis="both", which="major", labelsize=15)
 
 
 class Scatter3D(Plot):
     def set_axes(self, x: str, y: str, c: str, df: pd.DataFrame):
 
         fig = self.ax.add_subplot(projection="3d")
-        fig.scatter(df[x], df[y], df[c], c=df[c])
+        fig.scatter(df[x], df[y], df[c], c=df[c], s=100)
 
         fig.plot3D(
             np.linspace(0.5, 0.5, 10),
@@ -62,9 +65,10 @@ class Scatter3D(Plot):
         fig.set_xlim(0, 1)
         fig.set_ylim(0, 1)
         fig.set_zlim(0, 1)
-        fig.set_xlabel(x, fontsize=16)
-        fig.set_ylabel(y, fontsize=16)
-        fig.set_zlabel(c, fontsize=16)
+        fig.set_xlabel(x, fontsize=20)
+        fig.set_ylabel(y, fontsize=20)
+        fig.set_zlabel(c, fontsize=20)
+        fig.tick_params(axis="both", which="major", labelsize=15)
         fig.view_init(elev=20)
 
 

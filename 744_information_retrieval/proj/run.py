@@ -11,7 +11,7 @@ if __name__ == "__main__":
     lyrics_dir = Path("data/lyrics")
     playlist_dir = Path("data/spotify")
     gen_data = Path("data/final.csv")
-    plot_dir = Path("docs/statics")
+    plot_dir = Path("docs/statics/plots")
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
