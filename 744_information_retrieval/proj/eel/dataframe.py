@@ -15,6 +15,8 @@ TRANSFORM_KEY_FMT = {
 }
 QUAD = ("q1", "q2", "q3", "q4")
 
+pd.set_option("display.float_format", lambda x: "%.3f" % x)
+
 
 class Dataset:
     def __init__(self) -> None:
@@ -27,10 +29,8 @@ class Dataset:
 
     def get_dist(self, cols):
 
-        # return (
-        #     self.df[cols].describe().loc[["mean", "50%"]].transpose().to_latex()
-        # )
-        return self.df[cols].nunique()
+        return self.df[cols].describe().loc[["mean"]].transpose().to_latex()
+        # return self.df[cols].nunique()
 
     def get_top_emotions(self, title: str):
 

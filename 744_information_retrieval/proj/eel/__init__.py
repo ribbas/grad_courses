@@ -99,13 +99,13 @@ class EmotionExtractionFromLyrics:
 
         data = Dataset()
         data.read_csv(gen_data)
-        print(data.get_top_emotions("Pumped Up Kicks"))
+        # print(data.get_top_emotions("Pumped Up Kicks"))
         print(data.get_dist(i for i in EMOTION_KEYS))
-        # print(data.get_dist(f"u_{i}" for i in EMOTION_KEYS))
-        # print(data.get_dist(f"s_{i}" for i in EMOTION_KEYS))
+        print(data.get_dist(f"u_{i}" for i in EMOTION_KEYS))
+        print(data.get_dist(f"s_{i}" for i in EMOTION_KEYS))
         # print(data.get_dist(f"{i}_ratio" for i in EMOTION_KEYS))
         # print(data.get_dist(["title"]))
-        print(data.get_dist(["title"]))
+        # print(data.get_dist(["title"]))
 
     def generate_plots(self, gen_data: pathlib.Path, plot_dir: pathlib.Path):
 
