@@ -123,19 +123,19 @@ class Dataset:
             qthresh = {col: func([i[col] for i in df_data]) for col in QUAD}
 
         new_data = []
-        # for line in df_data:
-        #     for key in EMOTION_KEYS:
-        #         if line[f"{key}_ratio"] >= thresh[key]:
-        #             _line = line.copy()
-        #             _line["wheel_playlist"] = key
-        #             new_data.append(_line)
-
         for line in df_data:
-            for key in QUAD:
-                if line[key] >= qthresh[key]:
+            for key in EMOTION_KEYS:
+                if line[f"{key}_ratio"] >= thresh[key]:
                     _line = line.copy()
-                    _line["quadrant_playlist"] = key
+                    _line["wheel_playlist"] = key
                     new_data.append(_line)
+
+        # for line in df_data:
+        #     for key in QUAD:
+        #         if line[key] >= qthresh[key]:
+        #             _line = line.copy()
+        #             _line["quadrant_playlist"] = key
+        #             new_data.append(_line)
 
         return new_data
 

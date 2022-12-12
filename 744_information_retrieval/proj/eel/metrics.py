@@ -36,28 +36,28 @@ class Metrics:
     @staticmethod
     def score_metrics(df):
 
-        # wheel_ratios = {}
-        # for emo in EMOTION_KEYS:
-        #     wheel_ratios[emo] = Metrics.sentiment_ratio(
-        #         df, "wheel_playlist", emo
-        #     )
-
-        quad_ratios = {}
-        for quad in {"q1", "q2", "q3", "q4"}:
-            quad_ratios[quad] = Metrics.sentiment_ratio(
-                df, "quadrant_playlist", quad
+        wheel_ratios = {}
+        for emo in EMOTION_KEYS:
+            wheel_ratios[emo] = Metrics.sentiment_ratio(
+                df, "wheel_playlist", emo
             )
 
-        # print(wheel_ratios)
-        print(quad_ratios)
-        # print(
-        #     Metrics.n_unique_titles(df, "wheel_playlist"),
-        #     Metrics.accuracy(wheel_ratios),
-        # )
+        # quad_ratios = {}
+        # for quad in {"q1", "q2", "q3", "q4"}:
+        #     quad_ratios[quad] = Metrics.sentiment_ratio(
+        #         df, "quadrant_playlist", quad
+        #     )
+
+        print(wheel_ratios)
         print(
-            Metrics.n_unique_titles(df, "quadrant_playlist"),
-            Metrics.accuracy(quad_ratios),
+            Metrics.n_unique_titles(df, "wheel_playlist"),
+            Metrics.accuracy(wheel_ratios),
         )
+        # print(quad_ratios)
+        # print(
+        #     Metrics.n_unique_titles(df, "quadrant_playlist"),
+        #     Metrics.accuracy(quad_ratios),
+        # )
 
     @staticmethod
     def get_function():
