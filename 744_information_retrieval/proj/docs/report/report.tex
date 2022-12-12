@@ -34,7 +34,7 @@ Natural language processing on English song lyrics assume additional restriction
 
 \subsection{Sentiment Analysis}
 
-Sentiment scores are evaluated as the ratios of weights of the relatively positive and negative terms in a document. Context is typically emphasized to increase the accuracy of the perceived sentiment. This is achieved by using long n-grams. This project tokenizes the documents as 1-grams, and therefore loses contexts. The sentiment scores are instead evaluated as the ratio of the positive and negative terms over the total number of terms. Terms are labeled positive or negative if they are found in their corresponding datasets.
+Sentiment scores are evaluated as the ratios of weights of the relatively positive and negative terms in a document. Context is typically emphasized to increase the accuracy of the perceived sentiment. This is achieved by using long n-grams. This project tokenizes the documents as 1-grams, and therefore loses contexts. The sentiment scores are instead evaluated as the ratio of the positive terms ($p$) and negative terms ($n$) over the total number of terms. Terms are labeled positive or negative if they are found in their corresponding datasets.
 
 \begin{equation}
   S = \frac{|p| - |n|}{N}
@@ -43,6 +43,8 @@ Sentiment scores are evaluated as the ratios of weights of the relatively positi
 If a document contains more negative terms, then the sentiment score will naturally be negative as well, and vice versa for a positive score.
 
 \subsection{Emotion Classification}
+
+The field of emotion classification is highly subjective. It is often difficult to quantify with absolute values or discretely classify emotions. There have been several psychological models developed over the decades. This project utilizes 2 of the popular models, the Plutchik's Wheel of Emotions and the VAD Emotional State Model.
 
 \subsubsection{Plutchik's Wheel of Emotions Model}
 
@@ -85,63 +87,43 @@ The third dimension of the model can be disregarded to describe the more popular
   \label{fig:va}
 \end{figure}
 
-\subsubsection{Emotion Categories}
+\section{Source Datasets}
 
+The datasets for this project were obtained from various sources.
 
-\section{Technical Background}
-All of the source code is in Python 3.10. The program is split into several modules and follows an object oriented structure.
+\subsection{Playlist Datasets}
 
-% The total number of non-empty lines of code for the program totals to under 285.
+Playlist datasets were obtained from Spotify via their web application programming interface (API) \cite{spotify}. Top playlists curated by the Spotify staff were randomly selected, and the API was used to gather playlist names, lists of tracks, and the apparent targeted moods.
 
-% \begin{figure}[!ht]
-%   \includegraphics[scale=0.45]{statics/uml.png}
-%   \centering
-%   \caption{UML of Information Retrieval}
-% \end{figure}
+\subsection{Lyrics}
 
+The lyrics of all of the tracks from the playlist datasets were obtained via scraping from various web sources. In total, 748 documents were obtained for analysis.
 
+\subsection{NRC Emotion Lexicons}
 
-\subsection{Emotion Playlist}
+The word associations, emotion intensities and the VAD lexicons for the emotion models were obtained from the National Research Council Canada \cite{LREC18-AIL,Mohammad13,vad-acl2018}. The dictionaries for the positive and negative terms required to compute the sentiment scores were also extracted from these datasets.
 
-\begin{equation}
-  acc = \frac{\sum_{p \in E^{+}}\frac{\sum_{i}[p_i > 0]}{|p|} + \sum_{n \in E^{-}}\frac{\sum_{i}[n_i < 0]}{|n|}}{|E|}
+\section{Scores}
+
+The scores generated are based on sums of the emotion intensities and frequencies of word associations.
+
+\subsection{Emotion Intensity}
+
+Emotion intensity scores are generated for the 8 emotions identified by the Plutchik's Wheel Model. The scores are simply the sums of the corresponding emotion intensity values present in the NRC datasets. To normalize the intensity scores, each of the 8 emotions also have their corresponding intensity ratio scores, which are calculated by computing the ratio of the emotion intensities over the total sum of intensities. Equation \ref{equ:emo_ratio} defines the ratio for all emotions $e$ in the 8 emotions identified by the Plutchik's Wheel Model, $E$.
+
+\begin{equation} \label{equ:emo_ratio}
+  e_{ratio} = \frac{\sum_{i=0}e_i}{\sum_{e \in E}\sum_{i=0}e_i}
 \end{equation}
 
-% Original count: 748
+\subsection{VAD Scores}
 
+Similar to the emotion intensity scores, the valence, arousal and dominance scores were evaluated by summing their intensities and averaging them over the number of terms identified in the word associations. Since every term in the dataset are associated with a 3-tuple of valence, arousal and dominance values, their sums are averaged by the same value. Equation \ref{equ:vad} defines the ratios.
 
-\begin{simptable}
-  {ratio}
-  {scores}
-  {|c|c|c|}
-  \textbf{Metric} & \textbf{Tracks Categorized} & \textbf{Accuracy} \\
-  \hline
-  25\%  & 747 & 0.544 \\
-  \hline
-  50\%  & 747 & 0.643 \\
-  \hline
-  75\%  & 730 & 0.747 \\
-  \hline
-  mean  & 747 & 0.673 \\
-  \hline
-\end{simptable}
+\begin{equation} \label{equ:vad}
+  v = \frac{\sum_{i=0}^{N}v_i}{N}, a = \frac{\sum_{i=0}^{N}a_i}{N}, d = \frac{\sum_{i=0}^{N}d_i}{N}
+\end{equation}
 
-\begin{simptable}
-  {ratio}
-  {scores}
-  {|c|c|c|}
-  \textbf{Metric} & \textbf{Tracks Categorized} & \textbf{Accuracy} \\
-  \hline
-  25\%  & 626 & 0.572 \\
-  \hline
-  50\%  & 626 & 0.719 \\
-  \hline
-  75\%  & 603 & 0.820 \\
-  \hline
-  mean  & 626 & 0.713 \\
-  \hline
-\end{simptable}
-
+\section{Analysis}
 
 \begin{simptable}
   {No transform}
@@ -190,6 +172,51 @@ All of the source code is in Python 3.10. The program is split into several modu
   fear\_ratio         &  0.113061 &  0.106388&  0.409779 \\
   \hline
 \end{simptable}
+
+% \section{Technical Background}
+% All of the source code is in Python 3.10. The program is split into several modules and follows an object oriented structure.
+
+\subsection{Emotion Playlist}
+
+\begin{equation}
+  acc = \frac{\sum_{p \in E^{+}}\frac{\sum_{i}[p_i > 0]}{|p|} + \sum_{n \in E^{-}}\frac{\sum_{i}[n_i < 0]}{|n|}}{|E|}
+\end{equation}
+
+% Original count: 748
+
+
+\begin{simptable}
+  {ratio}
+  {scores}
+  {|c|c|c|}
+  \textbf{Metric} & \textbf{Tracks Categorized} & \textbf{Accuracy} \\
+  \hline
+  25\%  & 747 & 0.544 \\
+  \hline
+  50\%  & 747 & 0.643 \\
+  \hline
+  75\%  & 730 & 0.747 \\
+  \hline
+  mean  & 747 & 0.673 \\
+  \hline
+\end{simptable}
+
+\begin{simptable}
+  {ratio}
+  {scores}
+  {|c|c|c|}
+  \textbf{Metric} & \textbf{Tracks Categorized} & \textbf{Accuracy} \\
+  \hline
+  25\%  & 626 & 0.572 \\
+  \hline
+  50\%  & 626 & 0.719 \\
+  \hline
+  75\%  & 603 & 0.820 \\
+  \hline
+  mean  & 626 & 0.713 \\
+  \hline
+\end{simptable}
+
 
 \begin{simptable}
   {ratio}
