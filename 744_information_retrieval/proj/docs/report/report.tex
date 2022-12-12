@@ -66,13 +66,13 @@ Several categories described by the model do not translate well over text. For e
 The VAD (Valence-Arousal-Dominance) Emotional State Model was proposed by psychologist Albert Mehrabian. The model plots emotional states across these 3 dimensions of emotion. Valence measures how pleasant or unpleasant an emotion is, arousal determines the energy of the emotion, and dominance refers to the sense of control over the particular emotion. The model, pictured in \ref{fig:vad}, implies a more granular approach to categorizing emotions.
 
 \begin{figure}[!ht]
-  \includegraphics[scale=0.35]{../statics/vad.png}
+  \includegraphics[scale=0.35]{../statics/vad_.png}
   \centering
   \caption{VAD Emotional State Model}
   \label{fig:vad}
 \end{figure}
 
-The third dimension of the model can be disregarded to describe the more popular Valence-Arousal Emotional State Model (also known as the Circumplex Model), developed by psychologist James A. Russell. The two dimensions of this model allows for emotions to be categorized into quadrants which are sufficient in determining the general sentiment of the emotion. The four quadrants can be labeled as:
+The third dimension of the model can be disregarded to describe the more popular Valence-Arousal Emotional State Model (also known as the Circumplex Model), developed by psychologist James A. Russell. The two dimensions of this model allows for emotions to be categorized into quadrants which are sufficient in determining the general sentiment of the emotion. The four quadrants of the model, pictured in \ref{fig:va}, can be labeled as:
 \begin{itemize}
   \item \textbf{Quadrant I}: High-arousal/positive-valence, "joy"
   \item \textbf{Quadrant II}: High-arousal/negative-valence, "anger"
@@ -81,9 +81,9 @@ The third dimension of the model can be disregarded to describe the more popular
 \end{itemize}
 
 \begin{figure}[!ht]
-  \includegraphics[scale=0.35]{../statics/vad.png}
+  \includegraphics[scale=0.45]{../statics/va_.png}
   \centering
-  \caption{VAD Emotional State Model}
+  \caption{VA Emotional State Model}
   \label{fig:va}
 \end{figure}
 
@@ -128,24 +128,24 @@ Similar to the emotion intensity scores, the valence, arousal and dominance scor
 \begin{simptable}
   {No transform}
   {scores}
-  {|c|c|c||c|c||c|c|}
-  \textbf{Emotion} & \textbf{mean} & \textbf{median} & \textbf{mean} & \textbf{median} & \textbf{mean} & \textbf{median}\\
+  {|c|c||c||c|}
+  \textbf{Emotion} & \textbf{mean} & \textbf{mean} & \textbf{mean}\\
   \hline
-  anticipation &  1.730709 &  1.5940 &  3.719128 &  2.8350 &  1.730709 &  1.5940 \\
+  anticipation &  1.730709 &  3.719128 &  1.730709 \\
   \hline
-  disgust      &  1.069293 &  0.7200 &  2.601124 &  1.1640 &  1.069293 &  0.7200 \\
+  disgust      &  1.069293 &  2.601124 &  1.069293 \\
   \hline
-  anger        &  1.648021 &  1.2190 &  3.986169 &  1.8750 &  1.648021 &  1.2190 \\
+  anger        &  1.648021 &  3.986169 &  1.648021 \\
   \hline
-  trust        &  2.476561 &  2.1790 &  6.776188 &  4.9530 &  2.476284 &  2.1790 \\
+  trust        &  2.476561 &  6.776188 &  2.476284 \\
   \hline
-  sadness      &  1.790973 &  1.5090 &  3.842015 &  2.6960 &  1.701007 &  1.4210 \\
+  sadness      &  1.790973 &  3.842015 &  1.701007 \\
   \hline
-  joy          &  2.392433 &  2.2070 &  6.319867 &  4.4240 &  2.392433 &  2.2070 \\
+  joy          &  2.392433 &  6.319867 &  2.392433 \\
   \hline
-  fear         &  1.888261 &  1.5315 &  3.869922 &  2.4785 &  1.888261 &  1.5315 \\
+  fear         &  1.888261 &  3.869922 &  1.888261 \\
   \hline
-  surprise     &  0.851107 &  0.7420 &  1.840037 &  1.0710 &  0.851107 &  0.7420 \\
+  surprise     &  0.851107 &  1.840037 &  0.851107 \\
   \hline
 \end{simptable}
 
@@ -178,26 +178,37 @@ Similar to the emotion intensity scores, the valence, arousal and dominance scor
 
 \subsection{Emotion Playlist}
 
+\begin{figure}[!ht]
+  \includegraphics[scale=0.35]{../statics/plots/wheel_playlist.png}
+  \centering
+  \caption{Distribution of Sentiment Scores Over The 8 Emotions}
+  \label{fig:wheel_playlist}
+\end{figure}
+
+\begin{figure}[!ht]
+  \includegraphics[scale=0.35]{../statics/plots/quadrant_playlist.png}
+  \centering
+  \caption{Distribution of Sentiment Scores Over The 4 Quadrants}
+  \label{fig:quad_playlist}
+\end{figure}
+
 \begin{equation}
   acc = \frac{\sum_{p \in E^{+}}\frac{\sum_{i}[p_i > 0]}{|p|} + \sum_{n \in E^{-}}\frac{\sum_{i}[n_i < 0]}{|n|}}{|E|}
 \end{equation}
 
-% Original count: 748
-
-
 \begin{simptable}
   {ratio}
   {scores}
   {|c|c|c|}
-  \textbf{Metric} & \textbf{Tracks Categorized} & \textbf{Accuracy} \\
+  \textbf{Metric} & \textbf{Loss} & \textbf{Accuracy} \\
   \hline
-  25\%  & 747 & 0.544 \\
+  mean  & 0.13\% & 0.673 \\
   \hline
-  50\%  & 747 & 0.643 \\
+  25\%  & 0.13\% & 0.544 \\
   \hline
-  75\%  & 730 & 0.747 \\
+  50\%  & 0.13\% & 0.643 \\
   \hline
-  mean  & 747 & 0.673 \\
+  75\%  & 2.27\% & 0.748 \\
   \hline
 \end{simptable}
 
@@ -205,40 +216,15 @@ Similar to the emotion intensity scores, the valence, arousal and dominance scor
   {ratio}
   {scores}
   {|c|c|c|}
-  \textbf{Metric} & \textbf{Tracks Categorized} & \textbf{Accuracy} \\
+  \textbf{Metric} & \textbf{Loss} & \textbf{Accuracy} \\
   \hline
-  25\%  & 626 & 0.572 \\
+  mean  & 14.44\% & 0.713 \\
   \hline
-  50\%  & 626 & 0.719 \\
+  25\%  & 16.31\% & 0.572 \\
   \hline
-  75\%  & 603 & 0.820 \\
+  50\%  & 14.44\% & 0.719 \\
   \hline
-  mean  & 626 & 0.713 \\
-  \hline
-\end{simptable}
-
-
-\begin{simptable}
-  {ratio}
-  {scores}
-  {|c|c|}
-  \textbf{wheel\_playlist} & \textbf{count} \\
-  \hline
-  fear &  490 \\
-  \hline
-  disgust &  474 \\
-  \hline
-  anger &  470 \\
-  \hline
-  sadness &  470 \\
-  \hline
-  anticipation &  469 \\
-  \hline
-  trust &  461 \\
-  \hline
-  surprise &  458 \\
-  \hline
-  joy &  444 \\
+  75\%  & 18.45\% & 0.820 \\
   \hline
 \end{simptable}
 
