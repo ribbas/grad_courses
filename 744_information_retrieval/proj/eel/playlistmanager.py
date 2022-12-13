@@ -60,19 +60,29 @@ class PlaylistManager:
 
     def get_lyrics(self, playlist: Playlist):
 
+        print(
+            f"Loading lyrics from '{self.raw_lyrics_dir.absolute()}'...",
+            end="",
+        )
         lyrics_files = list((self.raw_lyrics_dir / playlist.name).iterdir())
         for track in playlist.tracks:
             for lyrics_file in lyrics_files:
                 if track.title in lyrics_file.stem:
                     track.lyrics = IO.read(lyrics_file)
+        print(" done!")
 
     def get_normalized_lyrics(self, playlist: Playlist):
 
+        print(
+            f"Loading lyrics from '{self.norm_lyrics_dir.absolute()}'...",
+            end="",
+        )
         lyrics_files = list((self.norm_lyrics_dir / playlist.name).iterdir())
         for track in playlist.tracks:
             for lyrics_file in lyrics_files:
                 if track.title in lyrics_file.stem:
                     track.lyrics = IO.read(lyrics_file)
+        print(" done!")
 
     def dump_lyrics(self, playlist: Playlist, norm: Normalizer):
 
@@ -83,7 +93,6 @@ class PlaylistManager:
                     playlist_dir = self.norm_lyrics_dir / playlist.name
                     playlist_dir.mkdir(exist_ok=True)
                     IO.dump(
-                        playlist_dir
-                        / f"{track.title} :: {track.artist[0].replace('/','::')}.txt",
+                        playlist_dir / f"{track.title}.txt",
                         " ".join(norm(track.lyrics)),
                     )
