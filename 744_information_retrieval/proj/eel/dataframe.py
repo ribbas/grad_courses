@@ -4,13 +4,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from .emotions import (
-    Emotions,
-    EMOTION_KEYS,
-    VAD_KEYS,
-    SENTIMENT_KEYS,
-    QUADRANT_KEYS,
-)
+from .emotions import Emotions, EMOTION_KEYS, VAD_KEYS, SENTIMENT_KEYS
 from .playlist import Playlist
 from .text import Normalizer
 

@@ -3,20 +3,25 @@ from .emotions import EMOTION_KEYS, QUADRANT_KEYS
 
 class AutoPlaylist:
     @staticmethod
-    def create_emotion_playlist(df_data, func, args=None):
-
-        thresh = {}
+    def threshold(df_data, func, args, key_fmt, keys):
 
         if args:
-            thresh = {
-                col: func([i[f"{col}_ratio"] for i in df_data], args)
-                for col in EMOTION_KEYS
+            return {
+                col: func([i[key_fmt.format(col)] for i in df_data], args)
+                for col in keys
             }
         else:
-            thresh = {
-                col: func([i[f"{col}_ratio"] for i in df_data])
-                for col in EMOTION_KEYS
+            return {
+                col: func([i[key_fmt.format(col)] for i in df_data])
+                for col in keys
             }
+
+    @staticmethod
+    def create_emotion_playlist(df_data, func, args=None):
+
+        thresh = AutoPlaylist.threshold(
+            df_data, func, args, "{0}_ratio", EMOTION_KEYS
+        )
 
         new_data = []
         for line in df_data:
@@ -32,23 +37,15 @@ class AutoPlaylist:
     @staticmethod
     def create_quadrant_playlist(df_data, func, args=None):
 
-        for i in df_data:
-            i["q1"] = i["joy_ratio"] + i["surprise_ratio"]
-            i["q2"] = i["anger_ratio"] + i["disgust_ratio"]
-            i["q3"] = i["sadness_ratio"] + i["fear_ratio"]
-            i["q4"] = i["trust_ratio"] + i["anticipation_ratio"]
+        for line in df_data:
+            line["q1"] = line["joy_ratio"] + line["surprise_ratio"]
+            line["q2"] = line["anger_ratio"] + line["disgust_ratio"]
+            line["q3"] = line["sadness_ratio"] + line["fear_ratio"]
+            line["q4"] = line["trust_ratio"] + line["anticipation_ratio"]
 
-        thresh = {}
-
-        if args:
-            thresh = {
-                col: func([i[col] for i in df_data], args)
-                for col in QUADRANT_KEYS
-            }
-        else:
-            thresh = {
-                col: func([i[col] for i in df_data]) for col in QUADRANT_KEYS
-            }
+        thresh = AutoPlaylist.threshold(
+            df_data, func, args, "{0}", QUADRANT_KEYS
+        )
 
         new_data = []
 

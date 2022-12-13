@@ -59,7 +59,6 @@ class EmotionExtractionFromLyrics:
     def load_checkpoint(self, bin_dir: pathlib.Path):
 
         self.loaded_checkpoint = True
-
         self.data = IO.read_pickle(bin_dir / "checkpoint")
         print("Loaded checkpoint.")
 
@@ -180,7 +179,5 @@ class EmotionExtractionFromLyrics:
     def dump(self, gen_data: pathlib.Path):
 
         ds = DataFrame()
-
         ds.generate(self.data)
-
         ds.dump(gen_data)
