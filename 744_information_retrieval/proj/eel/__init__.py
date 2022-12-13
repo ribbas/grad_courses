@@ -78,13 +78,13 @@ class EmotionExtractionFromLyrics:
             if playlist_name == "all":
                 for playlist in self.playlists:
                     print(f"Processing '{playlist.name}'")
-                    self.playlists.get_lyrics(playlist)
+                    self.playlists.get_normalized_lyrics(playlist)
                     df = DataFrame.transpose(playlist, norm, self.emotions)
                     self.data.extend(df)
 
             else:
                 playlist = self.playlists[playlist_name]
-                self.playlists.get_lyrics(playlist)
+                self.playlists.get_normalized_lyrics(playlist)
                 df = DataFrame.transpose(playlist, norm, self.emotions)
                 self.data.extend(df)
 
@@ -96,6 +96,7 @@ class EmotionExtractionFromLyrics:
         norm = Normalizer()
         for playlist in self.playlists:
             print(f"Processing '{playlist.name}'")
+            self.playlists.get_lyrics(playlist)
             self.playlists.dump_lyrics(playlist, norm)
 
     def create_emotion_playlist(self):

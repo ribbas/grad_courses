@@ -4,6 +4,7 @@ from typing import Generator
 from .files import IO
 from .lyrics import LyricsRetriever
 from .playlist import Playlist
+from .text import Normalizer
 
 
 class PlaylistManager:
@@ -65,7 +66,15 @@ class PlaylistManager:
                 if track.title in lyrics_file.stem:
                     track.lyrics = IO.read(lyrics_file)
 
-    def dump_lyrics(self, playlist: Playlist, norm):
+    def get_normalized_lyrics(self, playlist: Playlist):
+
+        lyrics_files = list((self.norm_lyrics_dir / playlist.name).iterdir())
+        for track in playlist.tracks:
+            for lyrics_file in lyrics_files:
+                if track.title in lyrics_file.stem:
+                    track.lyrics = IO.read(lyrics_file)
+
+    def dump_lyrics(self, playlist: Playlist, norm: Normalizer):
 
         lyrics_files = list((self.raw_lyrics_dir / playlist.name).iterdir())
         for track in playlist.tracks:
@@ -74,6 +83,7 @@ class PlaylistManager:
                     playlist_dir = self.norm_lyrics_dir / playlist.name
                     playlist_dir.mkdir(exist_ok=True)
                     IO.dump(
-                        playlist_dir / track.title,
-                        norm(track.lyrics),
+                        playlist_dir
+                        / f"{track.title} :: {track.artist[0].replace('/','::')}.txt",
+                        " ".join(norm(track.lyrics)),
                     )

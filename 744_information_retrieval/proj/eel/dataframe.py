@@ -53,7 +53,7 @@ class DataFrame:
                 line["title"] = track.title
                 line["playlist"] = playlist.name
 
-                lyrics = norm(track.lyrics)
+                lyrics = track.lyrics.split(" ")
 
                 for t_key, t_lyrics in zip(
                     TRANSFORM_KEY_FMT,
