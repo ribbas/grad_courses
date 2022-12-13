@@ -58,31 +58,28 @@ class PlaylistManager:
             + "\n",
         )
 
-    def get_lyrics(self, playlist: Playlist):
+    @staticmethod
+    def __get_lyrics(lyrics_dir: pathlib.Path, playlist: Playlist):
 
+        lyrics_dir_path = lyrics_dir / playlist.name
         print(
-            f"Loading lyrics from '{self.raw_lyrics_dir.absolute()}'...",
+            f"Loading lyrics from '{lyrics_dir_path.absolute()}'...",
             end="",
         )
-        lyrics_files = list((self.raw_lyrics_dir / playlist.name).iterdir())
+        lyrics_files = list(lyrics_dir_path.iterdir())
         for track in playlist.tracks:
             for lyrics_file in lyrics_files:
                 if track.title in lyrics_file.stem:
                     track.lyrics = IO.read(lyrics_file)
         print(" done!")
+
+    def get_lyrics(self, playlist: Playlist):
+
+        self.__get_lyrics(self.raw_lyrics_dir, playlist)
 
     def get_normalized_lyrics(self, playlist: Playlist):
 
-        print(
-            f"Loading lyrics from '{self.norm_lyrics_dir.absolute()}'...",
-            end="",
-        )
-        lyrics_files = list((self.norm_lyrics_dir / playlist.name).iterdir())
-        for track in playlist.tracks:
-            for lyrics_file in lyrics_files:
-                if track.title in lyrics_file.stem:
-                    track.lyrics = IO.read(lyrics_file)
-        print(" done!")
+        self.__get_lyrics(self.norm_lyrics_dir, playlist)
 
     def dump_lyrics(self, playlist: Playlist, norm: Normalizer):
 
