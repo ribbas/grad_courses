@@ -15,6 +15,7 @@ EMOTION_KEYS = {
 }
 VAD_KEYS = {"valence", "arousal", "dominance"}
 SENTIMENT_KEYS = {"negative", "positive"}
+QUADRANT_KEYS = {"q1", "q2", "q3", "q4"}
 
 
 class EmotionLexicon:
@@ -125,7 +126,7 @@ class Emotions:
 
         return counts
 
-    def get_wheel_category(self, lyrics: list[str] | set[str]):
+    def get_emotion_intensities(self, lyrics: list[str] | set[str]):
 
         counts = {e: 0.0 for e in EMOTION_KEYS}
 

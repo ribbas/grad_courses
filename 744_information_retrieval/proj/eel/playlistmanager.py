@@ -6,7 +6,7 @@ from .lyrics import LyricsRetriever
 from .playlist import Playlist
 
 
-class PlaylistService:
+class PlaylistManager:
     def __init__(
         self,
         playlist_dir: pathlib.Path,

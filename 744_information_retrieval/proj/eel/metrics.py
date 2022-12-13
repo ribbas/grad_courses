@@ -34,30 +34,26 @@ class Metrics:
         return np.mean(list(ratios.values()))
 
     @staticmethod
-    def score_metrics(df):
+    def emotion_sentiment_ratios(df):
 
-        wheel_ratios = {}
+        emotion_ratios = {}
         for emo in EMOTION_KEYS:
-            wheel_ratios[emo] = Metrics.sentiment_ratio(
-                df, "wheel_playlist", emo
+            emotion_ratios[emo] = Metrics.sentiment_ratio(
+                df, "emotion_playlist", emo
             )
 
-        # quad_ratios = {}
-        # for quad in {"q1", "q2", "q3", "q4"}:
-        #     quad_ratios[quad] = Metrics.sentiment_ratio(
-        #         df, "quadrant_playlist", quad
-        #     )
+        return emotion_ratios
 
-        print(wheel_ratios)
-        print(
-            Metrics.n_unique_titles(df, "wheel_playlist"),
-            Metrics.accuracy(wheel_ratios),
-        )
-        # print(quad_ratios)
-        # print(
-        #     Metrics.n_unique_titles(df, "quadrant_playlist"),
-        #     Metrics.accuracy(quad_ratios),
-        # )
+    @staticmethod
+    def quad_sentiment_ratios(df):
+
+        quad_ratios = {}
+        for quad in {"q1", "q2", "q3", "q4"}:
+            quad_ratios[quad] = Metrics.sentiment_ratio(
+                df, "quadrant_playlist", quad
+            )
+
+        return quad_ratios
 
     @staticmethod
     def get_function():

@@ -118,11 +118,11 @@ class PlotFactory:
         bp.set_axes("playlist", "sentiment", self.df)
         bp.save_fig(self.plot_dir / "sentiment.png")
 
-    def make_sentiment_wheel_playlist_boxplot(self):
+    def make_sentiment_emotion_playlist_boxplot(self):
 
         bp = BoxPlot()
-        bp.set_axes("wheel_playlist", "sentiment", self.df, showfliers=False)
-        bp.save_fig(self.plot_dir / "wheel_playlist.png")
+        bp.set_axes("emotion_playlist", "sentiment", self.df, showfliers=False)
+        bp.save_fig(self.plot_dir / "emotion_playlist.png")
 
     def make_va_scatter(self, c: str, set_limits=True):
 
