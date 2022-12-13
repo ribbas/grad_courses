@@ -5,12 +5,13 @@ from eel import EmotionExtractionFromLyrics
 
 if __name__ == "__main__":
 
-    emolex_dir = Path("data/emolex")
-    norm_emolex_dir = Path("data/norm_emolex")
+    playlist_dir = Path("data/spotify")
+    emolex_dir = Path("data/emolex/raw")
+    norm_emolex_dir = Path("data/emolex/norm")
+    raw_lyrics_dir = Path("data/lyrics/raw")
+    norm_lyrics_dir = Path("data/lyrics/norm")
     log_dir = Path("data/logs")
     bin_dir = Path("data/bin")
-    lyrics_dir = Path("data/lyrics")
-    playlist_dir = Path("data/spotify")
     gen_path = Path("data/gen/final.csv")
     plot_dir = Path("docs/statics/plots")
 
@@ -65,7 +66,8 @@ if __name__ == "__main__":
 
     eel_obj = EmotionExtractionFromLyrics(
         playlist_dir=playlist_dir,
-        lyrics_dir=lyrics_dir,
+        raw_lyrics_dir=raw_lyrics_dir,
+        norm_lyrics_dir=norm_lyrics_dir,
         log_dir=log_dir,
         norm_emolex_dir=emolex_dir,
     )
@@ -79,6 +81,7 @@ if __name__ == "__main__":
         eel_obj.clean_datasets(
             emolex_dir=emolex_dir, norm_emolex_dir=emolex_dir
         )
+        eel_obj.dump_normalized_lyrics()
 
     if args["build"]:
         eel_obj.get_playlists()

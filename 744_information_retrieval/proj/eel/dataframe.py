@@ -33,7 +33,6 @@ class DataFrame:
     def get_dist(self, cols):
 
         return self.__df[cols].describe().loc[["mean"]].transpose().to_latex()
-        # return self.__df[cols].nunique()
 
     def get_top_emotions(self, title: str):
 

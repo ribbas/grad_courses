@@ -10,15 +10,18 @@ class PlaylistManager:
     def __init__(
         self,
         playlist_dir: pathlib.Path,
-        lyrics_dir: pathlib.Path,
+        raw_lyrics_dir: pathlib.Path,
+        norm_lyrics_dir: pathlib.Path,
         log_dir: pathlib.Path,
     ) -> None:
 
-        self.playlists: list[Playlist] = []
-        self.ls = LyricsRetriever()
         self.playlist_dir = playlist_dir
-        self.lyrics_dir = lyrics_dir
+        self.raw_lyrics_dir = raw_lyrics_dir
+        self.norm_lyrics_dir = norm_lyrics_dir
         self.log_dir = log_dir
+
+        self.playlists: list[Playlist] = []
+        self.lr = LyricsRetriever()
 
     def __iter__(self) -> Generator[Playlist, None, None]:
 
@@ -41,9 +44,9 @@ class PlaylistManager:
     def add_lyrics(self, playlist: Playlist):
 
         print(f"Searching lyrics for {len(playlist.tracks)} tracks")
-        failed = self.ls.get_lyrics(
+        failed = self.lr.get_lyrics(
             playlist.tracks,
-            str(self.lyrics_dir.absolute() / playlist.name),
+            str(self.raw_lyrics_dir.absolute() / playlist.name),
         )
 
         IO.dump(
@@ -56,8 +59,21 @@ class PlaylistManager:
 
     def get_lyrics(self, playlist: Playlist):
 
-        lyrics_files = list((self.lyrics_dir / playlist.name).iterdir())
+        lyrics_files = list((self.raw_lyrics_dir / playlist.name).iterdir())
         for track in playlist.tracks:
             for lyrics_file in lyrics_files:
                 if track.title in lyrics_file.stem:
                     track.lyrics = IO.read(lyrics_file)
+
+    def dump_lyrics(self, playlist: Playlist, norm):
+
+        lyrics_files = list((self.raw_lyrics_dir / playlist.name).iterdir())
+        for track in playlist.tracks:
+            for lyrics_file in lyrics_files:
+                if track.title in lyrics_file.stem:
+                    playlist_dir = self.norm_lyrics_dir / playlist.name
+                    playlist_dir.mkdir(exist_ok=True)
+                    IO.dump(
+                        playlist_dir / track.title,
+                        norm(track.lyrics),
+                    )

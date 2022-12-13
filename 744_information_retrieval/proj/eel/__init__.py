@@ -16,7 +16,8 @@ class EmotionExtractionFromLyrics:
     def __init__(
         self,
         playlist_dir: pathlib.Path,
-        lyrics_dir: pathlib.Path,
+        raw_lyrics_dir: pathlib.Path,
+        norm_lyrics_dir: pathlib.Path,
         log_dir: pathlib.Path,
         norm_emolex_dir: pathlib.Path,
     ) -> None:
@@ -24,7 +25,10 @@ class EmotionExtractionFromLyrics:
         self.log_dir = log_dir
         self.loaded_checkpoint = False
         self.playlists = PlaylistManager(
-            playlist_dir=playlist_dir, lyrics_dir=lyrics_dir, log_dir=log_dir
+            playlist_dir=playlist_dir,
+            raw_lyrics_dir=raw_lyrics_dir,
+            norm_lyrics_dir=norm_lyrics_dir,
+            log_dir=log_dir,
         )
         self.emotions = Emotions(emolex_dir=norm_emolex_dir)
         self.data = []
@@ -34,6 +38,11 @@ class EmotionExtractionFromLyrics:
         for filename in self.playlists.playlist_dir.iterdir():
             file_data = IO.read_json(filename)
             self.playlists.append(Playlist(filename.stem, file_data))
+
+    # def dump_normalized_lyrics(self, playlist_name: str):
+
+    #     playlist = self.playlists[playlist_name]
+    #     self.playlists.dump_lyrics(playlist, Normalizer())
 
     def add_lyrics(self, playlist_name: str):
 
@@ -54,7 +63,7 @@ class EmotionExtractionFromLyrics:
     def save_checkpoint(self, bin_dir: pathlib.Path):
 
         IO.dump_pickle(bin_dir / "checkpoint", self.data)
-        print("Dumped checkpoint")
+        print("Dumped checkpoint.")
 
     def load_checkpoint(self, bin_dir: pathlib.Path):
 
@@ -81,6 +90,13 @@ class EmotionExtractionFromLyrics:
 
         else:
             print("Data already loaded from checkpoint")
+
+    def dump_normalized_lyrics(self):
+
+        norm = Normalizer()
+        for playlist in self.playlists:
+            print(f"Processing '{playlist.name}'")
+            self.playlists.dump_lyrics(playlist, norm)
 
     def create_emotion_playlist(self):
         return AutoPlaylist.create_emotion_playlist(
