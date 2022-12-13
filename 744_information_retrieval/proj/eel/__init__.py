@@ -2,7 +2,7 @@ import pathlib
 from pprint import pprint
 
 from .autoplaylist import AutoPlaylist
-from .dataset import DataFrame
+from .dataframe import DataFrame
 from .emotions import Emotions, EmotionLexicon, EMOTION_KEYS
 from .files import IO
 from .metrics import Metrics, FUNCTIONS
@@ -61,7 +61,7 @@ class EmotionExtractionFromLyrics:
         self.loaded_checkpoint = True
 
         self.data = IO.read_pickle(bin_dir / "checkpoint")
-        print("Loaded checkpoint")
+        print("Loaded checkpoint.")
 
     def create_df(self, playlist_name: str):
 
@@ -83,9 +83,14 @@ class EmotionExtractionFromLyrics:
         else:
             print("Data already loaded from checkpoint")
 
-    def generate_data(self):
-        self.data = AutoPlaylist.create_emotion_playlist(
-            self.data, *FUNCTIONS["75"]
+    def create_emotion_playlist(self):
+        return AutoPlaylist.create_emotion_playlist(
+            self.data, *FUNCTIONS["75% percentile"]
+        )
+
+    def create_quadrant_playlist(self):
+        return AutoPlaylist.create_quadrant_playlist(
+            self.data, *FUNCTIONS["75% percentile"]
         )
 
     def compute_metrics(self):
@@ -94,35 +99,25 @@ class EmotionExtractionFromLyrics:
         nunique_all = len(set(i["title"] for i in self.data))
         print("nunique titles before:", nunique_all)
 
-        for func_name, args in Metrics().get_function():
+        mt = Metrics(nunique_all)
+
+        for func_name, args in mt.get_function():
 
             data = AutoPlaylist.create_emotion_playlist(self.data, *args)
             ds.generate(data)
+            mt.set_df(ds.get_df())
+            mt.emotion_playlist_summary(func_name)
 
-            print("--------------------------------")
-            print(f"Function: {func_name}")
-            ratios = Metrics().emotion_sentiment_ratios(ds.get_df())
-            pprint(ratios)
-            nunique = Metrics.n_unique_titles(ds.get_df(), "wheel_playlist")
-            print(f"nunique_titles after:", nunique)
-            print(f"Loss:", (nunique_all - nunique) / nunique_all)
-            print(f"Accuracy:", Metrics.accuracy(ratios))
-            print("--------------------------------")
+        print(mt.best_metric())
 
-        for func_name, args in Metrics().get_function():
+        for func_name, args in mt.get_function():
 
-            data = AutoPlaylist.create_quad_playlist(self.data, *args)
+            data = AutoPlaylist.create_quadrant_playlist(self.data, *args)
             ds.generate(data)
+            mt.set_df(ds.get_df())
+            mt.quadrant_playlist_summary(func_name)
 
-            print("--------------------------------")
-            print(f"Function: {func_name}")
-            ratios = Metrics().quad_sentiment_ratios(ds.get_df())
-            pprint(ratios)
-            nunique = Metrics.n_unique_titles(ds.get_df(), "quadrant_playlist")
-            print(f"nunique_titles after:", nunique)
-            print(f"Loss:", (nunique_all - nunique) / nunique_all)
-            print(f"Accuracy:", Metrics.accuracy(ratios))
-            print("--------------------------------")
+        print(mt.best_metric())
 
     def read_csv(self, gen_data: pathlib.Path):
 
@@ -136,10 +131,10 @@ class EmotionExtractionFromLyrics:
         # print(data.get_dist(["title"]))
         # print(data.get_dist(["title"]))
 
-    def generate_plots(self, gen_data: pathlib.Path, plot_dir: pathlib.Path):
+    def generate_exploratory_plots(self, plot_dir: pathlib.Path):
 
         ds = DataFrame()
-        ds.read_csv(gen_data)
+        ds.generate(self.data)
         ds.drop_duplicate_artists()
         ds.drop_custom_titles()
 
@@ -152,14 +147,35 @@ class EmotionExtractionFromLyrics:
 
         ds.drop_duplicate_titles()
 
-        plt.make_sentiment_wheel_playlist_boxplot()
-
         plt.make_va_scatter(c="playlist")
         plt.make_va_scatter(c="playlist", set_limits=False)
 
-        plt.make_va_scatter(c="wheel_playlist", set_limits=False)
-
         plt.make_vad_scatter()
+
+    def generate_emotion_playlist_plots(self, plot_dir: pathlib.Path):
+
+        data = self.create_emotion_playlist()
+        ds = DataFrame()
+        ds.generate(data)
+        ds.drop_duplicate_artists()
+        ds.drop_custom_titles()
+        ds.drop_duplicate_titles()
+
+        plt = PlotFactory(ds.get_df(), EMOTION_KEYS, plot_dir)
+        plt.make_va_scatter(c="emotion_playlist", set_limits=False)
+        plt.make_sentiment_emotion_playlist_boxplot()
+
+    def generate_quadrant_playlist_plots(self, plot_dir: pathlib.Path):
+
+        data = self.create_quadrant_playlist()
+        ds = DataFrame()
+        ds.generate(data)
+        ds.drop_duplicate_artists()
+        ds.drop_custom_titles()
+        ds.drop_duplicate_titles()
+
+        plt = PlotFactory(ds.get_df(), EMOTION_KEYS, plot_dir)
+        plt.make_sentiment_quadrant_playlist_boxplot()
 
     def dump(self, gen_data: pathlib.Path):
 

@@ -42,4 +42,4 @@ class IO:
 
         with open(f"{filename}.pickle", "wb") as fp:
             pickle.dump(data, fp, protocol=pickle.HIGHEST_PROTOCOL)
-        print(f"Dumped Pickle to '{filename}.pickle'")
+        print(f"Dumped checkpoint to '{filename}.pickle'")

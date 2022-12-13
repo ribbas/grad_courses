@@ -124,6 +124,12 @@ class PlotFactory:
         bp.set_axes("emotion_playlist", "sentiment", self.df, showfliers=False)
         bp.save_fig(self.plot_dir / "emotion_playlist.png")
 
+    def make_sentiment_quadrant_playlist_boxplot(self):
+
+        bp = BoxPlot()
+        bp.set_axes("quadrant_playlist", "sentiment", self.df, showfliers=False)
+        bp.save_fig(self.plot_dir / "quadrant_playlist.png")
+
     def make_va_scatter(self, c: str, set_limits=True):
 
         sc = Scatter()

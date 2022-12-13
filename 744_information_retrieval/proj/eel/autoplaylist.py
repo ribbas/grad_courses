@@ -26,10 +26,11 @@ class AutoPlaylist:
                     _line["emotion_playlist"] = key
                     new_data.append(_line)
 
+        print("Generated emotion playlists")
         return new_data
 
     @staticmethod
-    def create_quad_playlist(df_data, func, args=None):
+    def create_quadrant_playlist(df_data, func, args=None):
 
         for i in df_data:
             i["q1"] = i["joy_ratio"] + i["surprise_ratio"]
@@ -58,4 +59,5 @@ class AutoPlaylist:
                     _line["quadrant_playlist"] = key
                     new_data.append(_line)
 
+        print("Generated quadrant playlists")
         return new_data

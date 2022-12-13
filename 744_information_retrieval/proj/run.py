@@ -11,7 +11,7 @@ if __name__ == "__main__":
     bin_dir = Path("data/bin")
     lyrics_dir = Path("data/lyrics")
     playlist_dir = Path("data/spotify")
-    gen_data = Path("data/gen/final.csv")
+    gen_path = Path("data/gen/final.csv")
     plot_dir = Path("docs/statics/plots")
 
     parser = argparse.ArgumentParser()
@@ -19,8 +19,8 @@ if __name__ == "__main__":
         "-p", "--play", type=str, default="all", help="name of playlist"
     )
     parser.add_argument(
-        "-l",
-        "--lyrics",
+        "-s",
+        "--scrape",
         action=argparse.BooleanOptionalAction,
         help="grab lyrics of playlist",
     )
@@ -31,16 +31,22 @@ if __name__ == "__main__":
         help="clean source lexicons",
     )
     parser.add_argument(
-        "-d",
-        "--data",
+        "-b",
+        "--build",
         action=argparse.BooleanOptionalAction,
-        help="generate dataframe",
+        help="build dataframe",
     )
     parser.add_argument(
-        "-b",
+        "-l",
         "--load",
         action=argparse.BooleanOptionalAction,
-        help="generate dataframe",
+        help="load checkpoint",
+    )
+    parser.add_argument(
+        "-m",
+        "--metrics",
+        action=argparse.BooleanOptionalAction,
+        help="generate metrics",
     )
     parser.add_argument(
         "-g",
@@ -64,7 +70,7 @@ if __name__ == "__main__":
         norm_emolex_dir=emolex_dir,
     )
 
-    if args["lyrics"]:
+    if args["scrape"]:
         eel_obj.get_playlists()
         eel_obj.add_lyrics(args["play"])
 
@@ -74,24 +80,25 @@ if __name__ == "__main__":
             emolex_dir=emolex_dir, norm_emolex_dir=emolex_dir
         )
 
-    if args["data"]:
+    if args["build"]:
         eel_obj.get_playlists()
         eel_obj.load_datasets()
         eel_obj.create_df(playlist_name=args["play"])
         eel_obj.save_checkpoint(bin_dir)
-        eel_obj.dump(gen_data)
+        eel_obj.dump(gen_path)
 
     if args["load"]:
         eel_obj.get_playlists()
         eel_obj.load_datasets()
         eel_obj.load_checkpoint(bin_dir)
-        eel_obj.create_df(playlist_name=args["play"])
-        eel_obj.generate_data()
+
+    if args["metrics"]:
         eel_obj.compute_metrics()
-        eel_obj.dump(gen_data)
 
     if args["graph"]:
-        eel_obj.generate_plots(gen_data, plot_dir)
+        eel_obj.generate_exploratory_plots(plot_dir)
+        eel_obj.generate_emotion_playlist_plots(plot_dir)
+        eel_obj.generate_quadrant_playlist_plots(plot_dir)
 
     if args["read"]:
-        eel_obj.read_csv(gen_data)
+        eel_obj.read_csv(gen_path)
